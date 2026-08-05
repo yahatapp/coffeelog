@@ -7,33 +7,35 @@
 set -Eeuo pipefail
 
 readonly VITE_PLUS_VERSION="${VITE_PLUS_VERSION:-0.2.7}"
-readonly NODE_VERSION="${NODE_VERSION:-24}"
-readonly VITE_PLUS_HOME="${VP_HOME:-${HOME}/.vite-plus}"
+
+# Codex Cloud runs setup scripts non-interactively. Do not let the Vite+
+# installer prompt about taking over Node.js version management.
+export CI=1
+export VP_NODE_MANAGER="no"
+export VP_HOME="${VP_HOME:-${HOME}/.vite-plus}"
 
 repo_root="$(git rev-parse --show-toplevel)"
 cd "$repo_root"
 
 installed_vp_version=""
-if [[ -x "$VITE_PLUS_HOME/bin/vp" ]]; then
-  installed_vp_version="$("$VITE_PLUS_HOME/bin/vp" --version 2>/dev/null | sed -n '1p')"
+if [[ -x "$VP_HOME/bin/vp" ]]; then
+  installed_vp_version="$("$VP_HOME/bin/vp" --version 2>/dev/null | sed -n '1p')"
 fi
 
 if [[ "$installed_vp_version" != "vp v${VITE_PLUS_VERSION}" ]]; then
   echo "Installing Vite+ v${VITE_PLUS_VERSION}..."
   curl --fail --silent --show-error --location https://vite.plus \
-    | VP_VERSION="$VITE_PLUS_VERSION" VP_HOME="$VITE_PLUS_HOME" bash
+    | VP_VERSION="$VITE_PLUS_VERSION" bash
 fi
 
-# The installer updates shell startup files, but its changes are not visible in
-# this Bash process. Add the installed command to PATH for the rest of setup.
-export VP_HOME="$VITE_PLUS_HOME"
+# Add vp to this setup shell and persist it for the separate agent shell.
 export PATH="$VP_HOME/bin:$PATH"
 
-configured_node_version="$(vp --version 2>/dev/null | awk '$1 == "Node.js" { print $2; exit }')"
-if [[ "$configured_node_version" != "v${NODE_VERSION}" && "$configured_node_version" != "v${NODE_VERSION}."* ]]; then
-  echo "Configuring Node.js ${NODE_VERSION}..."
-  vp env default "$NODE_VERSION"
-fi
+touch "$HOME/.bashrc"
+grep -qxF "export VP_HOME=\"${VP_HOME}\"" "$HOME/.bashrc" \
+  || echo "export VP_HOME=\"${VP_HOME}\"" >> "$HOME/.bashrc"
+grep -qxF 'export PATH="${VP_HOME}/bin:${PATH}"' "$HOME/.bashrc" \
+  || echo 'export PATH="${VP_HOME}/bin:${PATH}"' >> "$HOME/.bashrc"
 
 echo "Installing dependencies from pnpm-lock.yaml..."
 pnpm install --frozen-lockfile
