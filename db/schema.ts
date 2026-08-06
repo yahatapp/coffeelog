@@ -1,4 +1,4 @@
-import { pgSchema, text, uuid, timestamp, integer, real, date } from "drizzle-orm/pg-core";
+import { pgSchema, text, uuid, timestamp, integer, real, date, boolean } from "drizzle-orm/pg-core";
 import { relations, sql } from "drizzle-orm";
 
 // Brewlogと同じSupabase DB内にスキーマを分離
@@ -31,6 +31,7 @@ export const cafeLogs = cafelogSchema.table("cafe_logs", {
   farm: text("farm"),
   process: text("process"),
   roast: text("roast"),
+  isBlend: boolean("is_blend"),
   rating: real("rating"), // 1〜5
   price: integer("price"), // 円
   note: text("note"),
