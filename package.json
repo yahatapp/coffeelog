@@ -14,6 +14,7 @@
     "hooks:install": "lefthook install",
     "test": "vp test",
     "deploy": "pnpm run build && wrangler deploy",
+    "deploy:built": "wrangler deploy",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate"
   },
