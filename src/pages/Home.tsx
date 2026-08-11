@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useLiff } from "@/hooks/useLiff";
 import { api } from "@/lib/api";
+import { getErrorMessage } from "@/lib/errors";
 import { Coffee, ClipboardList, Plus, Star, Calendar, MessageSquare, Loader2 } from "lucide-react";
 import type { InferResponseType } from "hono/client";
 
@@ -15,6 +16,7 @@ const formatCoffeeInfo = (log: {
   farm?: string | null;
   process?: string | null;
   roast?: string | null;
+  isBlend?: boolean | null;
 }) => {
   const parts = [];
   if (log.origin) parts.push(log.origin);
@@ -27,6 +29,9 @@ const formatCoffeeInfo = (log: {
   const tags = [];
   if (log.process) tags.push(log.process);
   if (log.roast) tags.push(log.roast);
+  if (log.isBlend !== null && log.isBlend !== undefined) {
+    tags.push(log.isBlend ? "ブレンド" : "シングル");
+  }
 
   if (tags.length > 0) {
     base += ` (${tags.join(" / ")})`;
@@ -52,15 +57,15 @@ const HomePage = () => {
           console.error("Failed to fetch logs", res.status);
           setError("ログの取得に失敗しました。");
         }
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error("Error fetching logs", err);
-        setError(err.message || "通信エラーが発生しました。");
+        setError(getErrorMessage(err, "通信エラーが発生しました。"));
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchLogs();
+    void fetchLogs();
   }, []);
 
   const renderStars = (rating: number | null | undefined) => {

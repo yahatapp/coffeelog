@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { api } from "@/lib/api";
+import { getErrorMessage } from "@/lib/errors";
 import { ArrowLeft, Star, Calendar, MessageSquare, Save, Loader2, Minus, Plus } from "lucide-react";
 
 const CreateLogPage = () => {
@@ -88,15 +89,15 @@ const CreateLogPage = () => {
       });
 
       if (res.ok) {
-        navigate("/logs");
+        void navigate("/logs");
       } else {
         console.error("Failed to save log", res.status);
         const errorText = await res.text();
         setError(`保存に失敗しました。(${errorText})`);
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Error saving log", err);
-      setError(err.message || "通信エラーが発生しました。");
+      setError(getErrorMessage(err, "通信エラーが発生しました。"));
     } finally {
       setIsSubmitting(false);
     }

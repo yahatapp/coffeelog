@@ -8,8 +8,13 @@
     "build": "vp build",
     "check": "vp check",
     "check:fix": "vp check --fix",
+    "guard:changes": "./scripts/guard-changes.sh",
+    "guard:gitleaks-canary": "./scripts/check-gitleaks-canary.sh",
+    "guard:secrets": "gitleaks dir --no-banner --redact .",
+    "hooks:install": "lefthook install",
     "test": "vp test",
     "deploy": "pnpm run build && wrangler deploy",
+    "deploy:built": "wrangler deploy",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate"
   },
@@ -20,13 +25,13 @@
     "base-ui": "latest",
     "clsx": "^2.1.1",
     "drizzle-orm": "^0.45.2",
-    "hono": "^4.12.21",
+    "hono": "^4.12.34",
     "jose": "^6.2.3",
     "lucide-react": "^1.0.0",
     "postgres": "^3.4.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "react-router-dom": "^7.14.2",
+    "react-router-dom": "^7.18.2",
     "tailwind-merge": "^3.0.0",
     "tailwindcss-animate": "^1.0.7",
     "zod": "^4.4.3"
@@ -40,17 +45,11 @@
     "@vitejs/plugin-react": "^6.0.0",
     "autoprefixer": "^10.4.19",
     "drizzle-kit": "^0.31.10",
+    "lefthook": "2.1.10",
     "postcss": "^8.4.38",
     "tailwindcss": "^4.0.0",
     "typescript": "^6.0.0",
     "vite": "^8.0.0",
     "wrangler": "^4.92.0"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "workerd",
-      "esbuild",
-      "sharp"
-    ]
   }
 }

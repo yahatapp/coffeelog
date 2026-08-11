@@ -60,6 +60,26 @@ pnpm run db:migrate
 pnpm run dev
 ```
 
+### Security checks
+
+依存関係のインストール後、Git hook を一度だけ有効化してください。
+
+```bash
+pnpm run hooks:install
+```
+
+commit 時には、staged ファイルを対象に秘密情報、秘密鍵、500 KiB 超のファイル、
+format/lint/type エラーを検査します。CI と同じ主要チェックは手動でも実行できます。
+
+```bash
+pnpm run guard:changes
+pnpm audit --prod --audit-level moderate
+```
+
+ローカル hook は `--no-verify` で回避できるため、Pull Request では同じ検査を CI で
+再実行します。`main` への直接 push を禁止し、CI の `Verify` を必須チェックに設定することを
+推奨します。
+
 ### Deploy
 
 ```bash

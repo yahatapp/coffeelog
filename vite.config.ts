@@ -21,7 +21,32 @@ export default defineConfig(({ mode }) => {
     staged: {
       "*": "vp check --fix",
     },
-    plugins: [react(), tailwindcss(), cloudflare()],
+    lint: {
+      categories: {
+        correctness: "error",
+      },
+      plugins: ["typescript", "unicorn", "oxc", "react"],
+      rules: {
+        "no-eval": "error",
+        "no-new-func": "error",
+        "react/jsx-no-script-url": "error",
+        "react/no-danger": "error",
+        "react/no-danger-with-children": "error",
+        "react/react-in-jsx-scope": "off",
+        "typescript/no-implied-eval": "error",
+        "unicorn/no-abusive-eslint-disable": "error",
+      },
+      options: {
+        typeAware: true,
+        typeCheck: true,
+      },
+    },
+    // Vitest runs in Node. The Cloudflare plugin rejects Vitest's Node externals.
+    plugins: [react(), tailwindcss(), ...(mode === "test" ? [] : [cloudflare()])],
+    test: {
+      globals: true,
+      passWithNoTests: true,
+    },
     resolve: {
       alias: {
         "@": path.resolve(__dirname, "./src"),

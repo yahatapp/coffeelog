@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { api } from "@/lib/api";
+import { getErrorMessage } from "@/lib/errors";
 import {
   ArrowLeft,
   Edit2,
@@ -105,15 +106,15 @@ const LogDetailPage = () => {
             setError("詳細情報の取得に失敗しました。");
           }
         }
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error("Error fetching log details", err);
-        setError(err.message || "通信エラーが発生しました。");
+        setError(getErrorMessage(err, "通信エラーが発生しました。"));
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchLogDetails();
+    void fetchLogDetails();
   }, [id]);
 
   const handleSave = async (e: React.FormEvent) => {
@@ -154,16 +155,16 @@ const LogDetailPage = () => {
 
       if (res.ok) {
         const updatedLog = await res.json();
-        setLog(updatedLog);
+        setLog((current) => (current ? { ...current, ...updatedLog } : current));
         setIsEditMode(false);
       } else {
         console.error("Failed to update log", res.status);
         const errorText = await res.text();
         setError(`更新に失敗しました。(${errorText})`);
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Error updating log", err);
-      setError(err.message || "通信エラーが発生しました。");
+      setError(getErrorMessage(err, "通信エラーが発生しました。"));
     } finally {
       setIsSubmitting(false);
     }
@@ -175,7 +176,7 @@ const LogDetailPage = () => {
     try {
       const res = await api.api.logs[":id"].$delete({ param: { id } });
       if (res.ok) {
-        navigate("/logs");
+        void navigate("/logs");
       } else {
         console.error("Failed to delete log", res.status);
         const errorText = await res.text();
@@ -183,9 +184,9 @@ const LogDetailPage = () => {
         setIsSubmitting(false);
         setShowDeleteConfirm(false);
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Error deleting log", err);
-      setError(err.message || "通信エラーが発生しました。");
+      setError(getErrorMessage(err, "通信エラーが発生しました。"));
       setIsSubmitting(false);
       setShowDeleteConfirm(false);
     }

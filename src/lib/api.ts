@@ -8,7 +8,7 @@ export const setApiToken = (token: string | null) => {
 };
 
 export const api = hc<AppType>("/", {
-  headers: () => {
+  headers: (): Record<string, string> => {
     return apiToken ? { Authorization: `Bearer ${apiToken}` } : {};
   },
 });

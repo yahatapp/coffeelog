@@ -141,7 +141,7 @@ export const LiffProvider = ({ children }: { children: ReactNode }) => {
       }
     };
 
-    initLiff();
+    void initLiff();
   }, []);
 
   return (

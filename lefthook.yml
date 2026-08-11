@@ -1,0 +1,13 @@
+pre-commit:
+  jobs:
+    - name: detect staged secrets
+      run: gitleaks git --pre-commit --redact --staged --verbose
+
+    - name: check staged source
+      run: vp staged --hide-unstaged
+
+    - name: check staged diff
+      run: git diff --cached --check
+
+    - name: reject sensitive or large staged files
+      run: ./scripts/check-staged-files.sh
