@@ -14,6 +14,7 @@ const formatCoffeeInfo = (log: {
   farm?: string | null;
   process?: string | null;
   roast?: string | null;
+  isBlend?: boolean | null;
 }) => {
   const parts = [];
   if (log.origin) parts.push(log.origin);
@@ -26,6 +27,9 @@ const formatCoffeeInfo = (log: {
   const tags = [];
   if (log.process) tags.push(log.process);
   if (log.roast) tags.push(log.roast);
+  if (log.isBlend !== null && log.isBlend !== undefined) {
+    tags.push(log.isBlend ? "ブレンド" : "シングル");
+  }
 
   if (tags.length > 0) {
     base += ` (${tags.join(" / ")})`;

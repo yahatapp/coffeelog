@@ -12,6 +12,7 @@ const CreateLogPage = () => {
   const [farm, setFarm] = useState("");
   const [process, setProcess] = useState("");
   const [roast, setRoast] = useState("");
+  const [isBlend, setIsBlend] = useState<boolean | null>(null);
   const [rating, setRating] = useState<number | null>(3);
   const [price, setPrice] = useState("");
   const [visitDate, setVisitDate] = useState(() => {
@@ -78,6 +79,7 @@ const CreateLogPage = () => {
           farm: farm.trim() || null,
           process: process.trim() || null,
           roast: roast.trim() || null,
+          isBlend,
           rating: rating,
           price: parsedPrice,
           note: note.trim() || null,
@@ -203,6 +205,30 @@ const CreateLogPage = () => {
                 placeholder="例: 浅煎り"
                 className="w-full bg-cafe-background border border-cafe-secondary/20 rounded-xl px-4 py-3 text-sm text-cafe-text placeholder-cafe-secondary/40 focus:outline-none focus:ring-2 focus:ring-cafe-primary/10 focus:border-cafe-primary/60 transition-all"
               />
+            </div>
+          </div>
+
+          <div>
+            <label className="text-xs font-bold text-cafe-text block mb-2">ブレンド</label>
+            <div className="grid grid-cols-3 gap-2">
+              {[
+                { label: "未選択", value: null },
+                { label: "ブレンド", value: true },
+                { label: "シングル", value: false },
+              ].map((option) => (
+                <button
+                  key={option.label}
+                  type="button"
+                  onClick={() => setIsBlend(option.value)}
+                  className={`rounded-xl border px-3 py-2.5 text-xs font-bold transition-all active:scale-[0.98] ${
+                    isBlend === option.value
+                      ? "border-cafe-primary bg-cafe-primary text-white shadow-sm"
+                      : "border-cafe-secondary/20 bg-cafe-background text-cafe-secondary hover:border-cafe-primary/40 hover:bg-cafe-primary/5"
+                  }`}
+                >
+                  {option.label}
+                </button>
+              ))}
             </div>
           </div>
 

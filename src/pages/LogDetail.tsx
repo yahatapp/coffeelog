@@ -26,6 +26,7 @@ const formatCoffeeInfo = (log: {
   farm?: string | null;
   process?: string | null;
   roast?: string | null;
+  isBlend?: boolean | null;
 }) => {
   const parts = [];
   if (log.origin) parts.push(log.origin);
@@ -38,6 +39,9 @@ const formatCoffeeInfo = (log: {
   const tags = [];
   if (log.process) tags.push(log.process);
   if (log.roast) tags.push(log.roast);
+  if (log.isBlend !== null && log.isBlend !== undefined) {
+    tags.push(log.isBlend ? "ブレンド" : "シングル");
+  }
 
   if (tags.length > 0) {
     base += ` (${tags.join(" / ")})`;
@@ -63,6 +67,7 @@ const LogDetailPage = () => {
   const [farm, setFarm] = useState("");
   const [process, setProcess] = useState("");
   const [roast, setRoast] = useState("");
+  const [isBlend, setIsBlend] = useState<boolean | null>(null);
   const [rating, setRating] = useState<number | null>(3);
   const [price, setPrice] = useState("");
   const [visitDate, setVisitDate] = useState("");
@@ -87,6 +92,7 @@ const LogDetailPage = () => {
           setFarm(data.farm || "");
           setProcess(data.process || "");
           setRoast(data.roast || "");
+          setIsBlend(data.isBlend ?? null);
           setRating(data.rating);
           setPrice(data.price !== null && data.price !== undefined ? String(data.price) : "");
           setVisitDate(data.visitDate || "");
@@ -138,6 +144,7 @@ const LogDetailPage = () => {
           farm: farm.trim() || null,
           process: process.trim() || null,
           roast: roast.trim() || null,
+          isBlend,
           rating: rating,
           price: parsedPrice,
           note: note.trim() || null,
@@ -392,6 +399,30 @@ const LogDetailPage = () => {
             </div>
 
             <div>
+              <label className="text-xs font-bold text-cafe-text block mb-2">ブレンド</label>
+              <div className="grid grid-cols-3 gap-2">
+                {[
+                  { label: "未選択", value: null },
+                  { label: "ブレンド", value: true },
+                  { label: "シングル", value: false },
+                ].map((option) => (
+                  <button
+                    key={option.label}
+                    type="button"
+                    onClick={() => setIsBlend(option.value)}
+                    className={`rounded-xl border px-3 py-2.5 text-xs font-bold transition-all active:scale-[0.98] ${
+                      isBlend === option.value
+                        ? "border-cafe-primary bg-cafe-primary text-white shadow-sm"
+                        : "border-cafe-secondary/20 bg-cafe-background text-cafe-secondary hover:border-cafe-primary/40 hover:bg-cafe-primary/5"
+                    }`}
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div>
               <label className="text-xs font-bold text-cafe-text block mb-2">評価</label>
               <div className="flex items-center justify-between bg-cafe-background border border-cafe-secondary/15 rounded-2xl p-3.5 w-full shadow-inner">
                 <button
@@ -544,12 +575,18 @@ const LogDetailPage = () => {
                     焙煎: {log.roast}
                   </span>
                 )}
+                {log.isBlend !== null && log.isBlend !== undefined && (
+                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-sky-500/15 text-sky-800">
+                    {log.isBlend ? "ブレンド" : "シングル"}
+                  </span>
+                )}
                 {!log.origin &&
                   !log.region &&
                   !log.farm &&
                   !log.variety &&
                   !log.process &&
-                  !log.roast && (
+                  !log.roast &&
+                  log.isBlend == null && (
                     <span className="text-xs text-cafe-secondary italic">豆の詳細情報なし</span>
                   )}
               </div>
