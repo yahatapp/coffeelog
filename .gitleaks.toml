@@ -1,0 +1,18 @@
+title = "Cafelog Gitleaks configuration"
+
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Local-only secrets and generated dependency or build directories"
+paths = [
+  '''(^|/)\.dev\.vars$''',
+  '''(^|/)\.env$''',
+  '''(^|/)\.env\.(development|production|test|local)(\.local)?$''',
+  '''(^|/)\.direnv/''',
+  '''(^|/)\.git/''',
+  '''(^|/)\.pnpm-store/''',
+  '''(^|/)\.wrangler/''',
+  '''(^|/)dist/''',
+  '''(^|/)node_modules/''',
+]

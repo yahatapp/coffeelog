@@ -6,9 +6,9 @@ const SettingsPage = () => {
   const { profile, relogin } = useLiff();
   const [copied, setCopied] = useState(false);
 
-  const copyToClipboard = () => {
+  const copyToClipboard = async () => {
     if (profile?.userId) {
-      navigator.clipboard.writeText(profile.userId);
+      await navigator.clipboard.writeText(profile.userId);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     }
@@ -55,7 +55,7 @@ const SettingsPage = () => {
                   {profile.userId}
                 </span>
                 <button
-                  onClick={copyToClipboard}
+                  onClick={() => void copyToClipboard()}
                   className="p-1.5 text-cafe-secondary hover:text-cafe-primary hover:bg-cafe-primary/5 rounded-lg active:scale-95 transition-all"
                   title="ユーザーIDをコピー"
                 >

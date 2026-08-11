@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api } from "@/lib/api";
+import { getErrorMessage } from "@/lib/errors";
 import { ClipboardList, Plus, Star, Calendar, MessageSquare, Loader2 } from "lucide-react";
 import type { InferResponseType } from "hono/client";
 
@@ -50,15 +51,15 @@ const LogsPage = () => {
           console.error("Failed to fetch logs", res.status);
           setError("ログの取得に失敗しました。");
         }
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error("Error fetching logs", err);
-        setError(err.message || "通信エラーが発生しました。");
+        setError(getErrorMessage(err, "通信エラーが発生しました。"));
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchLogs();
+    void fetchLogs();
   }, []);
 
   const renderStars = (rating: number | null | undefined) => {
