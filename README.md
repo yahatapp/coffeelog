@@ -34,7 +34,7 @@ Supabase PostgreSQL (cafelog schema)
 
 ### Prerequisites
 
-- Nix + direnv（Node.js、pnpm、Gitleaksを`flake.nix`から提供）
+- Nix + direnv（Node.js、pnpm、Betterleaksを`flake.nix`から提供）
 - Supabase PostgreSQL DB（Brewlogと共有）
 - LINE Developers アカウント（新規チャネル作成済み）
 
@@ -63,11 +63,14 @@ pnpm run dev
 
 ### Security checks
 
-commit 時には、staged ファイルを対象に秘密情報、秘密鍵、500 KiB 超のファイル、
-format/lint/type エラーを検査します。CI と同じ主要チェックは手動でも実行できます。
+commit 時には、Betterleaksでstaged差分だけを対象に秘密情報を検査し、あわせて秘密鍵、
+500 KiB 超のファイル、format/lint/type エラーを検査します。Pull RequestのCIではbaseから
+headまでの全コミットを検査するため、PR内で追加後に削除された秘密も検出しますが、既存履歴
+全体は走査しません。CI と同じ主要チェックは手動でも実行できます。
 
 ```bash
 pnpm run guard:changes
+pnpm run guard:secrets:ci -- <base-sha> <head-sha>
 pnpm audit --prod --audit-level moderate
 ```
 
