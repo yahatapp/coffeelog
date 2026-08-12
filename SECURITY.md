@@ -11,9 +11,14 @@ mitigation. Never include a live secret; revoke or rotate exposed credentials fi
 
 ## Repository controls
 
-Repository administrators should protect `main`, require the `Verify` status check
-and pull-request review, prevent force pushes and branch deletion, enable secret
-scanning with push protection, and require approval for the `production` environment.
+Protect `main`, require changes to pass through a pull request and the `Verify` status
+check, and prevent force pushes and branch deletion. An approving review is optional
+while the repository has a sole maintainer. Enable secret scanning with push
+protection where available.
+
+Restrict the `production` environment to `main`. A manual self-approval can be used as
+an additional deployment confirmation, but it is not a substitute for the required
+CI checks.
 
 GitHub Actions use read-only default permissions and immutable commit SHAs. Runtime
 credentials must be stored in GitHub environment secrets or Cloudflare secrets, never

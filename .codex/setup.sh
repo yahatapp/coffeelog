@@ -1,44 +1,34 @@
 #!/usr/bin/env bash
 
-# Codex Cloud environment setup for Cafelog.
-# In the Codex environment settings, use this as the setup command:
-#   bash .codex/setup.sh
+set -euo pipefail
 
-set -Eeuo pipefail
+readonly REPO_ROOT="$(git rev-parse --show-toplevel)"
+readonly NIX_ENV_FILE="${HOME}/.cache/cafelog-nix-env.sh"
+cd "${REPO_ROOT}"
 
-readonly VITE_PLUS_VERSION="${VITE_PLUS_VERSION:-0.2.7}"
-
-# Codex Cloud runs setup scripts non-interactively. Do not let the Vite+
-# installer prompt about taking over Node.js version management.
-export CI=1
-export VP_NODE_MANAGER="no"
-export VP_HOME="${VP_HOME:-${HOME}/.vite-plus}"
-
-repo_root="$(git rev-parse --show-toplevel)"
-cd "$repo_root"
-
-installed_vp_version=""
-if [[ -x "$VP_HOME/bin/vp" ]]; then
-  installed_vp_version="$("$VP_HOME/bin/vp" --version 2>/dev/null | sed -n '1p')"
+if ! command -v nix >/dev/null 2>&1; then
+  echo "Nix is required to set up the Codex Cloud environment." >&2
+  exit 1
 fi
 
-if [[ "$installed_vp_version" != "vp v${VITE_PLUS_VERSION}" ]]; then
-  echo "Installing Vite+ v${VITE_PLUS_VERSION}..."
-  curl --fail --silent --show-error --location https://vite.plus \
-    | VP_VERSION="$VITE_PLUS_VERSION" bash
-fi
+# Run setup through the same pinned flake used by local development and CI.
+nix develop --command ./scripts/setup-vp.sh
+nix develop --command pnpm install --frozen-lockfile
+nix develop --command pnpm run hooks:install
+nix develop --command pnpm run guard:gitleaks-canary
 
-# Add vp to this setup shell and persist it for the separate agent shell.
-export PATH="$VP_HOME/bin:$PATH"
+# Codex runs setup and later agent commands in separate shells. Persist the
+# evaluated dev-shell environment so those commands use the same toolchain.
+mkdir -p "$(dirname "${NIX_ENV_FILE}")"
+nix print-dev-env > "${NIX_ENV_FILE}"
+chmod 0600 "${NIX_ENV_FILE}"
 
-touch "$HOME/.bashrc"
-grep -qxF "export VP_HOME=\"${VP_HOME}\"" "$HOME/.bashrc" \
-  || echo "export VP_HOME=\"${VP_HOME}\"" >> "$HOME/.bashrc"
-grep -qxF 'export PATH="${VP_HOME}/bin:${PATH}"' "$HOME/.bashrc" \
-  || echo 'export PATH="${VP_HOME}/bin:${PATH}"' >> "$HOME/.bashrc"
-
-echo "Installing dependencies from pnpm-lock.yaml..."
-pnpm install --frozen-lockfile
+touch "${HOME}/.bashrc"
+readonly SOURCE_LINE="source \"${NIX_ENV_FILE}\""
+grep -qxF "${SOURCE_LINE}" "${HOME}/.bashrc" || printf '%s\n' "${SOURCE_LINE}" >> "${HOME}/.bashrc"
 
 echo "Codex Cloud setup complete."
-vp --version
+nix develop --command node --version
+nix develop --command pnpm --version
+nix develop --command gitleaks version
+nix develop --command vp --version

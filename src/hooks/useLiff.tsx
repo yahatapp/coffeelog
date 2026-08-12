@@ -10,6 +10,16 @@ interface BackendProfile {
   createdAt: string;
 }
 
+class BackendInitError extends Error {
+  constructor(
+    readonly status: number,
+    message: string,
+  ) {
+    super(message);
+    this.name = "BackendInitError";
+  }
+}
+
 // モジュールレベルで初期化Promiseを管理して、React 18の二重初期化を防ぐ
 let liffInitPromise: Promise<void> | null = null;
 let backendInitPromise: Promise<BackendProfile> | null = null;
@@ -102,7 +112,7 @@ export const LiffProvider = ({ children }: { children: ReactNode }) => {
                 });
                 if (!res.ok) {
                   const errorText = await res.text();
-                  throw { status: res.status, message: errorText };
+                  throw new BackendInitError(res.status, errorText);
                 }
                 const data = await res.json();
                 return data.profile as BackendProfile;
@@ -112,20 +122,18 @@ export const LiffProvider = ({ children }: { children: ReactNode }) => {
             try {
               const profileData = await backendInitPromise;
               setBackendProfile(profileData);
-            } catch (err: any) {
+            } catch (err: unknown) {
               backendInitPromise = null; // Allow retry on failure
-              console.error("Backend init failed", err.status, err.message);
-              if (err.status === 401) {
+              console.error("Backend init failed", err);
+              if (err instanceof BackendInitError && err.status === 401) {
+                setError("セッションの有効期限が切れました。もう一度ログインしてください。");
+              } else if (err instanceof BackendInitError && err.status === 403) {
                 setError(
-                  `セッションの有効期限が切れました。もう一度ログインしてください。 (${err.message})`,
-                );
-              } else if (err.status === 403) {
-                setError(
-                  `アクセス権限がありません。許可されたLINEアカウントでログインしてください。 (${err.message})`,
+                  "アクセス権限がありません。許可されたLINEアカウントでログインしてください。",
                 );
               } else {
                 setError(
-                  `セッションの初期化に失敗しました。通信状況を確認し、再度お試しください。 (${err.message})`,
+                  "セッションの初期化に失敗しました。通信状況を確認し、再度お試しください。",
                 );
               }
             }
@@ -133,9 +141,9 @@ export const LiffProvider = ({ children }: { children: ReactNode }) => {
         } else {
           setIsLoggedIn(false);
         }
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error("LIFF init error", err);
-        setError(err.message);
+        setError(err instanceof Error ? err.message : "LIFFの初期化に失敗しました。");
       } finally {
         setIsLoading(false);
       }

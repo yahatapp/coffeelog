@@ -34,8 +34,7 @@ Supabase PostgreSQL (cafelog schema)
 
 ### Prerequisites
 
-- Node.js 24+ (Nix で管理)
-- pnpm
+- Nix + direnv（Node.js、pnpm、Gitleaksを`flake.nix`から提供）
 - Supabase PostgreSQL DB（Brewlogと共有）
 - LINE Developers アカウント（新規チャネル作成済み）
 
@@ -46,7 +45,9 @@ Supabase PostgreSQL (cafelog schema)
 direnv allow
 
 # 2. 依存関係のインストール
+./scripts/setup-vp.sh
 pnpm install
+pnpm run hooks:install
 
 # 3. 環境変数の設定
 cp .env.example .env
@@ -62,12 +63,6 @@ pnpm run dev
 
 ### Security checks
 
-依存関係のインストール後、Git hook を一度だけ有効化してください。
-
-```bash
-pnpm run hooks:install
-```
-
 commit 時には、staged ファイルを対象に秘密情報、秘密鍵、500 KiB 超のファイル、
 format/lint/type エラーを検査します。CI と同じ主要チェックは手動でも実行できます。
 
@@ -79,6 +74,9 @@ pnpm audit --prod --audit-level moderate
 ローカル hook は `--no-verify` で回避できるため、Pull Request では同じ検査を CI で
 再実行します。`main` への直接 push を禁止し、CI の `Verify` を必須チェックに設定することを
 推奨します。
+
+Codex Cloudの`.codex/setup.sh`も同じ`flake.nix`内でセットアップを実行し、評価済みの
+dev shell環境を後続のエージェントシェルへ引き継ぎます。
 
 ### Deploy
 

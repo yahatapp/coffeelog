@@ -52,15 +52,19 @@
       {
         devShells.default = pkgs.mkShell {
           buildInputs = with pkgs; [
-            nodejs_24
-            git
-            pnpm
+            bashInteractive
+            coreutils
             curl
+            git
+            gnugrep
             gitleaksPinned
+            nodejs_24
+            pnpm
           ];
 
           shellHook = ''
             export PATH="$PWD/node_modules/.bin:$PATH"
+            export PATH="''${VP_HOME:-$HOME/.vite-plus}/bin:$PATH"
             echo "☕ Cafelog Dev Environment"
             echo "Node.js: $(node --version)"
             echo "pnpm: $(pnpm --version)"
