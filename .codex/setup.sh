@@ -52,6 +52,10 @@ nix develop --command pnpm run guard:gitleaks-canary
 # evaluated dev-shell environment so those commands use the same toolchain.
 mkdir -p "$(dirname "${NIX_ENV_FILE}")"
 nix print-dev-env > "${NIX_ENV_FILE}"
+# print-dev-env preserves shellHook as a variable, but sourcing its output does
+# not execute the hook. Persist the path needed by the separately installed vp
+# binary explicitly so later Codex shells can run the package scripts.
+printf '%s\n' 'export PATH="${VP_HOME:-$HOME/.vite-plus}/bin:$PATH"' >> "${NIX_ENV_FILE}"
 chmod 0600 "${NIX_ENV_FILE}"
 
 touch "${HOME}/.bashrc"
