@@ -45,12 +45,12 @@ export const authMiddleware = createMiddleware<Env>(async (c, next) => {
     c.set("lineUserId", sub);
 
     await next();
-  } catch (error: any) {
+  } catch (error) {
     if (error instanceof HTTPException) throw error;
 
     console.error("JWT Verification failed:", error);
     throw new HTTPException(401, {
-      message: `Unauthorized: Invalid ID Token: ${error?.message || error}`,
+      message: "Unauthorized: Invalid ID Token",
       cause: error,
     });
   }

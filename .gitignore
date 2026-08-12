@@ -11,6 +11,7 @@ dist-ssr
 .env*
 *.env
 !.env.example
+!.envrc
 # If .envrc contains secrets, it should be ignored. 
 # But usually 'use flake' is safe.
 # .envrc 

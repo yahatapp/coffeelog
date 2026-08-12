@@ -37,7 +37,7 @@ jobs:
       - name: Verify secret scanner
         run: nix develop --command pnpm run guard:gitleaks-canary
 
-      - name: Scan working tree for secrets
+      - name: Scan repository for secrets
         run: nix develop --command pnpm run guard:secrets
 
       - name: Check formatting, lint, and types
