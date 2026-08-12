@@ -2,13 +2,44 @@
 
 set -euo pipefail
 
-readonly REPO_ROOT="$(git rev-parse --show-toplevel)"
+readonly NIX_INSTALLER_VERSION="v3.21.0"
+readonly NIX_INSTALLER_SHA256="c3cf066a28941e89fa1e38ed36f2acfc7479f9b088ddcf35160362a5ee89bd43"
+readonly NIX_INSTALLER_URL="https://install.determinate.systems/nix/tag/${NIX_INSTALLER_VERSION}/nix-installer.sh"
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+readonly REPO_ROOT
 readonly NIX_ENV_FILE="${HOME}/.cache/cafelog-nix-env.sh"
 cd "${REPO_ROOT}"
 
+# Nix can already be installed while missing from PATH in a fresh Codex shell.
+if ! command -v nix >/dev/null 2>&1 && [[ -r /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]]; then
+  # shellcheck disable=SC1091
+  source /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+fi
+
 if ! command -v nix >/dev/null 2>&1; then
-  echo "Nix is required to set up the Codex Cloud environment." >&2
-  exit 1
+  if [[ "$(uname -s)" != "Linux" || "$(id -u)" -ne 0 ]]; then
+    echo "Automatic Nix installation is supported only in the root Linux environment used by Codex Cloud." >&2
+    echo "Install Nix for this host, then run this setup script again." >&2
+    exit 1
+  fi
+
+  NIX_INSTALLER="$(mktemp)"
+  readonly NIX_INSTALLER
+  trap 'rm -f "${NIX_INSTALLER}"' EXIT
+
+  echo "Nix was not found; installing it with installer ${NIX_INSTALLER_VERSION} for Codex Cloud."
+  curl -fsSL "${NIX_INSTALLER_URL}" -o "${NIX_INSTALLER}"
+  printf '%s  %s\n' "${NIX_INSTALLER_SHA256}" "${NIX_INSTALLER}" | sha256sum -c -
+  bash "${NIX_INSTALLER}" install linux \
+    --no-confirm \
+    --prefer-upstream-nix \
+    --diagnostic-endpoint "" \
+    --init none \
+    --extra-conf "experimental-features = nix-command flakes" \
+    --extra-conf "sandbox = false"
+
+  # shellcheck disable=SC1091
+  source /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
 fi
 
 # Run setup through the same pinned flake used by local development and CI.
