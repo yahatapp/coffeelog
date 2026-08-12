@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-pnpm run guard:gitleaks-canary
+pnpm run guard:betterleaks-canary
 pnpm run guard:secrets
 pnpm run check
 pnpm test

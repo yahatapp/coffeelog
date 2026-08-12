@@ -13,7 +13,7 @@ readonly CANARY_VALUE='aB3dE7gH9jK2mN4pQ6sT8vW1yZ5cD0fGhJ2k'
 printf '%s%s"\n' "${CANARY_PREFIX}" "${CANARY_VALUE}" > "${CANARY_FILE}"
 
 set +e
-gitleaks dir \
+betterleaks dir \
   --no-banner \
   --redact \
   --report-format json \
@@ -23,9 +23,9 @@ readonly STATUS=$?
 set -e
 
 if [[ "${STATUS}" -ne 1 ]] || ! grep -q '"RuleID"' "${REPORT_FILE}"; then
-  echo "Gitleaks canary failed: the known synthetic token was not detected." >&2
-  echo "Gitleaks exit status: ${STATUS}" >&2
+  echo "Betterleaks canary failed: the known synthetic token was not detected." >&2
+  echo "Betterleaks exit status: ${STATUS}" >&2
   exit 1
 fi
 
-echo "Gitleaks canary passed."
+echo "Betterleaks canary passed."
