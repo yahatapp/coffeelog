@@ -10,7 +10,6 @@
     "check:fix": "vp check --fix",
     "guard:changes": "./scripts/guard-changes.sh",
     "guard:betterleaks-canary": "./scripts/check-betterleaks-canary.sh",
-    "guard:secrets": "betterleaks dir --no-banner --redact .",
     "guard:secrets:ci": "./scripts/check-secrets-ci.sh",
     "hooks:install": "lefthook install",
     "test": "vp test",
