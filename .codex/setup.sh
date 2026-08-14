@@ -46,7 +46,7 @@ fi
 nix develop --command ./scripts/setup-vp.sh
 nix develop --command pnpm install --frozen-lockfile
 nix develop --command pnpm run hooks:install
-nix develop --command pnpm run guard:gitleaks-canary
+nix develop --command pnpm run guard:betterleaks-canary
 
 # Codex runs setup and later agent commands in separate shells. Persist the
 # evaluated dev-shell environment so those commands use the same toolchain.
@@ -65,5 +65,5 @@ grep -qxF "${SOURCE_LINE}" "${HOME}/.bashrc" || printf '%s\n' "${SOURCE_LINE}" >
 echo "Codex Cloud setup complete."
 nix develop --command node --version
 nix develop --command pnpm --version
-nix develop --command gitleaks version
+nix develop --command betterleaks version
 nix develop --command vp --version
