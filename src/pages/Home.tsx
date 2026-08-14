@@ -163,22 +163,22 @@ const HomePage = () => {
               <Link
                 key={log.id}
                 to={`/logs/${log.id}`}
-                className="block bg-white/80 backdrop-blur-md rounded-2xl border border-cafe-secondary/15 p-4 shadow-sm hover:shadow-md hover:border-cafe-primary/20 transition-all active:scale-[0.99]"
+                className="block min-w-0 overflow-hidden bg-white/80 backdrop-blur-md rounded-2xl border border-cafe-secondary/15 p-4 shadow-sm hover:shadow-md hover:border-cafe-primary/20 transition-all active:scale-[0.99]"
               >
-                <div className="flex flex-col space-y-2">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <h4 className="font-bold text-cafe-text text-sm leading-snug">
+                <div className="flex min-w-0 flex-col space-y-2">
+                  <div className="flex min-w-0 items-start justify-between gap-2">
+                    <div className="min-w-0 flex-1">
+                      <h4 className="break-words font-bold text-cafe-text text-sm leading-snug">
                         {log.cafeName}
                       </h4>
                       {formatCoffeeInfo(log) && (
-                        <p className="text-[10px] text-cafe-secondary font-medium mt-0.5">
+                        <p className="break-words text-[10px] text-cafe-secondary font-medium mt-0.5">
                           {formatCoffeeInfo(log)}
                         </p>
                       )}
                     </div>
                     {log.rating && (
-                      <div className="flex items-center space-x-1">
+                      <div className="flex shrink-0 items-center space-x-1">
                         {renderStars(log.rating)}
                         <div className="inline-flex items-baseline text-cafe-secondary">
                           <span className="text-xs font-extrabold text-cafe-primary leading-none">
@@ -208,7 +208,7 @@ const HomePage = () => {
                         </span>
                       )}
                       {log.note && (
-                        <span className="flex items-center space-x-1 flex-1 min-w-[120px] truncate">
+                        <span className="flex max-w-full min-w-0 flex-1 items-center space-x-1 truncate">
                           <MessageSquare size={10} className="flex-shrink-0" />
                           <span className="truncate">{log.note}</span>
                         </span>
