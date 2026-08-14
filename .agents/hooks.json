@@ -3,8 +3,8 @@
     "Stop": [
       {
         "type": "command",
-        "command": "pnpm",
-        "args": ["run", "guard:changes"]
+        "command": "nix",
+        "args": ["develop", "--command", "pnpm", "run", "guard:changes"]
       }
     ]
   }
