@@ -366,7 +366,7 @@ const LogDetailPage = () => {
                 />
               </div>
 
-              <div>
+              <div className="col-span-2">
                 <label className="text-xs font-bold text-cafe-text block mb-1.5">農園</label>
                 <input
                   type="text"
