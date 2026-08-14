@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { api } from "@/lib/api";
 import { getErrorMessage } from "@/lib/errors";
+import { ProcessField } from "@/components/ProcessField";
 import { ArrowLeft, Star, Calendar, MessageSquare, Save, Loader2, Minus, Plus } from "lucide-react";
 
 const CreateLogPage = () => {
@@ -187,14 +188,13 @@ const CreateLogPage = () => {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="text-xs font-bold text-cafe-text block mb-1.5">精製方法</label>
-              <input
-                type="text"
-                value={process}
-                onChange={(e) => setProcess(e.target.value)}
-                placeholder="例: ナチュラル"
-                className="w-full bg-cafe-background border border-cafe-secondary/20 rounded-xl px-4 py-3 text-sm text-cafe-text placeholder-cafe-secondary/40 focus:outline-none focus:ring-2 focus:ring-cafe-primary/10 focus:border-cafe-primary/60 transition-all"
-              />
+              <label
+                htmlFor="create-process"
+                className="text-xs font-bold text-cafe-text block mb-1.5"
+              >
+                精製方法
+              </label>
+              <ProcessField id="create-process" value={process} onChange={setProcess} />
             </div>
 
             <div>
