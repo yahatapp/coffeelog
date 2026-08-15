@@ -16,6 +16,7 @@ import {
   Coffee,
   Minus,
   Plus,
+  ExternalLink,
 } from "lucide-react";
 import type { InferResponseType } from "hono/client";
 
@@ -63,6 +64,7 @@ const LogDetailPage = () => {
   // Edit Mode state
   const [isEditMode, setIsEditMode] = useState(false);
   const [cafeName, setCafeName] = useState("");
+  const [cafeUrl, setCafeUrl] = useState("");
   const [origin, setOrigin] = useState("");
   const [region, setRegion] = useState("");
   const [variety, setVariety] = useState("");
@@ -88,6 +90,7 @@ const LogDetailPage = () => {
           setLog(data);
           // Initialize edit form states
           setCafeName(data.cafeName);
+          setCafeUrl(data.cafeUrl || "");
           setOrigin(data.origin || "");
           setRegion(data.region || "");
           setVariety(data.variety || "");
@@ -140,6 +143,7 @@ const LogDetailPage = () => {
         param: { id },
         json: {
           cafeName: cafeName.trim(),
+          cafeUrl: cafeUrl.trim() || null,
           origin: origin.trim() || null,
           region: region.trim() || null,
           variety: variety.trim() || null,
@@ -331,6 +335,17 @@ const LogDetailPage = () => {
                 value={cafeName}
                 onChange={(e) => setCafeName(e.target.value)}
                 className="w-full bg-cafe-background border border-cafe-secondary/20 rounded-xl px-4 py-3 text-sm text-cafe-text focus:outline-none focus:ring-2 focus:ring-cafe-primary/10 focus:border-cafe-primary/60 transition-all"
+              />
+            </div>
+
+            <div>
+              <label className="text-xs font-bold text-cafe-text block mb-1.5">お店のURL</label>
+              <input
+                type="url"
+                value={cafeUrl}
+                onChange={(e) => setCafeUrl(e.target.value)}
+                placeholder="https://example.com"
+                className="w-full bg-cafe-background border border-cafe-secondary/20 rounded-xl px-4 py-3 text-sm text-cafe-text placeholder-cafe-secondary/40 focus:outline-none focus:ring-2 focus:ring-cafe-primary/10 focus:border-cafe-primary/60 transition-all"
               />
             </div>
 
@@ -546,6 +561,17 @@ const LogDetailPage = () => {
             </div>
             <div className="space-y-1 flex-1">
               <h3 className="text-xl font-bold text-cafe-text leading-tight">{log.cafeName}</h3>
+              {log.cafeUrl && (
+                <a
+                  href={log.cafeUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex max-w-full items-center gap-1 text-xs font-semibold text-cafe-primary hover:underline"
+                >
+                  <span className="truncate">お店のページを開く</span>
+                  <ExternalLink size={12} className="shrink-0" />
+                </a>
+              )}
               <div className="flex flex-wrap gap-1.5 mt-1.5">
                 {log.origin && (
                   <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-cafe-primary/15 text-cafe-primary">

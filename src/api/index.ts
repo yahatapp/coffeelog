@@ -12,8 +12,13 @@ const initSchema = z.object({
   avatarUrl: z.string().optional().nullable(),
 });
 
+const cafeUrlSchema = z.url().refine((url) => ["http:", "https:"].includes(new URL(url).protocol), {
+  message: "URL must use http or https",
+});
+
 const createLogSchema = z.object({
   cafeName: z.string().min(1),
+  cafeUrl: cafeUrlSchema.optional().nullable(),
   origin: z.string().optional().nullable(),
   region: z.string().optional().nullable(),
   variety: z.string().optional().nullable(),
@@ -29,6 +34,7 @@ const createLogSchema = z.object({
 
 const updateLogSchema = z.object({
   cafeName: z.string().min(1).optional(),
+  cafeUrl: cafeUrlSchema.optional().nullable(),
   origin: z.string().optional().nullable(),
   region: z.string().optional().nullable(),
   variety: z.string().optional().nullable(),

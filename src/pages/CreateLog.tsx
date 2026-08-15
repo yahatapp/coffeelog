@@ -8,6 +8,7 @@ import { ArrowLeft, Star, Calendar, MessageSquare, Save, Loader2, Minus, Plus } 
 const CreateLogPage = () => {
   const navigate = useNavigate();
   const [cafeName, setCafeName] = useState("");
+  const [cafeUrl, setCafeUrl] = useState("");
   const [origin, setOrigin] = useState("");
   const [region, setRegion] = useState("");
   const [variety, setVariety] = useState("");
@@ -75,6 +76,7 @@ const CreateLogPage = () => {
       const res = await api.api.logs.$post({
         json: {
           cafeName: cafeName.trim(),
+          cafeUrl: cafeUrl.trim() || null,
           origin: origin.trim() || null,
           region: region.trim() || null,
           variety: variety.trim() || null,
@@ -134,6 +136,17 @@ const CreateLogPage = () => {
               value={cafeName}
               onChange={(e) => setCafeName(e.target.value)}
               placeholder="例: ブルーボトルコーヒー"
+              className="w-full bg-cafe-background border border-cafe-secondary/20 rounded-xl px-4 py-3 text-sm text-cafe-text placeholder-cafe-secondary/40 focus:outline-none focus:ring-2 focus:ring-cafe-primary/10 focus:border-cafe-primary/60 transition-all"
+            />
+          </div>
+
+          <div>
+            <label className="text-xs font-bold text-cafe-text block mb-1.5">お店のURL</label>
+            <input
+              type="url"
+              value={cafeUrl}
+              onChange={(e) => setCafeUrl(e.target.value)}
+              placeholder="https://example.com"
               className="w-full bg-cafe-background border border-cafe-secondary/20 rounded-xl px-4 py-3 text-sm text-cafe-text placeholder-cafe-secondary/40 focus:outline-none focus:ring-2 focus:ring-cafe-primary/10 focus:border-cafe-primary/60 transition-all"
             />
           </div>
