@@ -357,7 +357,7 @@ const LogDetailPage = () => {
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-              <div>
+              <div className="col-span-2">
                 <label className="text-xs font-bold text-cafe-text block mb-1.5">地域</label>
                 <input
                   type="text"
