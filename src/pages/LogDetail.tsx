@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import { api } from "@/lib/api";
 import { getErrorMessage } from "@/lib/errors";
 import { ProcessField } from "@/components/ProcessField";
+import { Switch } from "@/components/Switch";
 import {
   ArrowLeft,
   Edit2,
@@ -73,7 +74,7 @@ const LogDetailPage = () => {
   const [farm, setFarm] = useState("");
   const [process, setProcess] = useState("");
   const [roast, setRoast] = useState("");
-  const [isBlend, setIsBlend] = useState<boolean | null>(null);
+  const [isBlend, setIsBlend] = useState(false);
   const [servingStyle, setServingStyle] = useState<"hot" | "iced" | null>(null);
   const [rating, setRating] = useState<number | null>(3);
   const [price, setPrice] = useState("");
@@ -100,7 +101,7 @@ const LogDetailPage = () => {
           setFarm(data.farm || "");
           setProcess(data.process || "");
           setRoast(data.roast || "");
-          setIsBlend(data.isBlend ?? null);
+          setIsBlend(data.isBlend ?? false);
           setServingStyle(
             data.servingStyle === "hot" || data.servingStyle === "iced" ? data.servingStyle : null,
           );
@@ -345,6 +346,14 @@ const LogDetailPage = () => {
               />
             </div>
 
+            <Switch
+              checked={isBlend}
+              onCheckedChange={setIsBlend}
+              checkedLabel="ブレンド"
+              uncheckedLabel="シングル"
+              ariaLabel="ブレンドとシングルを切り替える"
+            />
+
             <div>
               <label className="text-xs font-bold text-cafe-text block mb-1.5">お店のURL</label>
               <input
@@ -423,30 +432,6 @@ const LogDetailPage = () => {
             </div>
 
             <div>
-              <label className="text-xs font-bold text-cafe-text block mb-2">ブレンド</label>
-              <div className="grid grid-cols-3 gap-2">
-                {[
-                  { label: "未選択", value: null },
-                  { label: "ブレンド", value: true },
-                  { label: "シングル", value: false },
-                ].map((option) => (
-                  <button
-                    key={option.label}
-                    type="button"
-                    onClick={() => setIsBlend(option.value)}
-                    className={`rounded-xl border px-3 py-2.5 text-xs font-bold transition-all active:scale-[0.98] ${
-                      isBlend === option.value
-                        ? "border-cafe-primary bg-cafe-primary text-white shadow-sm"
-                        : "border-cafe-secondary/20 bg-cafe-background text-cafe-secondary hover:border-cafe-primary/40 hover:bg-cafe-primary/5"
-                    }`}
-                  >
-                    {option.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div>
               <label className="text-xs font-bold text-cafe-text block mb-2">評価</label>
               <div className="flex items-center justify-between bg-cafe-background border border-cafe-secondary/15 rounded-2xl p-3.5 w-full shadow-inner">
                 <button
@@ -503,11 +488,10 @@ const LogDetailPage = () => {
                 </div>
               </div>
 
-              <div>
+              <div className="col-span-2">
                 <label className="text-xs font-bold text-cafe-text block mb-2">提供温度</label>
-                <div className="grid grid-cols-3 gap-2">
+                <div className="grid grid-cols-2 gap-2">
                   {[
-                    { label: "未選択", value: null },
                     { label: "ホット", value: "hot" as const },
                     { label: "アイス", value: "iced" as const },
                   ].map((option) => (
