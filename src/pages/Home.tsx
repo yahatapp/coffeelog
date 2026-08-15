@@ -3,7 +3,16 @@ import { Link } from "react-router-dom";
 import { useLiff } from "@/hooks/useLiff";
 import { api } from "@/lib/api";
 import { getErrorMessage } from "@/lib/errors";
-import { Coffee, ClipboardList, Plus, Star, Calendar, MessageSquare, Loader2 } from "lucide-react";
+import {
+  ArrowRight,
+  Coffee,
+  ClipboardList,
+  Plus,
+  Star,
+  Calendar,
+  MessageSquare,
+  Loader2,
+} from "lucide-react";
 import type { InferResponseType } from "hono/client";
 
 type LogsResponse = InferResponseType<typeof api.api.logs.$get>;
@@ -115,12 +124,25 @@ const HomePage = () => {
         <p className="text-cafe-secondary mt-2">カフェコーヒーの記録をはじめよう</p>
       </div>
 
-      <div className="bg-white/80 backdrop-blur-md rounded-2xl border border-cafe-secondary/20 p-6 shadow-sm">
-        <h3 className="font-semibold text-cafe-text mb-2">☕ ようこそ Cafelog へ</h3>
-        <p className="text-sm text-cafe-secondary leading-relaxed">
-          カフェで飲んだコーヒーの評価を記録し、お気に入りの一杯を見つけましょう。
-        </p>
-      </div>
+      <Link
+        to="/logs/new"
+        className="group flex items-center gap-4 rounded-2xl border border-cafe-secondary/20 bg-white/80 p-5 shadow-sm backdrop-blur-md transition-all hover:border-cafe-primary/30 hover:shadow-md active:scale-[0.99]"
+      >
+        <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-cafe-primary text-white shadow-sm transition-transform group-hover:scale-105">
+          <Plus size={24} />
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="block font-bold text-cafe-text">新しい記録を追加</span>
+          <span className="mt-1 block text-xs leading-relaxed text-cafe-secondary">
+            カフェで飲んだコーヒーを記録する
+          </span>
+        </span>
+        <ArrowRight
+          aria-hidden="true"
+          className="shrink-0 text-cafe-secondary transition-transform group-hover:translate-x-1 group-hover:text-cafe-primary"
+          size={20}
+        />
+      </Link>
 
       {isLoading ? (
         <div className="flex flex-col items-center justify-center py-8">
