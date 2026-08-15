@@ -16,6 +16,8 @@ const cafeUrlSchema = z.url().refine((url) => ["http:", "https:"].includes(new U
   message: "URL must use http or https",
 });
 
+const servingStyleSchema = z.enum(["hot", "iced"]);
+
 const createLogSchema = z.object({
   cafeName: z.string().min(1),
   cafeUrl: cafeUrlSchema.optional().nullable(),
@@ -26,6 +28,7 @@ const createLogSchema = z.object({
   process: z.string().optional().nullable(),
   roast: z.string().optional().nullable(),
   isBlend: z.boolean().optional().nullable(),
+  servingStyle: servingStyleSchema.optional().nullable(),
   rating: z.number().min(1).max(5).optional().nullable(),
   price: z.number().int().nonnegative().optional().nullable(),
   note: z.string().optional().nullable(),
@@ -42,6 +45,7 @@ const updateLogSchema = z.object({
   process: z.string().optional().nullable(),
   roast: z.string().optional().nullable(),
   isBlend: z.boolean().optional().nullable(),
+  servingStyle: servingStyleSchema.optional().nullable(),
   rating: z.number().min(1).max(5).optional().nullable(),
   price: z.number().int().nonnegative().optional().nullable(),
   note: z.string().optional().nullable(),

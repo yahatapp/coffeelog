@@ -16,6 +16,7 @@ const formatCoffeeInfo = (log: {
   process?: string | null;
   roast?: string | null;
   isBlend?: boolean | null;
+  servingStyle?: string | null;
 }) => {
   const parts = [];
   if (log.origin) parts.push(log.origin);
@@ -31,6 +32,7 @@ const formatCoffeeInfo = (log: {
   if (log.isBlend !== null && log.isBlend !== undefined) {
     tags.push(log.isBlend ? "ブレンド" : "シングル");
   }
+  if (log.servingStyle) tags.push(log.servingStyle === "hot" ? "ホット" : "アイス");
 
   if (tags.length > 0) {
     base += ` (${tags.join(" / ")})`;

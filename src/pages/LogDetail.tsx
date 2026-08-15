@@ -30,6 +30,7 @@ const formatCoffeeInfo = (log: {
   process?: string | null;
   roast?: string | null;
   isBlend?: boolean | null;
+  servingStyle?: string | null;
 }) => {
   const parts = [];
   if (log.origin) parts.push(log.origin);
@@ -45,6 +46,7 @@ const formatCoffeeInfo = (log: {
   if (log.isBlend !== null && log.isBlend !== undefined) {
     tags.push(log.isBlend ? "ブレンド" : "シングル");
   }
+  if (log.servingStyle) tags.push(log.servingStyle === "hot" ? "ホット" : "アイス");
 
   if (tags.length > 0) {
     base += ` (${tags.join(" / ")})`;
@@ -72,6 +74,7 @@ const LogDetailPage = () => {
   const [process, setProcess] = useState("");
   const [roast, setRoast] = useState("");
   const [isBlend, setIsBlend] = useState<boolean | null>(null);
+  const [servingStyle, setServingStyle] = useState<"hot" | "iced" | null>(null);
   const [rating, setRating] = useState<number | null>(3);
   const [price, setPrice] = useState("");
   const [visitDate, setVisitDate] = useState("");
@@ -98,6 +101,9 @@ const LogDetailPage = () => {
           setProcess(data.process || "");
           setRoast(data.roast || "");
           setIsBlend(data.isBlend ?? null);
+          setServingStyle(
+            data.servingStyle === "hot" || data.servingStyle === "iced" ? data.servingStyle : null,
+          );
           setRating(data.rating);
           setPrice(data.price !== null && data.price !== undefined ? String(data.price) : "");
           setVisitDate(data.visitDate || "");
@@ -151,6 +157,7 @@ const LogDetailPage = () => {
           process: process.trim() || null,
           roast: roast.trim() || null,
           isBlend,
+          servingStyle,
           rating: rating,
           price: parsedPrice,
           note: note.trim() || null,
@@ -497,6 +504,31 @@ const LogDetailPage = () => {
               </div>
 
               <div>
+                <label className="text-xs font-bold text-cafe-text block mb-2">提供温度</label>
+                <div className="grid grid-cols-3 gap-2">
+                  {[
+                    { label: "未選択", value: null },
+                    { label: "ホット", value: "hot" as const },
+                    { label: "アイス", value: "iced" as const },
+                  ].map((option) => (
+                    <button
+                      key={option.label}
+                      type="button"
+                      onClick={() => setServingStyle(option.value)}
+                      aria-pressed={servingStyle === option.value}
+                      className={`rounded-xl border px-3 py-2.5 text-xs font-bold transition-all active:scale-[0.98] ${
+                        servingStyle === option.value
+                          ? "border-cafe-primary bg-cafe-primary text-white shadow-sm"
+                          : "border-cafe-secondary/20 bg-cafe-background text-cafe-secondary hover:border-cafe-primary/40 hover:bg-cafe-primary/5"
+                      }`}
+                    >
+                      {option.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
                 <label className="text-xs font-bold text-cafe-text block mb-1.5">訪問日</label>
                 <div className="relative">
                   <Calendar
@@ -608,13 +640,19 @@ const LogDetailPage = () => {
                     {log.isBlend ? "ブレンド" : "シングル"}
                   </span>
                 )}
+                {log.servingStyle && (
+                  <span className="bg-cafe-primary/5 text-cafe-primary text-xs font-bold px-3 py-1.5 rounded-full border border-cafe-primary/10">
+                    {log.servingStyle === "hot" ? "ホット" : "アイス"}
+                  </span>
+                )}
                 {!log.origin &&
                   !log.region &&
                   !log.farm &&
                   !log.variety &&
                   !log.process &&
                   !log.roast &&
-                  log.isBlend == null && (
+                  log.isBlend == null &&
+                  !log.servingStyle && (
                     <span className="text-xs text-cafe-secondary italic">豆の詳細情報なし</span>
                   )}
               </div>

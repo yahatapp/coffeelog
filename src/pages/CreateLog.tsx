@@ -16,6 +16,7 @@ const CreateLogPage = () => {
   const [process, setProcess] = useState("");
   const [roast, setRoast] = useState("");
   const [isBlend, setIsBlend] = useState<boolean | null>(null);
+  const [servingStyle, setServingStyle] = useState<"hot" | "iced" | null>(null);
   const [rating, setRating] = useState<number | null>(3);
   const [price, setPrice] = useState("");
   const [visitDate, setVisitDate] = useState(() => {
@@ -84,6 +85,7 @@ const CreateLogPage = () => {
           process: process.trim() || null,
           roast: roast.trim() || null,
           isBlend,
+          servingStyle,
           rating: rating,
           price: parsedPrice,
           note: note.trim() || null,
@@ -236,6 +238,31 @@ const CreateLogPage = () => {
                   onClick={() => setIsBlend(option.value)}
                   className={`rounded-xl border px-3 py-2.5 text-xs font-bold transition-all active:scale-[0.98] ${
                     isBlend === option.value
+                      ? "border-cafe-primary bg-cafe-primary text-white shadow-sm"
+                      : "border-cafe-secondary/20 bg-cafe-background text-cafe-secondary hover:border-cafe-primary/40 hover:bg-cafe-primary/5"
+                  }`}
+                >
+                  {option.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <label className="text-xs font-bold text-cafe-text block mb-2">提供温度</label>
+            <div className="grid grid-cols-3 gap-2">
+              {[
+                { label: "未選択", value: null },
+                { label: "ホット", value: "hot" as const },
+                { label: "アイス", value: "iced" as const },
+              ].map((option) => (
+                <button
+                  key={option.label}
+                  type="button"
+                  onClick={() => setServingStyle(option.value)}
+                  aria-pressed={servingStyle === option.value}
+                  className={`rounded-xl border px-3 py-2.5 text-xs font-bold transition-all active:scale-[0.98] ${
+                    servingStyle === option.value
                       ? "border-cafe-primary bg-cafe-primary text-white shadow-sm"
                       : "border-cafe-secondary/20 bg-cafe-background text-cafe-secondary hover:border-cafe-primary/40 hover:bg-cafe-primary/5"
                   }`}
