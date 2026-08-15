@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import { api } from "@/lib/api";
 import { getErrorMessage } from "@/lib/errors";
 import { ProcessField } from "@/components/ProcessField";
+import { Switch } from "@/components/Switch";
 import {
   ArrowLeft,
   Edit2,
@@ -30,6 +31,7 @@ const formatCoffeeInfo = (log: {
   process?: string | null;
   roast?: string | null;
   isBlend?: boolean | null;
+  servingStyle?: string | null;
 }) => {
   const parts = [];
   if (log.origin) parts.push(log.origin);
@@ -45,6 +47,7 @@ const formatCoffeeInfo = (log: {
   if (log.isBlend !== null && log.isBlend !== undefined) {
     tags.push(log.isBlend ? "ブレンド" : "シングル");
   }
+  if (log.servingStyle) tags.push(log.servingStyle === "hot" ? "ホット" : "アイス");
 
   if (tags.length > 0) {
     base += ` (${tags.join(" / ")})`;
@@ -71,7 +74,8 @@ const LogDetailPage = () => {
   const [farm, setFarm] = useState("");
   const [process, setProcess] = useState("");
   const [roast, setRoast] = useState("");
-  const [isBlend, setIsBlend] = useState<boolean | null>(null);
+  const [isBlend, setIsBlend] = useState(false);
+  const [servingStyle, setServingStyle] = useState<"hot" | "iced" | null>(null);
   const [rating, setRating] = useState<number | null>(3);
   const [price, setPrice] = useState("");
   const [visitDate, setVisitDate] = useState("");
@@ -97,7 +101,10 @@ const LogDetailPage = () => {
           setFarm(data.farm || "");
           setProcess(data.process || "");
           setRoast(data.roast || "");
-          setIsBlend(data.isBlend ?? null);
+          setIsBlend(data.isBlend ?? false);
+          setServingStyle(
+            data.servingStyle === "hot" || data.servingStyle === "iced" ? data.servingStyle : null,
+          );
           setRating(data.rating);
           setPrice(data.price !== null && data.price !== undefined ? String(data.price) : "");
           setVisitDate(data.visitDate || "");
@@ -151,6 +158,7 @@ const LogDetailPage = () => {
           process: process.trim() || null,
           roast: roast.trim() || null,
           isBlend,
+          servingStyle,
           rating: rating,
           price: parsedPrice,
           note: note.trim() || null,
@@ -338,6 +346,14 @@ const LogDetailPage = () => {
               />
             </div>
 
+            <Switch
+              checked={isBlend}
+              onCheckedChange={setIsBlend}
+              checkedLabel="ブレンド"
+              uncheckedLabel="シングル"
+              ariaLabel="ブレンドとシングルを切り替える"
+            />
+
             <div>
               <label className="text-xs font-bold text-cafe-text block mb-1.5">お店のURL</label>
               <input
@@ -416,30 +432,6 @@ const LogDetailPage = () => {
             </div>
 
             <div>
-              <label className="text-xs font-bold text-cafe-text block mb-2">ブレンド</label>
-              <div className="grid grid-cols-3 gap-2">
-                {[
-                  { label: "未選択", value: null },
-                  { label: "ブレンド", value: true },
-                  { label: "シングル", value: false },
-                ].map((option) => (
-                  <button
-                    key={option.label}
-                    type="button"
-                    onClick={() => setIsBlend(option.value)}
-                    className={`rounded-xl border px-3 py-2.5 text-xs font-bold transition-all active:scale-[0.98] ${
-                      isBlend === option.value
-                        ? "border-cafe-primary bg-cafe-primary text-white shadow-sm"
-                        : "border-cafe-secondary/20 bg-cafe-background text-cafe-secondary hover:border-cafe-primary/40 hover:bg-cafe-primary/5"
-                    }`}
-                  >
-                    {option.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div>
               <label className="text-xs font-bold text-cafe-text block mb-2">評価</label>
               <div className="flex items-center justify-between bg-cafe-background border border-cafe-secondary/15 rounded-2xl p-3.5 w-full shadow-inner">
                 <button
@@ -493,6 +485,30 @@ const LogDetailPage = () => {
                     onChange={(e) => setPrice(e.target.value)}
                     className="w-full bg-cafe-background border border-cafe-secondary/20 rounded-xl pl-8 pr-4 py-3 text-sm text-cafe-text focus:outline-none focus:ring-2 focus:ring-cafe-primary/10 focus:border-cafe-primary/60 transition-all"
                   />
+                </div>
+              </div>
+
+              <div className="col-span-2">
+                <label className="text-xs font-bold text-cafe-text block mb-2">提供温度</label>
+                <div className="grid grid-cols-2 gap-2">
+                  {[
+                    { label: "ホット", value: "hot" as const },
+                    { label: "アイス", value: "iced" as const },
+                  ].map((option) => (
+                    <button
+                      key={option.label}
+                      type="button"
+                      onClick={() => setServingStyle(option.value)}
+                      aria-pressed={servingStyle === option.value}
+                      className={`rounded-xl border px-3 py-2.5 text-xs font-bold transition-all active:scale-[0.98] ${
+                        servingStyle === option.value
+                          ? "border-cafe-primary bg-cafe-primary text-white shadow-sm"
+                          : "border-cafe-secondary/20 bg-cafe-background text-cafe-secondary hover:border-cafe-primary/40 hover:bg-cafe-primary/5"
+                      }`}
+                    >
+                      {option.label}
+                    </button>
+                  ))}
                 </div>
               </div>
 
@@ -608,13 +624,19 @@ const LogDetailPage = () => {
                     {log.isBlend ? "ブレンド" : "シングル"}
                   </span>
                 )}
+                {log.servingStyle && (
+                  <span className="bg-cafe-primary/5 text-cafe-primary text-xs font-bold px-3 py-1.5 rounded-full border border-cafe-primary/10">
+                    {log.servingStyle === "hot" ? "ホット" : "アイス"}
+                  </span>
+                )}
                 {!log.origin &&
                   !log.region &&
                   !log.farm &&
                   !log.variety &&
                   !log.process &&
                   !log.roast &&
-                  log.isBlend == null && (
+                  log.isBlend == null &&
+                  !log.servingStyle && (
                     <span className="text-xs text-cafe-secondary italic">豆の詳細情報なし</span>
                   )}
               </div>

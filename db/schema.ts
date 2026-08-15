@@ -33,6 +33,7 @@ export const cafeLogs = cafelogSchema.table("cafe_logs", {
   process: text("process"),
   roast: text("roast"),
   isBlend: boolean("is_blend"),
+  servingStyle: text("serving_style"), // hot / iced
   rating: real("rating"), // 1〜5
   price: integer("price"), // 円
   note: text("note"),
