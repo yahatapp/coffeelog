@@ -41,9 +41,32 @@ export const cafeLogs = cafelogSchema.table("cafe_logs", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
-export const cafeLogsRelations = relations(cafeLogs, ({ one }) => ({
+export const cafeLogsRelations = relations(cafeLogs, ({ one, many }) => ({
   user: one(profiles, {
     fields: [cafeLogs.userId],
     references: [profiles.lineUserId],
+  }),
+  images: many(cafeLogImages),
+}));
+
+// R2に保存した写真のメタデータ（画像本体はDBに保存しない）
+export const cafeLogImages = cafelogSchema.table("cafe_log_images", {
+  id: uuid("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
+  cafeLogId: uuid("cafe_log_id")
+    .notNull()
+    .references(() => cafeLogs.id, { onDelete: "cascade" }),
+  objectKey: text("object_key").notNull().unique(),
+  position: integer("position").notNull(),
+  contentType: text("content_type").notNull(),
+  byteSize: integer("byte_size").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const cafeLogImagesRelations = relations(cafeLogImages, ({ one }) => ({
+  cafeLog: one(cafeLogs, {
+    fields: [cafeLogImages.cafeLogId],
+    references: [cafeLogs.id],
   }),
 }));

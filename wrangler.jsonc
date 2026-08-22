@@ -10,4 +10,11 @@
   "observability": {
     "enabled": true,
   },
+  "r2_buckets": [
+    {
+      "binding": "CAFELOG_IMAGES",
+      "bucket_name": "cafelog-images",
+      "preview_bucket_name": "cafelog-images-preview",
+    },
+  ],
 }

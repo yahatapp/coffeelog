@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { api } from "@/lib/api";
+import { api, authorizedFetch } from "@/lib/api";
+import { resizeToJpeg } from "@/lib/images";
+import { ImagePicker, type SelectedImage } from "@/components/ImagePicker";
 import { getErrorMessage } from "@/lib/errors";
 import { ProcessField } from "@/components/ProcessField";
 import { Switch } from "@/components/Switch";
@@ -28,6 +30,7 @@ const CreateLogPage = () => {
     return `${yyyy}-${mm}-${dd}`;
   });
   const [note, setNote] = useState("");
+  const [images, setImages] = useState<SelectedImage[]>([]);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -95,6 +98,17 @@ const CreateLogPage = () => {
       });
 
       if (res.ok) {
+        const newLog = await res.json();
+        for (const selected of images) {
+          const image = await resizeToJpeg(selected.file);
+          const form = new FormData();
+          form.append("image", image);
+          const upload = await authorizedFetch(`/api/logs/${newLog.id}/images`, {
+            method: "POST",
+            body: form,
+          });
+          if (!upload.ok) throw new Error("写真のアップロードに失敗しました。");
+        }
         void navigate("/logs");
       } else {
         console.error("Failed to save log", res.status);
@@ -129,6 +143,7 @@ const CreateLogPage = () => {
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="bg-white/80 backdrop-blur-md rounded-2xl border border-cafe-secondary/20 p-6 shadow-sm space-y-4">
+          <ImagePicker images={images} onChange={setImages} onError={setError} />
           <div>
             <label className="text-xs font-bold text-cafe-text block mb-1.5">
               店舗名 <span className="text-red-500">*</span>

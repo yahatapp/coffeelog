@@ -4,6 +4,7 @@ import { api } from "@/lib/api";
 import { getErrorMessage } from "@/lib/errors";
 import { ProcessField } from "@/components/ProcessField";
 import { Switch } from "@/components/Switch";
+import { LogImages } from "@/components/LogImages";
 import {
   ArrowLeft,
   Edit2,
@@ -301,6 +302,8 @@ const LogDetailPage = () => {
           </div>
         )}
       </div>
+
+      {id && <LogImages logId={id} />}
 
       {showDeleteConfirm && (
         <div className="bg-red-50 border border-red-200 rounded-2xl p-5 shadow-sm space-y-4 animate-in fade-in slide-in-from-top-2 duration-250">
