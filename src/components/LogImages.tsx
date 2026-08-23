@@ -3,7 +3,15 @@ import { authorizedFetch } from "@/lib/api";
 
 type ImageMeta = { id: string; position: number };
 
-export const LogImages = ({ logId }: { logId: string }) => {
+export const LogImages = ({
+  logId,
+  refreshKey = 0,
+  onCountChange,
+}: {
+  logId: string;
+  refreshKey?: number;
+  onCountChange?: (count: number) => void;
+}) => {
   const [urls, setUrls] = useState<string[]>([]);
   useEffect(() => {
     const objectUrls: string[] = [];
@@ -11,6 +19,7 @@ export const LogImages = ({ logId }: { logId: string }) => {
       const metadata = await authorizedFetch(`/api/logs/${logId}/images`);
       if (!metadata.ok) return;
       const images = (await metadata.json()) as ImageMeta[];
+      onCountChange?.(images.length);
       const loaded = await Promise.all(
         images.map(async (image) => {
           const response = await authorizedFetch(`/api/logs/${logId}/images/${image.id}`);
@@ -24,7 +33,7 @@ export const LogImages = ({ logId }: { logId: string }) => {
     };
     void load();
     return () => objectUrls.forEach((url) => URL.revokeObjectURL(url));
-  }, [logId]);
+  }, [logId, refreshKey, onCountChange]);
   if (!urls.length) return null;
   return (
     <section aria-label="記録の写真" className="grid grid-cols-2 gap-2">

@@ -7,10 +7,12 @@ export const ImagePicker = ({
   images,
   onChange,
   onError,
+  maxImages = 5,
 }: {
   images: SelectedImage[];
   onChange: (images: SelectedImage[]) => void;
   onError: (message: string) => void;
+  maxImages?: number;
 }) => {
   const imagesRef = useRef(images);
   imagesRef.current = images;
@@ -21,7 +23,7 @@ export const ImagePicker = ({
 
   const select = (files: FileList | null) => {
     if (!files) return;
-    const available = 5 - images.length;
+    const available = maxImages - images.length;
     if (files.length > available) onError("写真は1つの記録につき5枚までです。");
     const additions = Array.from(files)
       .slice(0, available)
@@ -43,7 +45,9 @@ export const ImagePicker = ({
         >
           <Camera size={15} /> 写真
         </label>
-        <span className="text-xs font-semibold text-cafe-secondary">{images.length} / 5枚</span>
+        <span className="text-xs font-semibold text-cafe-secondary">
+          {images.length} / {maxImages}枚
+        </span>
       </div>
       <div className="grid grid-cols-3 gap-2">
         {images.map((image, index) => (
@@ -66,7 +70,7 @@ export const ImagePicker = ({
             </button>
           </div>
         ))}
-        {images.length < 5 && (
+        {images.length < maxImages && (
           <label
             htmlFor="log-images"
             className="flex aspect-square cursor-pointer flex-col items-center justify-center gap-1 rounded-xl border-2 border-dashed border-cafe-secondary/30 bg-cafe-background text-cafe-secondary hover:border-cafe-primary"

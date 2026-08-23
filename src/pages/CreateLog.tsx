@@ -99,17 +99,30 @@ const CreateLogPage = () => {
 
       if (res.ok) {
         const newLog = await res.json();
-        for (const selected of images) {
-          const image = await resizeToJpeg(selected.file);
-          const form = new FormData();
-          form.append("image", image);
-          const upload = await authorizedFetch(`/api/logs/${newLog.id}/images`, {
-            method: "POST",
-            body: form,
+        try {
+          for (const selected of images) {
+            const image = await resizeToJpeg(selected.file);
+            const form = new FormData();
+            form.append("image", image);
+            const upload = await authorizedFetch(`/api/logs/${newLog.id}/images`, {
+              method: "POST",
+              body: form,
+            });
+            if (!upload.ok) throw new Error("写真のアップロードに失敗しました。");
+          }
+          void navigate("/logs");
+        } catch (uploadError: unknown) {
+          console.error("Error uploading images", uploadError);
+          void navigate(`/logs/${newLog.id}`, {
+            state: {
+              edit: true,
+              photoUploadError: getErrorMessage(
+                uploadError,
+                "記録は保存されましたが、写真のアップロードに失敗しました。",
+              ),
+            },
           });
-          if (!upload.ok) throw new Error("写真のアップロードに失敗しました。");
         }
-        void navigate("/logs");
       } else {
         console.error("Failed to save log", res.status);
         const errorText = await res.text();

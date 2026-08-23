@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
-import { api } from "@/lib/api";
+import { useParams, useNavigate, Link, useLocation } from "react-router-dom";
+import { api, authorizedFetch } from "@/lib/api";
+import { resizeToJpeg } from "@/lib/images";
+import { ImagePicker, type SelectedImage } from "@/components/ImagePicker";
 import { getErrorMessage } from "@/lib/errors";
 import { ProcessField } from "@/components/ProcessField";
 import { Switch } from "@/components/Switch";
@@ -60,13 +62,18 @@ const formatCoffeeInfo = (log: {
 const LogDetailPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
+  const navigationState = location.state as { edit?: boolean; photoUploadError?: string } | null;
 
   const [log, setLog] = useState<LogResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   // Edit Mode state
-  const [isEditMode, setIsEditMode] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(navigationState?.edit ?? false);
+  const [images, setImages] = useState<SelectedImage[]>([]);
+  const [imageCount, setImageCount] = useState(0);
+  const [imageRefreshKey, setImageRefreshKey] = useState(0);
   const [cafeName, setCafeName] = useState("");
   const [cafeUrl, setCafeUrl] = useState("");
   const [origin, setOrigin] = useState("");
@@ -84,6 +91,9 @@ const LogDetailPage = () => {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [photoUploadError, setPhotoUploadError] = useState<string | null>(
+    navigationState?.photoUploadError ?? null,
+  );
 
   useEffect(() => {
     const fetchLogDetails = async () => {
@@ -170,7 +180,27 @@ const LogDetailPage = () => {
       if (res.ok) {
         const updatedLog = await res.json();
         setLog((current) => (current ? { ...current, ...updatedLog } : current));
-        setIsEditMode(false);
+        try {
+          for (const selected of images) {
+            const image = await resizeToJpeg(selected.file);
+            const form = new FormData();
+            form.append("image", image);
+            const upload = await authorizedFetch(`/api/logs/${id}/images`, {
+              method: "POST",
+              body: form,
+            });
+            if (!upload.ok) throw new Error("写真のアップロードに失敗しました。");
+            URL.revokeObjectURL(selected.previewUrl);
+            setImages((current) => current.filter((item) => item !== selected));
+            setImageCount((count) => count + 1);
+          }
+          setPhotoUploadError(null);
+          setImageRefreshKey((key) => key + 1);
+          setIsEditMode(false);
+        } catch (uploadError: unknown) {
+          console.error("Error uploading images", uploadError);
+          setPhotoUploadError(getErrorMessage(uploadError, "写真のアップロードに失敗しました。"));
+        }
       } else {
         console.error("Failed to update log", res.status);
         const errorText = await res.text();
@@ -251,7 +281,7 @@ const LogDetailPage = () => {
     );
   }
 
-  if (error || !log) {
+  if (!log) {
     return (
       <div className="space-y-4 text-center py-10">
         <div className="bg-white/80 backdrop-blur-md rounded-2xl border border-cafe-secondary/20 p-6 shadow-sm">
@@ -303,7 +333,19 @@ const LogDetailPage = () => {
         )}
       </div>
 
-      {id && <LogImages logId={id} />}
+      {error && (
+        <div className="bg-red-50 border border-red-200 text-red-600 text-xs p-4 rounded-xl font-semibold">
+          {error}
+        </div>
+      )}
+
+      {photoUploadError && (
+        <div className="bg-amber-50 border border-amber-200 text-amber-700 text-xs p-4 rounded-xl font-semibold">
+          記録は保存済みです。{photoUploadError} 写真を選び直して保存してください。
+        </div>
+      )}
+
+      {id && <LogImages logId={id} refreshKey={imageRefreshKey} onCountChange={setImageCount} />}
 
       {showDeleteConfirm && (
         <div className="bg-red-50 border border-red-200 rounded-2xl p-5 shadow-sm space-y-4 animate-in fade-in slide-in-from-top-2 duration-250">
@@ -336,6 +378,12 @@ const LogDetailPage = () => {
       {isEditMode ? (
         <form onSubmit={handleSave} className="space-y-6">
           <div className="bg-white/80 backdrop-blur-md rounded-2xl border border-cafe-secondary/20 p-6 shadow-sm space-y-4">
+            <ImagePicker
+              images={images}
+              onChange={setImages}
+              onError={setPhotoUploadError}
+              maxImages={Math.max(0, 5 - imageCount)}
+            />
             <div>
               <label className="text-xs font-bold text-cafe-text block mb-1.5">
                 店舗名 <span className="text-red-500">*</span>
