@@ -345,8 +345,6 @@ const LogDetailPage = () => {
         </div>
       )}
 
-      {id && <LogImages logId={id} refreshKey={imageRefreshKey} onCountChange={setImageCount} />}
-
       {showDeleteConfirm && (
         <div className="bg-red-50 border border-red-200 rounded-2xl p-5 shadow-sm space-y-4 animate-in fade-in slide-in-from-top-2 duration-250">
           <div className="space-y-1">
@@ -378,12 +376,6 @@ const LogDetailPage = () => {
       {isEditMode ? (
         <form onSubmit={handleSave} className="space-y-6">
           <div className="bg-white/80 backdrop-blur-md rounded-2xl border border-cafe-secondary/20 p-6 shadow-sm space-y-4">
-            <ImagePicker
-              images={images}
-              onChange={setImages}
-              onError={setPhotoUploadError}
-              maxImages={Math.max(0, 5 - imageCount)}
-            />
             <div>
               <label className="text-xs font-bold text-cafe-text block mb-1.5">
                 店舗名 <span className="text-red-500">*</span>
@@ -597,6 +589,13 @@ const LogDetailPage = () => {
                 />
               </div>
             </div>
+
+            <ImagePicker
+              images={images}
+              onChange={setImages}
+              onError={setPhotoUploadError}
+              maxImages={Math.max(0, 5 - imageCount)}
+            />
           </div>
 
           <div className="flex space-x-4">
@@ -750,6 +749,8 @@ const LogDetailPage = () => {
           </div>
         </div>
       )}
+
+      {id && <LogImages logId={id} refreshKey={imageRefreshKey} onCountChange={setImageCount} />}
     </div>
   );
 };
