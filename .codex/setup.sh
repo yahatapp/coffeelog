@@ -7,7 +7,7 @@ readonly NIX_INSTALLER_SHA256="c3cf066a28941e89fa1e38ed36f2acfc7479f9b088ddcf351
 readonly NIX_INSTALLER_URL="https://install.determinate.systems/nix/tag/${NIX_INSTALLER_VERSION}/nix-installer.sh"
 REPO_ROOT="$(git rev-parse --show-toplevel)"
 readonly REPO_ROOT
-readonly NIX_ENV_FILE="${HOME}/.cache/brewlog-nix-env.sh"
+readonly NIX_ENV_FILE="${HOME}/.cache/coffeelog-nix-env.sh"
 cd "${REPO_ROOT}"
 
 # Nix can already be installed while missing from PATH in a fresh Codex shell.
@@ -45,7 +45,7 @@ fi
 # Run setup through the same pinned flake used by local development and CI.
 nix develop --command ./scripts/setup-vp.sh
 nix develop --command pnpm install --frozen-lockfile
-nix develop --command pnpm run browser:install:with-deps
+nix develop --command pnpm --filter brewlog browser:install:with-deps
 nix develop --command pnpm run hooks:install
 nix develop --command pnpm run guard:betterleaks-canary
 
@@ -68,5 +68,5 @@ nix develop --command node --version
 nix develop --command pnpm --version
 nix develop --command betterleaks version
 nix develop --command vp --version
-nix develop --command pnpm exec playwright --version
-nix develop --command node --input-type=module -e 'import { chromium } from "@playwright/test"; const browser = await chromium.launch({ headless: true }); await browser.close(); console.log("Chromium headless launch succeeded.");'
+nix develop --command pnpm --filter brewlog exec playwright --version
+nix develop --command pnpm --filter brewlog exec node --input-type=module -e 'import { chromium } from "@playwright/test"; const browser = await chromium.launch({ headless: true }); await browser.close(); console.log("Chromium headless launch succeeded.");'

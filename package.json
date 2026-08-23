@@ -1,5 +1,5 @@
 {
-  "name": "line-app",
+  "name": "coffeelog",
   "version": "0.1.0",
   "private": true,
   "packageManager": "pnpm@11.11.0",
@@ -9,13 +9,14 @@
     "check": "turbo run check",
     "test": "turbo run test",
     "guard:changes": "turbo run guard:changes",
-    "guard:betterleaks-canary": "turbo run guard:betterleaks-canary",
     "guard:betterleaks-canary": "./scripts/check-betterleaks-canary.sh",
     "guard:secrets:ci": "./scripts/check-secrets-ci.sh",
+    "hooks:install": "lefthook install",
     "deploy:brewlog": "pnpm --filter brewlog deploy",
     "deploy:cafelog": "pnpm --filter cafelog deploy"
   },
   "devDependencies": {
+    "lefthook": "catalog:",
     "turbo": "^2.5.8"
   }
 }

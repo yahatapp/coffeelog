@@ -107,6 +107,9 @@ importers:
 
   .:
     devDependencies:
+      lefthook:
+        specifier: 'catalog:'
+        version: 2.1.10
       turbo:
         specifier: ^2.5.8
         version: 2.10.11

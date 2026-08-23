@@ -3,8 +3,8 @@ pre-commit:
     - name: detect staged secrets
       run: betterleaks git . --pre-commit --staged --no-banner --redact
 
-    - name: check staged source
-      run: vp staged --hide-unstaged
+    - name: check applications
+      run: pnpm check
 
     - name: check staged diff
       run: git diff --cached --check
