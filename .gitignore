@@ -1,0 +1,35 @@
+# Workspace dependencies and package-manager state
+node_modules/
+.pnpm-store/
+pnpm-debug.log*
+
+# Build and test artifacts
+dist/
+dist-ssr/
+.wrangler/
+playwright-report/
+test-results/
+blob-report/
+
+# Local environment and secrets
+.env*
+*.env
+!.env.example
+!.envrc
+.dev.vars
+*.local
+
+# Nix / direnv
+.direnv/
+
+# Logs and OS/editor files
+*.log
+.DS_Store
+Thumbs.db
+.idea/
+*.swp
+*.swo
+
+# Local tooling state
+.vite-plus/
+.antigravitycli/
