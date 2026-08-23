@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "vp dev",
     "build": "vp build",
+    "browser:install": "playwright install chromium",
+    "browser:install:with-deps": "playwright install --with-deps chromium",
     "check": "vp check",
     "check:fix": "vp check --fix",
     "guard:changes": "./scripts/guard-changes.sh",
@@ -39,6 +41,7 @@
   "devDependencies": {
     "@cloudflare/vite-plugin": "^1.52.1",
     "@cloudflare/workers-types": "^5.20260813.1",
+    "@playwright/test": "^1.62.1",
     "@tailwindcss/vite": "^4.3.3",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.4",

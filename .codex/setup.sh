@@ -45,6 +45,7 @@ fi
 # Run setup through the same pinned flake used by local development and CI.
 nix develop --command ./scripts/setup-vp.sh
 nix develop --command pnpm install --frozen-lockfile
+nix develop --command pnpm run browser:install:with-deps
 nix develop --command pnpm run hooks:install
 nix develop --command pnpm run guard:betterleaks-canary
 
@@ -67,3 +68,5 @@ nix develop --command node --version
 nix develop --command pnpm --version
 nix develop --command betterleaks version
 nix develop --command vp --version
+nix develop --command pnpm exec playwright --version
+nix develop --command node --input-type=module -e 'import { chromium } from "@playwright/test"; const browser = await chromium.launch({ headless: true }); await browser.close(); console.log("Chromium headless launch succeeded.");'

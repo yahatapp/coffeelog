@@ -6,6 +6,9 @@ node_modules
 dist
 dist-ssr
 .wrangler
+playwright-report
+test-results
+blob-report
 
 # Environment variables
 .env*
