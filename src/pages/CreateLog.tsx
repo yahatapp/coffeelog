@@ -156,7 +156,6 @@ const CreateLogPage = () => {
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="bg-white/80 backdrop-blur-md rounded-2xl border border-cafe-secondary/20 p-6 shadow-sm space-y-4">
-          <ImagePicker images={images} onChange={setImages} onError={setError} />
           <div>
             <label className="text-xs font-bold text-cafe-text block mb-1.5">
               店舗名 <span className="text-red-500">*</span>
@@ -370,6 +369,8 @@ const CreateLogPage = () => {
               />
             </div>
           </div>
+
+          <ImagePicker images={images} onChange={setImages} onError={setError} />
         </div>
 
         <button
