@@ -79,7 +79,10 @@ pnpm audit --prod --audit-level moderate
 推奨します。
 
 Codex Cloudの`.codex/setup.sh`も同じ`flake.nix`内でセットアップを実行し、評価済みの
-dev shell環境を後続のエージェントシェルへ引き継ぎます。
+dev shell環境を後続のエージェントシェルへ引き継ぎます。セットアップ時にはPlaywrightの
+ChromiumとLinux依存パッケージも導入し、ヘッドレス起動を確認します。Chromiumだけを手動で
+再導入する場合は`pnpm run browser:install`、Linux依存パッケージも含める場合は
+`pnpm run browser:install:with-deps`を実行してください。
 
 ### Deploy
 
