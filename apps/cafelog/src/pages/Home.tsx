@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { useLiff } from "@/hooks/useLiff";
-import { api } from "@/lib/api";
 import { getErrorMessage } from "@/lib/errors";
+import { cafelogQueries } from "@/lib/queries";
 import {
   ArrowRight,
   Coffee,
@@ -13,11 +13,6 @@ import {
   MessageSquare,
   Loader2,
 } from "lucide-react";
-import type { InferResponseType } from "hono/client";
-
-type LogsResponse = InferResponseType<typeof api.api.logs.$get>;
-type LogItem = LogsResponse[number];
-
 const formatCoffeeInfo = (log: {
   origin?: string | null;
   region?: string | null;
@@ -53,31 +48,8 @@ const formatCoffeeInfo = (log: {
 
 const HomePage = () => {
   const { profile } = useLiff();
-  const [logs, setLogs] = useState<LogItem[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchLogs = async () => {
-      try {
-        const res = await api.api.logs.$get();
-        if (res.ok) {
-          const data = await res.json();
-          setLogs(data);
-        } else {
-          console.error("Failed to fetch logs", res.status);
-          setError("ログの取得に失敗しました。");
-        }
-      } catch (err: unknown) {
-        console.error("Error fetching logs", err);
-        setError(getErrorMessage(err, "通信エラーが発生しました。"));
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    void fetchLogs();
-  }, []);
+  const { data: logs = [], isPending: isLoading, error } = useQuery(cafelogQueries.logs());
+  const errorMessage = error ? getErrorMessage(error, "通信エラーが発生しました。") : null;
 
   const renderStars = (rating: number | null | undefined) => {
     if (!rating) return null;
@@ -151,9 +123,9 @@ const HomePage = () => {
           <Loader2 className="animate-spin text-cafe-primary mb-2" size={24} />
           <p className="text-cafe-secondary text-xs">直近の記録を読み込み中...</p>
         </div>
-      ) : error ? (
+      ) : errorMessage ? (
         <div className="bg-red-50 border border-red-100 rounded-2xl p-4 text-center">
-          <p className="text-red-500 text-xs font-semibold">{error}</p>
+          <p className="text-red-500 text-xs font-semibold">{errorMessage}</p>
         </div>
       ) : logs.length === 0 ? (
         <div className="bg-white/80 backdrop-blur-md rounded-2xl border border-cafe-secondary/20 p-6 text-center shadow-sm space-y-4">

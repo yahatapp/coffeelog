@@ -3,6 +3,26 @@ import type { AppType } from "@/api";
 
 let apiToken: string | null = null;
 
+export class ApiError extends Error {
+  constructor(
+    readonly status: number,
+    message: string,
+  ) {
+    super(message);
+    this.name = "ApiError";
+  }
+}
+
+export const assertOk = async <
+  T extends { ok: boolean; status: number; text: () => Promise<string> },
+>(
+  response: T,
+) => {
+  if (response.ok) return response;
+  const message = await response.text();
+  throw new ApiError(response.status, message || `Request failed (${response.status})`);
+};
+
 export const setApiToken = (token: string | null) => {
   apiToken = token;
 };

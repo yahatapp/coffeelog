@@ -1,12 +1,7 @@
 import { useEffect, useState } from "react";
+import { CAFELOG_PROCESS_METHODS } from "@line-app/coffee-reference";
 
-const PROCESS_OPTIONS = [
-  "ウォッシュド",
-  "ナチュラル",
-  "ハニー",
-  "パルプドナチュラル",
-  "アナエロビック",
-] as const;
+const PROCESS_OPTIONS = CAFELOG_PROCESS_METHODS;
 const OTHER_PROCESS = "その他";
 
 type ProcessFieldProps = {

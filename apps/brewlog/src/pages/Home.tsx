@@ -1,47 +1,19 @@
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { Plus, Coffee, ClipboardList, Loader2, Star } from "lucide-react";
 import { useLiff } from "../hooks/useLiff";
-import { api } from "@/lib/api";
+import { logQueries, type BrewLog } from "@/lib/queries";
 import { Button } from "../components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
-
-interface RecentLog {
-  id: string;
-  beanId: string;
-  method: string | null;
-  rating: number | null;
-  createdAt: string;
-  tempType: string;
-  bean: {
-    name: string;
-  };
-}
 
 const Home = () => {
   const { profile } = useLiff();
   const navigate = useNavigate();
-  const [recentLogs, setRecentLogs] = useState<RecentLog[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchRecentLogs = async () => {
-      try {
-        const res = await api.api.logs.$get();
-        if (res.ok) {
-          const data = await res.json();
-          // Show only top 3 recent logs
-          setRecentLogs((data as RecentLog[]).slice(0, 3));
-        }
-      } catch (err) {
-        console.error("Failed to fetch recent logs", err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    void fetchRecentLogs();
-  }, []);
+  const logsQuery = useQuery({
+    ...logQueries.all(),
+    select: (logs): BrewLog[] => logs.slice(0, 3),
+  });
+  const recentLogs = logsQuery.data ?? [];
 
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
@@ -75,9 +47,16 @@ const Home = () => {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          {isLoading ? (
+          {logsQuery.isPending ? (
             <div className="flex justify-center py-4">
               <Loader2 className="animate-spin text-coffee-primary/30" size={24} />
+            </div>
+          ) : logsQuery.isError ? (
+            <div className="text-center py-4">
+              <p className="text-coffee-secondary text-sm mb-4">記録の取得に失敗しました。</p>
+              <Button className="w-full rounded-xl" onClick={() => void logsQuery.refetch()}>
+                再読み込み
+              </Button>
             </div>
           ) : recentLogs.length === 0 ? (
             <div className="text-center py-4">

@@ -1,50 +1,18 @@
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { User, LogOut, ChevronRight, Settings2 } from "lucide-react";
 import { useLiff } from "../hooks/useLiff";
 import { Card, CardContent } from "../components/ui/card";
-import { api } from "@/lib/api";
-
-interface Dripper {
-  id: string;
-  name: string;
-}
-
-interface Grinder {
-  id: string;
-  name: string;
-  fineMax: number;
-  mediumFineMax: number;
-  mediumMax: number;
-  mediumCoarseMax: number;
-}
+import { dripperQueries, grinderQueries } from "@/lib/queries";
 
 const Settings = () => {
   const { profile, liff } = useLiff();
   const navigate = useNavigate();
-  const [drippers, setDrippers] = useState<Dripper[]>([]);
-  const [grinders, setGrinders] = useState<Grinder[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  const fetchEquipment = async () => {
-    try {
-      const [drippersRes, grindersRes] = await Promise.all([
-        api.api.drippers.$get(),
-        api.api.grinders.$get(),
-      ]);
-
-      if (drippersRes.ok) setDrippers(await drippersRes.json());
-      if (grindersRes.ok) setGrinders(await grindersRes.json());
-    } catch (err) {
-      console.error("Failed to fetch equipment settings", err);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    void fetchEquipment();
-  }, []);
+  const drippersQuery = useQuery(dripperQueries.all());
+  const grindersQuery = useQuery(grinderQueries.all());
+  const drippers = drippersQuery.data ?? [];
+  const grinders = grindersQuery.data ?? [];
+  const isLoading = drippersQuery.isPending || grindersQuery.isPending;
 
   const handleLogout = () => {
     if (liff?.isLoggedIn()) {

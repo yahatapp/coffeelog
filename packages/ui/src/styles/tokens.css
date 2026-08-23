@@ -1,0 +1,16 @@
+/*
+ * Shared semantic Tailwind v4 tokens.
+ * Each app supplies its own values for the --app-color-* variables in :root.
+ */
+@theme inline {
+  --color-primary: var(--app-color-primary);
+  --color-primary-foreground: var(--app-color-primary-foreground);
+  --color-secondary: var(--app-color-secondary);
+  --color-secondary-foreground: var(--app-color-secondary-foreground);
+  --color-background: var(--app-color-background);
+  --color-foreground: var(--app-color-foreground);
+  --color-surface: var(--app-color-surface);
+  --color-muted: var(--app-color-muted);
+  --color-border: var(--app-color-border);
+  --color-ring: var(--app-color-ring);
+}

@@ -16,127 +16,20 @@ import { eq, and, desc } from "drizzle-orm";
 import { z } from "zod";
 import { HTTPException } from "hono/http-exception";
 import type { Env } from "./types";
+import {
+  beanCreateSchema as createBeanSchema,
+  beanUpdateSchema as updateBeanSchema,
+  dripperCreateSchema as createDripperSchema,
+  dripperUpdateSchema as updateDripperSchema,
+  grinderCreateSchema as createGrinderSchema,
+  grinderUpdateSchema as updateGrinderSchema,
+  logCreateSchema as createLogSchema,
+  logUpdateSchema as updateLogSchema,
+} from "../contracts";
 
 const initSchema = z.object({
   displayName: z.string(),
   avatarUrl: z.string().optional().nullable(),
-});
-
-const createBeanSchema = z.object({
-  name: z.string().min(1),
-  origin: z.string().optional().nullable(),
-  purchaseStore: z.string().optional().nullable(),
-  roastLevel: z.number().int().min(1).max(5).optional().nullable(),
-  roastDate: z.string().optional().nullable(),
-  purchaseDate: z.string().optional().nullable(),
-  imageUrl: z.string().optional().nullable(),
-  processMethod: z.string().optional().nullable(),
-  note: z.string().optional().nullable(),
-  parentBeanId: z.string().uuid().optional().nullable(),
-  version: z.string().optional().nullable(),
-});
-
-const updateBeanSchema = z.object({
-  name: z.string().min(1).optional(),
-  origin: z.string().optional().nullable(),
-  purchaseStore: z.string().optional().nullable(),
-  roastLevel: z.number().int().min(1).max(5).optional().nullable(),
-  roastDate: z.string().optional().nullable(),
-  purchaseDate: z.string().optional().nullable(),
-  imageUrl: z.string().optional().nullable(),
-  isArchived: z.boolean().optional(),
-  processMethod: z.string().optional().nullable(),
-  note: z.string().optional().nullable(),
-  parentBeanId: z.string().uuid().optional().nullable(),
-  version: z.string().optional().nullable(),
-});
-
-const createDripperSchema = z.object({
-  name: z.string().min(1),
-  isDefault: z.boolean().optional(),
-});
-
-const updateDripperSchema = z.object({
-  name: z.string().min(1).optional(),
-  isDefault: z.boolean().optional(),
-});
-
-const createGrinderSchema = z.object({
-  name: z.string().min(1),
-  fineMax: z.number().int().min(1).max(40),
-  mediumFineMax: z.number().int().min(1).max(40),
-  mediumMax: z.number().int().min(1).max(40),
-  mediumCoarseMax: z.number().int().min(1).max(40),
-  isDefault: z.boolean().optional(),
-});
-
-const updateGrinderSchema = z.object({
-  name: z.string().min(1).optional(),
-  fineMax: z.number().int().min(1).max(40).optional(),
-  mediumFineMax: z.number().int().min(1).max(40).optional(),
-  mediumMax: z.number().int().min(1).max(40).optional(),
-  mediumCoarseMax: z.number().int().min(1).max(40).optional(),
-  isDefault: z.boolean().optional(),
-});
-
-const createLogSchema = z.object({
-  beanId: z.string().uuid(),
-  method: z.string().optional().nullable(),
-  grindSize: z.number().int().min(1).max(40).optional().nullable(),
-  waterTemp: z.number().int().optional().nullable(),
-  beanAmount: z.number().optional().nullable(),
-  waterAmount: z.number().optional().nullable(),
-  rating: z.number().min(1).max(5).optional().nullable(),
-  note: z.string().optional().nullable(),
-  brewDate: z.string().optional().nullable(),
-  dripperId: z.string().uuid().optional().nullable(),
-  grinderId: z.string().uuid().optional().nullable(),
-  tempType: z.enum(["hot", "ice"]).optional(),
-  iceAmount: z.number().optional().nullable(),
-  yieldAmount: z.number().optional().nullable(),
-  drawdownTime: z.number().int().nonnegative().optional().nullable(),
-  bloomingTime: z.number().int().nonnegative().optional().nullable(),
-  hasBypass: z.boolean().optional(),
-  pours: z
-    .array(
-      z.object({
-        pourNumber: z.number().int().min(1),
-        waterAmount: z.number().positive(),
-        duration: z.number().int().nonnegative(),
-        pourType: z.enum(["all", "center_around", "center_only"]),
-      }),
-    )
-    .optional(),
-});
-
-const updateLogSchema = z.object({
-  beanId: z.string().uuid().optional(),
-  method: z.string().optional().nullable(),
-  grindSize: z.number().int().min(1).max(40).optional().nullable(),
-  waterTemp: z.number().int().optional().nullable(),
-  beanAmount: z.number().optional().nullable(),
-  waterAmount: z.number().optional().nullable(),
-  rating: z.number().min(1).max(5).optional().nullable(),
-  note: z.string().optional().nullable(),
-  brewDate: z.string().optional().nullable(),
-  dripperId: z.string().uuid().optional().nullable(),
-  grinderId: z.string().uuid().optional().nullable(),
-  tempType: z.enum(["hot", "ice"]).optional(),
-  iceAmount: z.number().optional().nullable(),
-  yieldAmount: z.number().optional().nullable(),
-  drawdownTime: z.number().int().nonnegative().optional().nullable(),
-  bloomingTime: z.number().int().nonnegative().optional().nullable(),
-  hasBypass: z.boolean().optional(),
-  pours: z
-    .array(
-      z.object({
-        pourNumber: z.number().int().min(1),
-        waterAmount: z.number().positive(),
-        duration: z.number().int().nonnegative(),
-        pourType: z.enum(["all", "center_around", "center_only"]),
-      }),
-    )
-    .optional(),
 });
 
 const app = new Hono<Env>();

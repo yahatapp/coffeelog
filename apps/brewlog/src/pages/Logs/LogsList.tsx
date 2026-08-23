@@ -1,53 +1,18 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import { Plus, ClipboardList, Star, Calendar, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
-import { api } from "@/lib/api";
+import { logQueries, type BrewLog } from "@/lib/queries";
 import { Button } from "../../components/ui/button";
 import { Card, CardContent } from "../../components/ui/card";
 
-interface BrewLog {
-  id: string;
-  beanId: string;
-  method: string | null;
-  dripperId: string | null;
-  dripper?: {
-    name: string;
-  } | null;
-  rating: number | null;
-  brewDate: string | null;
-  tempType: string;
-  createdAt: string;
-  bean: {
-    name: string;
-    version?: string | null;
-  };
-}
-
 const LogsList = () => {
   const navigate = useNavigate();
-  const [logs, setLogs] = useState<BrewLog[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const logsQuery = useQuery(logQueries.all());
+  const logs: BrewLog[] = logsQuery.data ?? [];
   const [activeTab, setActiveTab] = useState<"all" | "hot" | "ice">("all");
   const [sortBy, setSortBy] = useState<"date" | "bean" | "rating">("date");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
-
-  useEffect(() => {
-    const fetchLogs = async () => {
-      try {
-        const res = await api.api.logs.$get();
-        if (res.ok) {
-          const data = await res.json();
-          setLogs(data);
-        }
-      } catch (err) {
-        console.error("Failed to fetch logs", err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    void fetchLogs();
-  }, []);
 
   const formatDate = (log: BrewLog) => {
     if (log.brewDate) {
@@ -125,10 +90,21 @@ const LogsList = () => {
     return 0;
   });
 
-  if (isLoading) {
+  if (logsQuery.isPending) {
     return (
       <div className="flex justify-center items-center h-64">
         <Loader2 className="animate-spin text-coffee-primary" size={32} />
+      </div>
+    );
+  }
+
+  if (logsQuery.isError) {
+    return (
+      <div className="text-center p-8 text-coffee-secondary">
+        <p>抽出履歴の取得に失敗しました。</p>
+        <Button className="mt-4 rounded-xl" onClick={() => void logsQuery.refetch()}>
+          再読み込み
+        </Button>
       </div>
     );
   }
