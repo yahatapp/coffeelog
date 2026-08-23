@@ -1,5 +1,5 @@
 {
-  description = "LINE App Monorepo Development Environment";
+  description = "Coffeelog Monorepo Development Environment";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -39,7 +39,7 @@
           shellHook = ''
             export PATH="$PWD/node_modules/.bin:$PATH"
             export PATH="''${VP_HOME:-$HOME/.vite-plus}/bin:$PATH"
-            echo "☕ LINE App Monorepo Development Environment"
+            echo "☕ Coffeelog Monorepo Development Environment"
             echo "Node.js: $(node --version)"
             echo "pnpm: $(pnpm --version)"
           '';

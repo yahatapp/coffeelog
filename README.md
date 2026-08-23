@@ -1,4 +1,4 @@
-# LINE Coffee Apps Monorepo
+# Coffeelog Monorepo
 
 This repository contains two independently deployed LINE LIFF applications:
 
