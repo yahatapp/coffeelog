@@ -5,7 +5,7 @@ import { resizeToJpeg } from "@/lib/images";
 import { ImagePicker, type SelectedImage } from "@/components/ImagePicker";
 import { getErrorMessage } from "@/lib/errors";
 import { ProcessField } from "@/components/ProcessField";
-import { Switch } from "@/components/Switch";
+import { Segment } from "@/components/Segment";
 import { ArrowLeft, Star, Calendar, MessageSquare, Save, Loader2, Minus, Plus } from "lucide-react";
 
 const CreateLogPage = () => {
@@ -171,13 +171,18 @@ const CreateLogPage = () => {
             />
           </div>
 
-          <Switch
-            checked={isBlend}
-            onCheckedChange={setIsBlend}
-            checkedLabel="ブレンド"
-            uncheckedLabel="シングル"
-            ariaLabel="ブレンドとシングルを切り替える"
-          />
+          <div>
+            <label className="text-xs font-bold text-cafe-text block mb-2">豆の種類</label>
+            <Segment
+              value={isBlend ? "blend" : "single"}
+              onValueChange={(value) => setIsBlend(value === "blend")}
+              options={[
+                { label: "シングル", value: "single" },
+                { label: "ブレンド", value: "blend" },
+              ]}
+              ariaLabel="豆の種類"
+            />
+          </div>
 
           <div>
             <label className="text-xs font-bold text-cafe-text block mb-1.5">お店のURL</label>
@@ -263,26 +268,15 @@ const CreateLogPage = () => {
 
           <div>
             <label className="text-xs font-bold text-cafe-text block mb-2">提供温度</label>
-            <div className="grid grid-cols-2 gap-2">
-              {[
-                { label: "ホット", value: "hot" as const },
-                { label: "アイス", value: "iced" as const },
-              ].map((option) => (
-                <button
-                  key={option.label}
-                  type="button"
-                  onClick={() => setServingStyle(option.value)}
-                  aria-pressed={servingStyle === option.value}
-                  className={`rounded-xl border px-3 py-2.5 text-xs font-bold transition-all active:scale-[0.98] ${
-                    servingStyle === option.value
-                      ? "border-cafe-primary bg-cafe-primary text-white shadow-sm"
-                      : "border-cafe-secondary/20 bg-cafe-background text-cafe-secondary hover:border-cafe-primary/40 hover:bg-cafe-primary/5"
-                  }`}
-                >
-                  {option.label}
-                </button>
-              ))}
-            </div>
+            <Segment
+              value={servingStyle}
+              onValueChange={setServingStyle}
+              options={[
+                { label: "ホット", value: "hot" },
+                { label: "アイス", value: "iced" },
+              ]}
+              ariaLabel="提供温度"
+            />
           </div>
 
           <div>
