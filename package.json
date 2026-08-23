@@ -4,13 +4,14 @@
   "private": true,
   "packageManager": "pnpm@11.11.0",
   "scripts": {
-    "dev": "turbo run dev --parallel",
+    "dev": "turbo run dev",
     "build": "turbo run build",
     "check": "turbo run check",
     "test": "turbo run test",
     "guard:changes": "turbo run guard:changes",
     "guard:betterleaks-canary": "turbo run guard:betterleaks-canary",
-    "guard:secrets": "turbo run guard:secrets:ci",
+    "guard:betterleaks-canary": "./scripts/check-betterleaks-canary.sh",
+    "guard:secrets:ci": "./scripts/check-secrets-ci.sh",
     "deploy:brewlog": "pnpm --filter brewlog deploy",
     "deploy:cafelog": "pnpm --filter cafelog deploy"
   },

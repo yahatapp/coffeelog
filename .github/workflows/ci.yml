@@ -15,9 +15,9 @@ concurrency:
 
 jobs:
   verify:
-    name: Verify
+    name: Verify affected packages
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     steps:
       - name: Check out repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -45,14 +45,8 @@ jobs:
           HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
         run: nix develop --command pnpm run guard:secrets:ci -- "$BASE_SHA" "$HEAD_SHA"
 
-      - name: Check formatting, lint, and types
-        run: nix develop --command pnpm run check
-
-      - name: Run tests
-        run: nix develop --command pnpm test
-
-      - name: Build production bundle
-        run: nix develop --command pnpm run build
+      - name: Check, test, and build affected packages
+        run: nix develop --command pnpm turbo run check test build --affected
 
       - name: Audit production dependencies
         run: nix develop --command pnpm audit --prod --audit-level moderate
