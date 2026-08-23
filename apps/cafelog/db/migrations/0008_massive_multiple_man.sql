@@ -1,0 +1,2 @@
+CREATE UNIQUE INDEX "cafe_log_images_log_position_unique" ON "cafelog"."cafe_log_images" USING btree ("cafe_log_id","position");--> statement-breakpoint
+ALTER TABLE "cafelog"."cafe_log_images" ADD CONSTRAINT "cafe_log_images_position_range" CHECK ("cafelog"."cafe_log_images"."position" >= 0 AND "cafelog"."cafe_log_images"."position" < 5);

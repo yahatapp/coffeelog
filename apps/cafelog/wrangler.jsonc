@@ -1,0 +1,20 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "cafelog",
+  "main": "src/api/index.ts",
+  "compatibility_date": "2025-05-15",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "not_found_handling": "single-page-application",
+  },
+  "observability": {
+    "enabled": true,
+  },
+  "r2_buckets": [
+    {
+      "binding": "CAFELOG_IMAGES",
+      "bucket_name": "cafelog-images",
+      "preview_bucket_name": "cafelog-images-preview",
+    },
+  ],
+}
