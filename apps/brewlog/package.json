@@ -18,7 +18,7 @@
     "deploy": "pnpm run build && wrangler deploy",
     "deploy:built": "wrangler deploy",
     "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate"
+    "db:migrate": "node ../../scripts/db-migrate.mjs brewlog"
   },
   "dependencies": {
     "@hono/zod-validator": "catalog:",
