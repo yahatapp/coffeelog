@@ -83,6 +83,16 @@ dev shell環境を後続のエージェントシェルへ引き継ぎます。
 
 ### Deploy
 
+#### Cloudflare R2 の初回設定（Dashboard）
+
+1. Cloudflare Dashboard の **R2 Object Storage** を開き、請求情報の登録を求められた場合は登録します。
+2. **Create bucket** から Standard ストレージの `cafelog-images` を作成します。バケットは公開せず、カスタムドメインや `r2.dev` も有効にしません。
+3. プレビュー環境も利用する場合は、同じ手順で非公開の `cafelog-images-preview` を作成します。
+4. Workers & Pages から Cafelog Worker を開き、**Settings > Bindings > Add binding > R2 bucket** で、変数名 `CAFELOG_IMAGES` と `cafelog-images` を関連付けます。通常は `wrangler.jsonc` を含むデプロイで同じバインディングが自動設定されますが、Dashboard からデプロイ設定を管理している場合はこの操作が必要です。
+5. Supabase にDBマイグレーションを適用してからWorkerをデプロイします。
+
+画像は認証済みWorker経由でのみ読み書きします。R2 APIトークン、公開バケット、CORS設定は不要です。
+
 ```bash
 # Cloudflare Workers にデプロイ
 pnpm run deploy
