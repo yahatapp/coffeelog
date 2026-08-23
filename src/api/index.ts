@@ -248,12 +248,13 @@ const api = app
     const images = await db.query.cafeLogImages.findMany({
       where: eq(cafeLogImages.cafeLogId, c.req.param("id")),
     });
+
+    await Promise.all(images.map((image) => c.env.CAFELOG_IMAGES.delete(image.objectKey)));
+
     const [deletedLog] = await db
       .delete(cafeLogs)
       .where(eq(cafeLogs.id, c.req.param("id")))
       .returning();
-
-    await Promise.all(images.map((image) => c.env.CAFELOG_IMAGES.delete(image.objectKey)));
 
     return c.json(deletedLog);
   });
