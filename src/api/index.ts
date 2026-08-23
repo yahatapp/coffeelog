@@ -192,7 +192,11 @@ const api = app
           contentType: "image/jpeg",
           byteSize: file.size,
         })
+        .onConflictDoNothing({ target: [cafeLogImages.cafeLogId, cafeLogImages.position] })
         .returning();
+      if (!image) {
+        throw new HTTPException(400, { message: "Up to 5 images can be uploaded" });
+      }
       return c.json({ id: image.id, position: image.position }, 201);
     } catch (error) {
       await c.env.CAFELOG_IMAGES.delete(objectKey);
