@@ -1,0 +1,1 @@
+ALTER TABLE "brew_logs" ALTER COLUMN "rating" SET DATA TYPE real;

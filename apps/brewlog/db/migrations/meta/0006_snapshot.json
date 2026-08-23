@@ -1,0 +1,574 @@
+{
+  "id": "b956b3af-f0b7-40ae-9f28-890bd4df8d85",
+  "prevId": "747b0e92-2e86-4295-8cac-1e631c92757a",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.beans": {
+      "name": "beans",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "household_id": {
+          "name": "household_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "origin": {
+          "name": "origin",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "purchase_store": {
+          "name": "purchase_store",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "roast_level": {
+          "name": "roast_level",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "purchase_date": {
+          "name": "purchase_date",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "image_url": {
+          "name": "image_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "is_archived": {
+          "name": "is_archived",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "beans_household_id_households_id_fk": {
+          "name": "beans_household_id_households_id_fk",
+          "tableFrom": "beans",
+          "tableTo": "households",
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.brew_logs": {
+      "name": "brew_logs",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "bean_id": {
+          "name": "bean_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "household_id": {
+          "name": "household_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "method": {
+          "name": "method",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "grind_size": {
+          "name": "grind_size",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "water_temp": {
+          "name": "water_temp",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "bean_amount": {
+          "name": "bean_amount",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "water_amount": {
+          "name": "water_amount",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "rating": {
+          "name": "rating",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "note": {
+          "name": "note",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "brew_date": {
+          "name": "brew_date",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "dripper_id": {
+          "name": "dripper_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "grinder_id": {
+          "name": "grinder_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "temp_type": {
+          "name": "temp_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'hot'"
+        },
+        "ice_amount": {
+          "name": "ice_amount",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "yield_amount": {
+          "name": "yield_amount",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "drawdown_time": {
+          "name": "drawdown_time",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "blooming_time": {
+          "name": "blooming_time",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "has_bypass": {
+          "name": "has_bypass",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "brew_logs_bean_id_beans_id_fk": {
+          "name": "brew_logs_bean_id_beans_id_fk",
+          "tableFrom": "brew_logs",
+          "tableTo": "beans",
+          "columnsFrom": ["bean_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "brew_logs_user_id_profiles_line_user_id_fk": {
+          "name": "brew_logs_user_id_profiles_line_user_id_fk",
+          "tableFrom": "brew_logs",
+          "tableTo": "profiles",
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["line_user_id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "brew_logs_household_id_households_id_fk": {
+          "name": "brew_logs_household_id_households_id_fk",
+          "tableFrom": "brew_logs",
+          "tableTo": "households",
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "brew_logs_dripper_id_drippers_id_fk": {
+          "name": "brew_logs_dripper_id_drippers_id_fk",
+          "tableFrom": "brew_logs",
+          "tableTo": "drippers",
+          "columnsFrom": ["dripper_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "brew_logs_grinder_id_grinders_id_fk": {
+          "name": "brew_logs_grinder_id_grinders_id_fk",
+          "tableFrom": "brew_logs",
+          "tableTo": "grinders",
+          "columnsFrom": ["grinder_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.brew_pours": {
+      "name": "brew_pours",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "brew_log_id": {
+          "name": "brew_log_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "pour_number": {
+          "name": "pour_number",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "water_amount": {
+          "name": "water_amount",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "duration": {
+          "name": "duration",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "pour_type": {
+          "name": "pour_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "brew_pours_brew_log_id_brew_logs_id_fk": {
+          "name": "brew_pours_brew_log_id_brew_logs_id_fk",
+          "tableFrom": "brew_pours",
+          "tableTo": "brew_logs",
+          "columnsFrom": ["brew_log_id"],
+          "columnsTo": ["id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.drippers": {
+      "name": "drippers",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "household_id": {
+          "name": "household_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "drippers_household_id_households_id_fk": {
+          "name": "drippers_household_id_households_id_fk",
+          "tableFrom": "drippers",
+          "tableTo": "households",
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.grinders": {
+      "name": "grinders",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "household_id": {
+          "name": "household_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "fine_max": {
+          "name": "fine_max",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 6
+        },
+        "medium_fine_max": {
+          "name": "medium_fine_max",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 9
+        },
+        "medium_max": {
+          "name": "medium_max",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 15
+        },
+        "medium_coarse_max": {
+          "name": "medium_coarse_max",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 22
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "grinders_household_id_households_id_fk": {
+          "name": "grinders_household_id_households_id_fk",
+          "tableFrom": "grinders",
+          "tableTo": "households",
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.households": {
+      "name": "households",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.profiles": {
+      "name": "profiles",
+      "schema": "",
+      "columns": {
+        "line_user_id": {
+          "name": "line_user_id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "household_id": {
+          "name": "household_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "display_name": {
+          "name": "display_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "avatar_url": {
+          "name": "avatar_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "profiles_household_id_households_id_fk": {
+          "name": "profiles_household_id_households_id_fk",
+          "tableFrom": "profiles",
+          "tableTo": "households",
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {},
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

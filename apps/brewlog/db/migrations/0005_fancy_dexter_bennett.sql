@@ -1,0 +1,1 @@
+ALTER TABLE "brew_logs" ADD COLUMN "blooming_time" integer;

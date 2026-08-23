@@ -1,0 +1,1 @@
+ALTER TABLE "brew_logs" ADD COLUMN "has_bypass" boolean DEFAULT false NOT NULL;

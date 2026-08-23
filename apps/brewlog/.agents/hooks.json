@@ -1,0 +1,11 @@
+{
+  "repository-guard": {
+    "Stop": [
+      {
+        "type": "command",
+        "command": "nix",
+        "args": ["develop", "--command", "pnpm", "run", "guard:changes"]
+      }
+    ]
+  }
+}

@@ -1,0 +1,1 @@
+ALTER TABLE "brewlog"."beans" ADD COLUMN "note" text;
