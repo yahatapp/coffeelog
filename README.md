@@ -95,7 +95,10 @@ Drizzle ORMを使用してスキーマを管理しています。
 Lefthookのpre-commitでは、ステージ済みの内容だけを対象に、Betterleaks、Vite+、
 `git diff --check`、512 KBを超えるファイルの拒否を実行します。BetterleaksはNix dev shellに
 含まれます。Codex Cloudでも`.codex/setup.sh`が同じ`flake.nix`を評価し、Node.js、pnpm、
-Betterleaksなどをローカル・CIと同じNix環境から利用します。
+Betterleaksなどをローカル・CIと同じNix環境から利用します。セットアップ時にはPlaywrightの
+ChromiumとLinux依存パッケージも導入し、ヘッドレス起動を確認します。Chromiumだけを手動で
+再導入する場合は`pnpm run browser:install`、Linux依存パッケージも含める場合は
+`pnpm run browser:install:with-deps`を実行してください。
 
 クラウド上のAIエージェントはコミットを作らず差分だけを返す場合があるため、Git hookだけに
 依存しません。`.agents/hooks.json`のStop hookでは現在の作業ツリーを検査します。PRのCIでは
