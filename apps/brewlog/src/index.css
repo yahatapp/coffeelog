@@ -1,4 +1,6 @@
 @import "tailwindcss";
+@import "@line-app/ui/styles.css";
+@source "../../../packages/ui/src";
 @plugin "tailwindcss-animate";
 
 @theme {
@@ -9,6 +11,16 @@
 }
 
 :root {
+  --app-color-primary: #6f4e37;
+  --app-color-primary-foreground: #ffffff;
+  --app-color-secondary: #a67b5b;
+  --app-color-secondary-foreground: #ffffff;
+  --app-color-background: #faf9f6;
+  --app-color-foreground: #2c1e12;
+  --app-color-surface: #ffffff;
+  --app-color-muted: #a67b5b;
+  --app-color-border: rgb(166 123 91 / 20%);
+  --app-color-ring: #6f4e37;
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;

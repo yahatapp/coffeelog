@@ -1,22 +1,21 @@
 import React from "react";
+import { getRoastLabel as getSharedRoastLabel } from "@line-app/coffee-reference";
 
 interface RoastLevelIndicatorProps {
   level: number;
   className?: string;
 }
 
-export const getRoastLabel = (level: number | null) => {
-  if (!level) return "";
-  const labels = ["浅煎り", "中浅煎り", "中煎り", "中深煎り", "深煎り"];
-  return labels[level - 1] || "不明";
-};
+export const getRoastLabel = getSharedRoastLabel;
 
 export const getRoastConfig = (level: number) => {
+  const label = getRoastLabel(level);
+
   switch (level) {
     case 1:
       return {
         color: "#d4a373", // Cinnamon / Light Brown
-        label: "浅煎り",
+        label,
         bg: "bg-[#d4a373]/10",
         border: "border-[#d4a373]/20",
         text: "text-[#a2663e]",
@@ -24,7 +23,7 @@ export const getRoastConfig = (level: number) => {
     case 2:
       return {
         color: "#b5835a", // Medium Light Brown
-        label: "中浅煎り",
+        label,
         bg: "bg-[#b5835a]/10",
         border: "border-[#b5835a]/20",
         text: "text-[#8a5a36]",
@@ -32,7 +31,7 @@ export const getRoastConfig = (level: number) => {
     case 3:
       return {
         color: "#9c6644", // Medium Brown
-        label: "中煎り",
+        label,
         bg: "bg-[#9c6644]/10",
         border: "border-[#9c6644]/20",
         text: "text-[#6f4e37]",
@@ -40,7 +39,7 @@ export const getRoastConfig = (level: number) => {
     case 4:
       return {
         color: "#7f4f24", // Medium Dark Brown
-        label: "中深煎り",
+        label,
         bg: "bg-[#7f4f24]/10",
         border: "border-[#7f4f24]/20",
         text: "text-[#583920]",
@@ -48,7 +47,7 @@ export const getRoastConfig = (level: number) => {
     case 5:
       return {
         color: "#582f0e", // Deep Dark Brown
-        label: "深煎り",
+        label,
         bg: "bg-[#582f0e]/10",
         border: "border-[#582f0e]/20",
         text: "text-[#3d200a]",
@@ -56,7 +55,7 @@ export const getRoastConfig = (level: number) => {
     default:
       return {
         color: "#a67b5b",
-        label: "不明",
+        label,
         bg: "bg-gray-100",
         border: "border-gray-200",
         text: "text-gray-500",

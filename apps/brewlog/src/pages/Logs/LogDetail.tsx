@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   ArrowLeft,
@@ -12,88 +12,16 @@ import {
   Info,
   Check,
 } from "lucide-react";
-import { api } from "@/lib/api";
+import { logQueries, type BrewLog, type BrewLogResponse } from "@/lib/queries";
 import { Button, cn } from "../../components/ui/button";
 import { Card, CardContent } from "../../components/ui/card";
 import { OriginFlag } from "../../components/ui/OriginFlag";
 
-interface BrewLog {
-  id: string;
-  beanId: string;
-  userId: string;
-  method: string | null;
-  grindSize: number | null;
-  waterTemp: number | null;
-  beanAmount: number | null;
-  waterAmount: number | null;
-  rating: number | null;
-  note: string | null;
-  brewDate: string | null;
-  dripperId: string | null;
-  grinderId: string | null;
-  tempType: string;
-  iceAmount: number | null;
-  yieldAmount: number | null;
-  drawdownTime: number | null;
-  bloomingTime: number | null;
-  hasBypass: boolean;
-  createdAt: string;
-  pours: {
-    id: string;
-    pourNumber: number;
-    waterAmount: number;
-    duration: number;
-    pourType: "all" | "center_around" | "center_only";
-  }[];
-  bean: {
-    name: string;
-    origin: string | null;
-    processMethod?: string | null;
-    version?: string | null;
-  };
-  user: {
-    displayName: string;
-    avatarUrl: string | null;
-  };
-  dripper: {
-    name: string;
-  } | null;
-  grinder: {
-    name: string;
-    fineMax: number;
-    mediumFineMax: number;
-    mediumMax: number;
-    mediumCoarseMax: number;
-  } | null;
-}
-
 const LogDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [log, setLog] = useState<BrewLog | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchLog = async () => {
-      try {
-        if (!id) return;
-        const res = await api.api.logs[":id"].$get({ param: { id } });
-        if (res.ok) {
-          const data = await res.json();
-          setLog(data as unknown as BrewLog);
-        } else {
-          console.error("Log not found");
-          void navigate("/logs");
-        }
-      } catch (err) {
-        console.error("Failed to fetch log detail", err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    void fetchLog();
-  }, [id, navigate]);
+  const logQuery = useQuery(logQueries.detail(id ?? ""));
+  const log: BrewLogResponse | null = logQuery.data ?? null;
 
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
@@ -130,10 +58,21 @@ const LogDetail = () => {
     return "粗挽き";
   };
 
-  if (isLoading) {
+  if (logQuery.isPending) {
     return (
       <div className="flex justify-center items-center h-64">
         <Loader2 className="animate-spin text-coffee-primary" size={32} />
+      </div>
+    );
+  }
+
+  if (logQuery.isError) {
+    return (
+      <div className="text-center p-8 text-coffee-secondary">
+        <p>抽出記録の取得に失敗しました。</p>
+        <Button className="mt-4" onClick={() => void logQuery.refetch()}>
+          再読み込み
+        </Button>
       </div>
     );
   }

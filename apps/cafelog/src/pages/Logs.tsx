@@ -1,13 +1,8 @@
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import { api } from "@/lib/api";
 import { getErrorMessage } from "@/lib/errors";
+import { cafelogQueries } from "@/lib/queries";
 import { ClipboardList, Plus, Star, Calendar, MessageSquare, Loader2 } from "lucide-react";
-import type { InferResponseType } from "hono/client";
-
-type LogsResponse = InferResponseType<typeof api.api.logs.$get>;
-type LogItem = LogsResponse[number];
-
 const formatCoffeeInfo = (log: {
   origin?: string | null;
   region?: string | null;
@@ -42,31 +37,8 @@ const formatCoffeeInfo = (log: {
 };
 
 const LogsPage = () => {
-  const [logs, setLogs] = useState<LogItem[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchLogs = async () => {
-      try {
-        const res = await api.api.logs.$get();
-        if (res.ok) {
-          const data = await res.json();
-          setLogs(data);
-        } else {
-          console.error("Failed to fetch logs", res.status);
-          setError("ログの取得に失敗しました。");
-        }
-      } catch (err: unknown) {
-        console.error("Error fetching logs", err);
-        setError(getErrorMessage(err, "通信エラーが発生しました。"));
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    void fetchLogs();
-  }, []);
+  const { data: logs = [], isPending: isLoading, error, refetch } = useQuery(cafelogQueries.logs());
+  const errorMessage = error ? getErrorMessage(error, "通信エラーが発生しました。") : null;
 
   const renderStars = (rating: number | null | undefined) => {
     if (!rating) return null;
@@ -112,12 +84,12 @@ const LogsPage = () => {
     );
   }
 
-  if (error) {
+  if (errorMessage) {
     return (
       <div className="bg-white/80 backdrop-blur-md rounded-2xl border border-red-100 p-6 text-center shadow-sm">
-        <p className="text-red-500 font-semibold mb-4">{error}</p>
+        <p className="text-red-500 font-semibold mb-4">{errorMessage}</p>
         <button
-          onClick={() => window.location.reload()}
+          onClick={() => void refetch()}
           className="bg-cafe-primary text-white font-semibold py-2 px-6 rounded-xl hover:bg-cafe-primary/90 transition-all active:scale-95 text-sm"
         >
           再読み込み

@@ -1,27 +1,14 @@
-import { useEffect, useState, useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import { Plus, Coffee, ChevronRight, Loader2, Pencil } from "lucide-react";
-import { api } from "@/lib/api";
+import { beanQueries, type Bean } from "@/lib/queries";
 import { Button } from "../../components/ui/button";
 import { Card, CardContent } from "../../components/ui/card";
 import { OriginFlag } from "../../components/ui/OriginFlag";
 import { getCountryCode } from "@/utils/flag";
 import { CoffeeBeansIcon } from "../../components/ui/CoffeeBeansIcon";
 import { RoastLevelIndicator } from "../../components/ui/RoastLevelIndicator";
-
-interface Bean {
-  id: string;
-  parentBeanId?: string | null;
-  version?: string | null;
-  name: string;
-  origin: string | null;
-  purchaseStore: string | null;
-  roastLevel: number | null;
-  purchaseDate: string | null;
-  isArchived: boolean;
-  createdAt: string;
-  processMethod?: string | null;
-}
 
 interface BeanGroup {
   groupId: string;
@@ -32,27 +19,10 @@ interface BeanGroup {
 
 const BeansList = () => {
   const navigate = useNavigate();
-  const [beans, setBeans] = useState<Bean[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const beansQuery = useQuery(beanQueries.all());
   const [selectedGroup, setSelectedGroup] = useState<BeanGroup | null>(null);
 
-  useEffect(() => {
-    const fetchBeans = async () => {
-      try {
-        const res = await api.api.beans.$get();
-        if (res.ok) {
-          const data = await res.json();
-          setBeans(data);
-        }
-      } catch (err) {
-        console.error("Failed to fetch beans", err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    void fetchBeans();
-  }, []);
+  const beans = beansQuery.data ?? [];
 
   const activeBeans = beans.filter((bean) => !bean.isArchived);
 
@@ -82,10 +52,21 @@ const BeansList = () => {
       );
   }, [activeBeans]);
 
-  if (isLoading) {
+  if (beansQuery.isPending) {
     return (
       <div className="flex justify-center items-center h-64">
         <Loader2 className="animate-spin text-coffee-primary" size={32} />
+      </div>
+    );
+  }
+
+  if (beansQuery.isError) {
+    return (
+      <div className="text-center p-8 text-coffee-secondary">
+        <p>豆一覧の取得に失敗しました。</p>
+        <Button className="mt-4 rounded-xl" onClick={() => void beansQuery.refetch()}>
+          再読み込み
+        </Button>
       </div>
     );
   }

@@ -1,42 +1,31 @@
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Download, X } from "lucide-react";
-import { authorizedFetch } from "@/lib/api";
+import { useEffect, useState } from "react";
+import { cafelogQueries } from "@/lib/queries";
 
-type ImageMeta = { id: string; position: number };
-type LoadedImage = ImageMeta & { url: string };
+type LoadedImage = { id: string; position: number; url: string };
 
 export const LogImages = ({
   logId,
-  refreshKey = 0,
   onCountChange,
 }: {
   logId: string;
-  refreshKey?: number;
   onCountChange?: (count: number) => void;
 }) => {
+  const { data = [] } = useQuery(cafelogQueries.images(logId));
   const [images, setImages] = useState<LoadedImage[]>([]);
   const [previewIndex, setPreviewIndex] = useState<number | null>(null);
+
   useEffect(() => {
-    const objectUrls: string[] = [];
-    const load = async () => {
-      const metadata = await authorizedFetch(`/api/logs/${logId}/images`);
-      if (!metadata.ok) return;
-      const images = (await metadata.json()) as ImageMeta[];
-      onCountChange?.(images.length);
-      const loaded = await Promise.all(
-        images.map(async (image) => {
-          const response = await authorizedFetch(`/api/logs/${logId}/images/${image.id}`);
-          if (!response.ok) return null;
-          const url = URL.createObjectURL(await response.blob());
-          objectUrls.push(url);
-          return { ...image, url };
-        }),
-      );
-      setImages(loaded.filter((image): image is LoadedImage => image !== null));
-    };
-    void load();
-    return () => objectUrls.forEach((url) => URL.revokeObjectURL(url));
-  }, [logId, refreshKey, onCountChange]);
+    onCountChange?.(data.length);
+    const objectUrls = data.map((image) => ({
+      id: image.id,
+      position: image.position,
+      url: URL.createObjectURL(image.blob),
+    }));
+    setImages(objectUrls);
+    return () => objectUrls.forEach((image) => URL.revokeObjectURL(image.url));
+  }, [data, onCountChange]);
 
   useEffect(() => {
     if (previewIndex === null) return;
@@ -55,6 +44,7 @@ export const LogImages = ({
   if (!images.length) return null;
   const preview = previewIndex === null ? null : images[previewIndex];
   const previewNumber = previewIndex === null ? 0 : previewIndex + 1;
+
   return (
     <>
       <section aria-label="記録の写真" className="grid grid-cols-2 gap-2">
