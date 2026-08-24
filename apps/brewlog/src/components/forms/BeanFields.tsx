@@ -170,12 +170,13 @@ export const BeanFields = ({ form, isVersionMode }: BeanFieldsProps) => (
               value={field.state.value}
               onChange={(event) => {
                 const nextDate = event.target.value;
-                field.handleChange(nextDate);
-                if (
+                const shouldSyncVersion =
                   isVersionMode &&
-                  form.getFieldValue("version") ===
-                    form.getFieldValue("purchaseDate").replace(/-/g, ".")
-                ) {
+                  form.getFieldValue("version") === field.state.value.replace(/-/g, ".");
+
+                field.handleChange(nextDate);
+
+                if (shouldSyncVersion) {
                   form.setFieldValue("version", nextDate.replace(/-/g, "."));
                 }
               }}
