@@ -545,13 +545,15 @@ export const BrewLogFields = ({
                           ) : (
                             <select
                               value={pour.duration}
-                              onChange={(event) =>
+                              onChange={(event) => {
+                                const duration = Number(event.target.value);
                                 field.handleChange(
                                   updatePour(values, index, {
-                                    duration: Number(event.target.value),
+                                    duration,
                                   }),
-                                )
-                              }
+                                );
+                                if (index === 0) form.setFieldValue("bloomingTime", duration);
+                              }}
                               className="h-8 flex-1 rounded-lg border bg-white px-1 text-xs text-center"
                               required
                             >
