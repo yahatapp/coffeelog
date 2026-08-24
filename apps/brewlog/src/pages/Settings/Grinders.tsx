@@ -3,22 +3,14 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, CheckCircle, Loader2, Pencil, Plus, Sliders, Trash2 } from "lucide-react";
-import { grinderCreateSchema, grinderUpdateSchema } from "@/contracts";
 import { grinderQueries, mutations, queryKeys, type Grinder } from "@/lib/queries";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import type { FormApiLike } from "@/components/forms/types";
-
-type GrinderFormValues = {
-  name: string;
-  fineMax: number | "";
-  mediumFineMax: number | "";
-  mediumMax: number | "";
-  mediumCoarseMax: number | "";
-  isDefault: boolean;
-};
+import { getFirstValidationError } from "@/components/forms/formValidation";
+import { grinderFormSchema, type GrinderFormValues } from "@/components/forms/grinderForm";
 
 const emptyValues: GrinderFormValues = {
   name: "",
@@ -192,25 +184,11 @@ const Grinders = () => {
   });
   const form = useForm({
     defaultValues: emptyValues,
+    validators: {
+      onBlur: grinderFormSchema,
+      onSubmit: grinderFormSchema,
+    },
     onSubmit: async ({ value }) => {
-      if (
-        value.fineMax === "" ||
-        value.mediumFineMax === "" ||
-        value.mediumMax === "" ||
-        value.mediumCoarseMax === ""
-      )
-        throw new Error("すべての境界値を入力してください。");
-      if (
-        value.fineMax >= value.mediumFineMax ||
-        value.mediumFineMax >= value.mediumMax ||
-        value.mediumMax >= value.mediumCoarseMax
-      )
-        throw new Error("境界値は細挽きから粗挽きへ昇順にしてください。");
-      const payload = toPayload(value);
-      const parsed = editingId
-        ? grinderUpdateSchema.safeParse(payload)
-        : grinderCreateSchema.safeParse(payload);
-      if (!parsed.success) throw new Error("入力内容を確認してください。");
       if (editingId) await updateMutation.mutateAsync({ id: editingId, value });
       else await createMutation.mutateAsync(value);
     },
@@ -266,6 +244,16 @@ const Grinders = () => {
           )}
         </div>
         <GrinderFields form={form} isSubmitting={isSubmitting} />
+        <form.Subscribe selector={(state) => state.errors}>
+          {(errors) => {
+            const validationError = getFirstValidationError(errors);
+            return validationError ? (
+              <p className="text-xs text-red-600" role="alert">
+                {validationError}
+              </p>
+            ) : null;
+          }}
+        </form.Subscribe>
         <div className="flex gap-2">
           {editingId && (
             <Button
