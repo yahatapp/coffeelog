@@ -44,6 +44,14 @@ body {
   width: 100%;
 }
 
+/* Keep native date controls inside the form width in mobile WebViews. */
+input[type="date"] {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+}
+
 /* Hide spin-buttons in Chrome, Safari, Edge, and Opera */
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
