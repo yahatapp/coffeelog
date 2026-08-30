@@ -44,12 +44,11 @@ body {
   width: 100%;
 }
 
-/* Keep native date controls inside the form width in mobile WebViews. */
+/* Remove WebKit's intrinsic date-field sizing so it respects the shared Input width. */
 input[type="date"] {
-  box-sizing: border-box;
-  width: 100%;
-  min-width: 0;
-  max-width: 100%;
+  -webkit-appearance: none;
+  appearance: none;
+  overflow: hidden;
 }
 
 /* Hide spin-buttons in Chrome, Safari, Edge, and Opera */
