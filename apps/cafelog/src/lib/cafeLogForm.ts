@@ -70,7 +70,7 @@ export const createCafeLogDefaults = (): CafeLogFormValues => {
     process: "",
     roast: "",
     isBlend: false,
-    servingStyle: null,
+    servingStyle: "hot",
     rating: 3,
     price: "",
     visitDate: `${yyyy}-${mm}-${dd}`,
