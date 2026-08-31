@@ -1,5 +1,5 @@
 import React from "react";
-import { getRoastLabel as getSharedRoastLabel } from "@line-app/coffee-reference";
+import { getRoastLabel as getSharedRoastLabel } from "@yahatapp/coffee-reference";
 
 interface RoastLevelIndicatorProps {
   level: number;

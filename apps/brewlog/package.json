@@ -22,8 +22,8 @@
   },
   "dependencies": {
     "@hono/zod-validator": "catalog:",
-    "@line-app/coffee-reference": "workspace:*",
-    "@line-app/ui": "workspace:*",
+    "@yahatapp/coffee-reference": "workspace:*",
+    "@yahatapp/ui": "workspace:*",
     "@line/liff": "catalog:",
     "@radix-ui/react-slot": "catalog:",
     "@tanstack/react-form": "catalog:",

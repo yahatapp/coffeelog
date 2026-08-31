@@ -1,5 +1,5 @@
 @import "tailwindcss";
-@import "@line-app/ui/styles.css";
+@import "@yahatapp/ui/styles.css";
 @source "../../../packages/ui/src";
 @plugin "tailwindcss-animate";
 

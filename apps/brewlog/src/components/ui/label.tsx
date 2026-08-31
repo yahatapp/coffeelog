@@ -1,1 +1,1 @@
-export { Label } from "@line-app/ui";
+export { Label } from "@yahatapp/ui";

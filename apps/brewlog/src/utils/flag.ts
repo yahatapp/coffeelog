@@ -1,1 +1,1 @@
-export { COFFEE_COUNTRIES, getCountryCode, type CountryOption } from "@line-app/coffee-reference";
+export { COFFEE_COUNTRIES, getCountryCode, type CountryOption } from "@yahatapp/coffee-reference";

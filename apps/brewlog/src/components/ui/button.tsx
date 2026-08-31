@@ -1,1 +1,1 @@
-export { Button, cn, type ButtonProps } from "@line-app/ui";
+export { Button, cn, type ButtonProps } from "@yahatapp/ui";
