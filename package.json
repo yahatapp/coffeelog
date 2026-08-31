@@ -17,6 +17,6 @@
   },
   "devDependencies": {
     "lefthook": "catalog:",
-    "turbo": "^2.5.8"
+    "turbo": "^2.10.12"
   }
 }
