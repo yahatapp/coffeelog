@@ -523,7 +523,7 @@ export const BrewLogFields = ({
                                 }),
                               )
                             }
-                            className="h-8 flex-1 rounded-lg border bg-white px-1 text-xs text-center"
+                            className="h-8 flex-1 rounded-lg border border-coffee-secondary/20 bg-white px-1 text-xs text-center"
                             required
                           >
                             {optionsWithCurrent(waterAmountOptions, pour.waterAmount).map(
@@ -538,7 +538,7 @@ export const BrewLogFields = ({
                             <select
                               disabled
                               value=""
-                              className="h-8 flex-1 rounded-lg border bg-coffee-secondary/5 px-1 text-xs text-center"
+                              className="h-8 flex-1 rounded-lg border border-coffee-secondary/20 bg-coffee-secondary/5 px-1 text-xs text-center"
                             >
                               <option value="">不要</option>
                             </select>
@@ -554,7 +554,7 @@ export const BrewLogFields = ({
                                 );
                                 if (index === 0) form.setFieldValue("bloomingTime", duration);
                               }}
-                              className="h-8 flex-1 rounded-lg border bg-white px-1 text-xs text-center"
+                              className="h-8 flex-1 rounded-lg border border-coffee-secondary/20 bg-white px-1 text-xs text-center"
                               required
                             >
                               {optionsWithCurrent(durationOptions, pour.duration).map(
@@ -575,7 +575,7 @@ export const BrewLogFields = ({
                                 }),
                               )
                             }
-                            className="h-8 w-20 rounded-lg border bg-white px-1 text-xs text-center"
+                            className="h-8 w-20 rounded-lg border border-coffee-secondary/20 bg-white px-1 text-xs text-center"
                           >
                             <option value="all">全体に</option>
                             <option value="center_around">中心付近</option>
@@ -599,7 +599,7 @@ export const BrewLogFields = ({
                     <select
                       value={values.drawdownTime === "" ? "" : Math.floor(values.drawdownTime / 60)}
                       onChange={(event) => setDrawdownPart("minutes", event.target.value)}
-                      className="flex h-10 w-full rounded-xl border bg-white px-3 py-2 text-sm"
+                      className="flex h-10 w-full rounded-xl border border-coffee-secondary/20 bg-white px-3 py-2 text-sm"
                     >
                       <option value="">-</option>
                       {[0, 1, 2, 3, 4, 5].map((minute) => (
@@ -614,7 +614,7 @@ export const BrewLogFields = ({
                     <select
                       value={values.drawdownTime === "" ? "" : values.drawdownTime % 60}
                       onChange={(event) => setDrawdownPart("seconds", event.target.value)}
-                      className="flex h-10 w-full rounded-xl border bg-white px-3 py-2 text-sm"
+                      className="flex h-10 w-full rounded-xl border border-coffee-secondary/20 bg-white px-3 py-2 text-sm"
                     >
                       <option value="">-</option>
                       {Array.from({ length: 12 }, (_, index) => index * 5).map((second) => (
