@@ -44,6 +44,13 @@ body {
   width: 100%;
 }
 
+/* Remove WebKit's intrinsic date-field sizing so it respects the shared Input width. */
+input[type="date"] {
+  -webkit-appearance: none;
+  appearance: none;
+  overflow: hidden;
+}
+
 /* Hide spin-buttons in Chrome, Safari, Edge, and Opera */
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
