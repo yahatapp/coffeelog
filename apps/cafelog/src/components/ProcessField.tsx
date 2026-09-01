@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { CAFELOG_PROCESS_METHODS } from "@line-app/coffee-reference";
+import { CAFELOG_PROCESS_METHODS } from "@yahatapp/coffee-reference";
 
 const PROCESS_OPTIONS = CAFELOG_PROCESS_METHODS;
 const OTHER_PROCESS = "その他";

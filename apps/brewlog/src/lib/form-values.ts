@@ -1,5 +1,5 @@
 import type { BeanCreateInput, BeanUpdateInput, LogCreateInput, LogUpdateInput } from "@/contracts";
-import { BREWLOG_PROCESS_METHODS, getRoastLabel } from "@line-app/coffee-reference";
+import { BREWLOG_PROCESS_METHODS, getRoastLabel } from "@yahatapp/coffee-reference";
 
 export const PROCESS_METHODS = BREWLOG_PROCESS_METHODS;
 

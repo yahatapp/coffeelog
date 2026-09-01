@@ -125,12 +125,6 @@ importers:
       '@hono/zod-validator':
         specifier: 'catalog:'
         version: 0.9.0(hono@4.13.5)(zod@4.4.3)
-      '@line-app/coffee-reference':
-        specifier: workspace:*
-        version: link:../../packages/coffee-reference
-      '@line-app/ui':
-        specifier: workspace:*
-        version: link:../../packages/ui
       '@line/liff':
         specifier: 'catalog:'
         version: 2.30.0
@@ -143,6 +137,12 @@ importers:
       '@tanstack/react-query':
         specifier: 'catalog:'
         version: 5.102.8(react@19.2.8)
+      '@yahatapp/coffee-reference':
+        specifier: workspace:*
+        version: link:../../packages/coffee-reference
+      '@yahatapp/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
       base-ui:
         specifier: 'catalog:'
         version: 0.0.294
@@ -237,12 +237,6 @@ importers:
       '@hono/zod-validator':
         specifier: 'catalog:'
         version: 0.9.0(hono@4.13.5)(zod@4.4.3)
-      '@line-app/coffee-reference':
-        specifier: workspace:*
-        version: link:../../packages/coffee-reference
-      '@line-app/ui':
-        specifier: workspace:*
-        version: link:../../packages/ui
       '@line/liff':
         specifier: 'catalog:'
         version: 2.30.0
@@ -255,6 +249,12 @@ importers:
       '@tanstack/react-query':
         specifier: 'catalog:'
         version: 5.102.8(react@19.2.8)
+      '@yahatapp/coffee-reference':
+        specifier: workspace:*
+        version: link:../../packages/coffee-reference
+      '@yahatapp/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
       base-ui:
         specifier: 'catalog:'
         version: 0.0.294

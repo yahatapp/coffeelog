@@ -1,1 +1,1 @@
-export { Input } from "@line-app/ui";
+export { Input } from "@yahatapp/ui";
