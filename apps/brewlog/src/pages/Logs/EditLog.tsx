@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "@tanstack/react-form";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router-dom";
@@ -13,29 +13,12 @@ import {
   logQueries,
   mutations,
   queryKeys,
+  type Bean,
   type BrewLogResponse,
+  type Dripper,
+  type Grinder,
 } from "@/lib/queries";
 import { getTodayJSTString, toLogUpdateInput, type LogFormValues } from "@/lib/form-values";
-
-const emptyValues = (): LogFormValues => ({
-  beanId: "",
-  brewDate: getTodayJSTString(),
-  dripperId: "",
-  grinderId: "",
-  grindSize: 10,
-  waterTemp: 85,
-  beanAmount: 10,
-  waterAmount: 150,
-  rating: 3,
-  note: "",
-  tempType: "hot",
-  iceAmount: "",
-  yieldAmount: "",
-  drawdownTime: "",
-  bloomingTime: "",
-  hasBypass: false,
-  pours: [],
-});
 
 const parseTempType = (value: string | null | undefined): "hot" | "ice" =>
   value === "ice" ? "ice" : "hot";
@@ -98,10 +81,6 @@ const dirtyFieldLabels: Record<keyof LogFormValues, string> = {
 const valuesEqual = (left: unknown, right: unknown) =>
   JSON.stringify(left) === JSON.stringify(right);
 
-<<<<<<< ours
-const EditLog = () => {
-  const { id } = useParams<{ id: string }>();
-=======
 type EditLogFormProps = {
   id: string;
   log: BrewLogResponse;
@@ -121,22 +100,13 @@ const EditLogForm = ({
   masterDataError,
   onRetryMasterData,
 }: EditLogFormProps) => {
->>>>>>> theirs
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [error, setError] = useState<string | null>(null);
-  const [originalValues, setOriginalValues] = useState<LogFormValues | null>(null);
-  const hydratedLogId = useRef<string | null>(null);
-
-  const logQuery = useQuery(logQueries.detail(id ?? ""));
-  const beansQuery = useQuery(beanQueries.all());
-  const drippersQuery = useQuery(dripperQueries.all());
-  const grindersQuery = useQuery(grinderQueries.all());
-  const defaultValues = useMemo(() => emptyValues(), []);
+  const [originalValues] = useState(() => toFormValues(log));
 
   const updateMutation = useMutation({
     mutationFn: (values: LogFormValues) => {
-      if (!id) throw new Error("抽出記録が見つかりません。");
       if (!values.beanId) throw new Error("コーヒー豆を選択してください。");
       if (!values.dripperId) throw new Error("ドリッパーを選択してください。");
       if (values.waterTemp === "" || values.waterTemp <= 0)
@@ -156,7 +126,7 @@ const EditLogForm = ({
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: queryKeys.logs });
-      await queryClient.invalidateQueries({ queryKey: queryKeys.log(id ?? "") });
+      await queryClient.invalidateQueries({ queryKey: queryKeys.log(id) });
       void navigate(`/logs/${id}`);
     },
     onError: (mutationError) =>
@@ -177,46 +147,12 @@ const EditLogForm = ({
     undefined,
     unknown
   >({
-    defaultValues,
+    defaultValues: originalValues,
     onSubmit: async ({ value }) => {
       setError(null);
       await updateMutation.mutateAsync(value);
     },
   });
-
-  useEffect(() => {
-    if (!id) {
-      void navigate("/logs");
-      return;
-    }
-    if (!logQuery.data || hydratedLogId.current === id) return;
-
-    const initialValues = toFormValues(logQuery.data);
-    form.reset(initialValues);
-    setOriginalValues(initialValues);
-    hydratedLogId.current = id;
-  }, [form, id, logQuery.data, navigate]);
-
-  useEffect(() => {
-    if (logQuery.isError) void navigate("/logs");
-  }, [logQuery.isError, navigate]);
-
-  const isLoading =
-    logQuery.isPending ||
-    beansQuery.isPending ||
-    drippersQuery.isPending ||
-    grindersQuery.isPending;
-  const isFetchingMasters =
-    beansQuery.isPending || drippersQuery.isPending || grindersQuery.isPending;
-  const queryError = beansQuery.error ?? drippersQuery.error ?? grindersQuery.error;
-
-  if (isLoading) {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <Loader2 className="animate-spin text-coffee-primary" size={32} />
-      </div>
-    );
-  }
 
   return (
     <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 space-y-6">
@@ -237,18 +173,12 @@ const EditLogForm = ({
       >
         <BrewLogFields
           form={form}
-          beans={beansQuery.data ?? []}
-          drippers={drippersQuery.data ?? []}
-          grinders={grindersQuery.data ?? []}
-          isFetchingMasters={isFetchingMasters}
+          beans={beans}
+          drippers={drippers}
+          grinders={grinders}
           navigate={(path) => void navigate(path)}
         />
 
-<<<<<<< ours
-        {queryError && (
-          <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-2xl text-sm font-medium">
-            ⚠️ マスターデータの取得に失敗しました。再読み込みしてください。
-=======
         {masterDataError && (
           <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-600">
             <p>マスターデータの取得に失敗しました。</p>
@@ -260,13 +190,11 @@ const EditLogForm = ({
             >
               再読み込み
             </Button>
->>>>>>> theirs
           </div>
         )}
 
         <form.Subscribe selector={(state) => state.values}>
           {(values) => {
-            if (!originalValues) return null;
             const changedFields = (
               Object.keys(dirtyFieldLabels) as Array<keyof LogFormValues>
             ).filter((key) => !valuesEqual(values[key], originalValues[key]));
@@ -289,7 +217,7 @@ const EditLogForm = ({
         <Button
           type="submit"
           className="w-full rounded-2xl h-12 text-base shadow-lg bg-coffee-primary hover:bg-coffee-primary/90"
-          disabled={updateMutation.isPending || isFetchingMasters || !originalValues}
+          disabled={updateMutation.isPending}
         >
           {updateMutation.isPending ? (
             <Loader2 className="h-5 w-5 animate-spin" />
@@ -305,8 +233,6 @@ const EditLogForm = ({
   );
 };
 
-<<<<<<< ours
-=======
 const EditLog = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -356,15 +282,10 @@ const EditLog = () => {
       grinders={grindersQuery.data ?? []}
       masterDataError={Boolean(queryError)}
       onRetryMasterData={() => {
-        void Promise.all([
-          beansQuery.refetch(),
-          drippersQuery.refetch(),
-          grindersQuery.refetch(),
-        ]);
+        void Promise.all([beansQuery.refetch(), drippersQuery.refetch(), grindersQuery.refetch()]);
       }}
     />
   );
 };
 
->>>>>>> theirs
 export default EditLog;
