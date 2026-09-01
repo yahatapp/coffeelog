@@ -192,6 +192,7 @@ const EditLogForm = ({
             </Button>
           </div>
         )}
+
         <form.Subscribe selector={(state) => state.values}>
           {(values) => {
             const changedFields = (
