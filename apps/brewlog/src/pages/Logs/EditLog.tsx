@@ -98,8 +98,30 @@ const dirtyFieldLabels: Record<keyof LogFormValues, string> = {
 const valuesEqual = (left: unknown, right: unknown) =>
   JSON.stringify(left) === JSON.stringify(right);
 
+<<<<<<< ours
 const EditLog = () => {
   const { id } = useParams<{ id: string }>();
+=======
+type EditLogFormProps = {
+  id: string;
+  log: BrewLogResponse;
+  beans: Bean[];
+  drippers: Dripper[];
+  grinders: Grinder[];
+  masterDataError: boolean;
+  onRetryMasterData: () => void;
+};
+
+const EditLogForm = ({
+  id,
+  log,
+  beans,
+  drippers,
+  grinders,
+  masterDataError,
+  onRetryMasterData,
+}: EditLogFormProps) => {
+>>>>>>> theirs
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [error, setError] = useState<string | null>(null);
@@ -222,9 +244,23 @@ const EditLog = () => {
           navigate={(path) => void navigate(path)}
         />
 
+<<<<<<< ours
         {queryError && (
           <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-2xl text-sm font-medium">
             ⚠️ マスターデータの取得に失敗しました。再読み込みしてください。
+=======
+        {masterDataError && (
+          <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-600">
+            <p>マスターデータの取得に失敗しました。</p>
+            <Button
+              type="button"
+              variant="ghost"
+              className="mt-2 h-auto px-0 text-xs underline"
+              onClick={onRetryMasterData}
+            >
+              再読み込み
+            </Button>
+>>>>>>> theirs
           </div>
         )}
 
@@ -269,4 +305,66 @@ const EditLog = () => {
   );
 };
 
+<<<<<<< ours
+=======
+const EditLog = () => {
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const logQuery = useQuery(logQueries.detail(id ?? ""));
+  const beansQuery = useQuery(beanQueries.all());
+  const drippersQuery = useQuery(dripperQueries.all());
+  const grindersQuery = useQuery(grinderQueries.all());
+
+  useEffect(() => {
+    if (!id || logQuery.isError) void navigate("/logs");
+  }, [id, logQuery.isError, navigate]);
+
+  const isLoading =
+    logQuery.isPending ||
+    beansQuery.isPending ||
+    drippersQuery.isPending ||
+    grindersQuery.isPending;
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <Loader2 className="animate-spin text-coffee-primary" size={32} />
+      </div>
+    );
+  }
+
+  const queryError = beansQuery.error ?? drippersQuery.error ?? grindersQuery.error;
+  const isMasterDataUnavailable =
+    (beansQuery.isError && !beansQuery.data) ||
+    (drippersQuery.isError && !drippersQuery.data) ||
+    (grindersQuery.isError && !grindersQuery.data);
+  if (!id || !logQuery.data || isMasterDataUnavailable) {
+    return (
+      <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-600">
+        ⚠️ 編集データの取得に失敗しました。再読み込みしてください。
+      </div>
+    );
+  }
+
+  return (
+    <EditLogForm
+      key={id}
+      id={id}
+      log={logQuery.data}
+      beans={beansQuery.data ?? []}
+      drippers={drippersQuery.data ?? []}
+      grinders={grindersQuery.data ?? []}
+      masterDataError={Boolean(queryError)}
+      onRetryMasterData={() => {
+        void Promise.all([
+          beansQuery.refetch(),
+          drippersQuery.refetch(),
+          grindersQuery.refetch(),
+        ]);
+      }}
+    />
+  );
+};
+
+>>>>>>> theirs
 export default EditLog;
