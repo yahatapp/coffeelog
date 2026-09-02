@@ -42,15 +42,9 @@ if ! command -v nix >/dev/null 2>&1; then
   source /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
 fi
 
-# Run setup through the same pinned flake used by local development and CI.
-nix develop --command ./scripts/setup-vp.sh
-nix develop --command pnpm install --frozen-lockfile
-nix develop --command pnpm --filter brewlog browser:install:with-deps
-nix develop --command pnpm run hooks:install
-nix develop --command pnpm run guard:betterleaks-canary
-
 # Codex runs setup and later agent commands in separate shells. Persist the
-# evaluated dev-shell environment so those commands use the same toolchain.
+# evaluated dev-shell environment before any fallible setup steps so later
+# Codex shells use the Nix toolchain even if dependency setup is interrupted.
 mkdir -p "$(dirname "${NIX_ENV_FILE}")"
 nix print-dev-env > "${NIX_ENV_FILE}"
 # print-dev-env preserves shellHook as a variable, but sourcing its output does
@@ -62,6 +56,13 @@ chmod 0600 "${NIX_ENV_FILE}"
 touch "${HOME}/.bashrc"
 readonly SOURCE_LINE="source \"${NIX_ENV_FILE}\""
 grep -qxF "${SOURCE_LINE}" "${HOME}/.bashrc" || printf '%s\n' "${SOURCE_LINE}" >> "${HOME}/.bashrc"
+
+# Run setup through the same pinned flake used by local development and CI.
+nix develop --command ./scripts/setup-vp.sh
+nix develop --command pnpm install --frozen-lockfile
+nix develop --command pnpm --filter brewlog browser:install:with-deps
+nix develop --command pnpm run hooks:install
+nix develop --command pnpm run guard:betterleaks-canary
 
 echo "Codex Cloud setup complete."
 nix develop --command node --version
