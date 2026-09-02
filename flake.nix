@@ -45,7 +45,6 @@
 
           shellHook = ''
             export PATH="$PWD/node_modules/.bin:$PATH"
-            export PATH="''${VP_HOME:-$HOME/.vite-plus}/bin:$PATH"
             echo "☕ Coffeelog Monorepo Development Environment"
             echo "Node.js: $(node --version)"
             echo "pnpm: $(pnpm --version)"

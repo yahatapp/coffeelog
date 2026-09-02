@@ -24,8 +24,7 @@ A lightweight coffee brewing log application for personal/couple use, running as
 
     ```bash
     direnv allow  # Nix環境の有効化
-    ./scripts/setup-vp.sh  # 固定バージョンのVite+を検証してインストール
-    pnpm install
+    pnpm install  # lockfileで固定されたVite+もインストール
     pnpm run hooks:install
     ```
 
@@ -117,12 +116,11 @@ pnpm run guard:changes
 Pull Requestでは`.github/workflows/ci.yml`がNix dev shell内でチェック、テスト、ビルド、
 本番依存関係のセキュリティ監査を実行します。`main`へマージされると
 `.github/workflows/deploy.yml`が同じ環境でリリースを再検証し、Cloudflare Workersへ
-デプロイします。Vite+は両方のworkflowで`v0.2.7`に固定されています。
+デプロイします。Vite+はルートのdevDependencyとlockfileで`v0.2.7`に固定されています。
 
 ローカルでCI相当の検証を行う場合は、次を実行してください。
 
 ```bash
-nix develop --command ./scripts/setup-vp.sh
 nix develop --command pnpm install --frozen-lockfile
 nix develop --command pnpm run guard:betterleaks-canary
 nix develop --command pnpm run guard:secrets:ci -- <base-sha> <head-sha>

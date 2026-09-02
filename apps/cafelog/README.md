@@ -44,8 +44,7 @@ Supabase PostgreSQL (cafelog schema)
 # 1. Nix 開発環境を有効化
 direnv allow
 
-# 2. 依存関係のインストール
-./scripts/setup-vp.sh
+# 2. 依存関係のインストール（固定されたVite+を含む）
 pnpm install
 pnpm run hooks:install
 

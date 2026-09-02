@@ -48,9 +48,9 @@ fi
 mkdir -p "$(dirname "${NIX_ENV_FILE}")"
 nix print-dev-env > "${NIX_ENV_FILE}"
 # print-dev-env preserves shellHook as a variable, but sourcing its output does
-# not execute the hook. Persist the path needed by the separately installed vp
-# binary explicitly so later Codex shells can run the package scripts.
-printf '%s\n' 'export PATH="${VP_HOME:-$HOME/.vite-plus}/bin:$PATH"' >> "${NIX_ENV_FILE}"
+# not execute the hook. Persist the workspace binaries path explicitly so later
+# Codex shells can run pinned project tools such as vp.
+printf 'export PATH=%q:$PATH\n' "${REPO_ROOT}/node_modules/.bin" >> "${NIX_ENV_FILE}"
 chmod 0600 "${NIX_ENV_FILE}"
 
 touch "${HOME}/.bashrc"
@@ -58,7 +58,6 @@ readonly SOURCE_LINE="source \"${NIX_ENV_FILE}\""
 grep -qxF "${SOURCE_LINE}" "${HOME}/.bashrc" || printf '%s\n' "${SOURCE_LINE}" >> "${HOME}/.bashrc"
 
 # Run setup through the same pinned flake used by local development and CI.
-nix develop --command ./scripts/setup-vp.sh
 nix develop --command pnpm install --frozen-lockfile
 nix develop --command pnpm --filter brewlog browser:install:with-deps
 nix develop --command pnpm run hooks:install
