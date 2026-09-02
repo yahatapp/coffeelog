@@ -39,9 +39,6 @@ jobs:
       - name: Cache Nix store
         uses: DeterminateSystems/magic-nix-cache-action@908b263ff629f4cc17666315b7fd3ec127c6244d # v14
 
-      - name: Install pinned Vite+
-        run: nix develop --command ./scripts/setup-vp.sh
-
       - name: Install dependencies
         run: nix develop --command pnpm install --frozen-lockfile
 

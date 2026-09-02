@@ -2,6 +2,10 @@ packages:
   - apps/*
   - packages/*
 
+# pnpm is pinned and supplied by the Nix dev shell. Never download and run a
+# different package-manager version when the declared version does not match.
+pmOnFail: error
+
 allowBuilds:
   esbuild: true
   lefthook: true

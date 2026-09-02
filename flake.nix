@@ -22,6 +22,13 @@
           inherit system;
           config.allowUnfree = true;
         };
+        pnpmPinned = pkgs.pnpm.overrideAttrs (finalAttrs: _previousAttrs: {
+          version = "11.11.0";
+          src = pkgs.fetchurl {
+            url = "https://registry.npmjs.org/pnpm/-/pnpm-${finalAttrs.version}.tgz";
+            hash = "sha256-he8u/yFqGukIBMAMjfv6ZoU1NkRlDRCQaok8Ba7c2IQ=";
+          };
+        });
       in
       {
         devShells.default = pkgs.mkShell {
@@ -33,12 +40,11 @@
             gnugrep
             betterleaks
             nodejs_24
-            pnpm
+            pnpmPinned
           ];
 
           shellHook = ''
             export PATH="$PWD/node_modules/.bin:$PATH"
-            export PATH="''${VP_HOME:-$HOME/.vite-plus}/bin:$PATH"
             echo "☕ Coffeelog Monorepo Development Environment"
             echo "Node.js: $(node --version)"
             echo "pnpm: $(pnpm --version)"
