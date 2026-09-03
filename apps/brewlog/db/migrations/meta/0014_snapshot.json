@@ -116,12 +116,8 @@
           "tableFrom": "beans",
           "tableTo": "beans",
           "schemaTo": "brewlog",
-          "columnsFrom": [
-            "parent_bean_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["parent_bean_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -130,12 +126,8 @@
           "tableFrom": "beans",
           "tableTo": "households",
           "schemaTo": "brewlog",
-          "columnsFrom": [
-            "household_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -288,12 +280,8 @@
           "tableFrom": "brew_logs",
           "tableTo": "beans",
           "schemaTo": "brewlog",
-          "columnsFrom": [
-            "bean_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["bean_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -302,12 +290,8 @@
           "tableFrom": "brew_logs",
           "tableTo": "profiles",
           "schemaTo": "brewlog",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "line_user_id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["line_user_id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -316,12 +300,8 @@
           "tableFrom": "brew_logs",
           "tableTo": "households",
           "schemaTo": "brewlog",
-          "columnsFrom": [
-            "household_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -330,12 +310,8 @@
           "tableFrom": "brew_logs",
           "tableTo": "drippers",
           "schemaTo": "brewlog",
-          "columnsFrom": [
-            "dripper_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["dripper_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -344,12 +320,8 @@
           "tableFrom": "brew_logs",
           "tableTo": "grinders",
           "schemaTo": "brewlog",
-          "columnsFrom": [
-            "grinder_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["grinder_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -416,12 +388,8 @@
           "tableFrom": "brew_pours",
           "tableTo": "brew_logs",
           "schemaTo": "brewlog",
-          "columnsFrom": [
-            "brew_log_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["brew_log_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -477,12 +445,8 @@
           "tableFrom": "drippers",
           "tableTo": "households",
           "schemaTo": "brewlog",
-          "columnsFrom": [
-            "household_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -566,12 +530,8 @@
           "tableFrom": "grinders",
           "tableTo": "households",
           "schemaTo": "brewlog",
-          "columnsFrom": [
-            "household_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -658,12 +618,8 @@
           "tableFrom": "profiles",
           "tableTo": "households",
           "schemaTo": "brewlog",
-          "columnsFrom": [
-            "household_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["household_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
