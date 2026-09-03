@@ -28,6 +28,7 @@ export const BeanFields = ({ form, isVersionMode }: BeanFieldsProps) => (
               value={field.state.value}
               onValueChange={field.handleChange}
               options={coffeeTypeOptions}
+              disabled={isVersionMode}
             />
           </div>
         )}
