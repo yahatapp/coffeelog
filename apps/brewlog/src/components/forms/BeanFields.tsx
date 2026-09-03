@@ -1,6 +1,7 @@
 import { Card, CardContent } from "../ui/card";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
+import { Segment } from "../ui/segment";
 import { COFFEE_COUNTRIES } from "@/utils/flag";
 import { getRoastLabel, PROCESS_METHODS } from "@/lib/form-values";
 import type { BeanFormApi } from "./types";
@@ -10,9 +11,29 @@ type BeanFieldsProps = {
   isVersionMode: boolean;
 };
 
+const coffeeTypeOptions = [
+  { label: "レギュラーコーヒー", value: "regular" },
+  { label: "スペシャルティコーヒー", value: "specialty" },
+] as const;
+
 export const BeanFields = ({ form, isVersionMode }: BeanFieldsProps) => (
   <Card>
     <CardContent className="p-6 space-y-4">
+      <form.Field name="coffeeType">
+        {(field) => (
+          <div className="space-y-2">
+            <Label>コーヒーの種類</Label>
+            <Segment
+              ariaLabel="コーヒーの種類"
+              value={field.state.value}
+              onValueChange={field.handleChange}
+              options={coffeeTypeOptions}
+              disabled={isVersionMode}
+            />
+          </div>
+        )}
+      </form.Field>
+
       <form.Field name="name">
         {(field) => (
           <div className="space-y-2">

@@ -35,6 +35,7 @@ const AddBean = () => {
 
   const defaultValues: BeanFormValues = {
     name: "",
+    coffeeType: "regular",
     origin: "",
     purchaseStore: "",
     roastLevel: 3,
@@ -55,6 +56,7 @@ const AddBean = () => {
   useEffect(() => {
     if (!isVersionMode || !parentQuery.data) return;
     form.setFieldValue("name", parentQuery.data.name);
+    form.setFieldValue("coffeeType", parentQuery.data.coffeeType);
     form.setFieldValue("origin", parentQuery.data.origin ?? "");
     form.setFieldValue("purchaseStore", parentQuery.data.purchaseStore ?? "");
     form.setFieldValue("roastLevel", parentQuery.data.roastLevel ?? 3);

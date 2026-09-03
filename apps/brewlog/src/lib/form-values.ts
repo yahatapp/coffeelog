@@ -1,10 +1,17 @@
-import type { BeanCreateInput, BeanUpdateInput, LogCreateInput, LogUpdateInput } from "@/contracts";
+import type {
+  BeanCreateInput,
+  BeanUpdateInput,
+  CoffeeType,
+  LogCreateInput,
+  LogUpdateInput,
+} from "@/contracts";
 import { BREWLOG_PROCESS_METHODS, getRoastLabel } from "@yahatapp/coffee-reference";
 
 export const PROCESS_METHODS = BREWLOG_PROCESS_METHODS;
 
 export type BeanFormValues = {
   name: string;
+  coffeeType: CoffeeType;
   origin: string;
   purchaseStore: string;
   roastLevel: number;
@@ -21,6 +28,7 @@ export const toBeanCreateInput = (
   parentBeanId: string | null,
 ): BeanCreateInput => ({
   name: values.name.trim(),
+  coffeeType: values.coffeeType,
   origin: values.origin.trim() || null,
   purchaseStore: values.purchaseStore.trim() || null,
   roastLevel: values.roastLevel,
@@ -35,6 +43,7 @@ export const toBeanCreateInput = (
 
 export const toBeanUpdateInput = (values: BeanFormValues): BeanUpdateInput => ({
   name: values.name.trim(),
+  coffeeType: values.coffeeType,
   origin: values.origin.trim() || null,
   purchaseStore: values.purchaseStore.trim() || null,
   roastLevel: values.roastLevel,
