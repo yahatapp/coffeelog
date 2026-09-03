@@ -1,8 +1,8 @@
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { Plus, Coffee, ChevronRight, Loader2, Pencil } from "lucide-react";
-import { beanQueries, type Bean } from "@/lib/queries";
+import { Plus, Coffee, ChevronRight, Loader2, Pencil, Sparkles } from "lucide-react";
+import { beanQueries, logQueries, type Bean } from "@/lib/queries";
 import { Button } from "../../components/ui/button";
 import { Card, CardContent } from "../../components/ui/card";
 import { OriginFlag } from "../../components/ui/OriginFlag";
@@ -20,10 +20,10 @@ interface BeanGroup {
 const BeansList = () => {
   const navigate = useNavigate();
   const beansQuery = useQuery(beanQueries.all());
+  const logsQuery = useQuery(logQueries.all());
   const [selectedGroup, setSelectedGroup] = useState<BeanGroup | null>(null);
 
   const beans = beansQuery.data ?? [];
-
   const activeBeans = beans.filter((bean) => !bean.isArchived);
 
   const groupedBeans = useMemo(() => {
@@ -52,7 +52,19 @@ const BeansList = () => {
       );
   }, [activeBeans]);
 
-  if (beansQuery.isPending) {
+  const brewCountByGroupId = useMemo(() => {
+    const counts = new Map<string, number>();
+    const groupIdByBeanId = new Map(
+      (beansQuery.data ?? []).map((bean) => [bean.id, bean.parentBeanId || bean.id] as const),
+    );
+    for (const log of logsQuery.data ?? []) {
+      const groupId = groupIdByBeanId.get(log.beanId);
+      if (groupId) counts.set(groupId, (counts.get(groupId) ?? 0) + 1);
+    }
+    return counts;
+  }, [beansQuery.data, logsQuery.data]);
+
+  if (beansQuery.isPending || logsQuery.isPending) {
     return (
       <div className="flex justify-center items-center h-64">
         <Loader2 className="animate-spin text-coffee-primary" size={32} />
@@ -60,11 +72,14 @@ const BeansList = () => {
     );
   }
 
-  if (beansQuery.isError) {
+  if (beansQuery.isError || logsQuery.isError) {
     return (
       <div className="text-center p-8 text-coffee-secondary">
         <p>豆一覧の取得に失敗しました。</p>
-        <Button className="mt-4 rounded-xl" onClick={() => void beansQuery.refetch()}>
+        <Button
+          className="mt-4 rounded-xl"
+          onClick={() => void Promise.all([beansQuery.refetch(), logsQuery.refetch()])}
+        >
           再読み込み
         </Button>
       </div>
@@ -101,15 +116,17 @@ const BeansList = () => {
       ) : (
         <div className="space-y-3">
           {groupedBeans.map((group) => {
-            const { latestBean, versionCount } = group;
+            const { latestBean } = group;
+            const brewCount = brewCountByGroupId.get(group.groupId) ?? 0;
+            const displayDate = latestBean.purchaseDate ?? latestBean.roastDate;
             return (
               <Card
                 key={group.groupId}
                 className="hover:border-coffee-primary/30 transition-colors cursor-pointer group"
                 onClick={() => setSelectedGroup(group)}
               >
-                <CardContent className="p-4 flex items-center justify-between">
-                  <div className="flex items-center space-x-4 flex-1 min-w-0">
+                <CardContent className="p-4 flex items-center gap-3">
+                  <div className="flex items-center flex-1 min-w-0 gap-3">
                     <div className="bg-coffee-background w-12 h-12 rounded-2xl flex items-center justify-center group-hover:bg-coffee-primary/10 transition-colors flex-shrink-0 overflow-hidden">
                       {(() => {
                         const countryCode = getCountryCode(latestBean.origin);
@@ -127,19 +144,27 @@ const BeansList = () => {
                         return <CoffeeBeansIcon size={24} className="text-coffee-primary" />;
                       })()}
                     </div>
-                    <div className="min-w-0 flex-1">
+                    <div className="min-w-0 flex-1 space-y-1.5">
                       <h3 className="font-bold text-coffee-text truncate">{latestBean.name}</h3>
-                      <div className="flex flex-wrap gap-2 mt-1">
-                        {versionCount > 0 && (
-                          <span className="text-[10px] text-coffee-primary bg-coffee-primary/10 px-2 py-0.5 rounded-full font-bold">
-                            {versionCount}バージョン
-                          </span>
-                        )}
-                        <span className="text-[10px] text-coffee-secondary bg-coffee-secondary/10 px-2 py-0.5 rounded-full truncate max-w-[120px]">
-                          最新:{" "}
-                          {latestBean.version ||
-                            latestBean.purchaseDate?.replace(/-/g, ".") ||
-                            "未設定"}
+                      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-coffee-secondary">
+                        <span
+                          className={`inline-flex items-center gap-1 font-medium ${
+                            latestBean.coffeeType === "specialty" ? "text-amber-700" : ""
+                          }`}
+                        >
+                          {latestBean.coffeeType === "specialty" && (
+                            <Sparkles size={13} className="text-amber-500" aria-hidden="true" />
+                          )}
+                          {latestBean.coffeeType === "specialty" ? "スペシャルティ" : "レギュラー"}
+                        </span>
+                        <span className="inline-flex items-center gap-1 font-medium">
+                          <Coffee size={13} aria-hidden="true" />
+                          {brewCount}回抽出
+                        </span>
+                        <span>
+                          {displayDate
+                            ? `${latestBean.purchaseDate ? "購入" : "焙煎"} ${displayDate.replace(/-/g, ".")}`
+                            : "日付未設定"}
                         </span>
                       </div>
                       <div className="flex flex-wrap gap-2 mt-1 hidden sm:flex">
@@ -162,8 +187,10 @@ const BeansList = () => {
                       </div>
                     </div>
                   </div>
-                  <div className="flex items-center space-x-3 ml-4 flex-shrink-0">
-                    {latestBean.roastLevel && <RoastLevelIndicator level={latestBean.roastLevel} />}
+                  <div className="flex items-center gap-1 flex-shrink-0">
+                    {latestBean.roastLevel && (
+                      <RoastLevelIndicator level={latestBean.roastLevel} showLabel={false} />
+                    )}
                     <div className="flex items-center space-x-1">
                       <button
                         onClick={(e) => {

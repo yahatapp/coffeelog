@@ -4,6 +4,7 @@ import { getRoastLabel as getSharedRoastLabel } from "@yahatapp/coffee-reference
 interface RoastLevelIndicatorProps {
   level: number;
   className?: string;
+  showLabel?: boolean;
 }
 
 export const getRoastLabel = getSharedRoastLabel;
@@ -66,12 +67,15 @@ export const getRoastConfig = (level: number) => {
 export const RoastLevelIndicator: React.FC<RoastLevelIndicatorProps> = ({
   level,
   className = "",
+  showLabel = true,
 }) => {
   const config = getRoastConfig(level);
 
   return (
     <div
-      className={`inline-flex items-center space-x-1.5 py-1 px-2.5 rounded-full border ${config.bg} ${config.border} flex-shrink-0 transition-all duration-300 shadow-sm shadow-coffee-primary/2 hover:scale-[1.02] ${className}`}
+      className={`inline-flex items-center ${showLabel ? "space-x-1.5 py-1 px-2.5" : "p-1.5"} rounded-full border ${config.bg} ${config.border} flex-shrink-0 transition-all duration-300 shadow-sm shadow-coffee-primary/2 hover:scale-[1.02] ${className}`}
+      title={config.label}
+      aria-label={`焙煎度: ${config.label}`}
     >
       <span
         className="w-2.5 h-2.5 rounded-full flex-shrink-0"
@@ -80,7 +84,11 @@ export const RoastLevelIndicator: React.FC<RoastLevelIndicatorProps> = ({
           boxShadow: `0 1px 2px ${config.color}30, inset 0 -0.5px 1px rgba(0,0,0,0.15)`,
         }}
       />
-      <span className={`text-[10px] font-bold ${config.text} tracking-wider`}>{config.label}</span>
+      {showLabel && (
+        <span className={`text-[10px] font-bold ${config.text} tracking-wider`} aria-hidden="true">
+          {config.label}
+        </span>
+      )}
     </div>
   );
 };
