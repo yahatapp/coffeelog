@@ -33,6 +33,7 @@ const EditBean = () => {
 
   const defaultValues: BeanFormValues = {
     name: "",
+    coffeeType: "regular",
     origin: "",
     purchaseStore: "",
     roastLevel: 3,
@@ -54,6 +55,7 @@ const EditBean = () => {
     if (!beanQuery.data) return;
     form.reset({
       name: beanQuery.data.name,
+      coffeeType: beanQuery.data.coffeeType,
       origin: beanQuery.data.origin ?? "",
       purchaseStore: beanQuery.data.purchaseStore ?? "",
       roastLevel: beanQuery.data.roastLevel ?? 3,

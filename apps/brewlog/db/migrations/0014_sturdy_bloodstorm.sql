@@ -1,0 +1,1 @@
+ALTER TABLE "brewlog"."beans" ADD COLUMN "coffee_type" text DEFAULT 'regular' NOT NULL;

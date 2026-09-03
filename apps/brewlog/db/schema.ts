@@ -4,6 +4,9 @@ import { relations, sql } from "drizzle-orm";
 
 export const brewlogSchema = pgSchema("brewlog");
 
+export const coffeeTypes = ["regular", "specialty"] as const;
+export type CoffeeType = (typeof coffeeTypes)[number];
+
 export const households = brewlogSchema.table("households", {
   id: uuid("id")
     .primaryKey()
@@ -48,6 +51,7 @@ export const beans = brewlogSchema.table("beans", {
     .notNull()
     .references(() => households.id),
   name: text("name").notNull(),
+  coffeeType: text("coffee_type").$type<CoffeeType>().default("regular").notNull(),
   origin: text("origin"),
   purchaseStore: text("purchase_store"),
   roastLevel: integer("roast_level"), // 1:浅煎り 〜 5:深煎り 等

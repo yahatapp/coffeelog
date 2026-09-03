@@ -1,9 +1,11 @@
 import { z } from "zod";
 
 const nullableText = z.string().optional().nullable();
+export const coffeeTypeSchema = z.enum(["regular", "specialty"]);
 
 export const beanCreateSchema = z.object({
   name: z.string().min(1),
+  coffeeType: coffeeTypeSchema.default("regular"),
   origin: nullableText,
   purchaseStore: nullableText,
   roastLevel: z.number().int().min(1).max(5).optional().nullable(),
@@ -18,6 +20,7 @@ export const beanCreateSchema = z.object({
 
 export const beanUpdateSchema = z.object({
   name: z.string().min(1).optional(),
+  coffeeType: coffeeTypeSchema.optional(),
   origin: nullableText,
   purchaseStore: nullableText,
   roastLevel: z.number().int().min(1).max(5).optional().nullable(),
@@ -81,6 +84,7 @@ export const grinderUpdateSchema = grinderCreateSchema.partial();
 
 export type BeanCreateInput = z.infer<typeof beanCreateSchema>;
 export type BeanUpdateInput = z.infer<typeof beanUpdateSchema>;
+export type CoffeeType = z.infer<typeof coffeeTypeSchema>;
 export type LogCreateInput = z.infer<typeof logCreateSchema>;
 export type LogUpdateInput = z.infer<typeof logUpdateSchema>;
 export type DripperCreateInput = z.infer<typeof dripperCreateSchema>;
