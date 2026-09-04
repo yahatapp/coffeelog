@@ -139,7 +139,7 @@ const BeansList = () => {
             return (
               <Card
                 key={group.groupId}
-                className="hover:border-coffee-primary/30 transition-colors cursor-pointer group overflow-hidden"
+                className="border-x-transparent hover:border-x-transparent hover:border-y-coffee-primary/30 transition-colors cursor-pointer group overflow-hidden"
                 style={
                   latestBean.roastLevel
                     ? { backgroundImage: getRoastGradient(latestBean.roastLevel) }
@@ -186,11 +186,11 @@ const BeansList = () => {
                             ? "抽出回数を取得中"
                             : logsQuery.isError
                               ? "抽出回数未取得"
-                              : `${brewCount}回抽出`}
+                              : `${brewCount}杯`}
                         </span>
                         <span>
                           {displayDate
-                            ? `${latestBean.purchaseDate ? "購入" : "焙煎"} ${displayDate.replace(/-/g, ".")}`
+                            ? `${latestBean.purchaseDate ? "" : "焙煎 "}${displayDate.replace(/-/g, ".")}`
                             : "日付未設定"}
                         </span>
                       </div>
