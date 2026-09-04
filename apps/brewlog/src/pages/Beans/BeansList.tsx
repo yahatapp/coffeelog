@@ -64,7 +64,7 @@ const BeansList = () => {
     return counts;
   }, [beansQuery.data, logsQuery.data]);
 
-  if (beansQuery.isPending || logsQuery.isPending) {
+  if (beansQuery.isPending) {
     return (
       <div className="flex justify-center items-center h-64">
         <Loader2 className="animate-spin text-coffee-primary" size={32} />
@@ -72,14 +72,11 @@ const BeansList = () => {
     );
   }
 
-  if (beansQuery.isError || logsQuery.isError) {
+  if (beansQuery.isError) {
     return (
       <div className="text-center p-8 text-coffee-secondary">
         <p>豆一覧の取得に失敗しました。</p>
-        <Button
-          className="mt-4 rounded-xl"
-          onClick={() => void Promise.all([beansQuery.refetch(), logsQuery.refetch()])}
-        >
+        <Button className="mt-4 rounded-xl" onClick={() => void beansQuery.refetch()}>
           再読み込み
         </Button>
       </div>
@@ -99,6 +96,23 @@ const BeansList = () => {
           <Plus size={16} className="mr-1" /> 追加
         </Button>
       </div>
+
+      {logsQuery.isError && (
+        <div
+          className="flex items-center justify-between gap-3 rounded-xl bg-coffee-secondary/10 px-4 py-3 text-xs text-coffee-secondary"
+          role="status"
+        >
+          <p>抽出回数を取得できませんでした。豆の管理は引き続き行えます。</p>
+          <Button
+            size="sm"
+            variant="ghost"
+            className="h-auto shrink-0 px-2 py-1"
+            onClick={() => void logsQuery.refetch()}
+          >
+            再試行
+          </Button>
+        </div>
+      )}
 
       {groupedBeans.length === 0 ? (
         <Card className="border-dashed border-2">
@@ -159,7 +173,11 @@ const BeansList = () => {
                         </span>
                         <span className="inline-flex items-center gap-1 font-medium">
                           <Coffee size={13} aria-hidden="true" />
-                          {brewCount}回抽出
+                          {logsQuery.isPending
+                            ? "抽出回数を取得中"
+                            : logsQuery.isError
+                              ? "抽出回数未取得"
+                              : `${brewCount}回抽出`}
                         </span>
                         <span>
                           {displayDate
