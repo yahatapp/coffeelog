@@ -1,8 +1,18 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { Plus, ClipboardList, Star, Calendar, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
+import {
+  Plus,
+  ClipboardList,
+  Star,
+  Calendar,
+  ArrowUp,
+  ArrowDown,
+  Snowflake,
+  Sun,
+} from "lucide-react";
 import { logQueries, type BrewLog } from "@/lib/queries";
+import { OriginFlag } from "@/components/ui/OriginFlag";
 import { Button } from "../../components/ui/button";
 import { Card, CardContent } from "../../components/ui/card";
 
@@ -13,6 +23,16 @@ const LogsList = () => {
   const [activeTab, setActiveTab] = useState<"all" | "hot" | "ice">("all");
   const [sortBy, setSortBy] = useState<"date" | "bean" | "rating">("date");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+
+  const changeSort = (nextSort: "date" | "bean" | "rating") => {
+    if (sortBy === nextSort) {
+      setSortOrder(sortOrder === "desc" ? "asc" : "desc");
+      return;
+    }
+
+    setSortBy(nextSort);
+    setSortOrder(nextSort === "bean" ? "asc" : "desc");
+  };
 
   const formatDate = (log: BrewLog) => {
     if (log.brewDate) {
@@ -188,20 +208,14 @@ const LogsList = () => {
 
       {/* ソートUI */}
       {logs.length > 0 && (
-        <div className="flex items-center justify-between px-1 py-1.5 text-xs text-coffee-secondary bg-coffee-primary/5 rounded-xl p-2 border border-coffee-primary/10">
-          <div className="flex items-center space-x-1.5">
-            <span className="font-semibold text-coffee-primary/80">ソート:</span>
-            <div className="flex bg-gray-200/60 rounded-lg p-0.5 space-x-0.5">
+        <div className="rounded-xl border border-coffee-primary/10 bg-coffee-primary/5 p-2 text-xs text-coffee-secondary">
+          <div className="flex items-center gap-2">
+            <span className="shrink-0 font-semibold text-coffee-primary/80">ソート:</span>
+            <div className="grid min-w-0 flex-1 grid-cols-3 gap-1 rounded-lg bg-gray-200/60 p-1">
               <button
-                onClick={() => {
-                  if (sortBy === "date") {
-                    setSortOrder(sortOrder === "desc" ? "asc" : "desc");
-                  } else {
-                    setSortBy("date");
-                    setSortOrder("desc");
-                  }
-                }}
-                className={`px-3 py-1 rounded-md transition-all duration-200 flex items-center space-x-0.5 cursor-pointer ${
+                onClick={() => changeSort("date")}
+                aria-label={`日付で${sortBy === "date" && sortOrder === "desc" ? "昇順" : "降順"}に並べ替え`}
+                className={`flex min-h-11 items-center justify-center rounded-md px-3 transition-all duration-200 cursor-pointer ${
                   sortBy === "date"
                     ? "bg-white text-coffee-primary shadow-sm font-bold"
                     : "text-coffee-secondary/70 hover:text-coffee-primary hover:bg-white/30"
@@ -217,15 +231,9 @@ const LogsList = () => {
               </button>
 
               <button
-                onClick={() => {
-                  if (sortBy === "bean") {
-                    setSortOrder(sortOrder === "desc" ? "asc" : "desc");
-                  } else {
-                    setSortBy("bean");
-                    setSortOrder("asc");
-                  }
-                }}
-                className={`px-3 py-1 rounded-md transition-all duration-200 flex items-center space-x-0.5 cursor-pointer ${
+                onClick={() => changeSort("bean")}
+                aria-label={`豆で${sortBy === "bean" && sortOrder === "asc" ? "降順" : "昇順"}に並べ替え`}
+                className={`flex min-h-11 items-center justify-center rounded-md px-3 transition-all duration-200 cursor-pointer ${
                   sortBy === "bean"
                     ? "bg-white text-coffee-primary shadow-sm font-bold"
                     : "text-coffee-secondary/70 hover:text-coffee-primary hover:bg-white/30"
@@ -241,15 +249,9 @@ const LogsList = () => {
               </button>
 
               <button
-                onClick={() => {
-                  if (sortBy === "rating") {
-                    setSortOrder(sortOrder === "desc" ? "asc" : "desc");
-                  } else {
-                    setSortBy("rating");
-                    setSortOrder("desc");
-                  }
-                }}
-                className={`px-3 py-1 rounded-md transition-all duration-200 flex items-center space-x-0.5 cursor-pointer ${
+                onClick={() => changeSort("rating")}
+                aria-label={`評価で${sortBy === "rating" && sortOrder === "desc" ? "昇順" : "降順"}に並べ替え`}
+                className={`flex min-h-11 items-center justify-center rounded-md px-3 transition-all duration-200 cursor-pointer ${
                   sortBy === "rating"
                     ? "bg-white text-coffee-primary shadow-sm font-bold"
                     : "text-coffee-secondary/70 hover:text-coffee-primary hover:bg-white/30"
@@ -265,14 +267,6 @@ const LogsList = () => {
               </button>
             </div>
           </div>
-
-          <button
-            onClick={() => setSortOrder(sortOrder === "desc" ? "asc" : "desc")}
-            className="flex items-center space-x-1 px-2.5 py-1 rounded-lg border border-coffee-primary/10 hover:border-coffee-primary/20 hover:bg-white bg-white/60 transition-all duration-200 active:scale-95 text-coffee-secondary/80 font-medium cursor-pointer"
-          >
-            <ArrowUpDown size={12} className="text-coffee-primary" />
-            <span>{sortOrder === "desc" ? "降順" : "昇順"}</span>
-          </button>
         </div>
       )}
 
@@ -303,16 +297,12 @@ const LogsList = () => {
             >
               <CardContent className="p-4">
                 <div className="flex justify-between items-start">
-                  <div className="space-y-1">
-                    <h3 className="font-bold text-coffee-text">
-                      {log.bean.name}
-                      {log.bean.version && (
-                        <span className="text-xs font-normal text-coffee-secondary ml-1.5">
-                          ({log.bean.version})
-                        </span>
-                      )}
+                  <div className="min-w-0 space-y-1">
+                    <h3 className="flex items-center gap-2 font-bold text-coffee-text">
+                      <OriginFlag origin={log.bean.origin} size={16} />
+                      <span>{log.bean.name}</span>
                     </h3>
-                    <div className="flex items-center text-xs text-coffee-secondary space-x-2">
+                    <div className="flex flex-wrap items-center gap-2 text-xs text-coffee-secondary">
                       <span className="flex items-center">
                         <Calendar size={12} className="mr-1" />
                         {formatDate(log)}
@@ -322,22 +312,24 @@ const LogsList = () => {
                       )}
                       <span>•</span>
                       {log.tempType === "ice" ? (
-                        <span className="inline-flex items-center text-blue-500 font-semibold">
-                          <span className="w-1.5 h-1.5 rounded-full bg-blue-500 mr-1 animate-pulse" />
+                        <span className="inline-flex items-center gap-1 rounded-full bg-blue-100 px-2 py-1 font-bold text-blue-700 ring-1 ring-blue-200">
+                          <Snowflake size={13} aria-hidden="true" />
                           アイス
                         </span>
                       ) : (
-                        <span className="inline-flex items-center text-orange-500/90 font-semibold">
-                          <span className="w-1.5 h-1.5 rounded-full bg-orange-400 mr-1" />
+                        <span className="inline-flex items-center gap-1 rounded-full bg-orange-100 px-2 py-1 font-bold text-orange-700 ring-1 ring-orange-200">
+                          <Sun size={13} aria-hidden="true" />
                           ホット
                         </span>
                       )}
                     </div>
                   </div>
                   {log.rating && (
-                    <div className="flex items-center bg-yellow-50 px-2 py-1 rounded-lg">
-                      <Star size={12} className="fill-yellow-400 text-yellow-400 mr-1" />
-                      <span className="text-xs font-bold text-yellow-700">{log.rating}</span>
+                    <div className="flex items-center rounded-xl bg-yellow-50 px-2.5 py-1.5 ring-1 ring-yellow-200">
+                      <Star size={16} className="mr-1 fill-yellow-400 text-yellow-500" />
+                      <span className="text-base font-black leading-none text-yellow-800">
+                        {log.rating}
+                      </span>
                     </div>
                   )}
                 </div>
