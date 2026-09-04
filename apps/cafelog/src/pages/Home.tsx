@@ -1,186 +1,122 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
+import { Button, Card, CardContent, CardHeader, CardTitle } from "@yahatapp/ui";
+import { Calendar, Coffee, Loader2, Plus, Star } from "lucide-react";
+import { CoffeeAttributes } from "@/components/CoffeeAttributes";
 import { useLiff } from "@/hooks/useLiff";
 import { getErrorMessage } from "@/lib/errors";
 import { cafelogQueries } from "@/lib/queries";
-import { CoffeeAttributes } from "@/components/CoffeeAttributes";
-import {
-  ArrowRight,
-  Coffee,
-  ClipboardList,
-  Plus,
-  Star,
-  Calendar,
-  MessageSquare,
-  Loader2,
-} from "lucide-react";
+
+const formatDate = (dateStr: string | null | undefined) => {
+  if (!dateStr) return null;
+
+  const date = new Date(dateStr);
+  const dayOfWeek = ["日", "月", "火", "水", "木", "金", "土"][date.getDay()];
+  return `${date.getMonth() + 1}月${date.getDate()}日(${dayOfWeek})`;
+};
+
 const HomePage = () => {
   const { profile } = useLiff();
-  const { data: logs = [], isPending: isLoading, error } = useQuery(cafelogQueries.logs());
-  const errorMessage = error ? getErrorMessage(error, "通信エラーが発生しました。") : null;
-
-  const renderStars = (rating: number | null | undefined) => {
-    if (!rating) return null;
-    const stars = [];
-    const fullStars = Math.floor(rating);
-    const hasHalf = rating % 1 !== 0;
-
-    for (let i = 1; i <= 5; i++) {
-      if (i <= fullStars) {
-        stars.push(<Star key={i} size={12} className="fill-cafe-accent text-cafe-accent" />);
-      } else if (i === fullStars + 1 && hasHalf) {
-        stars.push(
-          <div key={i} className="relative inline-block">
-            <Star size={12} className="text-cafe-secondary/20" />
-            <div className="absolute top-0 left-0 w-1/2 overflow-hidden">
-              <Star size={12} className="fill-cafe-accent text-cafe-accent" />
-            </div>
-          </div>,
-        );
-      } else {
-        stars.push(<Star key={i} size={12} className="text-cafe-secondary/20" />);
-      }
-    }
-    return <div className="flex items-center space-x-0.5">{stars}</div>;
-  };
-
-  const formatDate = (dateStr: string | null | undefined) => {
-    if (!dateStr) return "";
-    const date = new Date(dateStr);
-    return date.toLocaleDateString("ja-JP", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-    });
-  };
+  const logsQuery = useQuery({
+    ...cafelogQueries.logs(),
+    select: (logs) => logs.slice(0, 5),
+  });
+  const recentLogs = logsQuery.data ?? [];
+  const errorMessage = logsQuery.error
+    ? getErrorMessage(logsQuery.error, "記録の取得に失敗しました。")
+    : null;
 
   return (
-    <div className="space-y-6">
-      <div className="text-center py-8">
-        <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-cafe-primary/10 mb-4">
-          <Coffee className="text-cafe-primary" size={32} />
-        </div>
-        <h2 className="text-2xl font-bold text-cafe-text">
-          {profile ? `${profile.displayName}さん` : "Cafelog"}
+    <div className="animate-in fade-in slide-in-from-bottom-4 space-y-5 duration-500">
+      <section>
+        <h2 className="mb-1 text-2xl font-bold text-cafe-primary">
+          こんにちは、{profile?.displayName || "ゲスト"}さん
         </h2>
-        <p className="text-cafe-secondary mt-2">カフェコーヒーの記録をはじめよう</p>
-      </div>
+        <p className="text-sm text-cafe-secondary">最近出会った一杯を振り返りましょう。</p>
+      </section>
 
-      <Link
-        to="/logs/new"
-        className="group flex items-center gap-4 rounded-2xl border border-cafe-secondary/20 bg-white/80 p-5 shadow-sm backdrop-blur-md transition-all hover:border-cafe-primary/30 hover:shadow-md active:scale-[0.99]"
-      >
-        <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-cafe-primary text-white shadow-sm transition-transform group-hover:scale-105">
-          <Plus size={24} />
-        </span>
-        <span className="min-w-0 flex-1">
-          <span className="block font-bold text-cafe-text">新しい記録を追加</span>
-          <span className="mt-1 block text-xs leading-relaxed text-cafe-secondary">
-            カフェで飲んだコーヒーを記録する
-          </span>
-        </span>
-        <ArrowRight
-          aria-hidden="true"
-          className="shrink-0 text-cafe-secondary transition-transform group-hover:translate-x-1 group-hover:text-cafe-primary"
-          size={20}
-        />
-      </Link>
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle className="flex items-center justify-between text-base">
+            <span>最近のカフェ記録</span>
+            {recentLogs.length > 0 && (
+              <Button asChild variant="ghost" size="sm" className="h-7 px-2 text-cafe-secondary">
+                <Link to="/logs">すべて見る</Link>
+              </Button>
+            )}
+          </CardTitle>
+        </CardHeader>
 
-      {isLoading ? (
-        <div className="flex flex-col items-center justify-center py-8">
-          <Loader2 className="animate-spin text-cafe-primary mb-2" size={24} />
-          <p className="text-cafe-secondary text-xs">直近の記録を読み込み中...</p>
-        </div>
-      ) : errorMessage ? (
-        <div className="bg-red-50 border border-red-100 rounded-2xl p-4 text-center">
-          <p className="text-red-500 text-xs font-semibold">{errorMessage}</p>
-        </div>
-      ) : logs.length === 0 ? (
-        <div className="bg-white/80 backdrop-blur-md rounded-2xl border border-cafe-secondary/20 p-6 text-center shadow-sm space-y-4">
-          <p className="text-xs text-cafe-secondary leading-relaxed">
-            まだコーヒーの記録がありません。美味しい一杯を記録してみませんか？
-          </p>
-          <Link
-            to="/logs/new"
-            className="inline-flex items-center justify-center bg-cafe-primary text-white font-semibold py-2.5 px-4 rounded-xl shadow-md hover:bg-cafe-primary/90 active:scale-[0.98] transition-all space-x-1.5 text-xs"
-          >
-            <Plus size={14} />
-            <span>最初の記録を追加</span>
-          </Link>
-        </div>
-      ) : (
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h3 className="font-bold text-cafe-text text-sm flex items-center space-x-1.5">
-              <ClipboardList className="text-cafe-primary" size={16} />
-              <span>直近の記録</span>
-            </h3>
-            <Link
-              to="/logs"
-              className="text-xs font-bold text-cafe-primary hover:underline transition-all"
-            >
-              すべての記録を見る &rarr;
-            </Link>
-          </div>
-          <div className="grid gap-3">
-            {logs.slice(0, 3).map((log) => (
-              <Link
-                key={log.id}
-                to={`/logs/${log.id}`}
-                className="block min-w-0 overflow-hidden bg-white/80 backdrop-blur-md rounded-2xl border border-cafe-secondary/15 p-4 shadow-sm hover:shadow-md hover:border-cafe-primary/20 transition-all active:scale-[0.99]"
-              >
-                <div className="flex min-w-0 flex-col space-y-2">
-                  <div className="flex min-w-0 items-start justify-between gap-2">
-                    <div className="min-w-0 flex-1">
-                      <h4 className="break-words font-bold text-cafe-text text-sm leading-snug">
-                        {log.cafeName}
-                      </h4>
-                      <CoffeeAttributes coffee={log} compact />
-                    </div>
-                    {log.rating && (
-                      <div className="flex shrink-0 items-center space-x-1">
-                        {renderStars(log.rating)}
-                        <div className="inline-flex items-baseline text-cafe-secondary">
-                          <span className="text-xs font-extrabold text-cafe-primary leading-none">
-                            {log.rating}
-                          </span>
-                          <span className="text-[8px] font-semibold text-cafe-secondary/50 mx-0.5">
-                            /
-                          </span>
-                          <span className="text-[8px] font-semibold text-cafe-secondary">5</span>
-                        </div>
-                      </div>
+        <CardContent>
+          {logsQuery.isPending ? (
+            <div className="flex justify-center py-8" aria-label="直近の記録を読み込み中">
+              <Loader2 className="animate-spin text-cafe-primary/30" size={24} />
+            </div>
+          ) : errorMessage ? (
+            <div className="py-4 text-center">
+              <p className="mb-4 text-sm text-cafe-secondary">{errorMessage}</p>
+              <Button className="w-full" onClick={() => void logsQuery.refetch()}>
+                再読み込み
+              </Button>
+            </div>
+          ) : recentLogs.length === 0 ? (
+            <div className="py-4 text-center">
+              <p className="mb-4 text-sm text-cafe-secondary">まだ記録がありません。</p>
+              <Button asChild className="w-full">
+                <Link to="/logs/new">
+                  <Plus size={18} />
+                  最初の一杯を記録する
+                </Link>
+              </Button>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {recentLogs.map((log) => (
+                <Link
+                  key={log.id}
+                  to={`/logs/${log.id}`}
+                  className="flex min-w-0 items-start gap-3 rounded-xl border border-cafe-secondary/5 bg-cafe-background/60 p-2.5 transition-colors hover:bg-cafe-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cafe-primary"
+                >
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-cafe-primary/10 text-cafe-primary">
+                    <Coffee size={17} />
+                  </span>
+
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate text-xs font-bold text-cafe-text">
+                      {log.cafeName}
+                    </span>
+                    <CoffeeAttributes coffee={log} compact />
+                    {formatDate(log.visitDate) && (
+                      <span className="mt-1.5 flex items-center gap-1 text-[10px] text-cafe-secondary">
+                        <Calendar size={10} />
+                        {formatDate(log.visitDate)}
+                      </span>
                     )}
-                  </div>
+                  </span>
 
-                  {(log.note || log.price || log.visitDate) && (
-                    <div className="border-t border-cafe-secondary/5 pt-2 flex flex-wrap gap-x-3 gap-y-1 text-[10px] text-cafe-secondary">
-                      {log.visitDate && (
-                        <span className="flex items-center space-x-1">
-                          <Calendar size={10} />
-                          <span>{formatDate(log.visitDate)}</span>
-                        </span>
-                      )}
-                      {log.price !== null && log.price !== undefined && (
-                        <span className="flex items-center space-x-0.5">
-                          <span className="text-[8px] font-bold">¥</span>
-                          <span>{log.price.toLocaleString()}</span>
-                        </span>
-                      )}
-                      {log.note && (
-                        <span className="flex max-w-full min-w-0 flex-1 items-center space-x-1 truncate">
-                          <MessageSquare size={10} className="flex-shrink-0" />
-                          <span className="truncate">{log.note}</span>
-                        </span>
-                      )}
-                    </div>
+                  {log.rating && (
+                    <span className="flex shrink-0 items-center gap-1 text-[10px] font-bold text-cafe-primary">
+                      <Star size={11} className="fill-cafe-accent text-cafe-accent" />
+                      {log.rating}
+                    </span>
                   )}
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-      )}
+                </Link>
+              ))}
+
+              <Button asChild className="mt-3 w-full">
+                <Link to="/logs/new">
+                  <Plus size={18} />
+                  新しい一杯を記録する
+                </Link>
+              </Button>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      <Button asChild variant="outline" className="w-full">
+        <Link to="/logs">記録の履歴を見る</Link>
+      </Button>
     </div>
   );
 };
