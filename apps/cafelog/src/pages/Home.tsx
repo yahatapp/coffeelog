@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useLiff } from "@/hooks/useLiff";
 import { getErrorMessage } from "@/lib/errors";
 import { cafelogQueries } from "@/lib/queries";
+import { CoffeeAttributes } from "@/components/CoffeeAttributes";
 import {
   ArrowRight,
   Coffee,
@@ -13,39 +14,6 @@ import {
   MessageSquare,
   Loader2,
 } from "lucide-react";
-const formatCoffeeInfo = (log: {
-  origin?: string | null;
-  region?: string | null;
-  variety?: string | null;
-  farm?: string | null;
-  process?: string | null;
-  roast?: string | null;
-  isBlend?: boolean | null;
-  servingStyle?: string | null;
-}) => {
-  const parts = [];
-  if (log.origin) parts.push(log.origin);
-  if (log.region) parts.push(log.region);
-  if (log.farm) parts.push(log.farm);
-  if (log.variety) parts.push(log.variety);
-
-  let base = parts.join(" ");
-
-  const tags = [];
-  if (log.process) tags.push(log.process);
-  if (log.roast) tags.push(log.roast);
-  if (log.isBlend !== null && log.isBlend !== undefined) {
-    tags.push(log.isBlend ? "ブレンド" : "シングル");
-  }
-  if (log.servingStyle) tags.push(log.servingStyle === "hot" ? "ホット" : "アイス");
-
-  if (tags.length > 0) {
-    base += ` (${tags.join(" / ")})`;
-  }
-
-  return base.trim() || "";
-};
-
 const HomePage = () => {
   const { profile } = useLiff();
   const { data: logs = [], isPending: isLoading, error } = useQuery(cafelogQueries.logs());
@@ -167,11 +135,7 @@ const HomePage = () => {
                       <h4 className="break-words font-bold text-cafe-text text-sm leading-snug">
                         {log.cafeName}
                       </h4>
-                      {formatCoffeeInfo(log) && (
-                        <p className="break-words text-[10px] text-cafe-secondary font-medium mt-0.5">
-                          {formatCoffeeInfo(log)}
-                        </p>
-                      )}
+                      <CoffeeAttributes coffee={log} compact />
                     </div>
                     {log.rating && (
                       <div className="flex shrink-0 items-center space-x-1">

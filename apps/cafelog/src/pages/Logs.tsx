@@ -3,38 +3,7 @@ import { Link } from "react-router-dom";
 import { getErrorMessage } from "@/lib/errors";
 import { cafelogQueries } from "@/lib/queries";
 import { ClipboardList, Plus, Star, Calendar, MessageSquare, Loader2 } from "lucide-react";
-const formatCoffeeInfo = (log: {
-  origin?: string | null;
-  region?: string | null;
-  variety?: string | null;
-  farm?: string | null;
-  process?: string | null;
-  roast?: string | null;
-  isBlend?: boolean | null;
-  servingStyle?: string | null;
-}) => {
-  const parts = [];
-  if (log.origin) parts.push(log.origin);
-  if (log.region) parts.push(log.region);
-  if (log.farm) parts.push(log.farm);
-  if (log.variety) parts.push(log.variety);
-
-  let base = parts.join(" ");
-
-  const tags = [];
-  if (log.process) tags.push(log.process);
-  if (log.roast) tags.push(log.roast);
-  if (log.isBlend !== null && log.isBlend !== undefined) {
-    tags.push(log.isBlend ? "ブレンド" : "シングル");
-  }
-  if (log.servingStyle) tags.push(log.servingStyle === "hot" ? "ホット" : "アイス");
-
-  if (tags.length > 0) {
-    base += ` (${tags.join(" / ")})`;
-  }
-
-  return base.trim() || "";
-};
+import { CoffeeAttributes } from "@/components/CoffeeAttributes";
 
 const LogsPage = () => {
   const { data: logs = [], isPending: isLoading, error, refetch } = useQuery(cafelogQueries.logs());
@@ -157,11 +126,7 @@ const LogsPage = () => {
                     <h3 className="break-words font-bold text-cafe-text text-base leading-snug">
                       {log.cafeName}
                     </h3>
-                    {formatCoffeeInfo(log) && (
-                      <p className="break-words text-xs text-cafe-secondary font-medium mt-0.5">
-                        {formatCoffeeInfo(log)}
-                      </p>
-                    )}
+                    <CoffeeAttributes coffee={log} compact />
                   </div>
                   {log.rating && (
                     <div className="flex shrink-0 items-center space-x-1.5">
