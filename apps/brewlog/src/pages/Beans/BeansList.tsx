@@ -8,7 +8,7 @@ import { Card, CardContent } from "../../components/ui/card";
 import { OriginFlag } from "../../components/ui/OriginFlag";
 import { getCountryCode } from "@/utils/flag";
 import { CoffeeBeansIcon } from "../../components/ui/CoffeeBeansIcon";
-import { RoastLevelIndicator } from "../../components/ui/RoastLevelIndicator";
+import { getRoastConfig, getRoastGradient } from "../../components/ui/RoastLevelIndicator";
 
 interface BeanGroup {
   groupId: string;
@@ -133,13 +133,22 @@ const BeansList = () => {
             const { latestBean } = group;
             const brewCount = brewCountByGroupId.get(group.groupId) ?? 0;
             const displayDate = latestBean.purchaseDate ?? latestBean.roastDate;
+            const roastConfig = latestBean.roastLevel
+              ? getRoastConfig(latestBean.roastLevel)
+              : null;
             return (
               <Card
                 key={group.groupId}
-                className="hover:border-coffee-primary/30 transition-colors cursor-pointer group"
+                className="hover:border-coffee-primary/30 transition-colors cursor-pointer group overflow-hidden"
+                style={
+                  latestBean.roastLevel
+                    ? { backgroundImage: getRoastGradient(latestBean.roastLevel) }
+                    : undefined
+                }
                 onClick={() => setSelectedGroup(group)}
               >
                 <CardContent className="p-4 flex items-center gap-3">
+                  {roastConfig && <span className="sr-only">焙煎度: {roastConfig.label}</span>}
                   <div className="flex items-center flex-1 min-w-0 gap-3">
                     <div className="bg-coffee-background w-12 h-12 rounded-2xl flex items-center justify-center group-hover:bg-coffee-primary/10 transition-colors flex-shrink-0 overflow-hidden">
                       {(() => {
@@ -205,26 +214,21 @@ const BeansList = () => {
                       </div>
                     </div>
                   </div>
-                  <div className="flex items-center gap-1 flex-shrink-0">
-                    {latestBean.roastLevel && (
-                      <RoastLevelIndicator level={latestBean.roastLevel} showLabel={false} />
-                    )}
-                    <div className="flex items-center space-x-1">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          void navigate(`/beans/${latestBean.id}/edit`);
-                        }}
-                        className="p-2 text-coffee-secondary hover:text-coffee-primary hover:bg-coffee-secondary/10 rounded-full transition-colors"
-                        title="最新の豆を編集"
-                      >
-                        <Pencil size={16} />
-                      </button>
-                      <ChevronRight
-                        size={18}
-                        className="text-coffee-secondary/40 group-hover:text-coffee-primary transition-colors"
-                      />
-                    </div>
+                  <div className="flex items-center space-x-1 flex-shrink-0 rounded-full bg-white/75 p-0.5 shadow-sm backdrop-blur-[2px]">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        void navigate(`/beans/${latestBean.id}/edit`);
+                      }}
+                      className="p-2 text-coffee-secondary hover:text-coffee-primary hover:bg-coffee-secondary/10 rounded-full transition-colors"
+                      title="最新の豆を編集"
+                    >
+                      <Pencil size={16} />
+                    </button>
+                    <ChevronRight
+                      size={18}
+                      className="mr-1 text-coffee-secondary/60 group-hover:text-coffee-primary transition-colors"
+                    />
                   </div>
                 </CardContent>
               </Card>
