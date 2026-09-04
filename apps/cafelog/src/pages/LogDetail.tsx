@@ -13,6 +13,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { CafeLogForm } from "@/components/CafeLogForm";
+import { CoffeeAttributes } from "@/components/CoffeeAttributes";
 import { LogImages } from "@/components/LogImages";
 import type { CafeLogFormValues } from "@/lib/cafeLogForm";
 import { getErrorMessage } from "@/lib/errors";
@@ -23,27 +24,6 @@ import {
   updateLog,
   uploadLogImages,
 } from "@/lib/queries";
-
-const formatCoffeeInfo = (log: {
-  origin?: string | null;
-  region?: string | null;
-  variety?: string | null;
-  farm?: string | null;
-  process?: string | null;
-  roast?: string | null;
-  isBlend?: boolean | null;
-  servingStyle?: string | null;
-}) => {
-  const parts = [log.origin, log.region, log.farm, log.variety].filter(Boolean);
-  const tags = [
-    log.process,
-    log.roast,
-    log.isBlend == null ? null : log.isBlend ? "ブレンド" : "シングル",
-    log.servingStyle === "hot" ? "ホット" : log.servingStyle === "iced" ? "アイス" : null,
-  ].filter(Boolean);
-  const base = parts.join(" ");
-  return tags.length ? `${base} (${tags.join(" / ")})`.trim() : base || "豆の詳細情報なし";
-};
 
 const toFormValues = (log: LogResponse): CafeLogFormValues => ({
   cafeName: log.cafeName,
@@ -229,8 +209,8 @@ const LogDetailPage = () => {
           <div className="space-y-1">
             <h4 className="text-red-700 font-bold text-sm">記録を削除しますか？</h4>
             <p className="text-xs text-red-600 leading-relaxed">
-              この操作は取り消せません。&ldquo;{log.cafeName} ({formatCoffeeInfo(log)}
-              )&rdquo;の記録を本当に削除してもよろしいですか？
+              この操作は取り消せません。&ldquo;{log.cafeName}
+              &rdquo;の記録を本当に削除してもよろしいですか？
             </p>
           </div>
           <div className="flex space-x-3">
@@ -285,9 +265,10 @@ const LogDetailPage = () => {
                   <ExternalLink size={12} className="shrink-0" />
                 </a>
               )}
-              <p className="text-xs text-cafe-secondary break-words">{formatCoffeeInfo(log)}</p>
             </div>
           </div>
+
+          <CoffeeAttributes coffee={log} />
 
           <div className="grid grid-cols-2 gap-4 border-t border-b border-cafe-secondary/10 py-5">
             <div className="space-y-1">
