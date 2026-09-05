@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Plus, Coffee, ChevronRight, Loader2, Pencil, Sparkles } from "lucide-react";
@@ -10,18 +10,10 @@ import { getCountryCode } from "@/utils/flag";
 import { CoffeeBeansIcon } from "../../components/ui/CoffeeBeansIcon";
 import { getRoastConfig, getRoastGradient } from "../../components/ui/RoastLevelIndicator";
 
-interface BeanGroup {
-  groupId: string;
-  latestBean: Bean;
-  allBeans: Bean[];
-  versionCount: number;
-}
-
 const BeansList = () => {
   const navigate = useNavigate();
   const beansQuery = useQuery(beanQueries.all());
   const logsQuery = useQuery(logQueries.all());
-  const [selectedGroup, setSelectedGroup] = useState<BeanGroup | null>(null);
 
   const beans = beansQuery.data ?? [];
   const activeBeans = beans.filter((bean) => !bean.isArchived);
@@ -42,8 +34,6 @@ const BeansList = () => {
         return {
           groupId,
           latestBean: sorted[0],
-          allBeans: sorted,
-          versionCount: sorted.length,
         };
       })
       .toSorted(
@@ -145,7 +135,15 @@ const BeansList = () => {
                     ? { backgroundImage: getRoastGradient(latestBean.roastLevel) }
                     : undefined
                 }
-                onClick={() => setSelectedGroup(group)}
+                onClick={() => navigate(`/beans/${latestBean.id}`)}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    void navigate(`/beans/${latestBean.id}`);
+                  }
+                }}
+                role="link"
+                tabIndex={0}
               >
                 <CardContent className="p-4 flex items-center gap-3">
                   {roastConfig && <span className="sr-only">焙煎度: {roastConfig.label}</span>}
@@ -234,57 +232,6 @@ const BeansList = () => {
               </Card>
             );
           })}
-        </div>
-      )}
-
-      {selectedGroup && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 animate-in fade-in"
-          onClick={() => setSelectedGroup(null)}
-        >
-          <Card
-            className="w-full max-w-sm overflow-hidden shadow-2xl"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="p-4 bg-coffee-primary/5 border-b border-coffee-primary/10">
-              <h3 className="font-bold text-coffee-primary text-lg">
-                {selectedGroup.latestBean.name}
-              </h3>
-              <p className="text-sm text-coffee-secondary mt-1">
-                最新バージョン:{" "}
-                {selectedGroup.latestBean.version ||
-                  selectedGroup.latestBean.purchaseDate?.replace(/-/g, ".") ||
-                  "未設定"}
-              </p>
-            </div>
-            <div className="p-4 space-y-3">
-              <Button
-                className="w-full justify-start h-12 rounded-xl"
-                onClick={() => navigate(`/logs/new?beanId=${selectedGroup.latestBean.id}`)}
-              >
-                <Coffee size={18} className="mr-3" />
-                この豆で抽出記録をつける
-              </Button>
-              <Button
-                variant="outline"
-                className="w-full justify-start h-12 rounded-xl border-coffee-primary/20 hover:bg-coffee-primary/5"
-                onClick={() => navigate(`/beans/new?parentBeanId=${selectedGroup.groupId}`)}
-              >
-                <Plus size={18} className="mr-3 text-coffee-primary" />
-                同じ豆の新しいバージョン(購入)を追加する
-              </Button>
-            </div>
-            <div className="p-3 bg-gray-50 border-t border-gray-100 flex justify-end">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setSelectedGroup(null)}
-                className="rounded-lg"
-              >
-                キャンセル
-              </Button>
-            </div>
-          </Card>
         </div>
       )}
     </div>
