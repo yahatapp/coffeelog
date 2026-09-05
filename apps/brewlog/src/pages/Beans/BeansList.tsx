@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Plus, Coffee, ChevronRight, Loader2, Pencil, Sparkles } from "lucide-react";
@@ -8,20 +8,12 @@ import { Card, CardContent } from "../../components/ui/card";
 import { OriginFlag } from "../../components/ui/OriginFlag";
 import { getCountryCode } from "@/utils/flag";
 import { CoffeeBeansIcon } from "../../components/ui/CoffeeBeansIcon";
-import { RoastLevelIndicator } from "../../components/ui/RoastLevelIndicator";
-
-interface BeanGroup {
-  groupId: string;
-  latestBean: Bean;
-  allBeans: Bean[];
-  versionCount: number;
-}
+import { getRoastConfig, getRoastGradient } from "../../components/ui/RoastLevelIndicator";
 
 const BeansList = () => {
   const navigate = useNavigate();
   const beansQuery = useQuery(beanQueries.all());
   const logsQuery = useQuery(logQueries.all());
-  const [selectedGroup, setSelectedGroup] = useState<BeanGroup | null>(null);
 
   const beans = beansQuery.data ?? [];
   const activeBeans = beans.filter((bean) => !bean.isArchived);
@@ -42,8 +34,6 @@ const BeansList = () => {
         return {
           groupId,
           latestBean: sorted[0],
-          allBeans: sorted,
-          versionCount: sorted.length,
         };
       })
       .toSorted(
@@ -133,13 +123,30 @@ const BeansList = () => {
             const { latestBean } = group;
             const brewCount = brewCountByGroupId.get(group.groupId) ?? 0;
             const displayDate = latestBean.purchaseDate ?? latestBean.roastDate;
+            const roastConfig = latestBean.roastLevel
+              ? getRoastConfig(latestBean.roastLevel)
+              : null;
             return (
               <Card
                 key={group.groupId}
-                className="hover:border-coffee-primary/30 transition-colors cursor-pointer group"
-                onClick={() => setSelectedGroup(group)}
+                className="border-x-transparent hover:border-x-transparent hover:border-y-coffee-primary/30 transition-colors cursor-pointer group overflow-hidden"
+                style={
+                  latestBean.roastLevel
+                    ? { backgroundImage: getRoastGradient(latestBean.roastLevel) }
+                    : undefined
+                }
+                onClick={() => navigate(`/beans/${latestBean.id}`)}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    void navigate(`/beans/${latestBean.id}`);
+                  }
+                }}
+                role="link"
+                tabIndex={0}
               >
                 <CardContent className="p-4 flex items-center gap-3">
+                  {roastConfig && <span className="sr-only">焙煎度: {roastConfig.label}</span>}
                   <div className="flex items-center flex-1 min-w-0 gap-3">
                     <div className="bg-coffee-background w-12 h-12 rounded-2xl flex items-center justify-center group-hover:bg-coffee-primary/10 transition-colors flex-shrink-0 overflow-hidden">
                       {(() => {
@@ -177,11 +184,11 @@ const BeansList = () => {
                             ? "抽出回数を取得中"
                             : logsQuery.isError
                               ? "抽出回数未取得"
-                              : `${brewCount}回抽出`}
+                              : `${brewCount}杯`}
                         </span>
                         <span>
                           {displayDate
-                            ? `${latestBean.purchaseDate ? "購入" : "焙煎"} ${displayDate.replace(/-/g, ".")}`
+                            ? `${latestBean.purchaseDate ? "" : "焙煎 "}${displayDate.replace(/-/g, ".")}`
                             : "日付未設定"}
                         </span>
                       </div>
@@ -205,82 +212,26 @@ const BeansList = () => {
                       </div>
                     </div>
                   </div>
-                  <div className="flex items-center gap-1 flex-shrink-0">
-                    {latestBean.roastLevel && (
-                      <RoastLevelIndicator level={latestBean.roastLevel} showLabel={false} />
-                    )}
-                    <div className="flex items-center space-x-1">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          void navigate(`/beans/${latestBean.id}/edit`);
-                        }}
-                        className="p-2 text-coffee-secondary hover:text-coffee-primary hover:bg-coffee-secondary/10 rounded-full transition-colors"
-                        title="最新の豆を編集"
-                      >
-                        <Pencil size={16} />
-                      </button>
-                      <ChevronRight
-                        size={18}
-                        className="text-coffee-secondary/40 group-hover:text-coffee-primary transition-colors"
-                      />
-                    </div>
+                  <div className="flex items-center space-x-1 flex-shrink-0 rounded-full bg-white/75 p-0.5 shadow-sm backdrop-blur-[2px]">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        void navigate(`/beans/${latestBean.id}/edit`);
+                      }}
+                      className="p-2 text-coffee-secondary hover:text-coffee-primary hover:bg-coffee-secondary/10 rounded-full transition-colors"
+                      title="最新の豆を編集"
+                    >
+                      <Pencil size={16} />
+                    </button>
+                    <ChevronRight
+                      size={18}
+                      className="mr-1 text-coffee-secondary/60 group-hover:text-coffee-primary transition-colors"
+                    />
                   </div>
                 </CardContent>
               </Card>
             );
           })}
-        </div>
-      )}
-
-      {selectedGroup && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 animate-in fade-in"
-          onClick={() => setSelectedGroup(null)}
-        >
-          <Card
-            className="w-full max-w-sm overflow-hidden shadow-2xl"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="p-4 bg-coffee-primary/5 border-b border-coffee-primary/10">
-              <h3 className="font-bold text-coffee-primary text-lg">
-                {selectedGroup.latestBean.name}
-              </h3>
-              <p className="text-sm text-coffee-secondary mt-1">
-                最新バージョン:{" "}
-                {selectedGroup.latestBean.version ||
-                  selectedGroup.latestBean.purchaseDate?.replace(/-/g, ".") ||
-                  "未設定"}
-              </p>
-            </div>
-            <div className="p-4 space-y-3">
-              <Button
-                className="w-full justify-start h-12 rounded-xl"
-                onClick={() => navigate(`/logs/new?beanId=${selectedGroup.latestBean.id}`)}
-              >
-                <Coffee size={18} className="mr-3" />
-                この豆で抽出記録をつける
-              </Button>
-              <Button
-                variant="outline"
-                className="w-full justify-start h-12 rounded-xl border-coffee-primary/20 hover:bg-coffee-primary/5"
-                onClick={() => navigate(`/beans/new?parentBeanId=${selectedGroup.groupId}`)}
-              >
-                <Plus size={18} className="mr-3 text-coffee-primary" />
-                同じ豆の新しいバージョン(購入)を追加する
-              </Button>
-            </div>
-            <div className="p-3 bg-gray-50 border-t border-gray-100 flex justify-end">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setSelectedGroup(null)}
-                className="rounded-lg"
-              >
-                キャンセル
-              </Button>
-            </div>
-          </Card>
         </div>
       )}
     </div>

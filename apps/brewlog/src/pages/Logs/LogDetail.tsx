@@ -11,6 +11,7 @@ import {
   User,
   Info,
   Check,
+  ChevronRight,
 } from "lucide-react";
 import { logQueries, type BrewLog, type BrewLogResponse } from "@/lib/queries";
 import { Button, cn } from "../../components/ui/button";
@@ -121,16 +122,21 @@ const LogDetail = () => {
             コーヒー豆
           </span>
           <div className="flex justify-between items-center mt-1">
-            <div>
+            <button
+              type="button"
+              onClick={() => navigate(`/beans/${log.bean.id}`)}
+              className="group min-w-0 rounded-xl -m-2 p-2 text-left transition-colors hover:bg-coffee-primary/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coffee-primary"
+              aria-label={`${log.bean.name}の詳細を見る`}
+            >
               <h3 className="text-lg font-bold text-coffee-primary leading-tight">
                 {log.bean.name}
-                {log.bean.version && (
-                  <span className="text-sm font-normal text-coffee-secondary ml-1.5">
-                    ({log.bean.version})
-                  </span>
-                )}
+                <ChevronRight
+                  size={16}
+                  className="ml-1 inline transition-transform group-hover:translate-x-0.5"
+                  aria-hidden="true"
+                />
               </h3>
-              <div className="flex flex-col items-start gap-y-1 mt-1.5">
+              <div className="mt-1.5">
                 {log.bean.origin && (
                   <div className="flex items-center gap-1.5">
                     <span className="text-xs text-coffee-secondary">産地:</span>
@@ -140,16 +146,8 @@ const LogDetail = () => {
                     </span>
                   </div>
                 )}
-                {log.bean.processMethod && (
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-xs text-coffee-secondary">精製方法:</span>
-                    <span className="text-xs text-coffee-secondary font-medium">
-                      {log.bean.processMethod}
-                    </span>
-                  </div>
-                )}
               </div>
-            </div>
+            </button>
             <div className="flex flex-col items-end gap-1.5 ml-4">
               {log.rating && (
                 <div className="flex items-center bg-yellow-400/10 border border-yellow-400/25 px-2.5 py-1 rounded-xl">

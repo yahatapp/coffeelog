@@ -64,6 +64,12 @@ export const getRoastConfig = (level: number) => {
   }
 };
 
+export const getRoastGradient = (level: number) => {
+  const { color } = getRoastConfig(level);
+
+  return `linear-gradient(90deg, #ffffff 0%, #ffffff 28%, ${color}26 52%, ${color} 100%)`;
+};
+
 export const RoastLevelIndicator: React.FC<RoastLevelIndicatorProps> = ({
   level,
   className = "",
