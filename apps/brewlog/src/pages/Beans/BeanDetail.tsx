@@ -1,6 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, Coffee, Edit2, Loader2, MapPin, NotebookText, Store } from "lucide-react";
+import {
+  ArrowLeft,
+  Coffee,
+  CopyPlus,
+  Edit2,
+  Loader2,
+  MapPin,
+  NotebookText,
+  Store,
+} from "lucide-react";
 import { beanQueries } from "@/lib/queries";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -114,19 +123,28 @@ const BeanDetail = () => {
         </CardContent>
       </Card>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="space-y-3">
+        <div className="grid grid-cols-2 gap-3">
+          <Button
+            variant="outline"
+            className="h-12 rounded-2xl border-coffee-primary/30"
+            onClick={() => navigate(`/beans/${bean.id}/edit`)}
+          >
+            <Edit2 size={17} className="mr-2" /> 編集する
+          </Button>
+          <Button
+            className="h-12 rounded-2xl shadow-md"
+            onClick={() => navigate(`/logs/new?beanId=${bean.id}`)}
+          >
+            <Coffee size={18} className="mr-2" /> 淹れる
+          </Button>
+        </div>
         <Button
           variant="outline"
-          className="h-12 rounded-2xl border-coffee-primary/30"
-          onClick={() => navigate(`/beans/${bean.id}/edit`)}
+          className="h-12 w-full rounded-2xl border-coffee-primary/30"
+          onClick={() => navigate(`/beans/new?parentBeanId=${bean.parentBeanId ?? bean.id}`)}
         >
-          <Edit2 size={17} className="mr-2" /> 編集する
-        </Button>
-        <Button
-          className="h-12 rounded-2xl shadow-md"
-          onClick={() => navigate(`/logs/new?beanId=${bean.id}`)}
-        >
-          <Coffee size={18} className="mr-2" /> 淹れる
+          <CopyPlus size={17} className="mr-2" /> 同じ豆の新しいバージョンを追加する
         </Button>
       </div>
     </div>
