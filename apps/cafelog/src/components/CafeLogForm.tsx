@@ -5,6 +5,7 @@ import { ImagePicker } from "@/components/ImagePicker";
 import { ProcessField } from "@/components/ProcessField";
 import { Segment } from "@/components/Segment";
 import { cafeLogFormSchema, type CafeLogFormValues } from "@/lib/cafeLogForm";
+import { FREQUENT_PREFECTURES, PREFECTURE_GROUPS } from "@/lib/prefectures";
 
 type CafeLogFormProps = {
   defaultValues: CafeLogFormValues;
@@ -109,6 +110,44 @@ export const CafeLogForm = ({
               {errorMessage(field.state.meta.errors) && (
                 <p className="mt-1 text-xs text-red-600">{errorMessage(field.state.meta.errors)}</p>
               )}
+            </div>
+          )}
+        </form.Field>
+
+        <form.Field name="prefecture">
+          {(field) => (
+            <div>
+              <label
+                htmlFor="cafe-prefecture"
+                className="text-xs font-bold text-cafe-text block mb-1.5"
+              >
+                都道府県
+              </label>
+              <select
+                id="cafe-prefecture"
+                value={field.state.value}
+                onChange={(event) => field.handleChange(event.target.value)}
+                onBlur={field.handleBlur}
+                className="w-full bg-cafe-background border border-cafe-secondary/20 rounded-xl px-4 py-3 text-sm text-cafe-text focus:outline-none focus:ring-2 focus:ring-cafe-primary/10 focus:border-cafe-primary/60 transition-all"
+              >
+                <option value="">選択してください</option>
+                <optgroup label="よく行く都道府県">
+                  {FREQUENT_PREFECTURES.map((prefecture) => (
+                    <option key={prefecture} value={prefecture}>
+                      {prefecture}
+                    </option>
+                  ))}
+                </optgroup>
+                {PREFECTURE_GROUPS.map((group) => (
+                  <optgroup key={group.label} label={group.label}>
+                    {group.prefectures.map((prefecture) => (
+                      <option key={prefecture} value={prefecture}>
+                        {prefecture}
+                      </option>
+                    ))}
+                  </optgroup>
+                ))}
+              </select>
             </div>
           )}
         </form.Field>

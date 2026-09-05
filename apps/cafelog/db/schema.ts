@@ -37,6 +37,7 @@ export const cafeLogs = cafelogSchema.table("cafe_logs", {
     .references(() => profiles.lineUserId),
   cafeName: text("cafe_name").notNull(),
   cafeUrl: text("cafe_url"),
+  prefecture: text("prefecture"),
   origin: text("origin"),
   region: text("region"),
   variety: text("variety"),
