@@ -28,10 +28,6 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <div className="flex flex-col min-h-screen bg-cafe-background text-cafe-text">
-      <header className="sticky top-0 z-10 bg-white/80 backdrop-blur-md border-b border-cafe-secondary/20 p-4">
-        <h1 className="text-xl font-bold text-cafe-primary tracking-tight">Cafelog</h1>
-      </header>
-
       <main className="flex-1 pb-24 p-4 max-w-md mx-auto w-full">{children}</main>
 
       <nav className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-cafe-secondary/15 flex justify-around items-center px-4 py-2 pb-8 z-20 shadow-lg shadow-cafe-primary/5">
