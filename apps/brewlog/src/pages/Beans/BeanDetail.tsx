@@ -1,16 +1,18 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   ArrowLeft,
   Coffee,
   CopyPlus,
   Edit2,
+  Archive,
   Loader2,
   MapPin,
   NotebookText,
   Store,
+  Trash2,
 } from "lucide-react";
-import { beanQueries } from "@/lib/queries";
+import { beanQueries, mutations, queryKeys } from "@/lib/queries";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { OriginFlag } from "@/components/ui/OriginFlag";
@@ -28,7 +30,23 @@ const DetailRow = ({ label, value }: { label: string; value: React.ReactNode }) 
 const BeanDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const beanQuery = useQuery(beanQueries.detail(id ?? ""));
+  const archiveMutation = useMutation({
+    mutationFn: ({ beanId, isArchived }: { beanId: string; isArchived: boolean }) =>
+      mutations.updateBean({ param: { id: beanId }, json: { isArchived } }),
+    onSuccess: async (bean) => {
+      queryClient.setQueryData(queryKeys.bean(bean.id), bean);
+      await queryClient.invalidateQueries({ queryKey: queryKeys.beans });
+    },
+  });
+  const deleteMutation = useMutation({
+    mutationFn: mutations.deleteBean,
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: queryKeys.beans });
+      void navigate("/beans");
+    },
+  });
 
   if (beanQuery.isPending) {
     return (
@@ -66,6 +84,31 @@ const BeanDetail = () => {
         </Button>
         <h2 className="text-xl font-bold text-coffee-primary">豆の詳細</h2>
       </div>
+
+      <div className="grid grid-cols-2 gap-3">
+        <Button
+          variant="outline"
+          className="h-11 rounded-2xl border-coffee-primary/30"
+          disabled={bean.isArchived}
+          onClick={() => navigate(`/beans/new?parentBeanId=${bean.parentBeanId ?? bean.id}`)}
+        >
+          <CopyPlus size={16} className="mr-2" /> バージョン追加
+        </Button>
+        <Button
+          variant="outline"
+          className="h-11 rounded-2xl border-coffee-primary/30"
+          disabled={bean.isArchived}
+          onClick={() => navigate(`/beans/${bean.id}/edit`)}
+        >
+          <Edit2 size={16} className="mr-2" /> 編集
+        </Button>
+      </div>
+
+      {bean.isArchived && (
+        <p className="rounded-xl bg-coffee-secondary/10 px-4 py-3 text-sm text-coffee-secondary">
+          この豆はアーカイブ済みのため、編集・バージョン追加・抽出記録はできません。
+        </p>
+      )}
 
       <Card className="overflow-hidden border-2 border-coffee-primary/10 shadow-md">
         <div className="bg-coffee-primary/5 p-5">
@@ -124,28 +167,42 @@ const BeanDetail = () => {
       </Card>
 
       <div className="space-y-3">
-        <div className="grid grid-cols-2 gap-3">
+        <Button
+          className="h-12 w-full rounded-2xl shadow-md"
+          disabled={bean.isArchived}
+          onClick={() => navigate(`/logs/new?beanId=${bean.id}`)}
+        >
+          <Coffee size={18} className="mr-2" /> 淹れる
+        </Button>
+        <div className="flex flex-col items-center gap-1">
           <Button
-            variant="outline"
-            className="h-12 rounded-2xl border-coffee-primary/30"
-            onClick={() => navigate(`/beans/${bean.id}/edit`)}
+            variant="ghost"
+            disabled={archiveMutation.isPending || deleteMutation.isPending}
+            onClick={() =>
+              archiveMutation.mutate({ beanId: bean.id, isArchived: !bean.isArchived })
+            }
           >
-            <Edit2 size={17} className="mr-2" /> 編集する
+            <Archive size={16} className="mr-2" />
+            {bean.isArchived ? "アーカイブから戻す" : "アーカイブする"}
           </Button>
           <Button
-            className="h-12 rounded-2xl shadow-md"
-            onClick={() => navigate(`/logs/new?beanId=${bean.id}`)}
+            variant="ghost"
+            className="text-red-600 hover:bg-red-50 hover:text-red-700"
+            disabled={archiveMutation.isPending || deleteMutation.isPending}
+            onClick={() => {
+              if (window.confirm("この豆を削除しますか？抽出記録は削除されません。")) {
+                deleteMutation.mutate(bean.id);
+              }
+            }}
           >
-            <Coffee size={18} className="mr-2" /> 淹れる
+            <Trash2 size={16} className="mr-2" /> 削除する
           </Button>
         </div>
-        <Button
-          variant="outline"
-          className="h-12 w-full rounded-2xl border-coffee-primary/30"
-          onClick={() => navigate(`/beans/new?parentBeanId=${bean.parentBeanId ?? bean.id}`)}
-        >
-          <CopyPlus size={17} className="mr-2" /> 同じ豆の新しいバージョンを追加する
-        </Button>
+        {(archiveMutation.isError || deleteMutation.isError) && (
+          <p className="text-center text-sm text-red-600">
+            操作に失敗しました。もう一度お試しください。
+          </p>
+        )}
       </div>
     </div>
   );

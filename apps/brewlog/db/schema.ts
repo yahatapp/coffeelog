@@ -61,6 +61,7 @@ export const beans = brewlogSchema.table("beans", {
   processMethod: text("process_method"),
   note: text("note"),
   isArchived: boolean("is_archived").default(false).notNull(),
+  deletedAt: timestamp("deleted_at"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 

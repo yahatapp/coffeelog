@@ -89,6 +89,7 @@ export type UpdateGrinderRequest = InferRequestType<(typeof api.api.grinders)[":
 export const mutations = {
   createBean: (options: CreateBeanRequest) => parseOkResponse(api.api.beans.$post(options)),
   updateBean: (options: UpdateBeanRequest) => parseOkResponse(api.api.beans[":id"].$patch(options)),
+  deleteBean: (id: string) => parseOkResponse(api.api.beans[":id"].$delete({ param: { id } })),
   createLog: (options: CreateLogRequest) => parseOkResponse(api.api.logs.$post(options)),
   updateLog: (options: UpdateLogRequest) => parseOkResponse(api.api.logs[":id"].$patch(options)),
   createDripper: (options: CreateDripperRequest) =>
