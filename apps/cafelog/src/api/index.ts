@@ -6,6 +6,7 @@ import { profiles, cafeLogs, cafeLogImages } from "../../db/schema";
 import { and, asc, eq, desc } from "drizzle-orm";
 import { z } from "zod";
 import { HTTPException } from "hono/http-exception";
+import { PREFECTURES } from "@/lib/prefectures";
 
 const initSchema = z.object({
   displayName: z.string(),
@@ -17,10 +18,12 @@ const cafeUrlSchema = z.url().refine((url) => ["http:", "https:"].includes(new U
 });
 
 const servingStyleSchema = z.enum(["hot", "iced"]);
+const prefectureSchema = z.enum(PREFECTURES);
 
 const createLogSchema = z.object({
   cafeName: z.string().min(1),
   cafeUrl: cafeUrlSchema.optional().nullable(),
+  prefecture: prefectureSchema.optional().nullable(),
   origin: z.string().optional().nullable(),
   region: z.string().optional().nullable(),
   variety: z.string().optional().nullable(),
@@ -38,6 +41,7 @@ const createLogSchema = z.object({
 const updateLogSchema = z.object({
   cafeName: z.string().min(1).optional(),
   cafeUrl: cafeUrlSchema.optional().nullable(),
+  prefecture: prefectureSchema.optional().nullable(),
   origin: z.string().optional().nullable(),
   region: z.string().optional().nullable(),
   variety: z.string().optional().nullable(),

@@ -64,6 +64,13 @@
       "when": 1787445205685,
       "tag": "0008_massive_multiple_man",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1788530311871,
+      "tag": "0009_unknown_arclight",
+      "breakpoints": true
     }
   ]
 }

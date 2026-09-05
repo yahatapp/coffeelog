@@ -1,9 +1,11 @@
 import { z } from "zod";
 import type { SelectedImage } from "@/components/ImagePicker";
+import { PREFECTURES } from "@/lib/prefectures";
 
 export type CafeLogFormValues = {
   cafeName: string;
   cafeUrl: string;
+  prefecture: string;
   origin: string;
   region: string;
   variety: string;
@@ -39,6 +41,7 @@ const optionalPriceSchema = z
 export const cafeLogFormSchema = z.object({
   cafeName: z.string().trim().min(1, "店舗名は必須項目です。"),
   cafeUrl: optionalUrlSchema,
+  prefecture: z.union([z.literal(""), z.enum(PREFECTURES)]),
   origin: z.string(),
   region: z.string(),
   variety: z.string(),
@@ -63,6 +66,7 @@ export const createCafeLogDefaults = (): CafeLogFormValues => {
   return {
     cafeName: "",
     cafeUrl: "",
+    prefecture: "",
     origin: "",
     region: "",
     variety: "",
@@ -82,6 +86,7 @@ export const createCafeLogDefaults = (): CafeLogFormValues => {
 export const toCafeLogPayload = (values: CafeLogFormValues) => ({
   cafeName: values.cafeName.trim(),
   cafeUrl: values.cafeUrl.trim() || null,
+  prefecture: values.prefecture || null,
   origin: values.origin.trim() || null,
   region: values.region.trim() || null,
   variety: values.variety.trim() || null,

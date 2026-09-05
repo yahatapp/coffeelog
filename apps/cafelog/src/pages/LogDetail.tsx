@@ -9,6 +9,7 @@ import {
   ExternalLink,
   Loader2,
   MessageSquare,
+  MapPin,
   Star,
   Trash2,
 } from "lucide-react";
@@ -28,6 +29,7 @@ import {
 const toFormValues = (log: LogResponse): CafeLogFormValues => ({
   cafeName: log.cafeName,
   cafeUrl: log.cafeUrl ?? "",
+  prefecture: log.prefecture ?? "",
   origin: log.origin ?? "",
   region: log.region ?? "",
   variety: log.variety ?? "",
@@ -254,6 +256,12 @@ const LogDetailPage = () => {
               <h3 className="text-xl font-bold text-cafe-text leading-tight break-words">
                 {log.cafeName}
               </h3>
+              {log.prefecture && (
+                <p className="flex items-center gap-1 text-xs font-semibold text-cafe-secondary">
+                  <MapPin size={12} />
+                  {log.prefecture}
+                </p>
+              )}
               {log.cafeUrl && (
                 <a
                   href={log.cafeUrl}
