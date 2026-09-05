@@ -27,13 +27,13 @@ const AddLog = () => {
       if (!previous || new Date(bean.createdAt).getTime() > new Date(previous.createdAt).getTime())
         latest.set(groupId, bean);
     }
-    const unique = [...latest.values()].toSorted(
-      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-    );
+    const unique = [...latest.values()]
+      .filter((bean) => !bean.isArchived)
+      .toSorted((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
     const paramBeanId = searchParams.get("beanId");
     if (paramBeanId && !unique.some((bean) => bean.id === paramBeanId)) {
       const selected = source.find((bean) => bean.id === paramBeanId);
-      if (selected) unique.unshift(selected);
+      if (selected && !selected.isArchived) unique.unshift(selected);
     }
     return unique;
   }, [allBeans, searchParams]);

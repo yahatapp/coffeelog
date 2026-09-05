@@ -12,7 +12,7 @@ import {
   grinders,
   brewPours,
 } from "../../db/schema";
-import { eq, and, desc } from "drizzle-orm";
+import { eq, and, desc, isNull } from "drizzle-orm";
 import { z } from "zod";
 import { HTTPException } from "hono/http-exception";
 import type { Env } from "./types";
@@ -95,7 +95,7 @@ const api = app
     const db = getDb(c.env.DATABASE_URL);
     return c.json(
       await db.query.beans.findMany({
-        where: eq(beansTable.householdId, householdId),
+        where: and(eq(beansTable.householdId, householdId), isNull(beansTable.deletedAt)),
         orderBy: [desc(beansTable.createdAt)],
       }),
     );
@@ -104,7 +104,11 @@ const api = app
     const householdId = await getHouseholdId(c);
     const db = getDb(c.env.DATABASE_URL);
     const bean = await db.query.beans.findFirst({
-      where: and(eq(beansTable.id, c.req.param("id")), eq(beansTable.householdId, householdId)),
+      where: and(
+        eq(beansTable.id, c.req.param("id")),
+        eq(beansTable.householdId, householdId),
+        isNull(beansTable.deletedAt),
+      ),
     });
     if (!bean) throw new HTTPException(404, { message: "Bean not found" });
     return c.json(bean);
@@ -112,23 +116,70 @@ const api = app
   .post("/api/beans", zValidator("json", createBeanSchema), async (c) => {
     const householdId = await getHouseholdId(c);
     const db = getDb(c.env.DATABASE_URL);
+    const data = c.req.valid("json");
+    if (data.parentBeanId) {
+      const parent = await db.query.beans.findFirst({
+        where: and(
+          eq(beansTable.id, data.parentBeanId),
+          eq(beansTable.householdId, householdId),
+          eq(beansTable.isArchived, false),
+          isNull(beansTable.deletedAt),
+        ),
+      });
+      if (!parent) throw new HTTPException(409, { message: "Archived or missing bean" });
+    }
     const [newBean] = await db
       .insert(beansTable)
-      .values({ ...c.req.valid("json"), householdId })
+      .values({ ...data, householdId })
       .returning();
     return c.json(newBean);
   })
   .patch("/api/beans/:id", zValidator("json", updateBeanSchema), async (c) => {
     const householdId = await getHouseholdId(c);
     const db = getDb(c.env.DATABASE_URL);
+    const data = c.req.valid("json");
+    const existing = await db.query.beans.findFirst({
+      where: and(
+        eq(beansTable.id, c.req.param("id")),
+        eq(beansTable.householdId, householdId),
+        isNull(beansTable.deletedAt),
+      ),
+    });
+    if (!existing) throw new HTTPException(404, { message: "Bean not found" });
+    if (existing.isArchived && !(Object.keys(data).length === 1 && data.isArchived === false)) {
+      throw new HTTPException(409, { message: "Archived beans cannot be edited" });
+    }
     const [updatedBean] = await db
       .update(beansTable)
-      .set(c.req.valid("json"))
-      .where(and(eq(beansTable.id, c.req.param("id")), eq(beansTable.householdId, householdId)))
+      .set(data)
+      .where(
+        and(
+          eq(beansTable.id, c.req.param("id")),
+          eq(beansTable.householdId, householdId),
+          isNull(beansTable.deletedAt),
+        ),
+      )
       .returning();
 
     if (!updatedBean) throw new HTTPException(404, { message: "Bean not found" });
     return c.json(updatedBean);
+  })
+  .delete("/api/beans/:id", async (c) => {
+    const householdId = await getHouseholdId(c);
+    const db = getDb(c.env.DATABASE_URL);
+    const [deletedBean] = await db
+      .update(beansTable)
+      .set({ deletedAt: new Date() })
+      .where(
+        and(
+          eq(beansTable.id, c.req.param("id")),
+          eq(beansTable.householdId, householdId),
+          isNull(beansTable.deletedAt),
+        ),
+      )
+      .returning();
+    if (!deletedBean) throw new HTTPException(404, { message: "Bean not found" });
+    return c.json(deletedBean);
   })
   .get("/api/logs", async (c) => {
     const householdId = await getHouseholdId(c);
@@ -168,6 +219,16 @@ const api = app
     const db = getDb(c.env.DATABASE_URL);
 
     const { pours, ...logData } = c.req.valid("json");
+
+    const selectableBean = await db.query.beans.findFirst({
+      where: and(
+        eq(beansTable.id, logData.beanId),
+        eq(beansTable.householdId, householdId),
+        eq(beansTable.isArchived, false),
+        isNull(beansTable.deletedAt),
+      ),
+    });
+    if (!selectableBean) throw new HTTPException(409, { message: "Bean is not available" });
 
     const result = await db.transaction(async (tx) => {
       const [newLog] = await tx

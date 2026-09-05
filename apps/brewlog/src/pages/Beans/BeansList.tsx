@@ -1,7 +1,16 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { Plus, Coffee, ChevronRight, Loader2, Pencil, Sparkles } from "lucide-react";
+import {
+  ArrowDown,
+  ArrowUp,
+  Plus,
+  Coffee,
+  ChevronRight,
+  Loader2,
+  Pencil,
+  Sparkles,
+} from "lucide-react";
 import { beanQueries, logQueries, type Bean } from "@/lib/queries";
 import { Button } from "../../components/ui/button";
 import { Card, CardContent } from "../../components/ui/card";
@@ -14,33 +23,32 @@ const BeansList = () => {
   const navigate = useNavigate();
   const beansQuery = useQuery(beanQueries.all());
   const logsQuery = useQuery(logQueries.all());
+  const [showArchived, setShowArchived] = useState(false);
+  const [sortBy, setSortBy] = useState<"date" | "name" | "brews">("date");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
 
-  const beans = beansQuery.data ?? [];
-  const activeBeans = beans.filter((bean) => !bean.isArchived);
+  const beans = useMemo(() => beansQuery.data ?? [], [beansQuery.data]);
 
   const groupedBeans = useMemo(() => {
     const groups: Record<string, Bean[]> = {};
-    activeBeans.forEach((bean) => {
+    beans.forEach((bean) => {
       const groupId = bean.parentBeanId || bean.id;
       if (!groups[groupId]) groups[groupId] = [];
       groups[groupId].push(bean);
     });
 
-    return Object.entries(groups)
-      .map(([groupId, groupBeans]) => {
-        const sorted = [...groupBeans].toSorted(
-          (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-        );
-        return {
-          groupId,
-          latestBean: sorted[0],
-        };
-      })
-      .toSorted(
-        (a, b) =>
-          new Date(b.latestBean.createdAt).getTime() - new Date(a.latestBean.createdAt).getTime(),
+    return Object.entries(groups).map(([groupId, groupBeans]) => {
+      const sorted = [...groupBeans].toSorted(
+        (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
       );
-  }, [activeBeans]);
+      const latestBean = sorted[0];
+      return {
+        groupId,
+        latestBean,
+        isArchived: latestBean.isArchived,
+      };
+    });
+  }, [beans]);
 
   const brewCountByGroupId = useMemo(() => {
     const counts = new Map<string, number>();
@@ -53,6 +61,31 @@ const BeansList = () => {
     }
     return counts;
   }, [beansQuery.data, logsQuery.data]);
+
+  const visibleBeans = useMemo(() => {
+    const groups = groupedBeans.filter((group) => showArchived || !group.isArchived);
+    return groups.toSorted((a, b) => {
+      let comparison: number;
+      if (sortBy === "name") {
+        comparison = a.latestBean.name.localeCompare(b.latestBean.name, "ja");
+      } else if (sortBy === "brews") {
+        comparison =
+          (brewCountByGroupId.get(a.groupId) ?? 0) - (brewCountByGroupId.get(b.groupId) ?? 0);
+      } else {
+        comparison =
+          new Date(a.latestBean.createdAt).getTime() - new Date(b.latestBean.createdAt).getTime();
+      }
+      return sortOrder === "asc" ? comparison : -comparison;
+    });
+  }, [brewCountByGroupId, groupedBeans, showArchived, sortBy, sortOrder]);
+
+  const changeSort = (nextSort: typeof sortBy) => {
+    if (sortBy === nextSort) setSortOrder((order) => (order === "asc" ? "desc" : "asc"));
+    else {
+      setSortBy(nextSort);
+      setSortOrder(nextSort === "name" ? "asc" : "desc");
+    }
+  };
 
   if (beansQuery.isPending) {
     return (
@@ -87,6 +120,34 @@ const BeansList = () => {
         </Button>
       </div>
 
+      {groupedBeans.length > 0 && (
+        <div className="space-y-2 rounded-2xl border border-coffee-primary/10 bg-coffee-primary/5 p-3">
+          <label className="flex min-h-11 cursor-pointer items-center justify-between gap-3 text-sm font-semibold text-coffee-primary">
+            <span>アーカイブも表示</span>
+            <input
+              type="checkbox"
+              checked={showArchived}
+              onChange={(event) => setShowArchived(event.target.checked)}
+              className="h-5 w-5 accent-coffee-primary"
+            />
+          </label>
+          <div className="grid grid-cols-3 gap-1 rounded-xl bg-white/60 p-1">
+            {(["date", "name", "brews"] as const).map((option) => (
+              <button
+                key={option}
+                type="button"
+                onClick={() => changeSort(option)}
+                className={`flex min-h-11 items-center justify-center rounded-lg text-xs font-semibold ${sortBy === option ? "bg-white text-coffee-primary shadow-sm" : "text-coffee-secondary"}`}
+              >
+                {option === "date" ? "登録日" : option === "name" ? "豆名" : "抽出回数"}
+                {sortBy === option &&
+                  (sortOrder === "desc" ? <ArrowDown size={12} /> : <ArrowUp size={12} />)}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
       {logsQuery.isError && (
         <div
           className="flex items-center justify-between gap-3 rounded-xl bg-coffee-secondary/10 px-4 py-3 text-xs text-coffee-secondary"
@@ -104,11 +165,15 @@ const BeansList = () => {
         </div>
       )}
 
-      {groupedBeans.length === 0 ? (
+      {visibleBeans.length === 0 ? (
         <Card className="border-dashed border-2">
           <CardContent className="p-12 text-center">
             <Coffee className="mx-auto text-coffee-secondary/30 mb-4" size={48} />
-            <p className="text-coffee-secondary text-sm">登録されている豆はありません。</p>
+            <p className="text-coffee-secondary text-sm">
+              {groupedBeans.length > 0
+                ? "表示できる豆はありません。"
+                : "登録されている豆はありません。"}
+            </p>
             <p className="text-xs text-coffee-secondary/60 mt-2">
               お気に入りの豆を登録しましょう！
             </p>
@@ -119,7 +184,7 @@ const BeansList = () => {
         </Card>
       ) : (
         <div className="space-y-3">
-          {groupedBeans.map((group) => {
+          {visibleBeans.map((group) => {
             const { latestBean } = group;
             const brewCount = brewCountByGroupId.get(group.groupId) ?? 0;
             const displayDate = latestBean.purchaseDate ?? latestBean.roastDate;
@@ -167,6 +232,11 @@ const BeansList = () => {
                     </div>
                     <div className="min-w-0 flex-1 space-y-1.5">
                       <h3 className="font-bold text-coffee-text truncate">{latestBean.name}</h3>
+                      {group.isArchived && (
+                        <span className="inline-flex rounded-full bg-coffee-secondary/15 px-2 py-0.5 text-[10px] font-bold text-coffee-secondary">
+                          アーカイブ済み
+                        </span>
+                      )}
                       <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-coffee-secondary">
                         <span
                           className={`inline-flex items-center gap-1 font-medium ${
@@ -214,11 +284,12 @@ const BeansList = () => {
                   </div>
                   <div className="flex items-center space-x-1 flex-shrink-0 rounded-full bg-white/75 p-0.5 shadow-sm backdrop-blur-[2px]">
                     <button
+                      disabled={group.isArchived}
                       onClick={(e) => {
                         e.stopPropagation();
                         void navigate(`/beans/${latestBean.id}/edit`);
                       }}
-                      className="p-2 text-coffee-secondary hover:text-coffee-primary hover:bg-coffee-secondary/10 rounded-full transition-colors"
+                      className="p-2 text-coffee-secondary hover:text-coffee-primary hover:bg-coffee-secondary/10 rounded-full transition-colors disabled:cursor-not-allowed disabled:opacity-30"
                       title="最新の豆を編集"
                     >
                       <Pencil size={16} />
