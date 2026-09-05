@@ -6,6 +6,7 @@ import { LiffProvider, useLiff } from "./hooks/useLiff";
 import HomePage from "./pages/Home";
 import BeansPage from "./pages/Beans/BeansList";
 import AddBeanPage from "./pages/Beans/AddBean";
+import BeanDetailPage from "./pages/Beans/BeanDetail";
 import EditBeanPage from "./pages/Beans/EditBean";
 import LogsPage from "./pages/Logs/LogsList";
 import AddLogPage from "./pages/Logs/AddLog";
@@ -114,6 +115,7 @@ const AppContent = () => {
           <Route path="/" element={<HomePage />} />
           <Route path="/beans" element={<BeansPage />} />
           <Route path="/beans/new" element={<AddBeanPage />} />
+          <Route path="/beans/:id" element={<BeanDetailPage />} />
           <Route path="/beans/:id/edit" element={<EditBeanPage />} />
           <Route path="/logs" element={<LogsPage />} />
           <Route path="/logs/new" element={<AddLogPage />} />
