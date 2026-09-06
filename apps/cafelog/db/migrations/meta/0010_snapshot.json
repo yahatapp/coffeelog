@@ -82,12 +82,8 @@
           "tableFrom": "cafe_log_images",
           "tableTo": "cafe_logs",
           "schemaTo": "cafelog",
-          "columnsFrom": [
-            "cafe_log_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["cafe_log_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -97,9 +93,7 @@
         "cafe_log_images_object_key_unique": {
           "name": "cafe_log_images_object_key_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "object_key"
-          ]
+          "columns": ["object_key"]
         }
       },
       "policies": {},
@@ -183,12 +177,8 @@
           "tableFrom": "cafe_log_links",
           "tableTo": "cafe_logs",
           "schemaTo": "cafelog",
-          "columnsFrom": [
-            "cafe_log_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["cafe_log_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -326,12 +316,8 @@
           "tableFrom": "cafe_logs",
           "tableTo": "profiles",
           "schemaTo": "cafelog",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "line_user_id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["line_user_id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
