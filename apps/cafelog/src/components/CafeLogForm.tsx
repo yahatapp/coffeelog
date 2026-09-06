@@ -169,21 +169,46 @@ export const CafeLogForm = ({
           )}
         </form.Field>
 
-        <form.Field name="cafeUrl">
+        <form.Field name="cafeLinks" mode="array">
           {(field) => (
             <div>
-              <label htmlFor="cafe-url" className="text-xs font-bold text-cafe-text block mb-1.5">
-                お店のURL
-              </label>
-              <input
-                id="cafe-url"
-                type="url"
-                value={field.state.value}
-                onChange={(event) => field.handleChange(event.target.value)}
-                onBlur={field.handleBlur}
-                placeholder="https://example.com"
-                className="w-full bg-cafe-background border border-cafe-secondary/20 rounded-xl px-4 py-3 text-sm text-cafe-text placeholder-cafe-secondary/40 focus:outline-none focus:ring-2 focus:ring-cafe-primary/10 focus:border-cafe-primary/60 transition-all"
-              />
+              <label className="text-xs font-bold text-cafe-text block mb-1.5">お店のリンク</label>
+              <div className="space-y-2">
+                {field.state.value.map((_, index) => (
+                  <form.Field key={index} name={`cafeLinks[${index}]`}>
+                    {(linkField) => (
+                      <div className="flex gap-2">
+                        <input
+                          aria-label={`お店のリンク ${index + 1}`}
+                          type="url"
+                          value={linkField.state.value}
+                          onChange={(event) => linkField.handleChange(event.target.value)}
+                          onBlur={linkField.handleBlur}
+                          placeholder="Instagram・ホームページ・Google Map"
+                          className="min-w-0 flex-1 bg-cafe-background border border-cafe-secondary/20 rounded-xl px-4 py-3 text-sm text-cafe-text placeholder-cafe-secondary/40 focus:outline-none focus:ring-2 focus:ring-cafe-primary/10 focus:border-cafe-primary/60 transition-all"
+                        />
+                        <button
+                          type="button"
+                          aria-label="リンクを削除"
+                          onClick={() => field.removeValue(index)}
+                          className="p-3 text-cafe-secondary hover:text-red-500 rounded-xl"
+                        >
+                          <Minus size={18} />
+                        </button>
+                      </div>
+                    )}
+                  </form.Field>
+                ))}
+                {field.state.value.length < 10 && (
+                  <button
+                    type="button"
+                    onClick={() => field.pushValue("")}
+                    className="inline-flex items-center gap-1 text-xs font-bold text-cafe-primary hover:underline"
+                  >
+                    <Plus size={14} /> リンクを追加
+                  </button>
+                )}
+              </div>
               {errorMessage(field.state.meta.errors) && (
                 <p className="mt-1 text-xs text-red-600">{errorMessage(field.state.meta.errors)}</p>
               )}

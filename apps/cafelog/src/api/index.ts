@@ -2,11 +2,12 @@ import { Hono } from "hono";
 import { getDb } from "./db";
 import { authMiddleware } from "./middleware/auth";
 import { zValidator } from "@hono/zod-validator";
-import { profiles, cafeLogs, cafeLogImages } from "../../db/schema";
+import { profiles, cafeLogs, cafeLogImages, cafeLogLinks } from "../../db/schema";
 import { and, asc, eq, desc } from "drizzle-orm";
 import { z } from "zod";
 import { HTTPException } from "hono/http-exception";
 import { PREFECTURES } from "@/lib/prefectures";
+import { classifyCafeLink } from "@/lib/cafeLinks";
 
 const initSchema = z.object({
   displayName: z.string(),
@@ -19,10 +20,11 @@ const cafeUrlSchema = z.url().refine((url) => ["http:", "https:"].includes(new U
 
 const servingStyleSchema = z.enum(["hot", "iced"]);
 const prefectureSchema = z.enum(PREFECTURES);
+const cafeLinksSchema = z.array(cafeUrlSchema).max(10);
 
 const createLogSchema = z.object({
   cafeName: z.string().min(1),
-  cafeUrl: cafeUrlSchema.optional().nullable(),
+  cafeLinks: cafeLinksSchema.optional(),
   prefecture: prefectureSchema.optional().nullable(),
   origin: z.string().optional().nullable(),
   region: z.string().optional().nullable(),
@@ -40,7 +42,7 @@ const createLogSchema = z.object({
 
 const updateLogSchema = z.object({
   cafeName: z.string().min(1).optional(),
-  cafeUrl: cafeUrlSchema.optional().nullable(),
+  cafeLinks: cafeLinksSchema.optional(),
   prefecture: prefectureSchema.optional().nullable(),
   origin: z.string().optional().nullable(),
   region: z.string().optional().nullable(),
@@ -115,7 +117,7 @@ const api = app
     return c.json(
       await db.query.cafeLogs.findMany({
         where: eq(cafeLogs.userId, lineUserId),
-        with: { user: true },
+        with: { user: true, links: { orderBy: [asc(cafeLogLinks.position)] } },
         orderBy: [desc(cafeLogs.createdAt)],
       }),
     );
@@ -125,7 +127,7 @@ const api = app
     const db = getDb(c.env.DATABASE_URL);
     const log = await db.query.cafeLogs.findFirst({
       where: eq(cafeLogs.id, c.req.param("id")),
-      with: { user: true },
+      with: { user: true, links: { orderBy: [asc(cafeLogLinks.position)] } },
     });
     if (!log || log.userId !== lineUserId) {
       throw new HTTPException(404, { message: "Log not found" });
@@ -211,10 +213,27 @@ const api = app
     const lineUserId = c.get("lineUserId");
     const db = getDb(c.env.DATABASE_URL);
 
-    const [newLog] = await db
-      .insert(cafeLogs)
-      .values({ ...c.req.valid("json"), userId: lineUserId })
-      .returning();
+    const { cafeLinks, ...values } = c.req.valid("json");
+    const newLog = await db.transaction(async (tx) => {
+      const [created] = await tx
+        .insert(cafeLogs)
+        .values({ ...values, userId: lineUserId })
+        .returning();
+      const links = cafeLinks?.length
+        ? await tx
+            .insert(cafeLogLinks)
+            .values(
+              cafeLinks.map((url, position) => ({
+                cafeLogId: created.id,
+                url,
+                type: classifyCafeLink(url),
+                position,
+              })),
+            )
+            .returning()
+        : [];
+      return { ...created, links };
+    });
 
     return c.json(newLog);
   })
@@ -230,11 +249,35 @@ const api = app
       throw new HTTPException(404, { message: "Log not found" });
     }
 
-    const [updatedLog] = await db
-      .update(cafeLogs)
-      .set(c.req.valid("json"))
-      .where(eq(cafeLogs.id, c.req.param("id")))
-      .returning();
+    const { cafeLinks, ...values } = c.req.valid("json");
+    const updatedLog = await db.transaction(async (tx) => {
+      const [updated] = await tx
+        .update(cafeLogs)
+        .set(values)
+        .where(eq(cafeLogs.id, c.req.param("id")))
+        .returning();
+      let links = await tx.query.cafeLogLinks.findMany({
+        where: eq(cafeLogLinks.cafeLogId, updated.id),
+        orderBy: [asc(cafeLogLinks.position)],
+      });
+      if (cafeLinks) {
+        await tx.delete(cafeLogLinks).where(eq(cafeLogLinks.cafeLogId, updated.id));
+        links = cafeLinks.length
+          ? await tx
+              .insert(cafeLogLinks)
+              .values(
+                cafeLinks.map((url, position) => ({
+                  cafeLogId: updated.id,
+                  url,
+                  type: classifyCafeLink(url),
+                  position,
+                })),
+              )
+              .returning()
+          : [];
+      }
+      return { ...updated, links };
+    });
 
     return c.json(updatedLog);
   })

@@ -4,7 +4,7 @@ import { PREFECTURES } from "@/lib/prefectures";
 
 export type CafeLogFormValues = {
   cafeName: string;
-  cafeUrl: string;
+  cafeLinks: string[];
   prefecture: string;
   origin: string;
   region: string;
@@ -40,7 +40,7 @@ const optionalPriceSchema = z
 
 export const cafeLogFormSchema = z.object({
   cafeName: z.string().trim().min(1, "店舗名は必須項目です。"),
-  cafeUrl: optionalUrlSchema,
+  cafeLinks: z.array(optionalUrlSchema).max(10, "お店のリンクは10件まで登録できます。"),
   prefecture: z.union([z.literal(""), z.enum(PREFECTURES)]),
   origin: z.string(),
   region: z.string(),
@@ -65,7 +65,7 @@ export const createCafeLogDefaults = (): CafeLogFormValues => {
 
   return {
     cafeName: "",
-    cafeUrl: "",
+    cafeLinks: [""],
     prefecture: "",
     origin: "",
     region: "",
@@ -85,7 +85,7 @@ export const createCafeLogDefaults = (): CafeLogFormValues => {
 
 export const toCafeLogPayload = (values: CafeLogFormValues) => ({
   cafeName: values.cafeName.trim(),
-  cafeUrl: values.cafeUrl.trim() || null,
+  cafeLinks: values.cafeLinks.map((url) => url.trim()).filter(Boolean),
   prefecture: values.prefecture || null,
   origin: values.origin.trim() || null,
   region: values.region.trim() || null,

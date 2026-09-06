@@ -59,6 +59,37 @@ export const cafeLogsRelations = relations(cafeLogs, ({ one, many }) => ({
     references: [profiles.lineUserId],
   }),
   images: many(cafeLogImages),
+  links: many(cafeLogLinks),
+}));
+
+export const cafeLogLinks = cafelogSchema.table(
+  "cafe_log_links",
+  {
+    id: uuid("id")
+      .primaryKey()
+      .default(sql`gen_random_uuid()`),
+    cafeLogId: uuid("cafe_log_id")
+      .notNull()
+      .references(() => cafeLogs.id, { onDelete: "cascade" }),
+    url: text("url").notNull(),
+    type: text("type").notNull(),
+    position: integer("position").notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (table) => [
+    uniqueIndex("cafe_log_links_log_position_unique").on(table.cafeLogId, table.position),
+    check(
+      "cafe_log_links_type_check",
+      sql`${table.type} IN ('instagram', 'google_maps', 'website')`,
+    ),
+  ],
+);
+
+export const cafeLogLinksRelations = relations(cafeLogLinks, ({ one }) => ({
+  cafeLog: one(cafeLogs, {
+    fields: [cafeLogLinks.cafeLogId],
+    references: [cafeLogs.id],
+  }),
 }));
 
 // R2に保存した写真のメタデータ（画像本体はDBに保存しない）
