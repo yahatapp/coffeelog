@@ -71,6 +71,13 @@
       "when": 1788530311871,
       "tag": "0009_unknown_arclight",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1788661963511,
+      "tag": "0010_wise_human_cannonball",
+      "breakpoints": true
     }
   ]
 }

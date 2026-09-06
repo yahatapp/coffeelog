@@ -4,9 +4,11 @@ import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import {
   ArrowLeft,
   Calendar,
+  Camera,
   Coffee,
   Edit2,
   ExternalLink,
+  Globe,
   Loader2,
   MessageSquare,
   MapPin,
@@ -28,7 +30,7 @@ import {
 
 const toFormValues = (log: LogResponse): CafeLogFormValues => ({
   cafeName: log.cafeName,
-  cafeUrl: log.cafeUrl ?? "",
+  cafeLinks: log.links.length > 0 ? log.links.map((link) => link.url) : [""],
   prefecture: log.prefecture ?? "",
   origin: log.origin ?? "",
   region: log.region ?? "",
@@ -262,16 +264,37 @@ const LogDetailPage = () => {
                   {log.prefecture}
                 </p>
               )}
-              {log.cafeUrl && (
-                <a
-                  href={log.cafeUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex max-w-full items-center gap-1 text-xs font-semibold text-cafe-primary hover:underline"
-                >
-                  <span className="truncate">お店のページを開く</span>
-                  <ExternalLink size={12} className="shrink-0" />
-                </a>
+              {log.links.length > 0 && (
+                <div className="flex items-center gap-2 pt-1">
+                  {log.links.map((link) => {
+                    const Icon =
+                      link.type === "instagram"
+                        ? Camera
+                        : link.type === "google_maps"
+                          ? MapPin
+                          : Globe;
+                    const label =
+                      link.type === "instagram"
+                        ? "Instagram"
+                        : link.type === "google_maps"
+                          ? "Google Map"
+                          : "ホームページ";
+                    return (
+                      <a
+                        key={link.id}
+                        href={link.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={label}
+                        title={label}
+                        className="inline-flex items-center justify-center p-2 text-cafe-primary bg-cafe-primary/5 border border-cafe-primary/10 rounded-xl hover:bg-cafe-primary/10"
+                      >
+                        <Icon size={18} />
+                        <ExternalLink size={9} className="ml-0.5" />
+                      </a>
+                    );
+                  })}
+                </div>
               )}
             </div>
           </div>

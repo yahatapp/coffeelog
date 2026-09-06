@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { cafeLogFormSchema, createCafeLogDefaults, toCafeLogPayload } from "./cafeLogForm";
 import { FREQUENT_PREFECTURES, PREFECTURES } from "./prefectures";
+import { classifyCafeLink } from "./cafeLinks";
 
 describe("createCafeLogDefaults", () => {
   it("defaults the serving style to hot", () => {
@@ -30,6 +31,17 @@ describe("createCafeLogDefaults", () => {
         prefecture: "不明",
       }).success,
     ).toBe(false);
+  });
+});
+
+describe("classifyCafeLink", () => {
+  it.each([
+    ["https://www.instagram.com/example/", "instagram"],
+    ["https://maps.app.goo.gl/example", "google_maps"],
+    ["https://www.google.com/maps/place/example", "google_maps"],
+    ["https://example.com/shop", "website"],
+  ] as const)("classifies %s as %s", (url, type) => {
+    expect(classifyCafeLink(url)).toBe(type);
   });
 });
 
