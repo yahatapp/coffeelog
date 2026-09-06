@@ -1,8 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { Button, Card, CardContent, CardHeader, CardTitle } from "@yahatapp/ui";
-import { Calendar, Coffee, Loader2, Plus, Star } from "lucide-react";
-import { CoffeeAttributes } from "@/components/CoffeeAttributes";
+import { Loader2, MapPin, Plus, Star } from "lucide-react";
 import { useLiff } from "@/hooks/useLiff";
 import { getErrorMessage } from "@/lib/errors";
 import { cafelogQueries } from "@/lib/queries";
@@ -19,7 +18,7 @@ const HomePage = () => {
   const { profile } = useLiff();
   const logsQuery = useQuery({
     ...cafelogQueries.logs(),
-    select: (logs) => logs.slice(0, 5),
+    select: (logs) => logs.slice(0, 3),
   });
   const recentLogs = logsQuery.data ?? [];
   const errorMessage = logsQuery.error
@@ -70,40 +69,51 @@ const HomePage = () => {
               </Button>
             </div>
           ) : (
-            <div className="space-y-2">
+            <div>
               {recentLogs.map((log) => (
                 <Link
                   key={log.id}
                   to={`/logs/${log.id}`}
-                  className="flex min-w-0 items-start gap-3 rounded-xl border border-cafe-secondary/5 bg-cafe-background/60 p-2.5 transition-colors hover:bg-cafe-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cafe-primary"
+                  className="group flex min-w-0 items-center justify-between gap-3 border-b border-cafe-secondary/10 px-1 py-3 first:pt-1 transition-colors last:border-b-0 hover:bg-cafe-background/60 focus-visible:rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cafe-primary"
                 >
-                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-cafe-primary/10 text-cafe-primary">
-                    <Coffee size={17} />
-                  </span>
-
                   <span className="min-w-0 flex-1">
-                    <span className="block truncate text-xs font-bold text-cafe-text">
-                      {log.cafeName}
-                    </span>
-                    <CoffeeAttributes coffee={log} compact />
-                    {formatDate(log.visitDate) && (
-                      <span className="mt-1.5 flex items-center gap-1 text-[10px] text-cafe-secondary">
-                        <Calendar size={10} />
-                        {formatDate(log.visitDate)}
+                    <span className="flex min-w-0 items-center gap-2">
+                      <span className="truncate text-sm font-bold text-cafe-text">
+                        {log.cafeName}
                       </span>
-                    )}
-                  </span>
-
-                  {log.rating && (
-                    <span className="flex shrink-0 items-center gap-1 text-[10px] font-bold text-cafe-primary">
-                      <Star size={11} className="fill-cafe-accent text-cafe-accent" />
-                      {log.rating}
+                      {log.rating && (
+                        <span
+                          className="flex shrink-0 items-center gap-1 text-[11px] font-bold text-cafe-primary"
+                          aria-label={`評価 ${log.rating}`}
+                        >
+                          <Star
+                            aria-hidden="true"
+                            size={11}
+                            className="fill-cafe-accent text-cafe-accent"
+                          />
+                          {log.rating}
+                        </span>
+                      )}
                     </span>
-                  )}
+                    <span className="mt-1 flex min-w-0 items-center gap-2 text-[11px] text-cafe-secondary">
+                      {log.origin && (
+                        <span className="flex min-w-0 items-center gap-1">
+                          <MapPin aria-hidden="true" size={11} className="shrink-0" />
+                          <span className="truncate">{log.origin}</span>
+                        </span>
+                      )}
+                      {log.origin && formatDate(log.visitDate) && <span aria-hidden="true">•</span>}
+                      {formatDate(log.visitDate) && (
+                        <time className="shrink-0" dateTime={log.visitDate ?? undefined}>
+                          {formatDate(log.visitDate)}
+                        </time>
+                      )}
+                    </span>
+                  </span>
                 </Link>
               ))}
 
-              <Button asChild className="mt-3 w-full">
+              <Button asChild className="mt-4 w-full">
                 <Link to="/logs/new">
                   <Plus size={18} />
                   新しい一杯を記録する
