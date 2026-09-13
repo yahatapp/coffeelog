@@ -278,7 +278,7 @@ const LogDetailPage = () => {
                 {flagEmoji(log.origin) ?? <Globe aria-hidden="true" size={30} />}
               </div>
               <span className="text-center text-[10px] font-bold text-cafe-secondary">
-                {log.isBlend ? "ブレンド" : "シングル"}
+                {log.isBlend == null ? "未登録" : log.isBlend ? "ブレンド" : "シングル"}
               </span>
             </div>
             <div className="space-y-2 flex-1 min-w-0">
