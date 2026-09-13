@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { Download, X } from "lucide-react";
+import { ChevronDown, Download, Images, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { cafelogQueries } from "@/lib/queries";
 
@@ -8,9 +8,11 @@ type LoadedImage = { id: string; position: number; url: string };
 export const LogImages = ({
   logId,
   onCountChange,
+  collapsible = false,
 }: {
   logId: string;
   onCountChange?: (count: number) => void;
+  collapsible?: boolean;
 }) => {
   const { data = [] } = useQuery(cafelogQueries.images(logId));
   const [images, setImages] = useState<LoadedImage[]>([]);
@@ -45,25 +47,44 @@ export const LogImages = ({
   const preview = previewIndex === null ? null : images[previewIndex];
   const previewNumber = previewIndex === null ? 0 : previewIndex + 1;
 
+  const gallery = (
+    <section aria-label="記録の写真" className="grid grid-cols-2 gap-2">
+      {images.map((image, index) => (
+        <button
+          key={image.id}
+          type="button"
+          className={images.length === 1 ? "col-span-2" : ""}
+          onClick={() => setPreviewIndex(index)}
+          aria-label={`記録の写真 ${index + 1} を拡大表示`}
+        >
+          <img
+            src={image.url}
+            alt={`記録の写真 ${index + 1}`}
+            className="aspect-square w-full rounded-2xl object-cover shadow-sm"
+          />
+        </button>
+      ))}
+    </section>
+  );
+
   return (
     <>
-      <section aria-label="記録の写真" className="grid grid-cols-2 gap-2">
-        {images.map((image, index) => (
-          <button
-            key={image.id}
-            type="button"
-            className={images.length === 1 ? "col-span-2" : ""}
-            onClick={() => setPreviewIndex(index)}
-            aria-label={`記録の写真 ${index + 1} を拡大表示`}
-          >
-            <img
-              src={image.url}
-              alt={`記録の写真 ${index + 1}`}
-              className="aspect-square w-full rounded-2xl object-cover shadow-sm"
+      {collapsible ? (
+        <details className="group overflow-hidden rounded-2xl border border-cafe-secondary/15 bg-white/80 shadow-sm">
+          <summary className="flex cursor-pointer list-none items-center gap-2 px-5 py-4 font-bold text-cafe-text [&::-webkit-details-marker]:hidden">
+            <Images aria-hidden="true" size={17} className="text-cafe-primary" />
+            写真 <span className="text-xs font-medium text-cafe-secondary">{images.length}枚</span>
+            <ChevronDown
+              aria-hidden="true"
+              size={17}
+              className="ml-auto text-cafe-secondary transition-transform group-open:rotate-180"
             />
-          </button>
-        ))}
-      </section>
+          </summary>
+          <div className="border-t border-cafe-secondary/10 p-4">{gallery}</div>
+        </details>
+      ) : (
+        gallery
+      )}
 
       {preview && (
         <div

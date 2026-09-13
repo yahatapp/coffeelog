@@ -1,4 +1,4 @@
-import { Bean, Flame, Layers3, MapPin, Snowflake, Sprout, ThermometerSun } from "lucide-react";
+import { Flame, Layers3, MapPin, Snowflake, Sprout, ThermometerSun } from "lucide-react";
 import type { ComponentType } from "react";
 
 type CoffeeAttributesValue = {
@@ -53,14 +53,7 @@ export const CoffeeAttributes = ({
 }) => {
   const groups = getAttributeGroups(coffee).filter(({ values }) => values.length > 0);
 
-  if (groups.length === 0) {
-    return compact ? null : (
-      <div className="flex items-center gap-2 rounded-xl bg-cafe-background/60 px-3 py-3 text-xs text-cafe-secondary">
-        <Bean aria-hidden="true" size={15} />
-        <span>豆の情報は登録されていません</span>
-      </div>
-    );
-  }
+  if (compact && groups.length === 0) return null;
 
   if (compact) {
     return (
@@ -80,8 +73,27 @@ export const CoffeeAttributes = ({
     );
   }
 
+  const sections = [
+    {
+      title: "産地",
+      rows: [
+        { label: "国", value: coffee.origin },
+        { label: "産地", value: coffee.region },
+        { label: "農園", value: coffee.farm },
+      ],
+    },
+    {
+      title: "豆と製法",
+      rows: [
+        { label: "品種", value: coffee.variety },
+        { label: "精製方法", value: coffee.process },
+        { label: "焙煎度", value: coffee.roast },
+      ],
+    },
+  ];
+
   return (
-    <section aria-labelledby="coffee-attributes-heading" className="space-y-3">
+    <section aria-labelledby="coffee-attributes-heading" className="space-y-4">
       <div className="flex items-center gap-2">
         <Layers3 aria-hidden="true" className="text-cafe-primary" size={16} />
         <h4
@@ -91,26 +103,28 @@ export const CoffeeAttributes = ({
           コーヒーの情報
         </h4>
       </div>
-      <dl className="divide-y divide-cafe-secondary/10 overflow-hidden rounded-xl border border-cafe-secondary/10 bg-cafe-background/35">
-        {groups.map(({ label, icon: Icon, values }) => (
-          <div key={label} className="grid grid-cols-[7rem_1fr] items-start gap-3 px-4 py-3">
-            <dt className="flex items-center gap-2 text-[11px] font-bold text-cafe-secondary">
-              <Icon aria-hidden="true" className="text-cafe-primary" size={14} />
-              {label}
-            </dt>
-            <dd className="flex flex-wrap justify-end gap-1.5 text-right">
-              {values.map((value) => (
-                <span
-                  key={value}
-                  className="rounded-full border border-cafe-secondary/15 bg-white px-2.5 py-1 text-xs font-semibold leading-none text-cafe-text shadow-xs"
+      <div className="space-y-4">
+        {sections.map(({ title, rows }) => (
+          <div key={title}>
+            <h5 className="mb-2 px-1 text-[11px] font-bold tracking-wide text-cafe-secondary">
+              {title}
+            </h5>
+            <dl className="overflow-hidden rounded-xl border border-cafe-secondary/10 bg-cafe-background/35 px-4">
+              {rows.map(({ label, value }) => (
+                <div
+                  key={label}
+                  className="flex min-w-0 items-start justify-between gap-4 border-b border-cafe-secondary/10 py-3 last:border-b-0"
                 >
-                  {value}
-                </span>
+                  <dt className="shrink-0 text-xs font-medium text-cafe-secondary">{label}</dt>
+                  <dd className="min-w-0 break-words text-right text-sm font-semibold text-cafe-text">
+                    {value || <span className="font-normal text-cafe-secondary/60">未登録</span>}
+                  </dd>
+                </div>
               ))}
-            </dd>
+            </dl>
           </div>
         ))}
-      </dl>
+      </div>
     </section>
   );
 };
