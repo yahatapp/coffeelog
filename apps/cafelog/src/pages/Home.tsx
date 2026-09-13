@@ -18,7 +18,7 @@ const HomePage = () => {
   const { profile } = useLiff();
   const logsQuery = useQuery({
     ...cafelogQueries.logs(),
-    select: (logs) => logs.slice(0, 3),
+    select: (logs) => logs.slice(0, 5),
   });
   const recentLogs = logsQuery.data ?? [];
   const errorMessage = logsQuery.error
