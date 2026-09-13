@@ -42,6 +42,8 @@ jobs:
         run: nix develop --command pnpm run guard:secrets:ci -- "$BASE_SHA" "$HEAD_SHA"
 
       - name: Check, test, and build affected packages
+        env:
+          TURBO_SCM_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
         run: nix develop --command pnpm turbo run check test build --affected
 
       - name: Audit production dependencies

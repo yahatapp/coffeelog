@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { CAFELOG_PROCESS_METHODS } from "@yahatapp/coffee-reference";
 
 const PROCESS_OPTIONS = CAFELOG_PROCESS_METHODS;
@@ -13,22 +13,17 @@ type ProcessFieldProps = {
 const isPresetProcess = (value: string) => PROCESS_OPTIONS.some((option) => option === value);
 
 export const ProcessField = ({ id, value, onChange }: ProcessFieldProps) => {
-  const [isOther, setIsOther] = useState(() => value !== "" && !isPresetProcess(value));
-
-  useEffect(() => {
-    if (value !== "") {
-      setIsOther(!isPresetProcess(value));
-    }
-  }, [value]);
+  const [selectedOther, setSelectedOther] = useState(() => value !== "" && !isPresetProcess(value));
+  const isOther = value !== "" ? !isPresetProcess(value) : selectedOther;
 
   const handleSelection = (selection: string) => {
     if (selection === OTHER_PROCESS) {
-      setIsOther(true);
+      setSelectedOther(true);
       onChange("");
       return;
     }
 
-    setIsOther(false);
+    setSelectedOther(false);
     onChange(selection);
   };
 
@@ -53,7 +48,10 @@ export const ProcessField = ({ id, value, onChange }: ProcessFieldProps) => {
         <input
           type="text"
           value={value}
-          onChange={(event) => onChange(event.target.value)}
+          onChange={(event) => {
+            setSelectedOther(true);
+            onChange(event.target.value);
+          }}
           placeholder="精製方法を入力"
           aria-label="その他の精製方法"
           className="w-full bg-cafe-background border border-cafe-secondary/20 rounded-xl px-4 py-3 text-sm text-cafe-text placeholder-cafe-secondary/40 focus:outline-none focus:ring-2 focus:ring-cafe-primary/10 focus:border-cafe-primary/60 transition-all"

@@ -15,7 +15,9 @@ export const ImagePicker = ({
   maxImages?: number;
 }) => {
   const imagesRef = useRef(images);
-  imagesRef.current = images;
+  useEffect(() => {
+    imagesRef.current = images;
+  }, [images]);
   useEffect(
     () => () => imagesRef.current.forEach((image) => URL.revokeObjectURL(image.previewUrl)),
     [],
