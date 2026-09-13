@@ -25,6 +25,8 @@ export const LogImages = ({
       position: image.position,
       url: URL.createObjectURL(image.blob),
     }));
+    // Object URLs are browser resources owned by this effect and revoked in its cleanup.
+    // eslint-disable-next-line react/set-state-in-effect
     setImages(objectUrls);
     return () => objectUrls.forEach((image) => URL.revokeObjectURL(image.url));
   }, [data, onCountChange]);

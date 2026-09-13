@@ -10,7 +10,7 @@ import { cafelogQueries, createLog, uploadLogImages } from "@/lib/queries";
 const CreateLogPage = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const defaultValues = useMemo(createCafeLogDefaults, []);
+  const defaultValues = useMemo(() => createCafeLogDefaults(), []);
   const [error, setError] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const createMutation = useMutation({ mutationFn: createLog });
