@@ -1,18 +1,20 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { getCountryCode } from "@yahatapp/coffee-reference";
 import { useMemo, useState } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import {
   ArrowLeft,
   Calendar,
   Camera,
-  Coffee,
   Edit2,
   ExternalLink,
   Globe,
   Loader2,
   MessageSquare,
   MapPin,
+  Snowflake,
   Star,
+  ThermometerSun,
   Trash2,
 } from "lucide-react";
 import { CafeLogForm } from "@/components/CafeLogForm";
@@ -72,6 +74,16 @@ const formatDate = (value: string | null | undefined) =>
         day: "2-digit",
       })
     : "未設定";
+
+const flagEmoji = (origin: string | null | undefined) => {
+  const code = getCountryCode(origin);
+  return code
+    ? String.fromCodePoint(
+        code.toUpperCase().charCodeAt(0) + 127397,
+        code.toUpperCase().charCodeAt(1) + 127397,
+      )
+    : null;
+};
 
 const LogDetailPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -249,12 +261,27 @@ const LogDetailPage = () => {
           maxImages={Math.max(0, 5 - imageCount)}
         />
       ) : (
-        <div className="bg-white/80 backdrop-blur-md rounded-2xl border border-cafe-secondary/15 p-6 shadow-sm space-y-6">
-          <div className="flex items-start space-x-4">
-            <div className="p-3 bg-cafe-primary/5 rounded-2xl text-cafe-primary border border-cafe-primary/10 shrink-0">
-              <Coffee size={28} />
+        <div className="bg-white/80 backdrop-blur-md rounded-2xl border border-cafe-secondary/15 p-5 sm:p-6 shadow-sm space-y-6">
+          <div className="flex items-start gap-4">
+            <div className="flex w-20 shrink-0 flex-col items-center gap-1.5">
+              <div
+                className="flex h-16 w-20 items-center justify-center rounded-2xl border border-cafe-primary/10 bg-cafe-primary/5 text-4xl text-cafe-primary"
+                role="img"
+                aria-label={
+                  flagEmoji(log.origin)
+                    ? `${log.origin}の国旗`
+                    : log.origin
+                      ? `${log.origin}（国旗なし）`
+                      : "産地未登録"
+                }
+              >
+                {flagEmoji(log.origin) ?? <Globe aria-hidden="true" size={30} />}
+              </div>
+              <span className="text-center text-[10px] font-bold text-cafe-secondary">
+                {log.isBlend == null ? "未登録" : log.isBlend ? "ブレンド" : "シングル"}
+              </span>
             </div>
-            <div className="space-y-1 flex-1 min-w-0">
+            <div className="space-y-2 flex-1 min-w-0">
               <h3 className="text-xl font-bold text-cafe-text leading-tight break-words">
                 {log.cafeName}
               </h3>
@@ -264,6 +291,27 @@ const LogDetailPage = () => {
                   {log.prefecture}
                 </p>
               )}
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
+                <div
+                  className="flex items-center gap-1.5"
+                  aria-label={log.rating == null ? "評価なし" : `評価 ${log.rating} / 5`}
+                >
+                  {renderStars(log.rating)}
+                  {log.rating != null && (
+                    <span className="text-sm font-extrabold text-cafe-primary">{log.rating}</span>
+                  )}
+                </div>
+                {log.servingStyle === "iced" && (
+                  <span className="inline-flex items-center gap-1 text-xs font-semibold text-cafe-secondary">
+                    <Snowflake aria-hidden="true" size={15} /> アイス
+                  </span>
+                )}
+                {log.servingStyle === "hot" && (
+                  <span className="inline-flex items-center gap-1 text-xs font-semibold text-cafe-secondary">
+                    <ThermometerSun aria-hidden="true" size={15} /> ホット
+                  </span>
+                )}
+              </div>
               {log.links.length > 0 && (
                 <div className="flex items-center gap-2 pt-1">
                   {log.links.map((link) => {
@@ -301,37 +349,6 @@ const LogDetailPage = () => {
 
           <CoffeeAttributes coffee={log} />
 
-          <div className="grid grid-cols-2 gap-4 border-t border-b border-cafe-secondary/10 py-5">
-            <div className="space-y-1">
-              <span className="text-[10px] font-bold text-cafe-secondary uppercase tracking-wider block">
-                評価
-              </span>
-              <div className="flex items-center gap-2">
-                {renderStars(log.rating)}
-                {log.rating != null && (
-                  <span className="text-xl font-extrabold text-cafe-primary">{log.rating}</span>
-                )}
-              </div>
-            </div>
-            <div className="space-y-1">
-              <span className="text-[10px] font-bold text-cafe-secondary uppercase tracking-wider block">
-                金額
-              </span>
-              <span className="text-sm font-bold text-cafe-text">
-                {log.price == null ? "未登録" : `¥${log.price.toLocaleString()}`}
-              </span>
-            </div>
-            <div className="space-y-1 col-span-2 pt-2">
-              <span className="text-[10px] font-bold text-cafe-secondary uppercase tracking-wider flex items-center gap-1">
-                <Calendar size={10} />
-                訪問日
-              </span>
-              <span className="text-sm font-semibold text-cafe-text">
-                {formatDate(log.visitDate)}
-              </span>
-            </div>
-          </div>
-
           <div className="space-y-2">
             <span className="text-[10px] font-bold text-cafe-secondary uppercase tracking-wider flex items-center gap-1">
               <MessageSquare size={10} />
@@ -348,7 +365,29 @@ const LogDetailPage = () => {
         </div>
       )}
 
-      {id && <LogImages logId={id} onCountChange={setImageCount} />}
+      {id && <LogImages logId={id} onCountChange={setImageCount} collapsible={!isEditMode} />}
+
+      {!isEditMode && (
+        <section
+          aria-label="訪問情報"
+          className="rounded-2xl border border-cafe-secondary/15 bg-white/80 px-5 py-1 shadow-sm"
+        >
+          <dl className="divide-y divide-cafe-secondary/10">
+            <div className="flex items-center justify-between gap-4 py-4">
+              <dt className="text-xs font-semibold text-cafe-secondary">金額</dt>
+              <dd className="text-sm font-bold text-cafe-text">
+                {log.price == null ? "未登録" : `¥${log.price.toLocaleString()}`}
+              </dd>
+            </div>
+            <div className="flex items-center justify-between gap-4 py-4">
+              <dt className="flex items-center gap-1.5 text-xs font-semibold text-cafe-secondary">
+                <Calendar aria-hidden="true" size={14} /> 訪問日
+              </dt>
+              <dd className="text-sm font-bold text-cafe-text">{formatDate(log.visitDate)}</dd>
+            </div>
+          </dl>
+        </section>
+      )}
     </div>
   );
 };
