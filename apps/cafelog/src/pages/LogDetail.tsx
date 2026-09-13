@@ -302,12 +302,12 @@ const LogDetailPage = () => {
                   )}
                 </div>
                 {log.servingStyle === "iced" && (
-                  <span className="inline-flex items-center gap-1 text-xs font-semibold text-cafe-secondary">
+                  <span className="inline-flex items-center gap-1 rounded-full bg-blue-100 px-2.5 py-1 text-xs font-bold text-blue-700 ring-1 ring-blue-200">
                     <Snowflake aria-hidden="true" size={15} /> アイス
                   </span>
                 )}
                 {log.servingStyle === "hot" && (
-                  <span className="inline-flex items-center gap-1 text-xs font-semibold text-cafe-secondary">
+                  <span className="inline-flex items-center gap-1 rounded-full bg-orange-100 px-2.5 py-1 text-xs font-bold text-orange-700 ring-1 ring-orange-200">
                     <ThermometerSun aria-hidden="true" size={15} /> ホット
                   </span>
                 )}

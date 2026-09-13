@@ -1,5 +1,7 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
+import { LogListControls, type LogSortOrder, type LogTemperatureFilter } from "@yahatapp/ui";
 import { getErrorMessage } from "@/lib/errors";
 import { cafelogQueries } from "@/lib/queries";
 import { ClipboardList, Plus, Star, Calendar, MessageSquare, Loader2 } from "lucide-react";
@@ -8,6 +10,40 @@ import { CoffeeAttributes } from "@/components/CoffeeAttributes";
 const LogsPage = () => {
   const { data: logs = [], isPending: isLoading, error, refetch } = useQuery(cafelogQueries.logs());
   const errorMessage = error ? getErrorMessage(error, "通信エラーが発生しました。") : null;
+  const [filter, setFilter] = useState<LogTemperatureFilter>("all");
+  const [sortBy, setSortBy] = useState<"date" | "prefecture" | "rating">("date");
+  const [sortOrder, setSortOrder] = useState<LogSortOrder>("desc");
+
+  const changeSort = (nextSort: "date" | "prefecture" | "rating") => {
+    if (sortBy === nextSort) {
+      setSortOrder((current) => (current === "desc" ? "asc" : "desc"));
+      return;
+    }
+    setSortBy(nextSort);
+    setSortOrder(nextSort === "prefecture" ? "asc" : "desc");
+  };
+
+  const filteredLogs = logs.filter((log) => filter === "all" || log.servingStyle === filter);
+  const sortedLogs = filteredLogs.toSorted((a, b) => {
+    if (sortBy === "date") {
+      const dateA = new Date(a.visitDate ?? a.createdAt).getTime();
+      const dateB = new Date(b.visitDate ?? b.createdAt).getTime();
+      return sortOrder === "desc" ? dateB - dateA : dateA - dateB;
+    }
+
+    if (sortBy === "prefecture") {
+      if (!a.prefecture && !b.prefecture) return 0;
+      if (!a.prefecture) return 1;
+      if (!b.prefecture) return -1;
+      const comparison = a.prefecture.localeCompare(b.prefecture, "ja");
+      return sortOrder === "desc" ? -comparison : comparison;
+    }
+
+    if (a.rating == null && b.rating == null) return 0;
+    if (a.rating == null) return 1;
+    if (b.rating == null) return -1;
+    return sortOrder === "desc" ? b.rating - a.rating : a.rating - b.rating;
+  });
 
   const renderStars = (rating: number | null | undefined) => {
     if (!rating) return null;
@@ -93,6 +129,26 @@ const LogsPage = () => {
         </Link>
       </div>
 
+      {logs.length > 0 && (
+        <LogListControls
+          filter={filter}
+          counts={{
+            all: logs.length,
+            hot: logs.filter((log) => log.servingStyle === "hot").length,
+            iced: logs.filter((log) => log.servingStyle === "iced").length,
+          }}
+          onFilterChange={setFilter}
+          sortBy={sortBy}
+          sortOrder={sortOrder}
+          sortOptions={[
+            { value: "date", label: "日付" },
+            { value: "prefecture", label: "都道府県" },
+            { value: "rating", label: "評価" },
+          ]}
+          onSortChange={changeSort}
+        />
+      )}
+
       {logs.length === 0 ? (
         <div className="bg-white/80 backdrop-blur-md rounded-2xl border border-cafe-secondary/20 p-12 text-center shadow-sm space-y-6">
           <div className="w-16 h-16 rounded-full bg-cafe-primary/5 flex items-center justify-center mx-auto border border-cafe-primary/10">
@@ -112,9 +168,16 @@ const LogsPage = () => {
             <span>最初の記録を追加</span>
           </Link>
         </div>
+      ) : filteredLogs.length === 0 ? (
+        <div className="rounded-2xl border-2 border-dashed border-cafe-secondary/20 bg-white/70 p-10 text-center">
+          <ClipboardList className="mx-auto mb-3 text-cafe-secondary/40" size={36} />
+          <p className="text-sm font-semibold text-cafe-secondary">
+            {filter === "hot" ? "ホット" : "アイス"}の記録はまだありません。
+          </p>
+        </div>
       ) : (
         <div className="grid gap-4">
-          {logs.map((log) => (
+          {sortedLogs.map((log) => (
             <Link
               key={log.id}
               to={`/logs/${log.id}`}
