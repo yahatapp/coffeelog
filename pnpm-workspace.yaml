@@ -21,7 +21,7 @@ overrides:
   vitest@*: 4.1.11
 
 catalog:
-  "@cloudflare/vite-plugin": 1.54.6
+  "@cloudflare/vite-plugin": 1.54.7
   "@cloudflare/workers-types": 5.20260910.1
   "@hono/zod-validator": 0.9.1
   "@line/liff": 2.31.0
@@ -33,7 +33,7 @@ catalog:
   "@types/react": 19.3.0
   "@types/react-dom": 19.3.0
   "@vitejs/plugin-react": 6.1.1
-  autoprefixer: 10.5.5
+  autoprefixer: 10.5.6
   base-ui: 0.0.294
   clsx: 2.1.1
   drizzle-kit: 0.31.10
@@ -53,5 +53,5 @@ catalog:
   typescript: 7.0.2
   vite: npm:@voidzero-dev/vite-plus-core@0.3.1
   vitest: 4.1.11
-  wrangler: 4.130.0
-  zod: 4.6.1
+  wrangler: 4.131.0
+  zod: 4.6.2
