@@ -7,6 +7,7 @@ export type LogSortOrder = "asc" | "desc";
 export type LogSortOption<T extends string> = {
   value: T;
   label: string;
+  initialOrder: LogSortOrder;
   ascendingLabel?: string;
 };
 
@@ -93,13 +94,18 @@ export const LogListControls = <T extends string>({
         >
           {sortOptions.map((option) => {
             const active = sortBy === option.value;
-            const nextOrder = active && sortOrder === "desc" ? "昇順" : "降順";
+            const nextOrder = active
+              ? sortOrder === "desc"
+                ? "asc"
+                : "desc"
+              : option.initialOrder;
+            const nextOrderLabel = nextOrder === "asc" ? (option.ascendingLabel ?? "昇順") : "降順";
             return (
               <button
                 key={option.value}
                 type="button"
                 onClick={() => onSortChange(option.value)}
-                aria-label={`${option.label}で${option.ascendingLabel ?? nextOrder}に並べ替え`}
+                aria-label={`${option.label}で${nextOrderLabel}に並べ替え`}
                 className={cn(
                   "flex min-h-11 items-center justify-center rounded-md px-2 transition-all",
                   active
@@ -108,7 +114,11 @@ export const LogListControls = <T extends string>({
                 )}
               >
                 <span>{option.label}</span>
-                {active && <span className="ml-1" aria-hidden="true">{sortOrder === "desc" ? "↓" : "↑"}</span>}
+                {active && (
+                  <span className="ml-1" aria-hidden="true">
+                    {sortOrder === "desc" ? "↓" : "↑"}
+                  </span>
+                )}
               </button>
             );
           })}

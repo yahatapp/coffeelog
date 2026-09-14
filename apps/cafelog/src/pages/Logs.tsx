@@ -141,9 +141,9 @@ const LogsPage = () => {
           sortBy={sortBy}
           sortOrder={sortOrder}
           sortOptions={[
-            { value: "date", label: "日付" },
-            { value: "prefecture", label: "都道府県" },
-            { value: "rating", label: "評価" },
+            { value: "date", label: "日付", initialOrder: "desc" },
+            { value: "prefecture", label: "都道府県", initialOrder: "asc" },
+            { value: "rating", label: "評価", initialOrder: "desc" },
           ]}
           onSortChange={changeSort}
         />
