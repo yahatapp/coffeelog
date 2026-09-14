@@ -18,7 +18,7 @@ const HomePage = () => {
   const { profile } = useLiff();
   const logsQuery = useQuery({
     ...cafelogQueries.logs(),
-    select: (logs) => logs.slice(0, 5),
+    select: (logs) => logs.slice(0, 4),
   });
   const recentLogs = logsQuery.data ?? [];
   const errorMessage = logsQuery.error
@@ -69,12 +69,12 @@ const HomePage = () => {
               </Button>
             </div>
           ) : (
-            <div>
+            <div className="space-y-3">
               {recentLogs.map((log) => (
                 <Link
                   key={log.id}
                   to={`/logs/${log.id}`}
-                  className="group flex min-w-0 items-center justify-between gap-3 border-b border-cafe-secondary/10 px-1 py-3 first:pt-1 transition-colors last:border-b-0 hover:bg-cafe-background/60 focus-visible:rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cafe-primary"
+                  className="group flex min-w-0 items-center justify-between gap-3 rounded-xl border border-cafe-secondary/15 bg-cafe-background/45 p-3 shadow-sm transition-all hover:-translate-y-0.5 hover:border-cafe-primary/25 hover:bg-white hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cafe-primary active:translate-y-0"
                 >
                   <span className="min-w-0 flex-1">
                     <span className="flex min-w-0 items-center gap-2">
