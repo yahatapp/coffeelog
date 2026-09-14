@@ -302,12 +302,12 @@ const LogDetailPage = () => {
                   )}
                 </div>
                 {log.servingStyle === "iced" && (
-                  <span className="inline-flex items-center gap-1 text-xs font-semibold text-cafe-secondary">
+                  <span className="inline-flex items-center gap-1 rounded-full bg-blue-100 px-2.5 py-1 text-xs font-bold text-blue-700 ring-1 ring-blue-200">
                     <Snowflake aria-hidden="true" size={15} /> アイス
                   </span>
                 )}
                 {log.servingStyle === "hot" && (
-                  <span className="inline-flex items-center gap-1 text-xs font-semibold text-cafe-secondary">
+                  <span className="inline-flex items-center gap-1 rounded-full bg-orange-100 px-2.5 py-1 text-xs font-bold text-orange-700 ring-1 ring-orange-200">
                     <ThermometerSun aria-hidden="true" size={15} /> ホット
                   </span>
                 )}
@@ -362,32 +362,30 @@ const LogDetailPage = () => {
               <p className="text-xs text-cafe-secondary italic">メモは登録されていません。</p>
             )}
           </div>
+
+          <dl
+            aria-label="訪問情報"
+            className="grid grid-cols-2 gap-4 border-t border-cafe-secondary/10 pt-5"
+          >
+            <div className="min-w-0 space-y-1.5">
+              <dt className="text-xs font-semibold text-cafe-secondary">金額</dt>
+              <dd className="truncate text-sm font-bold text-cafe-text">
+                {log.price == null ? "未登録" : `¥${log.price.toLocaleString()}`}
+              </dd>
+            </div>
+            <div className="min-w-0 space-y-1.5">
+              <dt className="flex items-center gap-1.5 text-xs font-semibold text-cafe-secondary">
+                <Calendar aria-hidden="true" size={14} /> 訪問日
+              </dt>
+              <dd className="truncate text-sm font-bold text-cafe-text">
+                {formatDate(log.visitDate)}
+              </dd>
+            </div>
+          </dl>
         </div>
       )}
 
       {id && <LogImages logId={id} onCountChange={setImageCount} collapsible={!isEditMode} />}
-
-      {!isEditMode && (
-        <section
-          aria-label="訪問情報"
-          className="rounded-2xl border border-cafe-secondary/15 bg-white/80 px-5 py-1 shadow-sm"
-        >
-          <dl className="divide-y divide-cafe-secondary/10">
-            <div className="flex items-center justify-between gap-4 py-4">
-              <dt className="text-xs font-semibold text-cafe-secondary">金額</dt>
-              <dd className="text-sm font-bold text-cafe-text">
-                {log.price == null ? "未登録" : `¥${log.price.toLocaleString()}`}
-              </dd>
-            </div>
-            <div className="flex items-center justify-between gap-4 py-4">
-              <dt className="flex items-center gap-1.5 text-xs font-semibold text-cafe-secondary">
-                <Calendar aria-hidden="true" size={14} /> 訪問日
-              </dt>
-              <dd className="text-sm font-bold text-cafe-text">{formatDate(log.visitDate)}</dd>
-            </div>
-          </dl>
-        </section>
-      )}
     </div>
   );
 };
