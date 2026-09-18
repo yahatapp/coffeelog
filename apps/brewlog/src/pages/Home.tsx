@@ -5,6 +5,7 @@ import { useLiff } from "../hooks/useLiff";
 import { logQueries, type BrewLog } from "@/lib/queries";
 import { Button } from "../components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
+import { OriginFlag } from "../components/ui/OriginFlag";
 
 const Home = () => {
   const { profile } = useLiff();
@@ -78,14 +79,8 @@ const Home = () => {
                   onClick={() => navigate(`/logs/${log.id}`)}
                 >
                   <div className="flex items-center space-x-3">
-                    <div
-                      className={`p-2 rounded-xl shadow-sm transition-colors ${
-                        log.tempType === "ice"
-                          ? "bg-blue-50 text-blue-500"
-                          : "bg-orange-50/80 text-orange-500"
-                      }`}
-                    >
-                      <Coffee size={16} />
+                    <div className="p-2 rounded-xl bg-coffee-background shadow-sm">
+                      <OriginFlag origin={log.bean.origin} size={16} />
                     </div>
                     <div>
                       <p className="text-xs font-bold text-coffee-text line-clamp-1">
