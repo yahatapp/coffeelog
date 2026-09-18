@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { Button, Card, CardContent, CardHeader, CardTitle } from "@yahatapp/ui";
 import { Loader2, MapPin, Plus, Star } from "lucide-react";
+import { OriginFlag } from "@/components/OriginFlag";
 import { useLiff } from "@/hooks/useLiff";
 import { getErrorMessage } from "@/lib/errors";
 import { cafelogQueries } from "@/lib/queries";
@@ -76,6 +77,7 @@ const HomePage = () => {
                   to={`/logs/${log.id}`}
                   className="group flex min-w-0 items-center justify-between gap-3 rounded-xl border border-cafe-secondary/15 bg-cafe-background/45 p-3 shadow-sm transition-all hover:-translate-y-0.5 hover:border-cafe-primary/25 hover:bg-white hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cafe-primary active:translate-y-0"
                 >
+                  <OriginFlag origin={log.origin} size={24} />
                   <span className="min-w-0 flex-1">
                     <span className="flex min-w-0 items-center gap-2">
                       <span className="truncate text-sm font-bold text-cafe-text">

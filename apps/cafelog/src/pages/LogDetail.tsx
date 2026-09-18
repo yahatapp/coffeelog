@@ -1,5 +1,4 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getCountryCode } from "@yahatapp/coffee-reference";
 import { useMemo, useState } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import {
@@ -19,6 +18,7 @@ import {
 import { CafeLogForm } from "@/components/CafeLogForm";
 import { CoffeeAttributes } from "@/components/CoffeeAttributes";
 import { LogImages } from "@/components/LogImages";
+import { OriginFlag } from "@/components/OriginFlag";
 import type { CafeLogFormValues } from "@/lib/cafeLogForm";
 import { getErrorMessage } from "@/lib/errors";
 import {
@@ -73,16 +73,6 @@ const formatDate = (value: string | null | undefined) =>
         day: "2-digit",
       })
     : "未設定";
-
-const flagEmoji = (origin: string | null | undefined) => {
-  const code = getCountryCode(origin);
-  return code
-    ? String.fromCodePoint(
-        code.toUpperCase().charCodeAt(0) + 127397,
-        code.toUpperCase().charCodeAt(1) + 127397,
-      )
-    : null;
-};
 
 const LogDetailPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -263,19 +253,7 @@ const LogDetailPage = () => {
         <div className="bg-white/80 backdrop-blur-md rounded-2xl border border-cafe-secondary/15 p-5 sm:p-6 shadow-sm space-y-6">
           <div className="flex items-start gap-3">
             <div className="flex shrink-0 flex-col items-center gap-1.5">
-              <div
-                className="flex h-[1.25em] items-center justify-center text-xl leading-tight text-cafe-primary"
-                role="img"
-                aria-label={
-                  flagEmoji(log.origin)
-                    ? `${log.origin}の国旗`
-                    : log.origin
-                      ? `${log.origin}（国旗なし）`
-                      : "産地未登録"
-                }
-              >
-                {flagEmoji(log.origin) ?? <Globe aria-hidden="true" size={24} />}
-              </div>
+              <OriginFlag origin={log.origin} size={24} />
               <span className="text-center text-[10px] font-bold text-cafe-secondary">
                 {log.isBlend == null ? "未登録" : log.isBlend ? "ブレンド" : "シングル"}
               </span>
