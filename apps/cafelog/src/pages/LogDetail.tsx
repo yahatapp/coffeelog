@@ -7,7 +7,6 @@ import {
   Calendar,
   Camera,
   Edit2,
-  ExternalLink,
   Globe,
   Loader2,
   MessageSquare,
@@ -327,6 +326,12 @@ const LogDetailPage = () => {
                         : link.type === "google_maps"
                           ? "Google Map"
                           : "ホームページ";
+                    const colorClasses =
+                      link.type === "instagram"
+                        ? "border-pink-200/80 bg-pink-100 text-pink-700 hover:bg-pink-200/80"
+                        : link.type === "google_maps"
+                          ? "border-emerald-200/80 bg-emerald-100 text-emerald-700 hover:bg-emerald-200/80"
+                          : "border-sky-200/80 bg-sky-100 text-sky-700 hover:bg-sky-200/80";
                     return (
                       <a
                         key={link.id}
@@ -335,10 +340,9 @@ const LogDetailPage = () => {
                         rel="noopener noreferrer"
                         aria-label={label}
                         title={label}
-                        className="inline-flex items-center justify-center p-2 text-cafe-primary bg-cafe-primary/5 border border-cafe-primary/10 rounded-xl hover:bg-cafe-primary/10"
+                        className={`inline-flex size-9 items-center justify-center rounded-xl border transition-colors ${colorClasses}`}
                       >
-                        <Icon size={18} />
-                        <ExternalLink size={9} className="ml-0.5" />
+                        <Icon size={18} aria-hidden="true" />
                       </a>
                     );
                   })}
