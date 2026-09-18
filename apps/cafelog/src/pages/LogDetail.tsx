@@ -262,10 +262,10 @@ const LogDetailPage = () => {
         />
       ) : (
         <div className="bg-white/80 backdrop-blur-md rounded-2xl border border-cafe-secondary/15 p-5 sm:p-6 shadow-sm space-y-6">
-          <div className="flex items-start gap-4">
-            <div className="flex w-20 shrink-0 flex-col items-center gap-1.5">
+          <div className="flex items-start gap-3">
+            <div className="flex shrink-0 flex-col items-center gap-1.5">
               <div
-                className="flex h-16 w-20 items-center justify-center rounded-2xl border border-cafe-primary/10 bg-cafe-primary/5 text-4xl text-cafe-primary"
+                className="flex h-[1.25em] items-center justify-center text-xl leading-tight text-cafe-primary"
                 role="img"
                 aria-label={
                   flagEmoji(log.origin)
@@ -275,7 +275,7 @@ const LogDetailPage = () => {
                       : "産地未登録"
                 }
               >
-                {flagEmoji(log.origin) ?? <Globe aria-hidden="true" size={30} />}
+                {flagEmoji(log.origin) ?? <Globe aria-hidden="true" size={24} />}
               </div>
               <span className="text-center text-[10px] font-bold text-cafe-secondary">
                 {log.isBlend == null ? "未登録" : log.isBlend ? "ブレンド" : "シングル"}
