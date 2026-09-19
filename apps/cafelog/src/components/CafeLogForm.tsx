@@ -320,6 +320,28 @@ export const CafeLogForm = ({
               </div>
             )}
           </form.Field>
+
+          <form.Field name="producer">
+            {(field) => (
+              <div className="col-span-2">
+                <label
+                  htmlFor="cafe-producer"
+                  className="text-xs font-bold text-cafe-text block mb-1.5"
+                >
+                  生産者
+                </label>
+                <input
+                  id="cafe-producer"
+                  type="text"
+                  value={field.state.value}
+                  onChange={(event) => field.handleChange(event.target.value)}
+                  onBlur={field.handleBlur}
+                  placeholder="例: ホセ・ヒラルド"
+                  className="w-full bg-cafe-background border border-cafe-secondary/20 rounded-xl px-4 py-3 text-sm text-cafe-text placeholder-cafe-secondary/40 focus:outline-none focus:ring-2 focus:ring-cafe-primary/10 focus:border-cafe-primary/60 transition-all"
+                />
+              </div>
+            )}
+          </form.Field>
         </div>
 
         <div className="grid grid-cols-2 gap-4">

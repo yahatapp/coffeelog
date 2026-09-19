@@ -10,6 +10,7 @@ export type CafeLogFormValues = {
   region: string;
   variety: string;
   farm: string;
+  producer: string;
   process: string;
   roast: string;
   isBlend: boolean;
@@ -46,6 +47,7 @@ export const cafeLogFormSchema = z.object({
   region: z.string(),
   variety: z.string(),
   farm: z.string(),
+  producer: z.string(),
   process: z.string(),
   roast: z.string(),
   isBlend: z.boolean(),
@@ -71,6 +73,7 @@ export const createCafeLogDefaults = (): CafeLogFormValues => {
     region: "",
     variety: "",
     farm: "",
+    producer: "",
     process: "",
     roast: "",
     isBlend: false,
@@ -91,6 +94,7 @@ export const toCafeLogPayload = (values: CafeLogFormValues) => ({
   region: values.region.trim() || null,
   variety: values.variety.trim() || null,
   farm: values.farm.trim() || null,
+  producer: values.producer.trim() || null,
   process: values.process.trim() || null,
   roast: values.roast.trim() || null,
   isBlend: values.isBlend,

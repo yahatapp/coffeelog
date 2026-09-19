@@ -6,6 +6,7 @@ type CoffeeAttributesValue = {
   region?: string | null;
   variety?: string | null;
   farm?: string | null;
+  producer?: string | null;
   process?: string | null;
   roast?: string | null;
   isBlend?: boolean | null;
@@ -25,9 +26,11 @@ const getAttributeGroups = (coffee: CoffeeAttributesValue): AttributeGroup[] => 
     values: [coffee.origin, coffee.region].filter((value): value is string => Boolean(value)),
   },
   {
-    label: "農園・品種",
+    label: "農園・生産者・品種",
     icon: Sprout,
-    values: [coffee.farm, coffee.variety].filter((value): value is string => Boolean(value)),
+    values: [coffee.farm, coffee.producer, coffee.variety].filter((value): value is string =>
+      Boolean(value),
+    ),
   },
   {
     label: "精製・焙煎",
@@ -80,6 +83,7 @@ export const CoffeeAttributes = ({
         { label: "国", value: coffee.origin },
         { label: "産地", value: coffee.region },
         { label: "農園", value: coffee.farm },
+        { label: "生産者", value: coffee.producer },
       ],
     },
     {
