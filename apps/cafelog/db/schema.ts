@@ -42,6 +42,7 @@ export const cafeLogs = cafelogSchema.table("cafe_logs", {
   region: text("region"),
   variety: text("variety"),
   farm: text("farm"),
+  producer: text("producer"),
   process: text("process"),
   roast: text("roast"),
   isBlend: boolean("is_blend"),

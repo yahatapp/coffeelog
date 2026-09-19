@@ -16,6 +16,13 @@ describe("createCafeLogDefaults", () => {
     expect(toCafeLogPayload(createCafeLogDefaults()).prefecture).toBeNull();
   });
 
+  it("trims the producer name and converts an empty value to null", () => {
+    expect(
+      toCafeLogPayload({ ...createCafeLogDefaults(), producer: "  ホセ・ヒラルド  " }).producer,
+    ).toBe("ホセ・ヒラルド");
+    expect(toCafeLogPayload(createCafeLogDefaults()).producer).toBeNull();
+  });
+
   it("accepts a Japanese prefecture and rejects an unknown value", () => {
     expect(
       cafeLogFormSchema.safeParse({

@@ -37,6 +37,7 @@ const toFormValues = (log: LogResponse): CafeLogFormValues => ({
   region: log.region ?? "",
   variety: log.variety ?? "",
   farm: log.farm ?? "",
+  producer: log.producer ?? "",
   process: log.process ?? "",
   roast: log.roast ?? "",
   isBlend: log.isBlend ?? false,
