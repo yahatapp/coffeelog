@@ -4,8 +4,8 @@ import { Link } from "react-router-dom";
 import { LogListControls, type LogSortOrder, type LogTemperatureFilter } from "@yahatapp/ui";
 import { getErrorMessage } from "@/lib/errors";
 import { cafelogQueries } from "@/lib/queries";
-import { ClipboardList, Plus, Star, Calendar, MessageSquare, Loader2 } from "lucide-react";
-import { CoffeeAttributes } from "@/components/CoffeeAttributes";
+import { ClipboardList, Plus, Loader2 } from "lucide-react";
+import { CafeLogListCard } from "@/components/CafeLogListCard";
 
 const LogsPage = () => {
   const { data: logs = [], isPending: isLoading, error, refetch } = useQuery(cafelogQueries.logs());
@@ -44,41 +44,6 @@ const LogsPage = () => {
     if (b.rating == null) return -1;
     return sortOrder === "desc" ? b.rating - a.rating : a.rating - b.rating;
   });
-
-  const renderStars = (rating: number | null | undefined) => {
-    if (!rating) return null;
-    const stars = [];
-    const fullStars = Math.floor(rating);
-    const hasHalf = rating % 1 !== 0;
-
-    for (let i = 1; i <= 5; i++) {
-      if (i <= fullStars) {
-        stars.push(<Star key={i} size={14} className="fill-cafe-accent text-cafe-accent" />);
-      } else if (i === fullStars + 1 && hasHalf) {
-        stars.push(
-          <div key={i} className="relative inline-block">
-            <Star size={14} className="text-cafe-secondary/20" />
-            <div className="absolute top-0 left-0 w-1/2 overflow-hidden">
-              <Star size={14} className="fill-cafe-accent text-cafe-accent" />
-            </div>
-          </div>,
-        );
-      } else {
-        stars.push(<Star key={i} size={14} className="text-cafe-secondary/20" />);
-      }
-    }
-    return <div className="flex items-center space-x-0.5">{stars}</div>;
-  };
-
-  const formatDate = (dateStr: string | null | undefined) => {
-    if (!dateStr) return "";
-    const date = new Date(dateStr);
-    return date.toLocaleDateString("ja-JP", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-    });
-  };
 
   if (isLoading) {
     return (
@@ -181,55 +146,9 @@ const LogsPage = () => {
             <Link
               key={log.id}
               to={`/logs/${log.id}`}
-              className="block min-w-0 overflow-hidden bg-white/80 backdrop-blur-md rounded-2xl border border-cafe-secondary/15 p-5 shadow-sm hover:shadow-md hover:border-cafe-primary/20 transition-all active:scale-[0.99]"
+              className="block min-w-0 overflow-hidden rounded-2xl border border-cafe-secondary/15 bg-white/80 p-5 shadow-sm backdrop-blur-md transition-all hover:border-cafe-primary/20 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cafe-primary active:scale-[0.99]"
             >
-              <div className="flex min-w-0 flex-col space-y-3">
-                <div className="flex min-w-0 items-start justify-between gap-2">
-                  <div className="min-w-0 flex-1">
-                    <h3 className="break-words font-bold text-cafe-text text-base leading-snug">
-                      {log.cafeName}
-                    </h3>
-                    <CoffeeAttributes coffee={log} compact />
-                  </div>
-                  {log.rating && (
-                    <div className="flex shrink-0 items-center space-x-1.5">
-                      {renderStars(log.rating)}
-                      <div className="inline-flex items-baseline text-cafe-secondary">
-                        <span className="text-sm font-extrabold text-cafe-primary leading-none">
-                          {log.rating}
-                        </span>
-                        <span className="text-[10px] font-semibold text-cafe-secondary/50 mx-0.5">
-                          /
-                        </span>
-                        <span className="text-[10px] font-semibold text-cafe-secondary">5</span>
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {(log.note || log.price || log.visitDate) && (
-                  <div className="border-t border-cafe-secondary/10 pt-3 flex flex-wrap gap-x-4 gap-y-2 text-xs text-cafe-secondary">
-                    {log.visitDate && (
-                      <span className="flex items-center space-x-1">
-                        <Calendar size={12} />
-                        <span>{formatDate(log.visitDate)}</span>
-                      </span>
-                    )}
-                    {log.price !== null && log.price !== undefined && (
-                      <span className="flex items-center space-x-0.5">
-                        <span className="text-[10px] font-bold">¥</span>
-                        <span>{log.price.toLocaleString()}</span>
-                      </span>
-                    )}
-                    {log.note && (
-                      <span className="flex max-w-full min-w-0 flex-1 items-center space-x-1 truncate">
-                        <MessageSquare size={12} className="flex-shrink-0" />
-                        <span className="truncate">{log.note}</span>
-                      </span>
-                    )}
-                  </div>
-                )}
-              </div>
+              <CafeLogListCard log={log} />
             </Link>
           ))}
         </div>
