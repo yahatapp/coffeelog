@@ -1,0 +1,1 @@
+ALTER TABLE "cafelog"."cafe_logs" ADD COLUMN "flavor_note" text;

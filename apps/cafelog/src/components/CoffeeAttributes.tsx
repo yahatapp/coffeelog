@@ -11,6 +11,7 @@ type CoffeeAttributesValue = {
   roast?: string | null;
   isBlend?: boolean | null;
   servingStyle?: string | null;
+  flavorNote?: string | null;
 };
 
 type AttributeGroup = {
@@ -92,6 +93,7 @@ export const CoffeeAttributes = ({
         { label: "品種", value: coffee.variety },
         { label: "精製方法", value: coffee.process },
         { label: "焙煎度", value: coffee.roast },
+        { label: "フレーバーノート", value: coffee.flavorNote },
       ],
     },
   ];
