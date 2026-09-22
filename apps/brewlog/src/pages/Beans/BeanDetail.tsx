@@ -149,6 +149,24 @@ const BeanDetail = () => {
             </dl>
           </section>
 
+          {bean.coffeeType === "specialty" &&
+            (bean.region || bean.variety || bean.farm || bean.producer) && (
+              <section
+                className="border-t border-coffee-secondary/10 pt-5"
+                aria-labelledby="bean-production-heading"
+              >
+                <h4 id="bean-production-heading" className="text-sm font-bold text-coffee-primary">
+                  生産情報
+                </h4>
+                <dl className="mt-2">
+                  <DetailRow label="地域" value={bean.region} />
+                  <DetailRow label="品種" value={bean.variety} />
+                  <DetailRow label="農園" value={bean.farm} />
+                  <DetailRow label="生産者" value={bean.producer} />
+                </dl>
+              </section>
+            )}
+
           <section
             className="border-t border-coffee-secondary/10 pt-5"
             aria-labelledby="bean-note-heading"

@@ -37,6 +37,10 @@ const AddBean = () => {
     name: "",
     coffeeType: "regular",
     origin: "",
+    region: "",
+    variety: "",
+    farm: "",
+    producer: "",
     purchaseStore: "",
     roastLevel: 3,
     roastDate: "",
@@ -58,6 +62,10 @@ const AddBean = () => {
     form.setFieldValue("name", parentQuery.data.name);
     form.setFieldValue("coffeeType", parentQuery.data.coffeeType);
     form.setFieldValue("origin", parentQuery.data.origin ?? "");
+    form.setFieldValue("region", parentQuery.data.region ?? "");
+    form.setFieldValue("variety", parentQuery.data.variety ?? "");
+    form.setFieldValue("farm", parentQuery.data.farm ?? "");
+    form.setFieldValue("producer", parentQuery.data.producer ?? "");
     form.setFieldValue("purchaseStore", parentQuery.data.purchaseStore ?? "");
     form.setFieldValue("roastLevel", parentQuery.data.roastLevel ?? 3);
     form.setFieldValue("processMethod", parentQuery.data.processMethod ?? "");

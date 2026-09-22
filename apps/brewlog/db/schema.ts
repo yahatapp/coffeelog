@@ -53,6 +53,10 @@ export const beans = brewlogSchema.table("beans", {
   name: text("name").notNull(),
   coffeeType: text("coffee_type").$type<CoffeeType>().default("regular").notNull(),
   origin: text("origin"),
+  region: text("region"),
+  variety: text("variety"),
+  farm: text("farm"),
+  producer: text("producer"),
   purchaseStore: text("purchase_store"),
   roastLevel: integer("roast_level"), // 1:浅煎り 〜 5:深煎り 等
   roastDate: date("roast_date"),

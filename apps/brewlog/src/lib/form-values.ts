@@ -13,6 +13,10 @@ export type BeanFormValues = {
   name: string;
   coffeeType: CoffeeType;
   origin: string;
+  region: string;
+  variety: string;
+  farm: string;
+  producer: string;
   purchaseStore: string;
   roastLevel: number;
   roastDate: string;
@@ -30,6 +34,10 @@ export const toBeanCreateInput = (
   name: values.name.trim(),
   coffeeType: values.coffeeType,
   origin: values.origin.trim() || null,
+  region: values.coffeeType === "specialty" ? values.region.trim() || null : null,
+  variety: values.coffeeType === "specialty" ? values.variety.trim() || null : null,
+  farm: values.coffeeType === "specialty" ? values.farm.trim() || null : null,
+  producer: values.coffeeType === "specialty" ? values.producer.trim() || null : null,
   purchaseStore: values.purchaseStore.trim() || null,
   roastLevel: values.roastLevel,
   roastDate: values.roastDate || null,
@@ -45,6 +53,10 @@ export const toBeanUpdateInput = (values: BeanFormValues): BeanUpdateInput => ({
   name: values.name.trim(),
   coffeeType: values.coffeeType,
   origin: values.origin.trim() || null,
+  region: values.coffeeType === "specialty" ? values.region.trim() || null : null,
+  variety: values.coffeeType === "specialty" ? values.variety.trim() || null : null,
+  farm: values.coffeeType === "specialty" ? values.farm.trim() || null : null,
+  producer: values.coffeeType === "specialty" ? values.producer.trim() || null : null,
   purchaseStore: values.purchaseStore.trim() || null,
   roastLevel: values.roastLevel,
   roastDate: values.roastDate || null,
