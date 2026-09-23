@@ -17,7 +17,7 @@
   },
   "devDependencies": {
     "lefthook": "catalog:",
-    "turbo": "^2.10.12",
-    "vite-plus": "0.3.1"
+    "turbo": "^2.11.2",
+    "vite-plus": "0.3.3"
   }
 }
