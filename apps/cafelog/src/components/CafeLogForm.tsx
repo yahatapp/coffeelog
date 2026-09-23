@@ -403,6 +403,28 @@ export const CafeLogForm = ({
           )}
         </form.Field>
 
+        <form.Field name="flavorNote">
+          {(field) => (
+            <div>
+              <label
+                htmlFor="cafe-flavor-note"
+                className="text-xs font-bold text-cafe-text block mb-1.5"
+              >
+                フレーバーノート
+              </label>
+              <input
+                id="cafe-flavor-note"
+                type="text"
+                value={field.state.value}
+                onChange={(event) => field.handleChange(event.target.value)}
+                onBlur={field.handleBlur}
+                placeholder="例: ベリー、ジャスミン、チョコレート"
+                className="w-full bg-cafe-background border border-cafe-secondary/20 rounded-xl px-4 py-3 text-sm text-cafe-text placeholder-cafe-secondary/40 focus:outline-none focus:ring-2 focus:ring-cafe-primary/10 focus:border-cafe-primary/60 transition-all"
+              />
+            </div>
+          )}
+        </form.Field>
+
         <form.Field name="rating">
           {(field) => {
             const rating = field.state.value;

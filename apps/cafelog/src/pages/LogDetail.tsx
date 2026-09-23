@@ -42,6 +42,7 @@ const toFormValues = (log: LogResponse): CafeLogFormValues => ({
   roast: log.roast ?? "",
   isBlend: log.isBlend ?? false,
   servingStyle: log.servingStyle === "hot" || log.servingStyle === "iced" ? log.servingStyle : null,
+  flavorNote: log.flavorNote ?? "",
   rating: log.rating,
   price: log.price == null ? "" : String(log.price),
   visitDate: log.visitDate ?? "",

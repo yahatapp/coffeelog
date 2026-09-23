@@ -75,6 +75,89 @@ export const BeanFields = ({ form, isVersionMode }: BeanFieldsProps) => (
         )}
       </form.Field>
 
+      <form.Subscribe selector={(state) => state.values.coffeeType}>
+        {(coffeeType) =>
+          coffeeType === "specialty" ? (
+            <div className="space-y-4 rounded-2xl bg-coffee-primary/5 p-4">
+              <div>
+                <h3 className="text-sm font-bold text-coffee-primary">生産情報</h3>
+                <p className="mt-1 text-xs text-coffee-secondary">
+                  スペシャルティコーヒーの詳しい属性を記録できます。
+                </p>
+              </div>
+
+              <form.Field name="region">
+                {(field) => (
+                  <div className="space-y-2">
+                    <Label htmlFor="region">地域</Label>
+                    <Input
+                      id="region"
+                      placeholder="例: シダマ"
+                      value={field.state.value}
+                      onChange={(event) => field.handleChange(event.target.value)}
+                      onBlur={field.handleBlur}
+                      className="rounded-xl border-coffee-secondary/20"
+                      disabled={isVersionMode}
+                    />
+                  </div>
+                )}
+              </form.Field>
+
+              <form.Field name="variety">
+                {(field) => (
+                  <div className="space-y-2">
+                    <Label htmlFor="variety">品種</Label>
+                    <Input
+                      id="variety"
+                      placeholder="例: ゲイシャ"
+                      value={field.state.value}
+                      onChange={(event) => field.handleChange(event.target.value)}
+                      onBlur={field.handleBlur}
+                      className="rounded-xl border-coffee-secondary/20"
+                      disabled={isVersionMode}
+                    />
+                  </div>
+                )}
+              </form.Field>
+
+              <form.Field name="farm">
+                {(field) => (
+                  <div className="space-y-2">
+                    <Label htmlFor="farm">農園</Label>
+                    <Input
+                      id="farm"
+                      placeholder="例: コピア農園"
+                      value={field.state.value}
+                      onChange={(event) => field.handleChange(event.target.value)}
+                      onBlur={field.handleBlur}
+                      className="rounded-xl border-coffee-secondary/20"
+                      disabled={isVersionMode}
+                    />
+                  </div>
+                )}
+              </form.Field>
+
+              <form.Field name="producer">
+                {(field) => (
+                  <div className="space-y-2">
+                    <Label htmlFor="producer">生産者</Label>
+                    <Input
+                      id="producer"
+                      placeholder="例: ホセ・ヒラルド"
+                      value={field.state.value}
+                      onChange={(event) => field.handleChange(event.target.value)}
+                      onBlur={field.handleBlur}
+                      className="rounded-xl border-coffee-secondary/20"
+                      disabled={isVersionMode}
+                    />
+                  </div>
+                )}
+              </form.Field>
+            </div>
+          ) : null
+        }
+      </form.Subscribe>
+
       <form.Field name="purchaseStore">
         {(field) => (
           <div className="space-y-2">
