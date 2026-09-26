@@ -12,6 +12,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { beanQueries, logQueries, type Bean } from "@/lib/queries";
+import { analytics } from "@/lib/analytics";
 import { Button } from "../../components/ui/button";
 import { Card, CardContent } from "../../components/ui/card";
 import { OriginFlag } from "../../components/ui/OriginFlag";
@@ -80,6 +81,7 @@ const BeansList = () => {
   }, [brewCountByGroupId, groupedBeans, showArchived, sortBy, sortOrder]);
 
   const changeSort = (nextSort: typeof sortBy) => {
+    analytics.trackEvent("sort_change");
     if (sortBy === nextSort) setSortOrder((order) => (order === "asc" ? "desc" : "asc"));
     else {
       setSortBy(nextSort);
@@ -127,7 +129,10 @@ const BeansList = () => {
             <input
               type="checkbox"
               checked={showArchived}
-              onChange={(event) => setShowArchived(event.target.checked)}
+              onChange={(event) => {
+                analytics.trackEvent("filter_change");
+                setShowArchived(event.target.checked);
+              }}
               className="h-5 w-5 accent-coffee-primary"
             />
           </label>

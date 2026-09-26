@@ -6,6 +6,7 @@ import { ArrowLeft, Loader2, Save } from "lucide-react";
 import { logUpdateSchema } from "@/contracts";
 import { BrewLogFields } from "@/components/forms/BrewLogFields";
 import { Button } from "@/components/ui/button";
+import { analytics } from "@/lib/analytics";
 import {
   beanQueries,
   dripperQueries,
@@ -125,12 +126,15 @@ const EditLogForm = ({
       return mutations.updateLog({ param: { id }, json: parsed.data });
     },
     onSuccess: async () => {
+      analytics.trackEvent("record_update_success");
       await queryClient.invalidateQueries({ queryKey: queryKeys.logs });
       await queryClient.invalidateQueries({ queryKey: queryKeys.log(id) });
       void navigate(`/logs/${id}`);
     },
-    onError: (mutationError) =>
-      setError(mutationError instanceof Error ? mutationError.message : "更新に失敗しました。"),
+    onError: (mutationError) => {
+      analytics.trackEvent("record_update_error");
+      setError(mutationError instanceof Error ? mutationError.message : "更新に失敗しました。");
+    },
   });
 
   const form = useForm<

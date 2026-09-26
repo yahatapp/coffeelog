@@ -21,6 +21,7 @@ import { LogImages } from "@/components/LogImages";
 import { OriginFlag } from "@/components/OriginFlag";
 import type { CafeLogFormValues } from "@/lib/cafeLogForm";
 import { getErrorMessage } from "@/lib/errors";
+import { analytics } from "@/lib/analytics";
 import {
   cafelogQueries,
   deleteLog,
@@ -104,6 +105,7 @@ const LogDetailPage = () => {
     setActionError(null);
     try {
       const updatedLog = await updateMutation.mutateAsync({ id, values });
+      analytics.trackEvent("record_update_success");
       queryClient.setQueryData(cafelogQueries.log(id).queryKey, (current) =>
         current ? { ...current, ...updatedLog } : updatedLog,
       );
@@ -118,6 +120,7 @@ const LogDetailPage = () => {
         setPhotoUploadError(getErrorMessage(uploadError, "写真のアップロードに失敗しました。"));
       }
     } catch (error: unknown) {
+      analytics.trackEvent("record_update_error");
       console.error("Error updating log", error);
       setActionError(getErrorMessage(error, "通信エラーが発生しました。"));
     }
@@ -316,6 +319,7 @@ const LogDetailPage = () => {
                       <a
                         key={link.id}
                         href={link.url}
+                        onClick={() => analytics.trackEvent("external_link_click")}
                         target="_blank"
                         rel="noopener noreferrer"
                         aria-label={label}

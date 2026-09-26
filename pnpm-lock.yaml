@@ -144,6 +144,9 @@ importers:
       '@tanstack/react-query':
         specifier: 'catalog:'
         version: 5.103.1(react@19.3.0)
+      '@yahatapp/analytics':
+        specifier: workspace:*
+        version: link:../../packages/analytics
       '@yahatapp/coffee-reference':
         specifier: workspace:*
         version: link:../../packages/coffee-reference
@@ -256,6 +259,9 @@ importers:
       '@tanstack/react-query':
         specifier: 'catalog:'
         version: 5.103.1(react@19.3.0)
+      '@yahatapp/analytics':
+        specifier: workspace:*
+        version: link:../../packages/analytics
       '@yahatapp/coffee-reference':
         specifier: workspace:*
         version: link:../../packages/coffee-reference
@@ -350,6 +356,12 @@ importers:
       wrangler:
         specifier: 'catalog:'
         version: 4.134.0(@cloudflare/workers-types@5.20260917.1)(@types/node@24.13.3)
+
+  packages/analytics:
+    devDependencies:
+      typescript:
+        specifier: 'catalog:'
+        version: 7.0.2
 
   packages/coffee-reference:
     devDependencies:

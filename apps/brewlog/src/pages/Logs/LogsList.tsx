@@ -12,6 +12,7 @@ import {
   Sun,
 } from "lucide-react";
 import { logQueries, type BrewLog } from "@/lib/queries";
+import { analytics } from "@/lib/analytics";
 import { OriginFlag } from "@/components/ui/OriginFlag";
 import { Button } from "../../components/ui/button";
 import { Card, CardContent } from "../../components/ui/card";
@@ -25,6 +26,7 @@ const LogsList = () => {
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
 
   const changeSort = (nextSort: "date" | "bean" | "rating") => {
+    analytics.trackEvent("sort_change");
     if (sortBy === nextSort) {
       setSortOrder(sortOrder === "desc" ? "asc" : "desc");
       return;
@@ -147,7 +149,10 @@ const LogsList = () => {
       {logs.length > 0 && (
         <div className="flex p-1 bg-gray-100/80 rounded-xl space-x-1">
           <button
-            onClick={() => setActiveTab("all")}
+            onClick={() => {
+              analytics.trackEvent("filter_change");
+              setActiveTab("all");
+            }}
             className={`flex-1 flex items-center justify-center space-x-1.5 py-2.5 px-3 rounded-lg text-xs font-semibold transition-all duration-200 ${
               activeTab === "all"
                 ? "bg-white text-coffee-primary shadow-sm"
@@ -167,7 +172,10 @@ const LogsList = () => {
           </button>
 
           <button
-            onClick={() => setActiveTab("hot")}
+            onClick={() => {
+              analytics.trackEvent("filter_change");
+              setActiveTab("hot");
+            }}
             className={`flex-1 flex items-center justify-center space-x-1.5 py-2.5 px-3 rounded-lg text-xs font-semibold transition-all duration-200 ${
               activeTab === "hot"
                 ? "bg-orange-50 text-orange-600 shadow-sm border border-orange-100"
@@ -186,7 +194,10 @@ const LogsList = () => {
           </button>
 
           <button
-            onClick={() => setActiveTab("ice")}
+            onClick={() => {
+              analytics.trackEvent("filter_change");
+              setActiveTab("ice");
+            }}
             className={`flex-1 flex items-center justify-center space-x-1.5 py-2.5 px-3 rounded-lg text-xs font-semibold transition-all duration-200 ${
               activeTab === "ice"
                 ? "bg-blue-50 text-blue-600 shadow-sm border border-blue-100"

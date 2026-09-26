@@ -6,6 +6,7 @@ import { getErrorMessage } from "@/lib/errors";
 import { cafelogQueries } from "@/lib/queries";
 import { ClipboardList, Plus, Loader2 } from "lucide-react";
 import { CafeLogListCard } from "@/components/CafeLogListCard";
+import { analytics } from "@/lib/analytics";
 
 const LogsPage = () => {
   const { data: logs = [], isPending: isLoading, error, refetch } = useQuery(cafelogQueries.logs());
@@ -15,6 +16,7 @@ const LogsPage = () => {
   const [sortOrder, setSortOrder] = useState<LogSortOrder>("desc");
 
   const changeSort = (nextSort: "date" | "prefecture" | "rating") => {
+    analytics.trackEvent("sort_change");
     if (sortBy === nextSort) {
       setSortOrder((current) => (current === "desc" ? "asc" : "desc"));
       return;
@@ -102,7 +104,10 @@ const LogsPage = () => {
             hot: logs.filter((log) => log.servingStyle === "hot").length,
             iced: logs.filter((log) => log.servingStyle === "iced").length,
           }}
-          onFilterChange={setFilter}
+          onFilterChange={(nextFilter) => {
+            analytics.trackEvent("filter_change");
+            setFilter(nextFilter);
+          }}
           sortBy={sortBy}
           sortOrder={sortOrder}
           sortOptions={[

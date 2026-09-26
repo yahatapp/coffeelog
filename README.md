@@ -44,7 +44,9 @@ Create these GitHub Environments in the monorepo repository before enabling depl
 
 | Environment | Secrets | Variable |
 | --- | --- | --- |
-| `production-brewlog` | `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_API_TOKEN`, `DATABASE_URL` | `VITE_LIFF_ID` |
-| `production-cafelog` | `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_API_TOKEN`, `DATABASE_URL` | `VITE_LIFF_ID` |
+| `production-brewlog` | `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_API_TOKEN`, `DATABASE_URL` | `VITE_LIFF_ID`, `VITE_GA4_MEASUREMENT_ID`, `VITE_CLARITY_PROJECT_ID` |
+| `production-cafelog` | `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_API_TOKEN`, `DATABASE_URL` | `VITE_LIFF_ID`, `VITE_GA4_MEASUREMENT_ID`, `VITE_CLARITY_PROJECT_ID` |
 
 The deploy workflows apply only that application's database migrations and deploy only that application's Worker. A change under `packages/` or to root build configuration intentionally triggers both deployments.
+
+GA4とClarityの設定・同意・検証手順は [docs/analytics.md](docs/analytics.md) を参照してください。
