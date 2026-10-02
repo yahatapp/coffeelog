@@ -1,6 +1,7 @@
 import { useLiff } from "@/hooks/useLiff";
 import { User, Copy, Check, Info, LogOut } from "lucide-react";
 import { useState } from "react";
+import { analytics } from "@/lib/analytics";
 
 const SettingsPage = () => {
   const { profile, relogin } = useLiff();
@@ -69,6 +70,41 @@ const SettingsPage = () => {
         <div className="bg-white/80 backdrop-blur-md rounded-2xl border border-cafe-secondary/20 p-6 shadow-sm text-center">
           <p className="text-cafe-secondary text-sm">プロフィール情報が見つかりません。</p>
         </div>
+      )}
+
+      {analytics.configured && (
+        <section className="rounded-2xl border border-cafe-secondary/20 bg-white p-4 shadow-sm">
+          <h3 className="text-sm font-bold text-cafe-text">利用状況の計測</h3>
+          <p className="mt-1 text-xs text-cafe-secondary">
+            {analytics.servicesLabel}
+            による利用状況の計測を、改善のために利用します。入力内容やLINE
+            IDをイベントとして送信しません。
+          </p>
+          <p className="mt-2 text-xs text-cafe-secondary">
+            現在:{" "}
+            {analytics.getConsent() === "enabled"
+              ? "許可中"
+              : analytics.getConsent() === "disabled"
+                ? "許可しない"
+                : "未選択"}
+          </p>
+          <div className="mt-3 flex gap-2">
+            <button
+              type="button"
+              className="min-h-11 flex-1 rounded-xl bg-cafe-primary px-3 text-sm font-semibold text-white"
+              onClick={() => analytics.setConsent("enabled")}
+            >
+              許可する
+            </button>
+            <button
+              type="button"
+              className="min-h-11 flex-1 rounded-xl border border-cafe-secondary/30 px-3 text-sm"
+              onClick={() => analytics.setConsent("disabled")}
+            >
+              許可しない
+            </button>
+          </div>
+        </section>
       )}
 
       <div className="bg-white/80 backdrop-blur-md rounded-2xl border border-cafe-secondary/20 p-6 shadow-sm space-y-4">

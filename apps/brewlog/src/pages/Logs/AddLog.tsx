@@ -8,6 +8,7 @@ import { beanQueries, dripperQueries, grinderQueries, mutations, queryKeys } fro
 import { getTodayJSTString, toLogCreateInput, type LogFormValues } from "@/lib/form-values";
 import { BrewLogFields } from "@/components/forms/BrewLogFields";
 import { Button } from "@/components/ui/button";
+import { analytics } from "@/lib/analytics";
 
 const AddLog = () => {
   const navigate = useNavigate();
@@ -61,11 +62,14 @@ const AddLog = () => {
       return mutations.createLog({ json: parsed.data });
     },
     onSuccess: async () => {
+      analytics.trackEvent("record_create_success");
       await queryClient.invalidateQueries({ queryKey: queryKeys.logs });
       void navigate("/logs");
     },
-    onError: (mutationError) =>
-      setError(mutationError instanceof Error ? mutationError.message : "保存に失敗しました。"),
+    onError: (mutationError) => {
+      analytics.trackEvent("record_create_error");
+      setError(mutationError instanceof Error ? mutationError.message : "保存に失敗しました。");
+    },
   });
 
   const defaultValues: LogFormValues = {

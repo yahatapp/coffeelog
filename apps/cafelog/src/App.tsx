@@ -1,6 +1,8 @@
+import { useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from "react-router-dom";
 import { Home as HomeIcon, ClipboardList, User, Loader2 } from "lucide-react";
 import { LiffProvider, useLiff } from "./hooks/useLiff";
+import { analytics } from "./lib/analytics";
 
 // Pages
 import HomePage from "./pages/Home";
@@ -12,6 +14,10 @@ import SettingsPage from "./pages/Settings";
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
+
+  useEffect(() => {
+    analytics.trackPage(location.pathname);
+  }, [location.pathname]);
 
   const isTabActive = (paths: string[]) => {
     return paths.some((path) => {
@@ -27,7 +33,39 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   ];
 
   return (
-    <div className="flex flex-col min-h-screen bg-cafe-background text-cafe-text">
+    <div
+      className="flex flex-col min-h-screen bg-cafe-background text-cafe-text"
+      data-clarity-mask="True"
+    >
+      {analytics.configured && analytics.getConsent() === null && (
+        <aside
+          className="mx-auto mt-4 w-full max-w-md rounded-2xl border border-cafe-secondary/20 bg-white p-4 text-sm shadow-sm"
+          aria-label="利用状況の計測について"
+        >
+          <p className="font-semibold">利用状況の計測</p>
+          <p className="mt-1 text-xs text-cafe-secondary">
+            使いやすさの改善のため、{analytics.servicesLabel}
+            で画面の利用状況と操作の様子を確認します。入力内容やLINE IDは計測イベントに含めません。
+          </p>
+          <div className="mt-3 flex gap-2">
+            <button
+              type="button"
+              className="min-h-11 flex-1 rounded-xl bg-cafe-primary px-3 text-sm font-semibold text-white"
+              onClick={() => analytics.setConsent("enabled")}
+            >
+              許可する
+            </button>
+            <button
+              type="button"
+              className="min-h-11 flex-1 rounded-xl border border-cafe-secondary/30 px-3 text-sm"
+              onClick={() => analytics.setConsent("disabled")}
+            >
+              許可しない
+            </button>
+          </div>
+          <p className="mt-2 text-xs text-cafe-secondary">設定からいつでも変更できます。</p>
+        </aside>
+      )}
       <main className="flex-1 pb-24 p-4 max-w-md mx-auto w-full">{children}</main>
 
       <nav className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-cafe-secondary/15 flex justify-around items-center px-4 py-2 pb-8 z-20 shadow-lg shadow-cafe-primary/5">

@@ -4,6 +4,7 @@ import { User, LogOut, ChevronRight, Settings2 } from "lucide-react";
 import { useLiff } from "../hooks/useLiff";
 import { Card, CardContent } from "../components/ui/card";
 import { dripperQueries, grinderQueries } from "@/lib/queries";
+import { analytics } from "@/lib/analytics";
 
 const Settings = () => {
   const { profile, liff } = useLiff();
@@ -87,6 +88,41 @@ const Settings = () => {
           </div>
         </Card>
       </section>
+
+      {analytics.configured && (
+        <section className="rounded-2xl border border-coffee-secondary/15 bg-white p-4">
+          <h3 className="text-sm font-bold text-coffee-primary">利用状況の計測</h3>
+          <p className="mt-1 text-xs text-coffee-secondary">
+            {analytics.servicesLabel}
+            による利用状況の計測を、改善のために利用します。入力内容やLINE
+            IDをイベントとして送信しません。
+          </p>
+          <p className="mt-2 text-xs text-coffee-secondary">
+            現在:{" "}
+            {analytics.getConsent() === "enabled"
+              ? "許可中"
+              : analytics.getConsent() === "disabled"
+                ? "許可しない"
+                : "未選択"}
+          </p>
+          <div className="mt-3 flex gap-2">
+            <button
+              type="button"
+              className="min-h-11 flex-1 rounded-xl bg-coffee-primary px-3 text-sm font-semibold text-white"
+              onClick={() => analytics.setConsent("enabled")}
+            >
+              許可する
+            </button>
+            <button
+              type="button"
+              className="min-h-11 flex-1 rounded-xl border border-coffee-secondary/30 px-3 text-sm"
+              onClick={() => analytics.setConsent("disabled")}
+            >
+              許可しない
+            </button>
+          </div>
+        </section>
+      )}
 
       {/* About and logout */}
       <section className="space-y-2 pt-2">

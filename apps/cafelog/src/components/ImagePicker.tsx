@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { Camera, Plus, X } from "lucide-react";
+import { analytics } from "@/lib/analytics";
 
 export type SelectedImage = { file: File; previewUrl: string };
 
@@ -30,6 +31,7 @@ export const ImagePicker = ({
     const additions = Array.from(files)
       .slice(0, available)
       .map((file) => ({ file, previewUrl: URL.createObjectURL(file) }));
+    if (additions.length > 0) analytics.trackEvent("photo_add");
     onChange([...images, ...additions]);
   };
 

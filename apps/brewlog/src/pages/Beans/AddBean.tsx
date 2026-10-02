@@ -8,6 +8,7 @@ import { beanQueries, mutations, queryKeys } from "@/lib/queries";
 import { getTodayJSTString, toBeanCreateInput, type BeanFormValues } from "@/lib/form-values";
 import { BeanFields } from "@/components/forms/BeanFields";
 import { Button } from "@/components/ui/button";
+import { analytics } from "@/lib/analytics";
 
 const AddBean = () => {
   const navigate = useNavigate();
@@ -28,6 +29,7 @@ const AddBean = () => {
       return mutations.createBean({ json: parsed.data });
     },
     onSuccess: async () => {
+      analytics.trackEvent("bean_create_success");
       await queryClient.invalidateQueries({ queryKey: queryKeys.beans });
       void navigate("/beans");
     },

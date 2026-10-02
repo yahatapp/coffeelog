@@ -6,6 +6,7 @@ import { CafeLogForm } from "@/components/CafeLogForm";
 import { createCafeLogDefaults, type CafeLogFormValues } from "@/lib/cafeLogForm";
 import { getErrorMessage } from "@/lib/errors";
 import { cafelogQueries, createLog, uploadLogImages } from "@/lib/queries";
+import { analytics } from "@/lib/analytics";
 
 const CreateLogPage = () => {
   const navigate = useNavigate();
@@ -22,10 +23,13 @@ const CreateLogPage = () => {
     try {
       newLog = await createMutation.mutateAsync(values);
     } catch (submissionError: unknown) {
+      analytics.trackEvent("record_create_error");
       console.error("Error saving log", submissionError);
       setError(getErrorMessage(submissionError, "通信エラーが発生しました。"));
       return;
     }
+
+    analytics.trackEvent("record_create_success");
 
     setIsUploading(true);
     try {
