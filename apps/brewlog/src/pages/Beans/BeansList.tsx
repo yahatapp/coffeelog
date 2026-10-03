@@ -18,7 +18,7 @@ import { Card, CardContent } from "../../components/ui/card";
 import { OriginFlag } from "../../components/ui/OriginFlag";
 import { getCountryCode } from "@/utils/flag";
 import { CoffeeBeansIcon } from "../../components/ui/CoffeeBeansIcon";
-import { getRoastConfig, getRoastGradient } from "../../components/ui/RoastLevelIndicator";
+import { RoastLevelIndicator } from "../../components/ui/RoastLevelIndicator";
 
 const BeansList = () => {
   const navigate = useNavigate();
@@ -193,18 +193,10 @@ const BeansList = () => {
             const { latestBean } = group;
             const brewCount = brewCountByGroupId.get(group.groupId) ?? 0;
             const displayDate = latestBean.purchaseDate ?? latestBean.roastDate;
-            const roastConfig = latestBean.roastLevel
-              ? getRoastConfig(latestBean.roastLevel)
-              : null;
             return (
               <Card
                 key={group.groupId}
-                className="border-x-transparent hover:border-x-transparent hover:border-y-coffee-primary/30 transition-colors cursor-pointer group overflow-hidden"
-                style={
-                  latestBean.roastLevel
-                    ? { backgroundImage: getRoastGradient(latestBean.roastLevel) }
-                    : undefined
-                }
+                className="hover:border-coffee-primary/30 transition-colors cursor-pointer group overflow-hidden"
                 onClick={() => navigate(`/beans/${latestBean.id}`)}
                 onKeyDown={(event) => {
                   if (event.key === "Enter" || event.key === " ") {
@@ -216,7 +208,6 @@ const BeansList = () => {
                 tabIndex={0}
               >
                 <CardContent className="p-4 flex items-center gap-3">
-                  {roastConfig && <span className="sr-only">焙煎度: {roastConfig.label}</span>}
                   <div className="flex items-center flex-1 min-w-0 gap-3">
                     <div className="bg-coffee-background w-12 h-12 rounded-2xl flex items-center justify-center group-hover:bg-coffee-primary/10 transition-colors flex-shrink-0 overflow-hidden">
                       {(() => {
@@ -237,10 +228,17 @@ const BeansList = () => {
                     </div>
                     <div className="min-w-0 flex-1 space-y-1.5">
                       <h3 className="font-bold text-coffee-text truncate">{latestBean.name}</h3>
-                      {group.isArchived && (
-                        <span className="inline-flex rounded-full bg-coffee-secondary/15 px-2 py-0.5 text-[10px] font-bold text-coffee-secondary">
-                          アーカイブ済み
-                        </span>
+                      {(latestBean.roastLevel || group.isArchived) && (
+                        <div className="flex flex-wrap items-center gap-2">
+                          {latestBean.roastLevel && (
+                            <RoastLevelIndicator level={latestBean.roastLevel} />
+                          )}
+                          {group.isArchived && (
+                            <span className="inline-flex rounded-full bg-coffee-secondary/15 px-2 py-0.5 text-[10px] font-bold text-coffee-secondary">
+                              アーカイブ済み
+                            </span>
+                          )}
+                        </div>
                       )}
                       <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-coffee-secondary">
                         <span
