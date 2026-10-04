@@ -2,28 +2,37 @@ import { Hono } from "hono";
 import { getDb } from "./db";
 import { authMiddleware } from "./middleware/auth";
 import { zValidator } from "@hono/zod-validator";
-import { profiles, cafeLogs, cafeLogImages, cafeLogLinks } from "../../db/schema";
+import { profiles, cafeLogs, cafeLogImages } from "../../db/schema";
 import { and, asc, eq, desc } from "drizzle-orm";
 import { z } from "zod";
 import { HTTPException } from "hono/http-exception";
 import { PREFECTURES } from "@/lib/prefectures";
 import { classifyCafeLink } from "@/lib/cafeLinks";
+import type { stores } from "@yahatapp/database/stores";
+import {
+  storeIdParamsSchema,
+  storeInputSchema,
+  storeUrlSchema,
+} from "@yahatapp/database/store-contracts";
+import {
+  findStore,
+  listStores,
+  loadStoreHistory,
+  resolveStore,
+} from "@yahatapp/database/store-service";
+import type { Env } from "./types";
 
 const initSchema = z.object({
   displayName: z.string(),
   avatarUrl: z.string().optional().nullable(),
 });
 
-const cafeUrlSchema = z.url().refine((url) => ["http:", "https:"].includes(new URL(url).protocol), {
-  message: "URL must use http or https",
-});
-
 const servingStyleSchema = z.enum(["hot", "iced"]);
 const prefectureSchema = z.enum(PREFECTURES);
-const cafeLinksSchema = z.array(cafeUrlSchema).max(10);
+const cafeLinksSchema = z.array(storeUrlSchema).max(10);
 
 const createLogSchema = z.object({
-  cafeName: z.string().min(1),
+  cafeName: storeInputSchema.shape.name,
   cafeLinks: cafeLinksSchema.optional(),
   prefecture: prefectureSchema.optional().nullable(),
   origin: z.string().optional().nullable(),
@@ -43,7 +52,7 @@ const createLogSchema = z.object({
 });
 
 const updateLogSchema = z.object({
-  cafeName: z.string().min(1).optional(),
+  cafeName: storeInputSchema.shape.name.optional(),
   cafeLinks: cafeLinksSchema.optional(),
   prefecture: prefectureSchema.optional().nullable(),
   origin: z.string().optional().nullable(),
@@ -62,18 +71,24 @@ const updateLogSchema = z.object({
   visitDate: z.string().optional().nullable(),
 });
 
-type Bindings = {
-  DATABASE_URL: string;
-  LINE_CHANNEL_ID: string;
-  ALLOWED_LINE_USER_IDS: string;
-  CAFELOG_IMAGES: R2Bucket;
-};
+const app = new Hono<Env>();
 
-type Variables = {
-  lineUserId: string;
-};
-
-const app = new Hono<{ Bindings: Bindings; Variables: Variables }>();
+// Keep the existing RPC response/form fields while taking shop data from stores.
+const toCafeLog = <
+  T extends typeof cafeLogs.$inferSelect & { store: typeof stores.$inferSelect | null },
+>(
+  log: T,
+) => ({
+  ...log,
+  cafeName: log.store?.name ?? log.cafeName ?? "",
+  prefecture: log.store?.prefecture ?? null,
+  links: (log.store?.links ?? []).map((url, position) => ({
+    id: `${log.storeId}:${position}`,
+    url,
+    type: classifyCafeLink(url),
+    position,
+  })),
+});
 
 const MAX_IMAGES = 5;
 const MAX_IMAGE_BYTES = 1024 * 1024;
@@ -115,28 +130,40 @@ const api = app
 
     return c.json({ profile });
   })
+  .get("/api/stores", async (c) => {
+    return c.json(await listStores(getDb(c.env.DATABASE_URL)));
+  })
+  .get("/api/stores/:id", zValidator("param", storeIdParamsSchema), async (c) => {
+    const { id } = c.req.valid("param");
+    const db = getDb(c.env.DATABASE_URL);
+    const store = await findStore(db, id);
+    if (!store) throw new HTTPException(404, { message: "Store not found" });
+    return c.json({ store, ...(await loadStoreHistory(db, id, c.get("lineUserId"))) });
+  })
   .get("/api/logs", async (c) => {
     const lineUserId = c.get("lineUserId");
     const db = getDb(c.env.DATABASE_URL);
     return c.json(
-      await db.query.cafeLogs.findMany({
-        where: eq(cafeLogs.userId, lineUserId),
-        with: { user: true, links: { orderBy: [asc(cafeLogLinks.position)] } },
-        orderBy: [desc(cafeLogs.createdAt)],
-      }),
+      (
+        await db.query.cafeLogs.findMany({
+          where: eq(cafeLogs.userId, lineUserId),
+          with: { user: true, store: true },
+          orderBy: [desc(cafeLogs.createdAt)],
+        })
+      ).map(toCafeLog),
     );
   })
   .get("/api/logs/:id", async (c) => {
     const lineUserId = c.get("lineUserId");
     const db = getDb(c.env.DATABASE_URL);
     const log = await db.query.cafeLogs.findFirst({
-      where: eq(cafeLogs.id, c.req.param("id")),
-      with: { user: true, links: { orderBy: [asc(cafeLogLinks.position)] } },
+      where: and(eq(cafeLogs.id, c.req.param("id")), eq(cafeLogs.userId, lineUserId)),
+      with: { user: true, store: true },
     });
     if (!log || log.userId !== lineUserId) {
       throw new HTTPException(404, { message: "Log not found" });
     }
-    return c.json(log);
+    return c.json(toCafeLog(log));
   })
   .get("/api/logs/:id/images", async (c) => {
     const { db } = await assertOwnedLog(c.env.DATABASE_URL, c.req.param("id"), c.get("lineUserId"));
@@ -217,26 +244,18 @@ const api = app
     const lineUserId = c.get("lineUserId");
     const db = getDb(c.env.DATABASE_URL);
 
-    const { cafeLinks, ...values } = c.req.valid("json");
+    const { cafeName, prefecture, cafeLinks, ...values } = c.req.valid("json");
     const newLog = await db.transaction(async (tx) => {
+      const store = await resolveStore(tx, {
+        name: cafeName,
+        prefecture,
+        links: cafeLinks?.length ? cafeLinks : undefined,
+      });
       const [created] = await tx
         .insert(cafeLogs)
-        .values({ ...values, userId: lineUserId })
+        .values({ ...values, storeId: store.id, userId: lineUserId })
         .returning();
-      const links = cafeLinks?.length
-        ? await tx
-            .insert(cafeLogLinks)
-            .values(
-              cafeLinks.map((url, position) => ({
-                cafeLogId: created.id,
-                url,
-                type: classifyCafeLink(url),
-                position,
-              })),
-            )
-            .returning()
-        : [];
-      return { ...created, links };
+      return toCafeLog({ ...created, store });
     });
 
     return c.json(newLog);
@@ -247,40 +266,31 @@ const api = app
 
     // Verify ownership
     const existing = await db.query.cafeLogs.findFirst({
-      where: eq(cafeLogs.id, c.req.param("id")),
+      where: and(eq(cafeLogs.id, c.req.param("id")), eq(cafeLogs.userId, lineUserId)),
+      with: { store: true },
     });
     if (!existing || existing.userId !== lineUserId) {
       throw new HTTPException(404, { message: "Log not found" });
     }
 
-    const { cafeLinks, ...values } = c.req.valid("json");
+    const { cafeName, prefecture, cafeLinks, ...values } = c.req.valid("json");
+    if (!existing.store) throw new HTTPException(404, { message: "Store not found" });
+    const existingStore = existing.store;
     const updatedLog = await db.transaction(async (tx) => {
+      const store =
+        cafeName !== undefined || prefecture !== undefined || cafeLinks !== undefined
+          ? await resolveStore(tx, {
+              name: cafeName ?? existingStore.name,
+              prefecture: prefecture === undefined ? existingStore.prefecture : prefecture,
+              links: cafeLinks ?? existingStore.links,
+            })
+          : existingStore;
       const [updated] = await tx
         .update(cafeLogs)
-        .set(values)
-        .where(eq(cafeLogs.id, c.req.param("id")))
+        .set({ ...values, storeId: store.id })
+        .where(and(eq(cafeLogs.id, c.req.param("id")), eq(cafeLogs.userId, lineUserId)))
         .returning();
-      let links = await tx.query.cafeLogLinks.findMany({
-        where: eq(cafeLogLinks.cafeLogId, updated.id),
-        orderBy: [asc(cafeLogLinks.position)],
-      });
-      if (cafeLinks) {
-        await tx.delete(cafeLogLinks).where(eq(cafeLogLinks.cafeLogId, updated.id));
-        links = cafeLinks.length
-          ? await tx
-              .insert(cafeLogLinks)
-              .values(
-                cafeLinks.map((url, position) => ({
-                  cafeLogId: updated.id,
-                  url,
-                  type: classifyCafeLink(url),
-                  position,
-                })),
-              )
-              .returning()
-          : [];
-      }
-      return { ...updated, links };
+      return toCafeLog({ ...updated, store });
     });
 
     return c.json(updatedLog);

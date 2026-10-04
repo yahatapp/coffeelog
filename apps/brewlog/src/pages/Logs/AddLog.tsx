@@ -64,6 +64,7 @@ const AddLog = () => {
     onSuccess: async () => {
       analytics.trackEvent("record_create_success");
       await queryClient.invalidateQueries({ queryKey: queryKeys.logs });
+      await queryClient.invalidateQueries({ queryKey: queryKeys.stores });
       void navigate("/logs");
     },
     onError: (mutationError) => {

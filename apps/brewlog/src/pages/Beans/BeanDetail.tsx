@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import {
   ArrowLeft,
   Coffee,
@@ -142,7 +142,21 @@ const BeanDetail = () => {
               <Store size={16} aria-hidden="true" /> 購入・焙煎情報
             </h4>
             <dl className="mt-2">
-              <DetailRow label="購入店" value={bean.purchaseStore} />
+              <DetailRow
+                label="購入店"
+                value={
+                  bean.storeId ? (
+                    <Link
+                      to={`/stores/${bean.storeId}`}
+                      className="inline-flex min-h-11 items-center text-coffee-primary underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coffee-primary"
+                    >
+                      {bean.purchaseStore || "店舗の記録を見る"}
+                    </Link>
+                  ) : (
+                    bean.purchaseStore
+                  )
+                }
+              />
               <DetailRow label="購入日" value={formatDate(bean.purchaseDate)} />
               <DetailRow label="焙煎日" value={formatDate(bean.roastDate)} />
               <DetailRow label="精製方法" value={bean.processMethod} />

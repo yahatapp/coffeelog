@@ -5,6 +5,7 @@ import { Segment } from "../ui/segment";
 import { COFFEE_COUNTRIES } from "@/utils/flag";
 import { getRoastLabel, PROCESS_METHODS } from "@/lib/form-values";
 import type { BeanFormApi } from "./types";
+import { BeanStoreFields } from "./BeanStoreFields";
 
 type BeanFieldsProps = {
   form: BeanFormApi;
@@ -158,22 +159,30 @@ export const BeanFields = ({ form, isVersionMode }: BeanFieldsProps) => (
         }
       </form.Subscribe>
 
-      <form.Field name="purchaseStore">
-        {(field) => (
-          <div className="space-y-2">
-            <Label htmlFor="purchaseStore">購入店</Label>
-            <Input
-              id="purchaseStore"
-              placeholder="例: ブルーボトルコーヒー"
-              value={field.state.value}
-              onChange={(event) => field.handleChange(event.target.value)}
-              onBlur={field.handleBlur}
-              className="rounded-xl border-coffee-secondary/20"
-              disabled={isVersionMode}
-            />
-          </div>
-        )}
-      </form.Field>
+      <form.Subscribe selector={(state) => state.values.coffeeType}>
+        {(coffeeType) =>
+          coffeeType === "specialty" ? (
+            <BeanStoreFields form={form} disabled={isVersionMode} />
+          ) : (
+            <form.Field name="purchaseStore">
+              {(field) => (
+                <div className="space-y-2">
+                  <Label htmlFor="purchaseStore">購入店</Label>
+                  <Input
+                    id="purchaseStore"
+                    placeholder="例: ブルーボトルコーヒー"
+                    value={field.state.value}
+                    onChange={(event) => field.handleChange(event.target.value)}
+                    onBlur={field.handleBlur}
+                    className="rounded-xl border-coffee-secondary/20"
+                    disabled={isVersionMode}
+                  />
+                </div>
+              )}
+            </form.Field>
+          )
+        }
+      </form.Subscribe>
 
       <form.Field name="processMethod">
         {(field) => (

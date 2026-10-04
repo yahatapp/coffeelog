@@ -15,6 +15,7 @@ import AddLogPage from "./pages/Logs/AddLog";
 import LogDetailPage from "./pages/Logs/LogDetail";
 import EditLogPage from "./pages/Logs/EditLog";
 import SettingsPage from "./pages/Settings";
+import StoresPage, { StoreDetailPage } from "./pages/Stores";
 import DrippersPage from "./pages/Settings/Drippers";
 import GrindersPage from "./pages/Settings/Grinders";
 import NotFoundPage from "./pages/NotFound";
@@ -37,7 +38,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     { to: "/", paths: ["/"], label: "ホーム", icon: HomeIcon },
     { to: "/beans", paths: ["/beans"], label: "豆", icon: Coffee },
     { to: "/logs", paths: ["/logs"], label: "記録", icon: ClipboardList },
-    { to: "/settings", paths: ["/settings"], label: "設定", icon: User },
+    { to: "/settings", paths: ["/settings", "/stores"], label: "設定", icon: User },
   ];
 
   return (
@@ -155,6 +156,8 @@ const AppContent = () => {
           <Route path="/logs/new" element={<AddLogPage />} />
           <Route path="/logs/:id" element={<LogDetailPage />} />
           <Route path="/logs/:id/edit" element={<EditLogPage />} />
+          <Route path="/stores" element={<StoresPage />} />
+          <Route path="/stores/:id" element={<StoreDetailPage />} />
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="/settings/drippers" element={<DrippersPage />} />
           <Route path="/settings/grinders" element={<GrindersPage />} />

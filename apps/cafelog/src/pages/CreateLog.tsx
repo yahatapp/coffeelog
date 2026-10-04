@@ -34,7 +34,7 @@ const CreateLogPage = () => {
     setIsUploading(true);
     try {
       await uploadLogImages(newLog.id, values.images);
-      await queryClient.invalidateQueries({ queryKey: cafelogQueries.logs().queryKey });
+      await queryClient.invalidateQueries({ queryKey: cafelogQueries.all });
       void navigate("/logs");
     } catch (uploadError: unknown) {
       console.error("Error uploading images", uploadError);
