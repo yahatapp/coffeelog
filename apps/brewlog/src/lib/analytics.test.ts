@@ -3,7 +3,7 @@ import { createAnalytics, safePagePath } from "@yahatapp/analytics";
 
 declare global {
   interface Window {
-    dataLayer?: unknown[][];
+    dataLayer?: ArrayLike<unknown>[];
   }
 }
 
@@ -68,6 +68,42 @@ describe("analytics privacy boundary", () => {
     expect(JSON.stringify(dataLayer)).not.toContain("private-record-id");
     expect(append).toHaveBeenCalledTimes(1);
   });
+
+  it.each(["brewlog", "cafelog"] as const)(
+    "queues %s GA commands in the Arguments format consumed by gtag.js",
+    (app) => {
+      vi.stubGlobal("window", {
+        localStorage: { getItem: () => "enabled", setItem: vi.fn() },
+        location: { origin: "https://example.test", pathname: "/", reload: vi.fn() },
+      });
+      vi.stubGlobal("document", {
+        head: { append: vi.fn() },
+        createElement: () => ({ async: false, src: "" }),
+      });
+      const analytics = createAnalytics({ app, gaId: "G-TEST123", production: true });
+
+      analytics.trackPage("/");
+      analytics.trackEvent("record_create_success");
+      analytics.setConsent("disabled");
+
+      const dataLayer = window.dataLayer ?? [];
+      expect(dataLayer.map((entry) => [entry[0], entry[1]])).toEqual(
+        expect.arrayContaining([
+          ["js", expect.any(Date)],
+          ["config", "G-TEST123"],
+          ["consent", "default"],
+          ["consent", "update"],
+          ["event", "page_view"],
+          ["event", "app_open"],
+          ["event", "record_create_success"],
+        ]),
+      );
+      // gtag.js treats plain arrays as data-layer method calls, not GA commands.
+      for (const command of dataLayer) {
+        expect(Object.prototype.toString.call(command)).toBe("[object Arguments]");
+      }
+    },
+  );
 
   it("loads Clarity only for consented sessions and denies advertising storage", () => {
     const scripts: string[] = [];
