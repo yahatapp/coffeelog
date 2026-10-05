@@ -17,7 +17,7 @@ type Gtag = (...args: unknown[]) => void;
 type Clarity = ((...args: unknown[]) => void) & { q?: unknown[][] };
 
 type AnalyticsWindow = Window & {
-  dataLayer?: unknown[][];
+  dataLayer?: ArrayLike<unknown>[];
   gtag?: Gtag;
   clarity?: Clarity;
 };
@@ -91,8 +91,9 @@ export function createAnalytics(config: AnalyticsConfig) {
 
     if (gaId) {
       analyticsWindow.dataLayer = analyticsWindow.dataLayer ?? [];
-      analyticsWindow.gtag = (...args: unknown[]) => {
-        analyticsWindow.dataLayer?.push(args);
+      // gtag.js treats Arguments objects as commands and plain arrays as method calls.
+      analyticsWindow.gtag = function () {
+        analyticsWindow.dataLayer?.push(arguments);
       };
       analyticsWindow.gtag("js", new Date());
       analyticsWindow.gtag("consent", "default", {
