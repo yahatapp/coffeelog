@@ -157,6 +157,51 @@ describe("店舗登録と履歴の共有", () => {
     expect(history.brewRecords[0].note).toBe("Household history");
     expect((await loadStoreHistory(db, store.id, "cafe-only")).brewRecords).toEqual([]);
   });
+  it("日付がない記録を日付付きの記録より後に返す", async () => {
+    const store = await resolveStore(db, { name: "History Order Store" });
+    const cafeRecords = await db
+      .insert(cafeLogs)
+      .values([
+        { userId: "self", storeId: store.id },
+        { userId: "self", storeId: store.id, visitDate: "2025-01-01" },
+        { userId: "self", storeId: store.id, visitDate: "2026-01-01" },
+      ])
+      .returning();
+    const [bean] = await db
+      .insert(beans)
+      .values({ householdId: household, name: "Order bean", storeId: store.id })
+      .returning();
+    const brewRecords = await db
+      .insert(brewLogs)
+      .values([
+        { beanId: bean.id, userId: "self", householdId: household },
+        {
+          beanId: bean.id,
+          userId: "self",
+          householdId: household,
+          brewDate: "2025-01-01",
+        },
+        {
+          beanId: bean.id,
+          userId: "self",
+          householdId: household,
+          brewDate: "2026-01-01",
+        },
+      ])
+      .returning();
+
+    const history = await loadStoreHistory(db, store.id, "self");
+    expect(history.cafeRecords.map(({ id }) => id)).toEqual([
+      cafeRecords[2].id,
+      cafeRecords[1].id,
+      cafeRecords[0].id,
+    ]);
+    expect(history.brewRecords.map(({ id }) => id)).toEqual([
+      brewRecords[2].id,
+      brewRecords[1].id,
+      brewRecords[0].id,
+    ]);
+  });
 });
 
 describe("店舗の入力検証", () => {

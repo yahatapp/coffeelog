@@ -1,4 +1,4 @@
-import { and, asc, desc, eq, isNull } from "drizzle-orm";
+import { and, asc, desc, eq, isNull, sql } from "drizzle-orm";
 import type { PgDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core";
 import { stores } from "./stores";
 import { cafeLogs } from "./cafelog";
@@ -84,7 +84,7 @@ export const loadStoreHistory = async <T extends PgQueryResultHKT>(
       })
       .from(cafeLogs)
       .where(and(eq(cafeLogs.storeId, storeId), eq(cafeLogs.userId, lineUserId)))
-      .orderBy(desc(cafeLogs.visitDate), desc(cafeLogs.createdAt)),
+      .orderBy(sql`${desc(cafeLogs.visitDate)} nulls last`, desc(cafeLogs.createdAt)),
     db
       .select({
         id: brewLogs.id,
@@ -117,7 +117,7 @@ export const loadStoreHistory = async <T extends PgQueryResultHKT>(
         and(eq(profiles.householdId, brewLogs.householdId), eq(profiles.lineUserId, lineUserId)),
       )
       .where(eq(beans.storeId, storeId))
-      .orderBy(desc(brewLogs.brewDate), desc(brewLogs.createdAt)),
+      .orderBy(sql`${desc(brewLogs.brewDate)} nulls last`, desc(brewLogs.createdAt)),
   ]);
   // Keep records for archived/soft-deleted beans: brewing history is retained.
   return { cafeRecords, brewRecords };
