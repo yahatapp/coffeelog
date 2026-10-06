@@ -17,8 +17,8 @@ peerDependencyRules:
     tailwindcss: "4"
 
 overrides:
-  vite@*: npm:@voidzero-dev/vite-plus-core@0.3.1
-  vitest@*: 4.1.11
+  vite@*: npm:@voidzero-dev/vite-plus-core@1.0.0
+  vitest@*: 5.0.1
 
 catalog:
   "@cloudflare/vite-plugin": 1.62.5
@@ -51,7 +51,7 @@ catalog:
   tailwindcss: 4.3.3
   tailwindcss-animate: 1.0.7
   typescript: 7.0.2
-  vite: npm:@voidzero-dev/vite-plus-core@0.3.1
+  vite: npm:@voidzero-dev/vite-plus-core@1.0.0
   vitest: 5.0.3
   wrangler: 4.147.0
   zod: 4.6.5

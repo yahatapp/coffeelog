@@ -18,7 +18,7 @@
   "devDependencies": {
     "lefthook": "catalog:",
     "turbo": "^2.11.7",
-    "vite-plus": "0.3.1"
+    "vite-plus": "1.0.0"
   },
   "packageManager": "pnpm@11.11.0"
 }
