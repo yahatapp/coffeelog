@@ -1,4 +1,5 @@
 import { useForm } from "@tanstack/react-form";
+import { useQuery } from "@tanstack/react-query";
 import { Calendar, Loader2, MessageSquare, Minus, Plus, Save, Star } from "lucide-react";
 import { useState } from "react";
 import { ImagePicker } from "@/components/ImagePicker";
@@ -6,6 +7,7 @@ import { ProcessField } from "@/components/ProcessField";
 import { Segment } from "@/components/Segment";
 import { cafeLogFormSchema, type CafeLogFormValues } from "@/lib/cafeLogForm";
 import { FREQUENT_PREFECTURES, PREFECTURE_GROUPS } from "@/lib/prefectures";
+import { cafelogQueries } from "@/lib/queries";
 
 type CafeLogFormProps = {
   defaultValues: CafeLogFormValues;
@@ -66,6 +68,7 @@ export const CafeLogForm = ({
   maxImages = 5,
 }: CafeLogFormProps) => {
   const [imageError, setImageError] = useState<string | null>(null);
+  const storesQuery = useQuery(cafelogQueries.stores());
   const form = useForm({
     defaultValues,
     validators: {
@@ -101,12 +104,31 @@ export const CafeLogForm = ({
                 id="cafe-name"
                 type="text"
                 required
+                list="registered-stores"
                 value={field.state.value}
-                onChange={(event) => field.handleChange(event.target.value)}
+                onChange={(event) => {
+                  const name = event.target.value;
+                  field.handleChange(name);
+                  const matches = (storesQuery.data ?? []).filter((store) => store.name === name);
+                  if (matches.length === 1) {
+                    form.setFieldValue("prefecture", matches[0].prefecture ?? "");
+                    form.setFieldValue(
+                      "cafeLinks",
+                      matches[0].links.length ? matches[0].links : [""],
+                    );
+                  }
+                }}
                 onBlur={field.handleBlur}
                 placeholder="例: ブルーボトルコーヒー"
                 className="w-full bg-cafe-background border border-cafe-secondary/20 rounded-xl px-4 py-3 text-sm text-cafe-text placeholder-cafe-secondary/40 focus:outline-none focus:ring-2 focus:ring-cafe-primary/10 focus:border-cafe-primary/60 transition-all"
               />
+              <datalist id="registered-stores">
+                {(storesQuery.data ?? []).map((store) => (
+                  <option key={store.id} value={store.name}>
+                    {store.prefecture ?? ""}
+                  </option>
+                ))}
+              </datalist>
               {errorMessage(field.state.meta.errors) && (
                 <p className="mt-1 text-xs text-red-600">{errorMessage(field.state.meta.errors)}</p>
               )}

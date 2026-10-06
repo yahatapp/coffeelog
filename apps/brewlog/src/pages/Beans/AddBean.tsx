@@ -31,6 +31,7 @@ const AddBean = () => {
     onSuccess: async () => {
       analytics.trackEvent("bean_create_success");
       await queryClient.invalidateQueries({ queryKey: queryKeys.beans });
+      await queryClient.invalidateQueries({ queryKey: queryKeys.stores });
       void navigate("/beans");
     },
   });
@@ -44,6 +45,10 @@ const AddBean = () => {
     farm: "",
     producer: "",
     purchaseStore: "",
+    storeId: "",
+    storeName: "",
+    storePrefecture: "",
+    storeLinks: [""],
     roastLevel: 3,
     roastDate: "",
     purchaseDate: today,
@@ -69,6 +74,7 @@ const AddBean = () => {
     form.setFieldValue("farm", parentQuery.data.farm ?? "");
     form.setFieldValue("producer", parentQuery.data.producer ?? "");
     form.setFieldValue("purchaseStore", parentQuery.data.purchaseStore ?? "");
+    form.setFieldValue("storeId", parentQuery.data.storeId ?? "");
     form.setFieldValue("roastLevel", parentQuery.data.roastLevel ?? 3);
     form.setFieldValue("processMethod", parentQuery.data.processMethod ?? "");
   }, [form, isVersionMode, parentQuery.data]);

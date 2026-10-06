@@ -16,6 +16,14 @@ import { eq, and, desc, isNull } from "drizzle-orm";
 import { z } from "zod";
 import { HTTPException } from "hono/http-exception";
 import type { Env } from "./types";
+import { storeIdParamsSchema } from "@yahatapp/database/store-contracts";
+import {
+  findStore,
+  listStores,
+  loadStoreHistory,
+  resolveStore,
+} from "@yahatapp/database/store-service";
+import type { stores } from "@yahatapp/database/stores";
 import {
   beanCreateSchema as createBeanSchema,
   beanUpdateSchema as updateBeanSchema,
@@ -33,6 +41,15 @@ const initSchema = z.object({
 });
 
 const app = new Hono<Env>();
+
+const toBean = <
+  T extends typeof beansTable.$inferSelect & { store: typeof stores.$inferSelect | null },
+>(
+  bean: T,
+) => ({
+  ...bean,
+  purchaseStore: bean.store?.name ?? bean.purchaseStore,
+});
 
 // Apply authentication middleware to all routes
 app.use("/*", authMiddleware);
@@ -90,14 +107,29 @@ const api = app
 
     return c.json(result);
   })
+  .get("/api/stores", async (c) => {
+    await getHouseholdId(c);
+    return c.json(await listStores(getDb(c.env.DATABASE_URL)));
+  })
+  .get("/api/stores/:id", zValidator("param", storeIdParamsSchema), async (c) => {
+    await getHouseholdId(c);
+    const { id } = c.req.valid("param");
+    const db = getDb(c.env.DATABASE_URL);
+    const store = await findStore(db, id);
+    if (!store) throw new HTTPException(404, { message: "Store not found" });
+    return c.json({ store, ...(await loadStoreHistory(db, id, c.get("lineUserId"))) });
+  })
   .get("/api/beans", async (c) => {
     const householdId = await getHouseholdId(c);
     const db = getDb(c.env.DATABASE_URL);
     return c.json(
-      await db.query.beans.findMany({
-        where: and(eq(beansTable.householdId, householdId), isNull(beansTable.deletedAt)),
-        orderBy: [desc(beansTable.createdAt)],
-      }),
+      (
+        await db.query.beans.findMany({
+          where: and(eq(beansTable.householdId, householdId), isNull(beansTable.deletedAt)),
+          with: { store: true },
+          orderBy: [desc(beansTable.createdAt)],
+        })
+      ).map(toBean),
     );
   })
   .get("/api/beans/:id", async (c) => {
@@ -109,14 +141,18 @@ const api = app
         eq(beansTable.householdId, householdId),
         isNull(beansTable.deletedAt),
       ),
+      with: { store: true },
     });
     if (!bean) throw new HTTPException(404, { message: "Bean not found" });
-    return c.json(bean);
+    return c.json(toBean(bean));
   })
   .post("/api/beans", zValidator("json", createBeanSchema), async (c) => {
     const householdId = await getHouseholdId(c);
     const db = getDb(c.env.DATABASE_URL);
     const data = c.req.valid("json");
+    if (data.coffeeType !== "specialty" && (data.store || data.storeId)) {
+      throw new HTTPException(400, { message: "Stores can only be linked to specialty coffee" });
+    }
     if (data.parentBeanId) {
       const parent = await db.query.beans.findFirst({
         where: and(
@@ -128,10 +164,20 @@ const api = app
       });
       if (!parent) throw new HTTPException(409, { message: "Archived or missing bean" });
     }
-    const [newBean] = await db
-      .insert(beansTable)
-      .values({ ...data, householdId })
-      .returning();
+    const { store, storeId, ...values } = data;
+    const newBean = await db.transaction(async (tx) => {
+      const selectedStore = storeId
+        ? await findStore(tx, storeId)
+        : store
+          ? await resolveStore(tx, store)
+          : null;
+      if (storeId && !selectedStore) throw new HTTPException(404, { message: "Store not found" });
+      const [created] = await tx
+        .insert(beansTable)
+        .values({ ...values, householdId, storeId: selectedStore?.id ?? null })
+        .returning();
+      return toBean({ ...created, store: selectedStore ?? null });
+    });
     return c.json(newBean);
   })
   .patch("/api/beans/:id", zValidator("json", updateBeanSchema), async (c) => {
@@ -144,24 +190,43 @@ const api = app
         eq(beansTable.householdId, householdId),
         isNull(beansTable.deletedAt),
       ),
+      with: { store: true },
     });
     if (!existing) throw new HTTPException(404, { message: "Bean not found" });
     if (existing.isArchived && !(Object.keys(data).length === 1 && data.isArchived === false)) {
       throw new HTTPException(409, { message: "Archived beans cannot be edited" });
     }
-    const [updatedBean] = await db
-      .update(beansTable)
-      .set(data)
-      .where(
-        and(
-          eq(beansTable.id, c.req.param("id")),
-          eq(beansTable.householdId, householdId),
-          isNull(beansTable.deletedAt),
-        ),
-      )
-      .returning();
-
-    if (!updatedBean) throw new HTTPException(404, { message: "Bean not found" });
+    const coffeeType = data.coffeeType ?? existing.coffeeType;
+    if (coffeeType !== "specialty" && (data.store || data.storeId)) {
+      throw new HTTPException(400, { message: "Stores can only be linked to specialty coffee" });
+    }
+    const { store, storeId, ...values } = data;
+    const updatedBean = await db.transaction(async (tx) => {
+      const selectedStore =
+        coffeeType !== "specialty"
+          ? null
+          : storeId
+            ? await findStore(tx, storeId)
+            : store
+              ? await resolveStore(tx, store)
+              : storeId === null || store === null
+                ? null
+                : existing.store;
+      if (storeId && !selectedStore) throw new HTTPException(404, { message: "Store not found" });
+      const [updated] = await tx
+        .update(beansTable)
+        .set({ ...values, storeId: selectedStore?.id ?? null })
+        .where(
+          and(
+            eq(beansTable.id, c.req.param("id")),
+            eq(beansTable.householdId, householdId),
+            isNull(beansTable.deletedAt),
+          ),
+        )
+        .returning();
+      if (!updated) throw new HTTPException(404, { message: "Bean not found" });
+      return toBean({ ...updated, store: selectedStore ?? null });
+    });
     return c.json(updatedBean);
   })
   .delete("/api/beans/:id", async (c) => {

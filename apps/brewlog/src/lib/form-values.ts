@@ -6,6 +6,7 @@ import type {
   LogUpdateInput,
 } from "@/contracts";
 import { BREWLOG_PROCESS_METHODS, getRoastLabel } from "@yahatapp/coffee-reference";
+import { storeInputSchema } from "@yahatapp/database/store-contracts";
 
 export const PROCESS_METHODS = BREWLOG_PROCESS_METHODS;
 
@@ -18,6 +19,10 @@ export type BeanFormValues = {
   farm: string;
   producer: string;
   purchaseStore: string;
+  storeId: string;
+  storeName: string;
+  storePrefecture: string;
+  storeLinks: string[];
   roastLevel: number;
   roastDate: string;
   purchaseDate: string;
@@ -25,6 +30,28 @@ export type BeanFormValues = {
   note: string;
   version: string;
   isArchived: boolean;
+};
+
+const beanStoreInput = (
+  values: BeanFormValues,
+): Pick<BeanCreateInput, "purchaseStore" | "storeId" | "store"> => {
+  const result =
+    values.coffeeType === "specialty" && values.storeId === "new"
+      ? storeInputSchema.safeParse({
+          name: values.storeName.trim(),
+          prefecture: values.storePrefecture || null,
+          links: values.storeLinks.some((url) => url.trim())
+            ? values.storeLinks.map((url) => url.trim()).filter(Boolean)
+            : undefined,
+        })
+      : null;
+  if (result && !result.success) throw new Error("店舗名・都道府県・リンクを確認してください。");
+  return {
+    purchaseStore: values.coffeeType === "regular" ? values.purchaseStore.trim() || null : null,
+    storeId:
+      values.coffeeType === "specialty" && values.storeId !== "new" ? values.storeId || null : null,
+    store: result?.data ?? null,
+  };
 };
 
 export const toBeanCreateInput = (
@@ -38,7 +65,7 @@ export const toBeanCreateInput = (
   variety: values.coffeeType === "specialty" ? values.variety.trim() || null : null,
   farm: values.coffeeType === "specialty" ? values.farm.trim() || null : null,
   producer: values.coffeeType === "specialty" ? values.producer.trim() || null : null,
-  purchaseStore: values.purchaseStore.trim() || null,
+  ...beanStoreInput(values),
   roastLevel: values.roastLevel,
   roastDate: values.roastDate || null,
   purchaseDate: values.purchaseDate || null,
@@ -57,7 +84,7 @@ export const toBeanUpdateInput = (values: BeanFormValues): BeanUpdateInput => ({
   variety: values.coffeeType === "specialty" ? values.variety.trim() || null : null,
   farm: values.coffeeType === "specialty" ? values.farm.trim() || null : null,
   producer: values.coffeeType === "specialty" ? values.producer.trim() || null : null,
-  purchaseStore: values.purchaseStore.trim() || null,
+  ...beanStoreInput(values),
   roastLevel: values.roastLevel,
   roastDate: values.roastDate || null,
   purchaseDate: values.purchaseDate || null,

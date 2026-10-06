@@ -1,0 +1,32 @@
+{
+  "name": "@yahatapp/database",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./stores": "./src/stores.ts",
+    "./store-contracts": "./src/store-contracts.ts",
+    "./store-service": "./src/store-service.ts",
+    "./cafelog": "./src/cafelog.ts",
+    "./brewlog": "./src/brewlog.ts"
+  },
+  "scripts": {
+    "check": "tsc --noEmit",
+    "build": "tsc --noEmit",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "node ../../scripts/db-migrate.mjs all",
+    "test": "vp test"
+  },
+  "dependencies": {
+    "drizzle-orm": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "0.5.8",
+    "@types/node": "24.13.3",
+    "drizzle-kit": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "vitest": "catalog:"
+  }
+}

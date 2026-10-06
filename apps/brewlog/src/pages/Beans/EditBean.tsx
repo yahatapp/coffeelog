@@ -26,6 +26,7 @@ const EditBean = () => {
     onSuccess: async (bean) => {
       queryClient.setQueryData(queryKeys.bean(bean.id), bean);
       await queryClient.invalidateQueries({ queryKey: queryKeys.beans });
+      await queryClient.invalidateQueries({ queryKey: queryKeys.stores });
       await queryClient.invalidateQueries({ queryKey: queryKeys.logs });
       void navigate("/beans");
     },
@@ -40,6 +41,10 @@ const EditBean = () => {
     farm: "",
     producer: "",
     purchaseStore: "",
+    storeId: "",
+    storeName: "",
+    storePrefecture: "",
+    storeLinks: [""],
     roastLevel: 3,
     roastDate: "",
     purchaseDate: "",
@@ -66,6 +71,10 @@ const EditBean = () => {
       farm: beanQuery.data.farm ?? "",
       producer: beanQuery.data.producer ?? "",
       purchaseStore: beanQuery.data.purchaseStore ?? "",
+      storeId: beanQuery.data.storeId ?? "",
+      storeName: "",
+      storePrefecture: "",
+      storeLinks: [""],
       roastLevel: beanQuery.data.roastLevel ?? 3,
       roastDate: beanQuery.data.roastDate ?? "",
       purchaseDate: beanQuery.data.purchaseDate ?? "",

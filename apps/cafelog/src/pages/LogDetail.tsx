@@ -109,7 +109,7 @@ const LogDetailPage = () => {
       queryClient.setQueryData(cafelogQueries.log(id).queryKey, (current) =>
         current ? { ...current, ...updatedLog } : updatedLog,
       );
-      await queryClient.invalidateQueries({ queryKey: cafelogQueries.logs().queryKey });
+      await queryClient.invalidateQueries({ queryKey: cafelogQueries.all });
       try {
         await uploadLogImages(id, values.images);
         await queryClient.invalidateQueries({ queryKey: cafelogQueries.images(id).queryKey });
@@ -132,7 +132,7 @@ const LogDetailPage = () => {
     try {
       await deleteMutation.mutateAsync(id);
       queryClient.removeQueries({ queryKey: cafelogQueries.log(id).queryKey });
-      await queryClient.invalidateQueries({ queryKey: cafelogQueries.logs().queryKey });
+      await queryClient.invalidateQueries({ queryKey: cafelogQueries.all });
       void navigate("/logs");
     } catch (error: unknown) {
       console.error("Error deleting log", error);
@@ -267,6 +267,12 @@ const LogDetailPage = () => {
               <h3 className="text-xl font-bold text-cafe-text leading-tight break-words">
                 {log.cafeName}
               </h3>
+              <Link
+                to={`/stores/${log.storeId}`}
+                className="inline-flex min-h-11 items-center text-xs font-bold text-cafe-primary underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cafe-primary"
+              >
+                このお店のコーヒー記録
+              </Link>
               {log.prefecture && (
                 <p className="flex items-center gap-1 text-xs font-semibold text-cafe-secondary">
                   <MapPin size={12} />

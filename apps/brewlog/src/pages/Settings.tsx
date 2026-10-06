@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { User, LogOut, ChevronRight, Settings2 } from "lucide-react";
 import { useLiff } from "../hooks/useLiff";
 import { Card, CardContent } from "../components/ui/card";
@@ -88,6 +88,14 @@ const Settings = () => {
           </div>
         </Card>
       </section>
+
+      <Link
+        to="/stores"
+        className="flex min-h-16 items-center justify-between rounded-2xl border border-coffee-secondary/20 bg-white p-4 text-sm font-bold text-coffee-primary shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coffee-primary"
+      >
+        <span>お店・コーヒー記録</span>
+        <span aria-hidden="true">›</span>
+      </Link>
 
       {analytics.configured && (
         <section className="rounded-2xl border border-coffee-secondary/15 bg-white p-4">

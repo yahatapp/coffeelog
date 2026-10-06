@@ -8,6 +8,8 @@ export type LogsResponse = InferResponseType<typeof api.api.logs.$get>;
 export type LogResponse = InferResponseType<(typeof api.api.logs)[":id"]["$get"]>;
 export type CreateLogInput = InferRequestType<typeof api.api.logs.$post>["json"];
 export type UpdateLogInput = InferRequestType<(typeof api.api.logs)[":id"]["$patch"]>["json"];
+type StoresResponse = InferResponseType<typeof api.api.stores.$get, 200>;
+type StoreHistoryResponse = InferResponseType<(typeof api.api.stores)[":id"]["$get"], 200>;
 
 export type ImageMeta = { id: string; position: number };
 export type LoadedImageBlob = ImageMeta & { blob: Blob };
@@ -82,6 +84,18 @@ export const uploadLogImages = async (logId: string, images: CafeLogFormValues["
 
 export const cafelogQueries = {
   all: ["cafelog"] as const,
+  stores: () =>
+    queryOptions({
+      queryKey: ["cafelog", "stores"] as const,
+      queryFn: async () => parseJson<StoresResponse>(await api.api.stores.$get()),
+    }),
+  store: (id: string) =>
+    queryOptions({
+      queryKey: ["cafelog", "stores", id] as const,
+      queryFn: async () =>
+        parseJson<StoreHistoryResponse>(await api.api.stores[":id"].$get({ param: { id } })),
+      enabled: Boolean(id),
+    }),
   logs: () =>
     queryOptions({
       queryKey: ["cafelog", "logs"] as const,
