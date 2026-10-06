@@ -1,6 +1,7 @@
 import { useLiff } from "@/hooks/useLiff";
 import { User, Copy, Check, Info, LogOut } from "lucide-react";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { analytics } from "@/lib/analytics";
 
 const SettingsPage = () => {
@@ -71,6 +72,14 @@ const SettingsPage = () => {
           <p className="text-cafe-secondary text-sm">プロフィール情報が見つかりません。</p>
         </div>
       )}
+
+      <Link
+        to="/stores"
+        className="flex min-h-16 items-center justify-between rounded-2xl border border-cafe-secondary/20 bg-white p-4 text-sm font-bold text-cafe-primary shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cafe-primary"
+      >
+        <span>お店・コーヒー記録</span>
+        <span aria-hidden="true">›</span>
+      </Link>
 
       {analytics.configured && (
         <section className="rounded-2xl border border-cafe-secondary/20 bg-white p-4 shadow-sm">

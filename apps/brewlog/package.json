@@ -28,6 +28,7 @@
     "@tanstack/react-query": "catalog:",
     "@yahatapp/analytics": "workspace:*",
     "@yahatapp/coffee-reference": "workspace:*",
+    "@yahatapp/database": "workspace:*",
     "@yahatapp/ui": "workspace:*",
     "base-ui": "catalog:",
     "clsx": "catalog:",

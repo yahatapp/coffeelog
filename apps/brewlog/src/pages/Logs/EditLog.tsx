@@ -128,6 +128,7 @@ const EditLogForm = ({
     onSuccess: async () => {
       analytics.trackEvent("record_update_success");
       await queryClient.invalidateQueries({ queryKey: queryKeys.logs });
+      await queryClient.invalidateQueries({ queryKey: queryKeys.stores });
       await queryClient.invalidateQueries({ queryKey: queryKeys.log(id) });
       void navigate(`/logs/${id}`);
     },

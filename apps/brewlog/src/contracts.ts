@@ -1,46 +1,61 @@
 import { z } from "zod";
+import { storeInputSchema } from "@yahatapp/database/store-contracts";
 
 const nullableText = z.string().optional().nullable();
 export const coffeeTypeSchema = z.enum(["regular", "specialty"]);
 
-export const beanCreateSchema = z.object({
-  name: z.string().min(1),
-  coffeeType: coffeeTypeSchema.default("regular"),
-  origin: nullableText,
-  region: nullableText,
-  variety: nullableText,
-  farm: nullableText,
-  producer: nullableText,
-  purchaseStore: nullableText,
-  roastLevel: z.number().int().min(1).max(5).optional().nullable(),
-  roastDate: nullableText,
-  purchaseDate: nullableText,
-  imageUrl: nullableText,
-  processMethod: nullableText,
-  note: nullableText,
-  parentBeanId: z.string().uuid().optional().nullable(),
-  version: nullableText,
-});
+export const beanCreateSchema = z
+  .object({
+    name: z.string().min(1),
+    coffeeType: coffeeTypeSchema.default("regular"),
+    origin: nullableText,
+    region: nullableText,
+    variety: nullableText,
+    farm: nullableText,
+    producer: nullableText,
+    purchaseStore: nullableText,
+    storeId: z.uuid().optional().nullable(),
+    store: storeInputSchema.optional().nullable(),
+    roastLevel: z.number().int().min(1).max(5).optional().nullable(),
+    roastDate: nullableText,
+    purchaseDate: nullableText,
+    imageUrl: nullableText,
+    processMethod: nullableText,
+    note: nullableText,
+    parentBeanId: z.string().uuid().optional().nullable(),
+    version: nullableText,
+  })
+  .refine(
+    (data) => !(data.storeId && data.store),
+    "店舗は選択または新規登録のどちらかを指定してください。",
+  );
 
-export const beanUpdateSchema = z.object({
-  name: z.string().min(1).optional(),
-  coffeeType: coffeeTypeSchema.optional(),
-  origin: nullableText,
-  region: nullableText,
-  variety: nullableText,
-  farm: nullableText,
-  producer: nullableText,
-  purchaseStore: nullableText,
-  roastLevel: z.number().int().min(1).max(5).optional().nullable(),
-  roastDate: nullableText,
-  purchaseDate: nullableText,
-  imageUrl: nullableText,
-  isArchived: z.boolean().optional(),
-  processMethod: nullableText,
-  note: nullableText,
-  parentBeanId: z.string().uuid().optional().nullable(),
-  version: nullableText,
-});
+export const beanUpdateSchema = z
+  .object({
+    name: z.string().min(1).optional(),
+    coffeeType: coffeeTypeSchema.optional(),
+    origin: nullableText,
+    region: nullableText,
+    variety: nullableText,
+    farm: nullableText,
+    producer: nullableText,
+    purchaseStore: nullableText,
+    storeId: z.uuid().optional().nullable(),
+    store: storeInputSchema.optional().nullable(),
+    roastLevel: z.number().int().min(1).max(5).optional().nullable(),
+    roastDate: nullableText,
+    purchaseDate: nullableText,
+    imageUrl: nullableText,
+    isArchived: z.boolean().optional(),
+    processMethod: nullableText,
+    note: nullableText,
+    parentBeanId: z.string().uuid().optional().nullable(),
+    version: nullableText,
+  })
+  .refine(
+    (data) => !(data.storeId && data.store),
+    "店舗は選択または新規登録のどちらかを指定してください。",
+  );
 
 const pourSchema = z.object({
   pourNumber: z.number().int().min(1),

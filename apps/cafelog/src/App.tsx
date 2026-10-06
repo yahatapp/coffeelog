@@ -11,6 +11,7 @@ import LogsPage from "./pages/Logs";
 import CreateLogPage from "./pages/CreateLog";
 import LogDetailPage from "./pages/LogDetail";
 import SettingsPage from "./pages/Settings";
+import StoresPage, { StoreDetailPage } from "./pages/Stores";
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
@@ -29,7 +30,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   const navItems = [
     { to: "/", paths: ["/"], label: "ホーム", icon: HomeIcon },
     { to: "/logs", paths: ["/logs"], label: "記録", icon: ClipboardList },
-    { to: "/settings", paths: ["/settings"], label: "設定", icon: User },
+    { to: "/settings", paths: ["/settings", "/stores"], label: "設定", icon: User },
   ];
 
   return (
@@ -142,6 +143,8 @@ const AppContent = () => {
           <Route path="/logs" element={<LogsPage />} />
           <Route path="/logs/new" element={<CreateLogPage />} />
           <Route path="/logs/:id" element={<LogDetailPage />} />
+          <Route path="/stores" element={<StoresPage />} />
+          <Route path="/stores/:id" element={<StoreDetailPage />} />
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>

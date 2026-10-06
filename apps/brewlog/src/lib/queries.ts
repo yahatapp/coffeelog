@@ -20,6 +20,21 @@ export const queryKeys = {
   log: (id: string) => ["brewlog", "logs", id] as const,
   drippers: ["brewlog", "drippers"] as const,
   grinders: ["brewlog", "grinders"] as const,
+  stores: ["brewlog", "stores"] as const,
+};
+
+export const storeQueries = {
+  all: () =>
+    queryOptions({
+      queryKey: queryKeys.stores,
+      queryFn: () => parseOkResponse(api.api.stores.$get()),
+    }),
+  detail: (id: string) =>
+    queryOptions({
+      queryKey: [...queryKeys.stores, id],
+      queryFn: () => parseOkResponse(api.api.stores[":id"].$get({ param: { id } })),
+      enabled: Boolean(id),
+    }),
 };
 
 export type BeansResponse = InferResponseType<typeof api.api.beans.$get, 200>;
