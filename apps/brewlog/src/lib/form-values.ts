@@ -110,6 +110,7 @@ export type LogFormValues = {
   beanAmount: number | "";
   waterAmount: number | "";
   rating: number;
+  brewComment: string;
   note: string;
   tempType: "hot" | "ice";
   iceAmount: number | "";
@@ -130,6 +131,7 @@ export const toLogCreateInput = (values: LogFormValues): LogCreateInput => ({
   beanAmount: numberOrNull(values.beanAmount),
   waterAmount: numberOrNull(values.waterAmount),
   rating: values.rating,
+  brewComment: values.brewComment.trim() || null,
   note: values.note.trim() || null,
   brewDate: values.brewDate || null,
   dripperId: values.dripperId || null,

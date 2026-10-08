@@ -1,0 +1,1 @@
+ALTER TABLE "brewlog"."brew_logs" ADD COLUMN "brew_comment" text;

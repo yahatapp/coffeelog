@@ -682,6 +682,22 @@ export const BrewLogFields = ({
                   </button>
                 </div>
               </div>
+              <form.Field name="brewComment">
+                {(field) => (
+                  <div className="space-y-2 pt-2 border-t border-coffee-secondary/5">
+                    <Label htmlFor="brewComment">抽出コメント</Label>
+                    <textarea
+                      id="brewComment"
+                      rows={3}
+                      value={field.state.value}
+                      onChange={(event) => field.handleChange(event.target.value)}
+                      onBlur={field.handleBlur}
+                      className="flex w-full rounded-xl border border-coffee-secondary/20 bg-white px-3 py-2 text-sm"
+                      placeholder="ステアや温度調整など..."
+                    />
+                  </div>
+                )}
+              </form.Field>
               <form.Field name="note">
                 {(field) => (
                   <div className="space-y-2 pt-2 border-t border-coffee-secondary/5">

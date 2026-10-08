@@ -72,6 +72,7 @@ export const logCreateSchema = z.object({
   beanAmount: z.number().optional().nullable(),
   waterAmount: z.number().optional().nullable(),
   rating: z.number().min(1).max(5).optional().nullable(),
+  brewComment: nullableText,
   note: nullableText,
   brewDate: nullableText,
   dripperId: z.string().uuid().optional().nullable(),

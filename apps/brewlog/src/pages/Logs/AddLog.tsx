@@ -83,6 +83,7 @@ const AddLog = () => {
     beanAmount: 10,
     waterAmount: 150,
     rating: 3,
+    brewComment: "",
     note: "",
     tempType: "hot",
     iceAmount: "",
