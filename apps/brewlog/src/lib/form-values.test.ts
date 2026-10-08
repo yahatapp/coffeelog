@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { toBeanCreateInput, toBeanUpdateInput, type BeanFormValues } from "./form-values";
+import {
+  toBeanCreateInput,
+  toBeanUpdateInput,
+  toLogCreateInput,
+  type BeanFormValues,
+  type LogFormValues,
+} from "./form-values";
 
 const beanValues = (coffeeType: BeanFormValues["coffeeType"]): BeanFormValues => ({
   name: "  エチオピア  ",
@@ -21,6 +27,36 @@ const beanValues = (coffeeType: BeanFormValues["coffeeType"]): BeanFormValues =>
   note: " フローラル ",
   version: " 2026.09 ",
   isArchived: false,
+});
+
+describe("抽出記録フォームの変換", () => {
+  it("抽出コメントを整形してテイスティングノートとは別に送信する", () => {
+    const values: LogFormValues = {
+      beanId: "0d46d52a-3b9d-440d-a156-6de187c59b73",
+      brewDate: "2026-10-04",
+      dripperId: "",
+      grinderId: "",
+      grindSize: 10,
+      waterTemp: 85,
+      beanAmount: 10,
+      waterAmount: 150,
+      rating: 3,
+      brewComment: "  30秒でステア  ",
+      note: "  フローラル  ",
+      tempType: "hot",
+      iceAmount: "",
+      yieldAmount: 150,
+      drawdownTime: "",
+      bloomingTime: "",
+      hasBypass: false,
+      pours: [],
+    };
+
+    expect(toLogCreateInput(values)).toMatchObject({
+      brewComment: "30秒でステア",
+      note: "フローラル",
+    });
+  });
 });
 
 describe("豆フォームの変換", () => {

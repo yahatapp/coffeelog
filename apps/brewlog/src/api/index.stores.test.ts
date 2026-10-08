@@ -144,3 +144,55 @@ describe("Brewlogの店舗登録API", () => {
     expect((await request("/api/stores/invalid")).status).toBe(400);
   });
 });
+
+describe("Brewlogの抽出コメントAPI", () => {
+  it("店舗付きの豆の抽出コメントを保存・取得・変更・削除し、ノートを保つ", async () => {
+    const bean = beanSchema.parse(
+      await (
+        await request("/api/beans", "POST", {
+          name: "Comment bean",
+          coffeeType: "specialty",
+          store: { name: "Comment Store" },
+        })
+      ).json(),
+    );
+    const logSchema = z.object({
+      id: z.uuid(),
+      brewComment: z.string().nullable(),
+      note: z.string().nullable(),
+      bean: z.object({ storeId: z.uuid().nullable() }),
+    });
+    const created = await request("/api/logs", "POST", {
+      beanId: bean.id,
+      brewComment: "30秒でステア",
+      note: "フローラル",
+    });
+    expect(created.status).toBe(200);
+    const log = logSchema.parse(await created.json());
+    expect(log.brewComment).toBe("30秒でステア");
+    expect(log.note).toBe("フローラル");
+    expect(log.bean.storeId).toBe(bean.storeId);
+    expect(logSchema.parse(await (await request(`/api/logs/${log.id}`)).json()).brewComment).toBe(
+      "30秒でステア",
+    );
+    expect(logSchema.array().parse(await (await request("/api/logs")).json())).toContainEqual(log);
+
+    const updated = await request(`/api/logs/${log.id}`, "PATCH", {
+      brewComment: "温度を下げた",
+    });
+    expect(updated.status).toBe(200);
+    expect(logSchema.parse(await updated.json())).toMatchObject({
+      brewComment: "温度を下げた",
+      note: "フローラル",
+    });
+    const noteOnly = await request(`/api/logs/${log.id}`, "PATCH", { note: "甘みもある" });
+    expect(noteOnly.status).toBe(200);
+    expect(logSchema.parse(await noteOnly.json()).brewComment).toBe("温度を下げた");
+    const cleared = await request(`/api/logs/${log.id}`, "PATCH", { brewComment: null });
+    expect(cleared.status).toBe(200);
+    expect(logSchema.parse(await cleared.json())).toMatchObject({
+      brewComment: null,
+      note: "甘みもある",
+    });
+  });
+});

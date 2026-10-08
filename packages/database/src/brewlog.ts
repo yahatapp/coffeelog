@@ -119,6 +119,7 @@ export const brewLogs = brewlogSchema.table("brew_logs", {
   beanAmount: real("bean_amount"),
   waterAmount: real("water_amount"),
   rating: real("rating"),
+  brewComment: text("brew_comment"),
   note: text("note"),
   brewDate: date("brew_date"), // Actual brewing date, optional
   dripperId: uuid("dripper_id").references(() => drippers.id), // Reference to dripper master

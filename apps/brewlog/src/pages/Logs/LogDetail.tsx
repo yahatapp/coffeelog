@@ -414,6 +414,17 @@ const LogDetail = () => {
             </div>
           )}
 
+          {log.brewComment && (
+            <div className="bg-coffee-background p-4 rounded-2xl border border-coffee-secondary/10 space-y-1.5">
+              <span className="text-[10px] font-bold text-coffee-secondary flex items-center uppercase tracking-wider">
+                <Info size={12} className="mr-1" /> 抽出コメント
+              </span>
+              <p className="text-sm text-coffee-text leading-relaxed whitespace-pre-wrap">
+                {log.brewComment}
+              </p>
+            </div>
+          )}
+
           {/* Notes Card */}
           {log.note && (
             <div className="bg-coffee-background p-4 rounded-2xl border border-coffee-secondary/10 space-y-1.5">

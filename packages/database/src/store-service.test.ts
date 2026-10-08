@@ -21,9 +21,19 @@ const migrations = (relative: string) =>
 const cafeMigrations = migrations("../../../apps/cafelog/db/migrations");
 const brewMigrations = migrations("../../../apps/brewlog/db/migrations");
 const sharedMigrations = migrations("../db/migrations");
+const brewStoreMigrationIndex = brewMigrations.findIndex(({ sql }) =>
+  sql.some((statement) =>
+    statement.includes('ALTER TABLE "brewlog"."beans" ADD COLUMN "store_id"'),
+  ),
+);
+const legacyBrewId = "00000000-0000-4000-8000-000000000030";
 
 beforeAll(async () => {
-  for (const migration of [...cafeMigrations.slice(0, -1), ...brewMigrations.slice(0, -1)]) {
+  expect(brewStoreMigrationIndex).toBeGreaterThan(0);
+  for (const migration of [
+    ...cafeMigrations.slice(0, -1),
+    ...brewMigrations.slice(0, brewStoreMigrationIndex),
+  ]) {
     await client.exec(migration.sql.join("\n"));
   }
   await client.exec(`
@@ -43,11 +53,13 @@ beforeAll(async () => {
     INSERT INTO brewlog.beans (household_id, name, coffee_type, purchase_store) VALUES
       ('${household}', 'Branch bean', 'specialty', 'Branch Coffee'),
       ('${household}', 'Regular bean', 'regular', 'Supermarket');
+    INSERT INTO brewlog.brew_logs (id, bean_id, user_id, household_id, note) VALUES
+      ('${legacyBrewId}', '${legacyBeanId}', 'self', '${household}', 'Preserved tasting note');
   `);
   for (const migration of [
     ...sharedMigrations,
     ...cafeMigrations.slice(-1),
-    ...brewMigrations.slice(-1),
+    ...brewMigrations.slice(brewStoreMigrationIndex),
   ]) {
     await client.exec(migration.sql.join("\n"));
   }
@@ -57,6 +69,13 @@ afterAll(async () => {
 });
 
 describe("既存記録を保つ店舗移行", () => {
+  it("抽出コメントの追加後も既存のノートと店舗関連を保つ", async () => {
+    const [log] = await db.select().from(brewLogs).where(eq(brewLogs.id, legacyBrewId));
+    expect(log.note).toBe("Preserved tasting note");
+    expect(log.brewComment).toBeNull();
+    const [bean] = await db.select().from(beans).where(eq(beans.id, log.beanId));
+    expect(bean.storeId).toBeTruthy();
+  });
   it("店舗名とリンクを移し、元の情報とメモを保つ", async () => {
     const [log] = await db.select().from(cafeLogs).where(eq(cafeLogs.id, legacyCafeId));
     const store = await findStore(db, log.storeId);
