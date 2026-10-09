@@ -421,21 +421,34 @@ export function StoreHistory({
                     .join(" · ") || "豆情報未登録"}
                 </p>
                 <ul className="divide-y divide-border">
-                  {records.slice(0, 3).map((record) => (
-                    <li key={record.id}>
-                      <button
-                        type="button"
-                        onClick={onOpenBrewRecord ? () => onOpenBrewRecord(record.id) : undefined}
-                        className="flex min-h-14 w-full items-center justify-between gap-3 py-2 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                      >
+                  {records.slice(0, 3).map((record) => {
+                    const details = (
+                      <>
                         <span className="text-xs text-muted">
                           {dateLabel(record.brewDate)} ·{" "}
                           {record.tempType === "ice" ? "アイス" : "ホット"}
                         </span>
                         <Rating rating={record.rating} />
-                      </button>
-                    </li>
-                  ))}
+                      </>
+                    );
+                    return (
+                      <li key={record.id}>
+                        {onOpenBrewRecord ? (
+                          <button
+                            type="button"
+                            onClick={() => onOpenBrewRecord(record.id)}
+                            className="flex min-h-14 w-full items-center justify-between gap-3 py-2 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                          >
+                            {details}
+                          </button>
+                        ) : (
+                          <div className="flex min-h-14 w-full items-center justify-between gap-3 py-2 text-left">
+                            {details}
+                          </div>
+                        )}
+                      </li>
+                    );
+                  })}
                 </ul>
                 {records.length > 3 && (
                   <p className="text-right text-xs text-muted">
