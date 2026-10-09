@@ -88,6 +88,7 @@ export const loadStoreHistory = async <T extends PgQueryResultHKT>(
     db
       .select({
         id: brewLogs.id,
+        beanId: beans.id,
         beanName: beans.name,
         beanVersion: beans.version,
         origin: beans.origin,

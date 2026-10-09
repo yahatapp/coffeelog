@@ -173,6 +173,7 @@ describe("店舗登録と履歴の共有", () => {
     const history = await loadStoreHistory(db, store.id, "self");
     expect(history.cafeRecords.map((record) => record.id)).toEqual([ownCafe.id]);
     expect(history.brewRecords.map((record) => record.id)).toEqual([ownBrew.id]);
+    expect(history.brewRecords[0].beanId).toBe(ownBean.id);
     expect(history.brewRecords[0].note).toBe("Household history");
     expect((await loadStoreHistory(db, store.id, "cafe-only")).brewRecords).toEqual([]);
   });
