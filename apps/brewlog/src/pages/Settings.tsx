@@ -14,6 +14,8 @@ const Settings = () => {
   const drippers = drippersQuery.data ?? [];
   const grinders = grindersQuery.data ?? [];
   const isLoading = drippersQuery.isPending || grindersQuery.isPending;
+  const analyticsConsent = analytics.getConsent();
+  const isAnalyticsEnabled = analyticsConsent === "enabled";
 
   const handleLogout = () => {
     if (liff?.isLoggedIn()) {
@@ -107,28 +109,19 @@ const Settings = () => {
           </p>
           <p className="mt-2 text-xs text-coffee-secondary">
             現在:{" "}
-            {analytics.getConsent() === "enabled"
-              ? "許可中"
-              : analytics.getConsent() === "disabled"
-                ? "許可しない"
-                : "未選択"}
+            {isAnalyticsEnabled ? "許可中" : analyticsConsent === "disabled" ? "停止中" : "未選択"}
           </p>
-          <div className="mt-3 flex gap-2">
-            <button
-              type="button"
-              className="min-h-11 flex-1 rounded-xl bg-coffee-primary px-3 text-sm font-semibold text-white"
-              onClick={() => analytics.setConsent("enabled")}
-            >
-              許可する
-            </button>
-            <button
-              type="button"
-              className="min-h-11 flex-1 rounded-xl border border-coffee-secondary/30 px-3 text-sm"
-              onClick={() => analytics.setConsent("disabled")}
-            >
-              許可しない
-            </button>
-          </div>
+          <button
+            type="button"
+            className={`mt-3 min-h-11 w-full rounded-xl px-3 text-sm font-semibold ${
+              isAnalyticsEnabled
+                ? "border border-coffee-secondary/30 text-coffee-text"
+                : "bg-coffee-primary text-white"
+            }`}
+            onClick={() => analytics.setConsent(isAnalyticsEnabled ? "disabled" : "enabled")}
+          >
+            {isAnalyticsEnabled ? "計測を停止する" : "計測を許可する"}
+          </button>
         </section>
       )}
 
