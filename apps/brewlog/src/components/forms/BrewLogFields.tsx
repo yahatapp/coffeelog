@@ -64,14 +64,15 @@ export const BrewLogFields = ({
       const maxGrind = selectedGrinder
         ? Math.max(values.grindSize || 1, Math.round(selectedGrinder.mediumCoarseMax * 1.2))
         : Math.max(values.grindSize || 1, 40);
-      const grindMarks = [
-        { value: 1, label: "1 (細)" },
-        { value: (selectedGrinder?.fineMax ?? 6) + 1, label: "中細" },
-        { value: (selectedGrinder?.mediumFineMax ?? 9) + 1, label: "中" },
-        { value: (selectedGrinder?.mediumMax ?? 15) + 1, label: "中粗" },
-        { value: (selectedGrinder?.mediumCoarseMax ?? 22) + 1, label: "粗" },
-      ].filter((mark) => mark.value >= minGrind && mark.value <= maxGrind);
-      if (grindMarks.length === 0) grindMarks.push({ value: minGrind, label: String(minGrind) });
+      const grindPresets = Array.from(
+        new Set([
+          minGrind,
+          (selectedGrinder?.fineMax ?? 6) + 1,
+          (selectedGrinder?.mediumFineMax ?? 9) + 1,
+          (selectedGrinder?.mediumMax ?? 15) + 1,
+          (selectedGrinder?.mediumCoarseMax ?? 22) + 1,
+        ]),
+      ).filter((value) => value >= minGrind && value <= maxGrind);
 
       const setTempType = (tempType: "hot" | "ice") => {
         if (tempType === "ice") {
@@ -250,26 +251,39 @@ export const BrewLogFields = ({
               </div>
               <form.Field name="grindSize">
                 {(field) => (
-                  <input
-                    type="range"
-                    id="grindSize"
-                    min={minGrind}
-                    max={maxGrind}
-                    step="1"
-                    value={field.state.value}
-                    onChange={(event) => field.handleChange(Number(event.target.value))}
-                    onBlur={field.handleBlur}
-                    className="w-full h-2 bg-coffee-secondary/20 rounded-lg appearance-none cursor-pointer accent-coffee-primary"
-                  />
+                  <>
+                    <input
+                      type="range"
+                      id="grindSize"
+                      min={minGrind}
+                      max={maxGrind}
+                      step="1"
+                      value={field.state.value}
+                      aria-valuetext={`${field.state.value}クリック (${getGrindLabel(field.state.value, selectedGrinder)})`}
+                      onChange={(event) => field.handleChange(Number(event.target.value))}
+                      onBlur={field.handleBlur}
+                      className="w-full h-2 bg-coffee-secondary/20 rounded-lg appearance-none cursor-pointer accent-coffee-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                    />
+                    <div role="group" aria-label="挽き目の目安から選択" className="space-y-2">
+                      <p className="text-xs text-coffee-secondary">挽き目の目安から選択</p>
+                      <div className="flex flex-wrap gap-2">
+                        {grindPresets.map((value) => (
+                          <Button
+                            key={value}
+                            type="button"
+                            variant={field.state.value === value ? "secondary" : "outline"}
+                            aria-pressed={field.state.value === value}
+                            onClick={() => field.handleChange(value)}
+                            onBlur={field.handleBlur}
+                          >
+                            {getGrindLabel(value, selectedGrinder)} ({value}クリック)
+                          </Button>
+                        ))}
+                      </div>
+                    </div>
+                  </>
                 )}
               </form.Field>
-              <div className="flex justify-between text-[10px] text-coffee-secondary">
-                {grindMarks.map((mark) => (
-                  <span key={mark.value}>
-                    {mark.value} ({mark.label})
-                  </span>
-                ))}
-              </div>
             </div>
 
             <div className="space-y-2 pt-1">
