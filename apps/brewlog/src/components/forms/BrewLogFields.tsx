@@ -3,6 +3,7 @@ import { Button, cn } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { Card, CardContent } from "../ui/card";
+import { Slider } from "../ui/slider";
 import type { Bean, Dripper, Grinder } from "@/lib/queries";
 import {
   durationOptions,
@@ -64,7 +65,7 @@ export const BrewLogFields = ({
       const maxGrind = selectedGrinder
         ? Math.max(values.grindSize || 1, Math.round(selectedGrinder.mediumCoarseMax * 1.2))
         : Math.max(values.grindSize || 1, 40);
-      const grindPresets = Array.from(
+      const grindMarks = Array.from(
         new Set([
           minGrind,
           (selectedGrinder?.fineMax ?? 6) + 1,
@@ -72,7 +73,12 @@ export const BrewLogFields = ({
           (selectedGrinder?.mediumMax ?? 15) + 1,
           (selectedGrinder?.mediumCoarseMax ?? 22) + 1,
         ]),
-      ).filter((value) => value >= minGrind && value <= maxGrind);
+      )
+        .filter((value) => value >= minGrind && value <= maxGrind)
+        .map((value) => ({
+          value,
+          label: getGrindLabel(value, selectedGrinder).replace("挽き", ""),
+        }));
 
       const setTempType = (tempType: "hot" | "ice") => {
         if (tempType === "ice") {
@@ -240,48 +246,27 @@ export const BrewLogFields = ({
             </div>
 
             <div className="space-y-2 pt-1">
-              <div className="flex justify-between items-center">
-                <Label htmlFor="grindSize">
-                  挽き目 (クリック数:{" "}
-                  <span className="font-bold text-coffee-primary">{values.grindSize}</span>)
-                </Label>
-                <span className="text-sm font-bold bg-coffee-primary/10 text-coffee-primary px-3 py-0.5 rounded-full">
-                  {getGrindLabel(values.grindSize, selectedGrinder)}
-                </span>
-              </div>
               <form.Field name="grindSize">
                 {(field) => (
-                  <>
-                    <input
-                      type="range"
-                      id="grindSize"
-                      min={minGrind}
-                      max={maxGrind}
-                      step="1"
-                      value={field.state.value}
-                      aria-valuetext={`${field.state.value}クリック (${getGrindLabel(field.state.value, selectedGrinder)})`}
-                      onChange={(event) => field.handleChange(Number(event.target.value))}
-                      onBlur={field.handleBlur}
-                      className="w-full h-2 bg-coffee-secondary/20 rounded-lg appearance-none cursor-pointer accent-coffee-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                    />
-                    <div role="group" aria-label="挽き目の目安から選択" className="space-y-2">
-                      <p className="text-xs text-coffee-secondary">挽き目の目安から選択</p>
-                      <div className="flex flex-wrap gap-2">
-                        {grindPresets.map((value) => (
-                          <Button
-                            key={value}
-                            type="button"
-                            variant={field.state.value === value ? "secondary" : "outline"}
-                            aria-pressed={field.state.value === value}
-                            onClick={() => field.handleChange(value)}
-                            onBlur={field.handleBlur}
-                          >
-                            {getGrindLabel(value, selectedGrinder)} ({value}クリック)
-                          </Button>
-                        ))}
-                      </div>
-                    </div>
-                  </>
+                  <Slider
+                    id="grindSize"
+                    label={
+                      <>
+                        挽き目 (クリック数:{" "}
+                        <span className="font-bold text-coffee-primary">{field.state.value}</span>)
+                      </>
+                    }
+                    valueDescription={getGrindLabel(field.state.value, selectedGrinder)}
+                    min={minGrind}
+                    max={maxGrind}
+                    value={field.state.value}
+                    marks={grindMarks}
+                    onValueChange={field.handleChange}
+                    onBlur={field.handleBlur}
+                    getValueText={(value) =>
+                      `${value}クリック (${getGrindLabel(value, selectedGrinder)})`
+                    }
+                  />
                 )}
               </form.Field>
             </div>
