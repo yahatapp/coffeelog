@@ -21,6 +21,7 @@
     "db:migrate": "node ../../scripts/db-migrate.mjs brewlog"
   },
   "dependencies": {
+    "@base-ui/react": "catalog:",
     "@hono/zod-validator": "catalog:",
     "@line/liff": "catalog:",
     "@radix-ui/react-slot": "catalog:",
