@@ -366,47 +366,33 @@ export const CafeLogForm = ({
           </form.Field>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
-          <form.Field name="process">
-            {(field) => (
-              <div>
-                <label
-                  htmlFor="cafe-process"
-                  className="text-xs font-bold text-cafe-text block mb-1.5"
-                >
-                  精製方法
-                </label>
-                <ProcessField
-                  id="cafe-process"
-                  value={field.state.value}
-                  onChange={field.handleChange}
-                />
-              </div>
-            )}
-          </form.Field>
-
-          <form.Field name="roast">
-            {(field) => (
-              <div>
-                <label
-                  htmlFor="cafe-roast"
-                  className="text-xs font-bold text-cafe-text block mb-1.5"
-                >
-                  焙煎度
-                </label>
-                <input
-                  id="cafe-roast"
-                  type="text"
-                  value={field.state.value}
-                  onChange={(event) => field.handleChange(event.target.value)}
-                  onBlur={field.handleBlur}
-                  placeholder="例: 浅煎り"
-                  className="w-full bg-cafe-background border border-cafe-secondary/20 rounded-xl px-4 py-3 text-sm text-cafe-text placeholder-cafe-secondary/40 focus:outline-none focus:ring-2 focus:ring-cafe-primary/10 focus:border-cafe-primary/60 transition-all"
-                />
-              </div>
-            )}
-          </form.Field>
-        </div>
+        <form.Field name="process">
+          {(field) => (
+            <ProcessField id="cafe-process" value={field.state.value} onChange={field.handleChange}>
+              <form.Field name="roast">
+                {(field) => (
+                  <div>
+                    <label
+                      htmlFor="cafe-roast"
+                      className="text-xs font-bold text-cafe-text block mb-1.5"
+                    >
+                      焙煎度
+                    </label>
+                    <input
+                      id="cafe-roast"
+                      type="text"
+                      value={field.state.value}
+                      onChange={(event) => field.handleChange(event.target.value)}
+                      onBlur={field.handleBlur}
+                      placeholder="例: 浅煎り"
+                      className="w-full bg-cafe-background border border-cafe-secondary/20 rounded-xl px-4 py-3 text-sm text-cafe-text placeholder-cafe-secondary/40 focus:outline-none focus:ring-2 focus:ring-cafe-primary/10 focus:border-cafe-primary/60 transition-all"
+                    />
+                  </div>
+                )}
+              </form.Field>
+            </ProcessField>
+          )}
+        </form.Field>
 
         <form.Field name="servingStyle">
           {(field) => (
