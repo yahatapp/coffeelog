@@ -24,7 +24,9 @@ An existing checkout does not automatically follow updates to GitHub. Before eac
 implementation task (including follow-up requests in the same chat) and before
 pushing, run `bash .codex/sync.sh`. It fetches origin, fast-forwards changes pushed
 to the same branch from another environment, then merges the latest main into
-the work branch. On main, it only permits fast-forward updates.
+the work branch. It explicitly fetches all remote branch refs, including main,
+even if the cloud checkout's fetch configuration is limited to one branch.
+On main, it only permits fast-forward updates.
 
 The script stops on local changes, detached HEAD, an unfinished Git operation,
 or a diverged remote work branch. Commit the intended local work or resolve the

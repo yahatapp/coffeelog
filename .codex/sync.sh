@@ -20,7 +20,9 @@ for STATE in MERGE_HEAD CHERRY_PICK_HEAD REVERT_HEAD rebase-merge rebase-apply; 
   fi
 done
 
-git fetch origin
+# Cloud checkouts may have no fetch refspec or fetch only the checked-out branch.
+# Explicitly update remote branch refs so origin/main cannot remain stale.
+git fetch --prune origin '+refs/heads/*:refs/remotes/origin/*'
 git rev-parse --verify origin/main >/dev/null
 
 # Include commits pushed from another environment without rewriting history.
