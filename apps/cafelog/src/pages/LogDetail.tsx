@@ -19,7 +19,7 @@ import { CafeLogForm } from "@/components/CafeLogForm";
 import { CoffeeAttributes } from "@/components/CoffeeAttributes";
 import { LogImages } from "@/components/LogImages";
 import { OriginFlag } from "@/components/OriginFlag";
-import type { CafeLogFormValues } from "@/lib/cafeLogForm";
+import { parseFlavorNotes, type CafeLogFormValues } from "@/lib/cafeLogForm";
 import { getErrorMessage } from "@/lib/errors";
 import { analytics } from "@/lib/analytics";
 import {
@@ -43,7 +43,7 @@ const toFormValues = (log: LogResponse): CafeLogFormValues => ({
   roast: log.roast ?? "",
   isBlend: log.isBlend ?? false,
   servingStyle: log.servingStyle === "hot" || log.servingStyle === "iced" ? log.servingStyle : null,
-  flavorNote: log.flavorNote ?? "",
+  flavorNotes: parseFlavorNotes(log.flavorNote),
   rating: log.rating,
   price: log.price == null ? "" : String(log.price),
   visitDate: log.visitDate ?? "",

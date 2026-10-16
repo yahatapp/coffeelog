@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { cafeLogFormSchema, createCafeLogDefaults, toCafeLogPayload } from "./cafeLogForm";
+import {
+  cafeLogFormSchema,
+  createCafeLogDefaults,
+  parseFlavorNotes,
+  toCafeLogPayload,
+} from "./cafeLogForm";
 import { FREQUENT_PREFECTURES, PREFECTURES } from "./prefectures";
 import { classifyCafeLink } from "./cafeLinks";
 
@@ -23,12 +28,15 @@ describe("createCafeLogDefaults", () => {
     expect(toCafeLogPayload(createCafeLogDefaults()).producer).toBeNull();
   });
 
-  it("trims the flavor note and converts an empty value to null", () => {
+  it("trims flavor notes, drops blank entries and serializes them for the API", () => {
     expect(
-      toCafeLogPayload({ ...createCafeLogDefaults(), flavorNote: "  ベリー、ジャスミン  " })
-        .flavorNote,
+      toCafeLogPayload({
+        ...createCafeLogDefaults(),
+        flavorNotes: ["  ベリー  ", "", "  ", " ジャスミン "],
+      }).flavorNote,
     ).toBe("ベリー、ジャスミン");
     expect(toCafeLogPayload(createCafeLogDefaults()).flavorNote).toBeNull();
+    expect(toCafeLogPayload({ ...createCafeLogDefaults(), flavorNotes: [] }).flavorNote).toBeNull();
   });
 
   it("accepts a Japanese prefecture and rejects an unknown value", () => {
@@ -65,5 +73,25 @@ describe("PREFECTURES", () => {
     expect(PREFECTURES.slice(0, 5)).toEqual(FREQUENT_PREFECTURES);
     expect(PREFECTURES).toHaveLength(47);
     expect(new Set(PREFECTURES)).toHaveLength(47);
+  });
+});
+
+describe("parseFlavorNotes", () => {
+  it.each([null, undefined, "", " 、,， "])("provides an empty input for %s", (value) => {
+    expect(parseFlavorNotes(value)).toEqual([""]);
+  });
+
+  it("splits existing notes separated by Japanese and Western commas", () => {
+    expect(parseFlavorNotes(" ベリー、 ジャスミン,チョコレート，ピーチ ")).toEqual([
+      "ベリー",
+      "ジャスミン",
+      "チョコレート",
+      "ピーチ",
+    ]);
+  });
+
+  it("preserves flavor notes when a saved record is edited again", () => {
+    const values = { ...createCafeLogDefaults(), flavorNotes: ["ベリー", "ジャスミン"] };
+    expect(parseFlavorNotes(toCafeLogPayload(values).flavorNote)).toEqual(values.flavorNotes);
   });
 });
