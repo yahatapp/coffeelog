@@ -89,14 +89,6 @@ export const createCafeLogDefaults = (): CafeLogFormValues => {
   };
 };
 
-export const parseFlavorNotes = (value: string | null | undefined): string[] => {
-  const notes = (value ?? "")
-    .split(/[,、，]/)
-    .map((note) => note.trim())
-    .filter(Boolean);
-  return notes.length ? notes : [""];
-};
-
 export const toCafeLogPayload = (values: CafeLogFormValues) => ({
   cafeName: values.cafeName.trim(),
   cafeLinks: values.cafeLinks.map((url) => url.trim()).filter(Boolean),
@@ -110,11 +102,7 @@ export const toCafeLogPayload = (values: CafeLogFormValues) => ({
   roast: values.roast.trim() || null,
   isBlend: values.isBlend,
   servingStyle: values.servingStyle,
-  flavorNote:
-    values.flavorNotes
-      .map((note) => note.trim())
-      .filter(Boolean)
-      .join("、") || null,
+  flavorNotes: values.flavorNotes.map((note) => note.trim()).filter(Boolean),
   rating: values.rating,
   price: values.price.trim() === "" ? null : Number(values.price),
   note: values.note.trim() || null,

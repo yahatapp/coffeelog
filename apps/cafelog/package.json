@@ -39,6 +39,7 @@
     "postgres": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
+    "react-icons": "catalog:",
     "react-router-dom": "catalog:",
     "tailwind-merge": "catalog:",
     "tailwindcss-animate": "catalog:",

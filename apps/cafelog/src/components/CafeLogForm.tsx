@@ -413,18 +413,16 @@ export const CafeLogForm = ({
 
         <form.Field name="flavorNotes" mode="array">
           {(field) => (
-            <div>
-              <label className="text-xs font-bold text-cafe-text block mb-1.5">
-                フレーバーノート
-              </label>
+            <fieldset>
+              <legend className="text-xs font-bold text-cafe-text mb-1.5">フレーバーノート</legend>
               <div className="space-y-2">
                 {field.state.value.map((_, index) => (
                   <form.Field key={index} name={`flavorNotes[${index}]`}>
                     {(noteField) => (
                       <div className="flex gap-2">
                         <input
-                          type="text"
                           aria-label={`フレーバーノート ${index + 1}`}
+                          type="text"
                           value={noteField.state.value}
                           onChange={(event) => noteField.handleChange(event.target.value)}
                           onBlur={noteField.handleBlur}
@@ -448,10 +446,10 @@ export const CafeLogForm = ({
                   onClick={() => field.pushValue("")}
                   className="inline-flex items-center gap-1 text-xs font-bold text-cafe-primary hover:underline"
                 >
-                  <Plus size={14} /> フレーバーノートを追加
+                  <Plus size={14} /> フレーバーを追加
                 </button>
               </div>
-            </div>
+            </fieldset>
           )}
         </form.Field>
 
