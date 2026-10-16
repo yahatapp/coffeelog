@@ -17,6 +17,10 @@ if ! command -v nix >/dev/null 2>&1 && [[ -r /nix/var/nix/profiles/default/etc/p
 fi
 
 if ! command -v nix >/dev/null 2>&1; then
+  if [[ "$(uname -s)" == "Linux" && "$(id -u)" -ne 0 ]]; then
+    exec bash "${REPO_ROOT}/.codex/setup-portable.sh"
+  fi
+
   if [[ "$(uname -s)" != "Linux" || "$(id -u)" -ne 0 ]]; then
     echo "Automatic Nix installation is supported only in the root Linux environment used by Codex Cloud." >&2
     echo "Install Nix for this host, then run this setup script again." >&2

@@ -32,5 +32,6 @@ Thumbs.db
 *.swo
 
 # Local tooling state
+.codex/.runtime/
 .vite-plus/
 .antigravitycli/
