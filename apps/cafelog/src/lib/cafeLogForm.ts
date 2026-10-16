@@ -15,7 +15,7 @@ export type CafeLogFormValues = {
   roast: string;
   isBlend: boolean;
   servingStyle: "hot" | "iced" | null;
-  flavorNote: string;
+  flavorNotes: string[];
   rating: number | null;
   price: string;
   visitDate: string;
@@ -53,7 +53,7 @@ export const cafeLogFormSchema = z.object({
   roast: z.string(),
   isBlend: z.boolean(),
   servingStyle: z.enum(["hot", "iced"]).nullable(),
-  flavorNote: z.string(),
+  flavorNotes: z.array(z.string()),
   rating: z.number().min(1).max(5).nullable(),
   price: optionalPriceSchema,
   visitDate: z.string(),
@@ -80,7 +80,7 @@ export const createCafeLogDefaults = (): CafeLogFormValues => {
     roast: "",
     isBlend: false,
     servingStyle: "hot",
-    flavorNote: "",
+    flavorNotes: [""],
     rating: 3,
     price: "",
     visitDate: `${yyyy}-${mm}-${dd}`,
@@ -102,7 +102,7 @@ export const toCafeLogPayload = (values: CafeLogFormValues) => ({
   roast: values.roast.trim() || null,
   isBlend: values.isBlend,
   servingStyle: values.servingStyle,
-  flavorNote: values.flavorNote.trim() || null,
+  flavorNotes: values.flavorNotes.map((note) => note.trim()).filter(Boolean),
   rating: values.rating,
   price: values.price.trim() === "" ? null : Number(values.price),
   note: values.note.trim() || null,

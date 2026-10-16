@@ -77,7 +77,7 @@ export const loadStoreHistory = async <T extends PgQueryResultHKT>(
         roast: cafeLogs.roast,
         isBlend: cafeLogs.isBlend,
         servingStyle: cafeLogs.servingStyle,
-        flavorNote: cafeLogs.flavorNote,
+        flavorNotes: cafeLogs.flavorNotes,
         rating: cafeLogs.rating,
         price: cafeLogs.price,
         note: cafeLogs.note,

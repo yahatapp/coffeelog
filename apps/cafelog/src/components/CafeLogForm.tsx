@@ -425,25 +425,45 @@ export const CafeLogForm = ({
           )}
         </form.Field>
 
-        <form.Field name="flavorNote">
+        <form.Field name="flavorNotes" mode="array">
           {(field) => (
-            <div>
-              <label
-                htmlFor="cafe-flavor-note"
-                className="text-xs font-bold text-cafe-text block mb-1.5"
-              >
-                フレーバーノート
-              </label>
-              <input
-                id="cafe-flavor-note"
-                type="text"
-                value={field.state.value}
-                onChange={(event) => field.handleChange(event.target.value)}
-                onBlur={field.handleBlur}
-                placeholder="例: ベリー、ジャスミン、チョコレート"
-                className="w-full bg-cafe-background border border-cafe-secondary/20 rounded-xl px-4 py-3 text-sm text-cafe-text placeholder-cafe-secondary/40 focus:outline-none focus:ring-2 focus:ring-cafe-primary/10 focus:border-cafe-primary/60 transition-all"
-              />
-            </div>
+            <fieldset>
+              <legend className="text-xs font-bold text-cafe-text mb-1.5">フレーバーノート</legend>
+              <div className="space-y-2">
+                {field.state.value.map((_, index) => (
+                  <form.Field key={index} name={`flavorNotes[${index}]`}>
+                    {(noteField) => (
+                      <div className="flex gap-2">
+                        <input
+                          aria-label={`フレーバーノート ${index + 1}`}
+                          type="text"
+                          value={noteField.state.value}
+                          onChange={(event) => noteField.handleChange(event.target.value)}
+                          onBlur={noteField.handleBlur}
+                          placeholder="例: ベリー"
+                          className="min-w-0 flex-1 bg-cafe-background border border-cafe-secondary/20 rounded-xl px-4 py-3 text-sm text-cafe-text placeholder-cafe-secondary/40 focus:outline-none focus:ring-2 focus:ring-cafe-primary/10 focus:border-cafe-primary/60 transition-all"
+                        />
+                        <button
+                          type="button"
+                          aria-label={`フレーバーノート ${index + 1}を削除`}
+                          onClick={() => field.removeValue(index)}
+                          className="p-3 text-cafe-secondary hover:text-red-500 rounded-xl"
+                        >
+                          <Minus size={18} />
+                        </button>
+                      </div>
+                    )}
+                  </form.Field>
+                ))}
+                <button
+                  type="button"
+                  onClick={() => field.pushValue("")}
+                  className="inline-flex items-center gap-1 text-xs font-bold text-cafe-primary hover:underline"
+                >
+                  <Plus size={14} /> フレーバーを追加
+                </button>
+              </div>
+            </fieldset>
           )}
         </form.Field>
 
