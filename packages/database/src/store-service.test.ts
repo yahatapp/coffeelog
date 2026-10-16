@@ -21,6 +21,11 @@ const migrations = (relative: string) =>
 const cafeMigrations = migrations("../../../apps/cafelog/db/migrations");
 const brewMigrations = migrations("../../../apps/brewlog/db/migrations");
 const sharedMigrations = migrations("../db/migrations");
+const cafeStoreMigrationIndex = cafeMigrations.findIndex(({ sql }) =>
+  sql.some((statement) =>
+    statement.includes('ALTER TABLE "cafelog"."cafe_logs" ADD COLUMN "store_id"'),
+  ),
+);
 const brewStoreMigrationIndex = brewMigrations.findIndex(({ sql }) =>
   sql.some((statement) =>
     statement.includes('ALTER TABLE "brewlog"."beans" ADD COLUMN "store_id"'),
@@ -29,9 +34,10 @@ const brewStoreMigrationIndex = brewMigrations.findIndex(({ sql }) =>
 const legacyBrewId = "00000000-0000-4000-8000-000000000030";
 
 beforeAll(async () => {
+  expect(cafeStoreMigrationIndex).toBeGreaterThan(0);
   expect(brewStoreMigrationIndex).toBeGreaterThan(0);
   for (const migration of [
-    ...cafeMigrations.slice(0, -1),
+    ...cafeMigrations.slice(0, cafeStoreMigrationIndex),
     ...brewMigrations.slice(0, brewStoreMigrationIndex),
   ]) {
     await client.exec(migration.sql.join("\n"));
@@ -58,7 +64,7 @@ beforeAll(async () => {
   `);
   for (const migration of [
     ...sharedMigrations,
-    ...cafeMigrations.slice(-1),
+    ...cafeMigrations.slice(cafeStoreMigrationIndex),
     ...brewMigrations.slice(brewStoreMigrationIndex),
   ]) {
     await client.exec(migration.sql.join("\n"));

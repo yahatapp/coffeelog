@@ -24,7 +24,7 @@ type CafeRecord = CoffeeRecord & {
   farm: string | null;
   producer: string | null;
   roast: string | null;
-  flavorNote: string | null;
+  flavorNotes: string[];
   servingStyle: string | null;
   price: number | null;
 };
@@ -260,7 +260,7 @@ function CafeRecordModal({
     ["生産者", record.producer],
     ["精製", record.process],
     ["焙煎", record.roast],
-    ["フレーバー", record.flavorNote],
+    ["フレーバー", record.flavorNotes.join("\n")],
     ["金額", record.price == null ? null : `¥${record.price.toLocaleString()}`],
     ["コメント", record.note],
   ] as const;

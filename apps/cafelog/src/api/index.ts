@@ -44,7 +44,10 @@ const createLogSchema = z.object({
   roast: z.string().optional().nullable(),
   isBlend: z.boolean().optional().nullable(),
   servingStyle: servingStyleSchema.optional().nullable(),
-  flavorNote: z.string().optional().nullable(),
+  flavorNotes: z
+    .array(z.string().trim())
+    .transform((notes) => notes.filter(Boolean))
+    .optional(),
   rating: z.number().min(1).max(5).optional().nullable(),
   price: z.number().int().nonnegative().optional().nullable(),
   note: z.string().optional().nullable(),
@@ -64,7 +67,10 @@ const updateLogSchema = z.object({
   roast: z.string().optional().nullable(),
   isBlend: z.boolean().optional().nullable(),
   servingStyle: servingStyleSchema.optional().nullable(),
-  flavorNote: z.string().optional().nullable(),
+  flavorNotes: z
+    .array(z.string().trim())
+    .transform((notes) => notes.filter(Boolean))
+    .optional(),
   rating: z.number().min(1).max(5).optional().nullable(),
   price: z.number().int().nonnegative().optional().nullable(),
   note: z.string().optional().nullable(),

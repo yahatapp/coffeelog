@@ -55,7 +55,10 @@ export const cafeLogs = cafelogSchema.table(
     roast: text("roast"),
     isBlend: boolean("is_blend"),
     servingStyle: text("serving_style"), // hot / iced
-    flavorNote: text("flavor_note"),
+    flavorNotes: text("flavor_notes")
+      .array()
+      .notNull()
+      .default(sql`'{}'::text[]`),
     rating: real("rating"), // 1〜5
     price: integer("price"), // 円
     note: text("note"),

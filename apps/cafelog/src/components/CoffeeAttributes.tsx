@@ -11,7 +11,7 @@ type CoffeeAttributesValue = {
   roast?: string | null;
   isBlend?: boolean | null;
   servingStyle?: string | null;
-  flavorNote?: string | null;
+  flavorNotes?: string[];
 };
 
 type AttributeGroup = {
@@ -93,7 +93,10 @@ export const CoffeeAttributes = ({
         { label: "品種", value: coffee.variety },
         { label: "精製方法", value: coffee.process },
         { label: "焙煎度", value: coffee.roast },
-        { label: "フレーバーノート", value: coffee.flavorNote },
+        {
+          label: "フレーバーノート",
+          value: coffee.flavorNotes?.join("\n"),
+        },
       ],
     },
   ];
@@ -122,7 +125,7 @@ export const CoffeeAttributes = ({
                   className="flex min-w-0 items-start justify-between gap-4 border-b border-cafe-secondary/10 py-3 last:border-b-0"
                 >
                   <dt className="shrink-0 text-xs font-medium text-cafe-secondary">{label}</dt>
-                  <dd className="min-w-0 break-words text-right text-sm font-semibold text-cafe-text">
+                  <dd className="min-w-0 whitespace-pre-line break-words text-right text-sm font-semibold text-cafe-text">
                     {value || <span className="font-normal text-cafe-secondary/60">未登録</span>}
                   </dd>
                 </div>

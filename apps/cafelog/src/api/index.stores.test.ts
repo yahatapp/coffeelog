@@ -51,6 +51,55 @@ afterAll(async () => {
 });
 
 describe("Cafelogの店舗登録API", () => {
+  it("フレーバーを配列として保存し、個々の内容と順序を編集・取得できる", async () => {
+    const flavorLogSchema = logSchema.extend({ flavorNotes: z.array(z.string()) });
+    const created = flavorLogSchema.parse(
+      await (
+        await request("/api/logs", "POST", {
+          cafeName: "Flavor Shop",
+          flavorNotes: [" ベリー ", "", "ジャスミン、紅茶"],
+        })
+      ).json(),
+    );
+    expect(created.flavorNotes).toEqual(["ベリー", "ジャスミン、紅茶"]);
+    const [stored] = await database
+      .select()
+      .from(schema.cafeLogs)
+      .where(eq(schema.cafeLogs.id, created.id));
+    expect(stored.flavorNotes).toEqual(created.flavorNotes);
+    const retained = flavorLogSchema.parse(
+      await (await request(`/api/logs/${created.id}`, "PATCH", { note: "更新" })).json(),
+    );
+    expect(retained.flavorNotes).toEqual(created.flavorNotes);
+    const updated = flavorLogSchema.parse(
+      await (
+        await request(`/api/logs/${created.id}`, "PATCH", {
+          flavorNotes: ["チョコレート", "ベリー"],
+        })
+      ).json(),
+    );
+    expect(updated.flavorNotes).toEqual(["チョコレート", "ベリー"]);
+    const detail = flavorLogSchema.parse(await (await request(`/api/logs/${created.id}`)).json());
+    expect(detail.flavorNotes).toEqual(updated.flavorNotes);
+    const history = z
+      .object({ cafeRecords: z.array(flavorLogSchema.pick({ id: true, flavorNotes: true })) })
+      .parse(await (await request(`/api/stores/${created.storeId}`)).json());
+    expect(history.cafeRecords[0].flavorNotes).toEqual(updated.flavorNotes);
+    expect(
+      (await request(`/api/logs/${created.id}`, "PATCH", { flavorNotes: "ベリー" })).status,
+    ).toBe(400);
+    const cleared = flavorLogSchema.parse(
+      await (await request(`/api/logs/${created.id}`, "PATCH", { flavorNotes: [] })).json(),
+    );
+    expect(cleared.flavorNotes).toEqual([]);
+    const empty = flavorLogSchema.parse(
+      await (await request("/api/logs", "POST", { cafeName: "Empty Flavor Shop" })).json(),
+    );
+    expect(empty.flavorNotes).toEqual([]);
+    await request(`/api/logs/${created.id}`, "DELETE");
+    await request(`/api/logs/${empty.id}`, "DELETE");
+  });
+
   it("既存のリクエストで店舗に関連付け、店舗情報を別テーブルから返す", async () => {
     const response = await request("/api/logs", "POST", {
       cafeName: "Cafe Store",

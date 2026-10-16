@@ -84,6 +84,9 @@ catalogs:
     react-dom:
       specifier: 19.3.0
       version: 19.3.0
+    react-icons:
+      specifier: 5.7.0
+      version: 5.7.0
     react-router-dom:
       specifier: 7.18.4
       version: 7.18.4
@@ -116,6 +119,8 @@ overrides:
   '@types/node': 24.13.3
   vite@*: npm:@voidzero-dev/vite-plus-core@1.1.0
   vitest@*: 5.0.3
+
+packageExtensionsChecksum: sha256-9TshY3AV+X+qboMem9HaNEUrntyojan5y2MZbyonHtc=
 
 importers:
 
@@ -308,6 +313,9 @@ importers:
       react-dom:
         specifier: 'catalog:'
         version: 19.3.0(react@19.3.0)
+      react-icons:
+        specifier: 'catalog:'
+        version: 5.7.0(react@19.3.0)
       react-router-dom:
         specifier: 'catalog:'
         version: 7.18.4(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
@@ -3104,6 +3112,11 @@ packages:
     peerDependencies:
       react: ^19.3.0
 
+  react-icons@5.7.0:
+    resolution: {integrity: sha512-LBLy340Rzqy6+/yVhZKT3B/QpP1BZaesGqasf09HPOBzRarcDIFH0WwXlXQfE7q7ipxK4MSiC5DIBWURCny6fw==}
+    peerDependencies:
+      react: '*'
+
   react-is@17.0.2:
     resolution: {integrity: sha512-w2GsyukL62IJnlaff/nRegPQR94C/XXamvMWmSHRJ4y7Ts/4ocGRmTHvOs8PSE6pB3dWOrD/nueuU5sduBsQ4w==}
 
@@ -3959,6 +3972,7 @@ snapshots:
       '@liff/scan-code': 2.31.2(tslib@2.8.1)
       '@liff/store': 2.31.2(tslib@2.8.1)
       '@liff/types': 2.31.2
+      '@liff/use': 2.31.2(tslib@2.8.1)
       '@liff/util': 2.31.2(tslib@2.8.1)
     transitivePeerDependencies:
       - tslib
@@ -4036,6 +4050,7 @@ snapshots:
       '@liff/consts': 2.31.2(tslib@2.8.1)
       '@liff/is-api-available': 2.31.2(tslib@2.8.1)
       '@liff/native-bridge': 2.31.2(tslib@2.8.1)
+      '@liff/server-api': 2.31.2(tslib@2.8.1)
       '@liff/store': 2.31.2(tslib@2.8.1)
       '@liff/use': 2.31.2(tslib@2.8.1)
       '@liff/util': 2.31.2(tslib@2.8.1)
@@ -5615,6 +5630,10 @@ snapshots:
     dependencies:
       react: 19.3.0
       scheduler: 0.28.0
+
+  react-icons@5.7.0(react@19.3.0):
+    dependencies:
+      react: 19.3.0
 
   react-is@17.0.2: {}
 

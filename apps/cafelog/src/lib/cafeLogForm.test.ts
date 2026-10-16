@@ -23,12 +23,14 @@ describe("createCafeLogDefaults", () => {
     expect(toCafeLogPayload(createCafeLogDefaults()).producer).toBeNull();
   });
 
-  it("trims the flavor note and converts an empty value to null", () => {
+  it("trims flavor notes, removes empty inputs, and preserves individual items", () => {
     expect(
-      toCafeLogPayload({ ...createCafeLogDefaults(), flavorNote: "  ベリー、ジャスミン  " })
-        .flavorNote,
-    ).toBe("ベリー、ジャスミン");
-    expect(toCafeLogPayload(createCafeLogDefaults()).flavorNote).toBeNull();
+      toCafeLogPayload({
+        ...createCafeLogDefaults(),
+        flavorNotes: ["  ベリー  ", " ", "ジャスミン、紅茶", ""],
+      }).flavorNotes,
+    ).toEqual(["ベリー", "ジャスミン、紅茶"]);
+    expect(toCafeLogPayload(createCafeLogDefaults()).flavorNotes).toEqual([]);
   });
 
   it("accepts a Japanese prefecture and rejects an unknown value", () => {

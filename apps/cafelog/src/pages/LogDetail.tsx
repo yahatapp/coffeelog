@@ -1,12 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
+import { FaGlobe, FaInstagram, FaMapLocationDot } from "react-icons/fa6";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import {
   ArrowLeft,
   Calendar,
-  Camera,
   Edit2,
-  Globe,
   Loader2,
   MessageSquare,
   MapPin,
@@ -43,7 +42,7 @@ const toFormValues = (log: LogResponse): CafeLogFormValues => ({
   roast: log.roast ?? "",
   isBlend: log.isBlend ?? false,
   servingStyle: log.servingStyle === "hot" || log.servingStyle === "iced" ? log.servingStyle : null,
-  flavorNote: log.flavorNote ?? "",
+  flavorNotes: log.flavorNotes.length > 0 ? log.flavorNotes : [""],
   rating: log.rating,
   price: log.price == null ? "" : String(log.price),
   visitDate: log.visitDate ?? "",
@@ -305,10 +304,10 @@ const LogDetailPage = () => {
                   {log.links.map((link) => {
                     const Icon =
                       link.type === "instagram"
-                        ? Camera
+                        ? FaInstagram
                         : link.type === "google_maps"
-                          ? MapPin
-                          : Globe;
+                          ? FaMapLocationDot
+                          : FaGlobe;
                     const label =
                       link.type === "instagram"
                         ? "Instagram"
