@@ -17,3 +17,23 @@ run `pnpm --filter cafelog browser:install` separately.
 
 After setup, verify with `pnpm exec lefthook run pre-commit`. Hooks must succeed
 without `LEFTHOOK=0` or other skips.
+
+## Reusing a cloud environment
+
+An existing checkout does not automatically follow updates to GitHub. Before each
+implementation task (including follow-up requests in the same chat) and before
+pushing, run `bash .codex/sync.sh`. It fetches origin, fast-forwards changes pushed
+to the same branch from another environment, then merges the latest main into
+the work branch. On main, it only permits fast-forward updates.
+
+The script stops on local changes, detached HEAD, an unfinished Git operation,
+or a diverged remote work branch. Commit the intended local work or resolve the
+Git state first; it never stashes, resets, or force-pushes. Merge conflicts must
+be resolved before continuing. Rerun dependency installation if package inputs
+changed, followed by the relevant checks.
+
+For an environment maintenance command, use
+`bash .codex/sync.sh && bash .codex/setup.sh` on a clean work branch. Synchronizing
+is explicit rather than a shell startup action, so opening a terminal cannot
+unexpectedly change a checkout. GitHub may advance again after a fetch or push;
+rerun the same command when a PR reports that its base has changed.

@@ -1,5 +1,15 @@
 # Repository Instructions
 
+## Keeping cloud workspaces current
+
+- Before starting implementation, including follow-up work in an existing cloud
+  environment, and immediately before pushing, run `bash .codex/sync.sh`.
+- If there are local changes, fetch `origin` first, preserve the changes, and
+  commit the intended work before running the sync script. Never automatically
+  stash, reset, discard edits, or force-push to synchronize.
+- Resolve any merge conflicts before continuing. After synchronization, install
+  dependencies when their inputs changed and rerun the relevant checks.
+
 ## Reviews and pull requests
 
 - Write code review comments in Japanese.
