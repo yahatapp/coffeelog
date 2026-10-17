@@ -300,7 +300,7 @@ const LogDetailPage = () => {
                 )}
               </div>
               {log.links.length > 0 && (
-                <div className="flex items-center gap-2 pt-1">
+                <div className="flex flex-wrap items-center gap-3 pt-1">
                   {log.links.map((link) => {
                     const Icon =
                       link.type === "instagram"
@@ -314,12 +314,6 @@ const LogDetailPage = () => {
                         : link.type === "google_maps"
                           ? "Google Map"
                           : "ホームページ";
-                    const colorClasses =
-                      link.type === "instagram"
-                        ? "border-pink-200/80 bg-pink-100 text-pink-700 hover:bg-pink-200/80"
-                        : link.type === "google_maps"
-                          ? "border-emerald-200/80 bg-emerald-100 text-emerald-700 hover:bg-emerald-200/80"
-                          : "border-sky-200/80 bg-sky-100 text-sky-700 hover:bg-sky-200/80";
                     return (
                       <a
                         key={link.id}
@@ -329,7 +323,7 @@ const LogDetailPage = () => {
                         rel="noopener noreferrer"
                         aria-label={label}
                         title={label}
-                        className={`inline-flex size-9 items-center justify-center rounded-xl border transition-colors ${colorClasses}`}
+                        className="inline-flex size-11 shrink-0 items-center justify-center rounded-full border border-cafe-secondary/20 bg-cafe-primary/5 text-cafe-primary transition-colors hover:bg-cafe-primary/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cafe-primary focus-visible:ring-offset-2"
                       >
                         <Icon size={18} aria-hidden="true" />
                       </a>
