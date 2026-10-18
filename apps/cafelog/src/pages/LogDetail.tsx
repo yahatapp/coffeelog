@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
-import { FaGlobe, FaInstagram, FaMapLocationDot } from "react-icons/fa6";
+import { FaGlobe, FaMapLocationDot } from "react-icons/fa6";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import {
   ArrowLeft,
@@ -302,12 +302,7 @@ const LogDetailPage = () => {
               {log.links.length > 0 && (
                 <div className="flex flex-wrap items-center gap-3 pt-1">
                   {log.links.map((link) => {
-                    const Icon =
-                      link.type === "instagram"
-                        ? FaInstagram
-                        : link.type === "google_maps"
-                          ? FaMapLocationDot
-                          : FaGlobe;
+                    const Icon = link.type === "google_maps" ? FaMapLocationDot : FaGlobe;
                     const label =
                       link.type === "instagram"
                         ? "Instagram"
@@ -323,9 +318,20 @@ const LogDetailPage = () => {
                         rel="noopener noreferrer"
                         aria-label={label}
                         title={label}
-                        className="inline-flex size-11 shrink-0 items-center justify-center rounded-full text-cafe-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cafe-primary focus-visible:ring-offset-2"
+                        className={`inline-flex shrink-0 items-center justify-center rounded-full text-cafe-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cafe-primary focus-visible:ring-offset-2 ${link.type === "instagram" ? "size-16" : "size-11"}`}
                       >
-                        <Icon size={18} aria-hidden="true" />
+                        {link.type === "instagram" ? (
+                          <img
+                            src="/brand/instagram-glyph-gradient.png"
+                            alt=""
+                            aria-hidden="true"
+                            width={32}
+                            height={32}
+                            className="size-8"
+                          />
+                        ) : (
+                          <Icon size={18} aria-hidden="true" />
+                        )}
                       </a>
                     );
                   })}
