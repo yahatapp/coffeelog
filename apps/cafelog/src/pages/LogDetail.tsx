@@ -323,7 +323,7 @@ const LogDetailPage = () => {
                         rel="noopener noreferrer"
                         aria-label={label}
                         title={label}
-                        className="inline-flex size-11 shrink-0 items-center justify-center rounded-full border border-cafe-secondary/20 bg-cafe-primary/5 text-cafe-primary transition-colors hover:bg-cafe-primary/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cafe-primary focus-visible:ring-offset-2"
+                        className="inline-flex size-11 shrink-0 items-center justify-center rounded-full text-cafe-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cafe-primary focus-visible:ring-offset-2"
                       >
                         <Icon size={18} aria-hidden="true" />
                       </a>
