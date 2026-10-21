@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import {
+  Archive,
   ArrowDown,
   ArrowUp,
   Plus,
@@ -212,13 +213,14 @@ const BeansList = () => {
                       <h3 className="font-bold text-coffee-text truncate">{latestBean.name}</h3>
                       {(latestBean.roastLevel || group.isArchived) && (
                         <div className="flex flex-wrap items-center gap-2">
-                          {latestBean.roastLevel && (
-                            <RoastLevelIndicator level={latestBean.roastLevel} />
-                          )}
                           {group.isArchived && (
-                            <span className="inline-flex rounded-full bg-coffee-secondary/15 px-2 py-0.5 text-[10px] font-bold text-coffee-secondary">
+                            <span className="inline-flex items-center gap-1 rounded-full bg-coffee-secondary/15 px-2.5 py-1 text-xs font-bold text-coffee-primary">
+                              <Archive size={14} aria-hidden="true" />
                               アーカイブ済み
                             </span>
+                          )}
+                          {latestBean.roastLevel && (
+                            <RoastLevelIndicator level={latestBean.roastLevel} />
                           )}
                         </div>
                       )}
