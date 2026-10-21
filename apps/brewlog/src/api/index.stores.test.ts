@@ -145,6 +145,61 @@ describe("Brewlogの店舗登録API", () => {
   });
 });
 
+describe("Brewlogの豆バージョンAPI", () => {
+  const versionSchema = beanSchema.extend({
+    parentBeanId: z.uuid().nullable(),
+    version: z.string().nullable(),
+    isArchived: z.boolean(),
+  });
+
+  it("アーカイブ済みの豆から未アーカイブの新版を作成し、元の版の状態を保つ", async () => {
+    const original = versionSchema.parse(
+      await (await request("/api/beans", "POST", { name: "Version bean" })).json(),
+    );
+    expect((await request(`/api/beans/${original.id}`, "PATCH", { isArchived: true })).status).toBe(
+      200,
+    );
+    const response = await request("/api/beans", "POST", {
+      name: "Version bean",
+      parentBeanId: original.id,
+      version: "再購入",
+    });
+    expect(response.status).toBe(200);
+    const latest = versionSchema.parse(await response.json());
+    expect(latest).toMatchObject({
+      parentBeanId: original.id,
+      version: "再購入",
+      isArchived: false,
+    });
+    expect(
+      versionSchema.parse(await (await request(`/api/beans/${original.id}`)).json()).isArchived,
+    ).toBe(true);
+    expect((await request(`/api/beans/${original.id}`, "PATCH", { name: "変更" })).status).toBe(
+      409,
+    );
+    expect((await request("/api/logs", "POST", { beanId: original.id })).status).toBe(409);
+    expect((await request("/api/logs", "POST", { beanId: latest.id })).status).toBe(200);
+  });
+
+  it("他の世帯・削除済み・存在しない豆からのバージョン追加を拒否する", async () => {
+    const original = versionSchema.parse(
+      await (await request("/api/beans", "POST", { name: "Private bean" })).json(),
+    );
+    const payload = { name: "Copy", parentBeanId: original.id, version: "新版" };
+    expect((await request("/api/beans", "POST", payload, "other")).status).toBe(409);
+    expect((await request(`/api/beans/${original.id}`, "DELETE")).status).toBe(200);
+    expect((await request("/api/beans", "POST", payload)).status).toBe(409);
+    expect(
+      (
+        await request("/api/beans", "POST", {
+          ...payload,
+          parentBeanId: "00000000-0000-4000-8000-000000000099",
+        })
+      ).status,
+    ).toBe(409);
+  });
+});
+
 describe("Brewlogの抽出コメントAPI", () => {
   it("店舗付きの豆の抽出コメントを保存・取得・変更・削除し、ノートを保つ", async () => {
     const bean = beanSchema.parse(

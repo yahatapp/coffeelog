@@ -15,6 +15,24 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  VerifyPortable:
+    if: github.event_name == 'push' || github.event.pull_request.draft == false
+    name: Verify portable development setup
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up portable development tools
+        run: bash .codex/setup-portable.sh
+
+      - name: Verify pinned Node.js
+        run: |
+          source .codex/.runtime/env.sh
+          test "$(node --version)" = "v$(cat .node-version)"
+          test "$(pnpm exec node --version)" = "v$(cat .node-version)"
+
   Verify:
     if: github.event_name == 'push' || github.event.pull_request.draft == false
     runs-on: ubuntu-latest

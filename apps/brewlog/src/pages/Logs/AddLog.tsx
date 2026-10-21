@@ -8,6 +8,7 @@ import { beanQueries, dripperQueries, grinderQueries, mutations, queryKeys } fro
 import { getTodayJSTString, toLogCreateInput, type LogFormValues } from "@/lib/form-values";
 import { BrewLogFields } from "@/components/forms/BrewLogFields";
 import { Button } from "@/components/ui/button";
+import { getBrewableBeans } from "@/lib/bean-versions";
 import { analytics } from "@/lib/analytics";
 
 const AddLog = () => {
@@ -19,25 +20,10 @@ const AddLog = () => {
   const drippersQuery = useQuery(dripperQueries.all());
   const grindersQuery = useQuery(grinderQueries.all());
   const allBeans = beansQuery.data;
-  const beans = useMemo(() => {
-    const source = allBeans ?? [];
-    const latest = new Map<string, (typeof source)[number]>();
-    for (const bean of source) {
-      const groupId = bean.parentBeanId ?? bean.id;
-      const previous = latest.get(groupId);
-      if (!previous || new Date(bean.createdAt).getTime() > new Date(previous.createdAt).getTime())
-        latest.set(groupId, bean);
-    }
-    const unique = [...latest.values()]
-      .filter((bean) => !bean.isArchived)
-      .toSorted((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-    const paramBeanId = searchParams.get("beanId");
-    if (paramBeanId && !unique.some((bean) => bean.id === paramBeanId)) {
-      const selected = source.find((bean) => bean.id === paramBeanId);
-      if (selected && !selected.isArchived) unique.unshift(selected);
-    }
-    return unique;
-  }, [allBeans, searchParams]);
+  const beans = useMemo(
+    () => getBrewableBeans(allBeans ?? [], searchParams.get("beanId")),
+    [allBeans, searchParams],
+  );
   const drippers = drippersQuery.data;
   const grinders = grindersQuery.data;
   const queryError = beansQuery.error ?? drippersQuery.error ?? grindersQuery.error;

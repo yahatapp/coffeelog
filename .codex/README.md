@@ -4,8 +4,10 @@ Configure the environment setup command to run `bash .codex/setup.sh` from the
 repository root. Run the same command to repair an existing environment.
 
 - With Nix installed, or on root Linux, setup uses the pinned Nix development shell.
-- On non-root Linux without Nix, setup uses `setup-portable.sh`. This requires
-  Node.js 24 and installs checksum-verified pnpm 11.11.0 and Betterleaks 1.4.1,
+  Development, CI, and deployment use Node.js 24.22.1 from `.node-version`, with
+  checksum-verified official binaries supplied by `flake.nix`.
+- On non-root Linux without Nix, setup uses `setup-portable.sh`. This installs
+  checksum-verified Node.js 24.22.1, pnpm 11.11.0, and Betterleaks 1.4.1,
   matching `package.json`, `flake.nix`, and the nixpkgs revision in `flake.lock`.
   Tools, caches, and package-manager state stay in the ignored `.codex/.runtime/`
   directory. Both `.profile` and `.bashrc` load this environment for later shells

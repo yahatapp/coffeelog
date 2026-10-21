@@ -11,7 +11,8 @@ import {
   Pencil,
   Sparkles,
 } from "lucide-react";
-import { beanQueries, logQueries, type Bean } from "@/lib/queries";
+import { beanQueries, logQueries } from "@/lib/queries";
+import { groupBeanVersions } from "@/lib/bean-versions";
 import { analytics } from "@/lib/analytics";
 import { Button } from "../../components/ui/button";
 import { Card, CardContent } from "../../components/ui/card";
@@ -30,26 +31,7 @@ const BeansList = () => {
 
   const beans = useMemo(() => beansQuery.data ?? [], [beansQuery.data]);
 
-  const groupedBeans = useMemo(() => {
-    const groups: Record<string, Bean[]> = {};
-    beans.forEach((bean) => {
-      const groupId = bean.parentBeanId || bean.id;
-      if (!groups[groupId]) groups[groupId] = [];
-      groups[groupId].push(bean);
-    });
-
-    return Object.entries(groups).map(([groupId, groupBeans]) => {
-      const sorted = [...groupBeans].toSorted(
-        (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-      );
-      const latestBean = sorted[0];
-      return {
-        groupId,
-        latestBean,
-        isArchived: latestBean.isArchived,
-      };
-    });
-  }, [beans]);
+  const groupedBeans = useMemo(() => groupBeanVersions(beans), [beans]);
 
   const brewCountByGroupId = useMemo(() => {
     const counts = new Map<string, number>();
