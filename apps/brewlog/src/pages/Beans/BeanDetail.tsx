@@ -17,6 +17,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { OriginFlag } from "@/components/ui/OriginFlag";
 import { RoastLevelIndicator } from "@/components/ui/RoastLevelIndicator";
+import { BeanVersionHistory } from "@/components/BeanVersionHistory";
+import { getBeanVersionLabel } from "@/lib/bean-versions";
 
 const formatDate = (date: string | null) => date?.replaceAll("-", ".") || "未設定";
 
@@ -89,7 +91,6 @@ const BeanDetail = () => {
         <Button
           variant="outline"
           className="h-11 rounded-2xl border-coffee-primary/30"
-          disabled={bean.isArchived}
           onClick={() => navigate(`/beans/new?parentBeanId=${bean.parentBeanId ?? bean.id}`)}
         >
           <CopyPlus size={16} className="mr-2" /> バージョン追加
@@ -106,7 +107,7 @@ const BeanDetail = () => {
 
       {bean.isArchived && (
         <p className="rounded-xl bg-coffee-secondary/10 px-4 py-3 text-sm text-coffee-secondary">
-          この豆はアーカイブ済みのため、編集・バージョン追加・抽出記録はできません。
+          この豆はアーカイブ済みのため、編集・抽出記録はできません。再購入したらバージョンを追加できます。
         </p>
       )}
 
@@ -120,7 +121,9 @@ const BeanDetail = () => {
               <h3 className="mt-1 break-words text-2xl font-bold text-coffee-primary">
                 {bean.name}
               </h3>
-              {bean.version && <p className="mt-1 text-sm text-coffee-secondary">{bean.version}</p>}
+              <p className="mt-1 text-sm text-coffee-secondary">
+                バージョン: {getBeanVersionLabel(bean)}
+              </p>
             </div>
             {bean.roastLevel && <RoastLevelIndicator level={bean.roastLevel} />}
           </div>
@@ -197,6 +200,8 @@ const BeanDetail = () => {
           </section>
         </CardContent>
       </Card>
+
+      <BeanVersionHistory bean={bean} />
 
       <div className="space-y-3">
         <Button

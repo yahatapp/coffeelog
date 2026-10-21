@@ -158,11 +158,10 @@ const api = app
         where: and(
           eq(beansTable.id, data.parentBeanId),
           eq(beansTable.householdId, householdId),
-          eq(beansTable.isArchived, false),
           isNull(beansTable.deletedAt),
         ),
       });
-      if (!parent) throw new HTTPException(409, { message: "Archived or missing bean" });
+      if (!parent) throw new HTTPException(409, { message: "Missing bean" });
     }
     const { store, storeId, ...values } = data;
     const newBean = await db.transaction(async (tx) => {
