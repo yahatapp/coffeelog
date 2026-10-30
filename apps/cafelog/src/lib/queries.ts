@@ -1,6 +1,6 @@
 import { queryOptions } from "@tanstack/react-query";
 import type { InferRequestType, InferResponseType } from "hono/client";
-import { api, assertOk, authorizedFetch } from "@/lib/api";
+import { api, ApiError, assertOk, authorizedFetch } from "@/lib/api";
 import { resizeToJpeg } from "@/lib/images";
 import { toCafeLogPayload, type CafeLogFormValues } from "@/lib/cafeLogForm";
 
@@ -69,16 +69,65 @@ export const deleteLog = async (id: string) => {
   return parseJson<LogResponse>(response);
 };
 
+// Retain the identity across automatic retries and another save of the same selection.
+const uploadIds = new WeakMap<File, Map<string, string>>();
+const isRetryableUploadError = (error: unknown) =>
+  error instanceof ApiError
+    ? [408, 409, 429, 500, 502, 503, 504].includes(error.status)
+    : error instanceof TypeError ||
+      (error instanceof DOMException && error.name === "TimeoutError");
+
+const uploadImage = async (logId: string, body: FormData) => {
+  for (let attempt = 0; ; attempt++) {
+    try {
+      const response = await authorizedFetch(`/api/logs/${logId}/images`, {
+        method: "POST",
+        body,
+        signal: AbortSignal.timeout(60_000),
+      });
+      await assertOk(response);
+      return;
+    } catch (error) {
+      if (attempt >= 2 || !isRetryableUploadError(error)) throw error;
+      await new Promise((resolve) => setTimeout(resolve, 1000 * 2 ** attempt));
+    }
+  }
+};
+
 export const uploadLogImages = async (logId: string, images: CafeLogFormValues["images"]) => {
   for (const selected of images) {
-    const image = await resizeToJpeg(selected.file);
+    let image;
+    try {
+      image = await resizeToJpeg(selected.file);
+    } catch (error) {
+      throw new Error("写真を変換できませんでした。JPEGやPNGの写真でお試しください。", {
+        cause: error,
+      });
+    }
+    const idsForFile = uploadIds.get(selected.file) ?? new Map<string, string>();
+    const imageId = idsForFile.get(logId) ?? crypto.randomUUID();
+    idsForFile.set(logId, imageId);
+    uploadIds.set(selected.file, idsForFile);
     const body = new FormData();
     body.append("image", image);
-    const response = await authorizedFetch(`/api/logs/${logId}/images`, {
-      method: "POST",
-      body,
-    });
-    await assertOk(response);
+    body.append("imageId", imageId);
+    try {
+      await uploadImage(logId, body);
+    } catch (error) {
+      if (error instanceof ApiError && error.status === 401) {
+        throw new Error("ログインの有効期限が切れました。画面を開き直してお試しください。", {
+          cause: error,
+        });
+      }
+      if (error instanceof ApiError && error.status === 400) {
+        throw new Error("写真の枚数や形式を確認してください。写真は5枚まで保存できます。", {
+          cause: error,
+        });
+      }
+      throw new Error("写真を送信できませんでした。通信状況を確認してお試しください。", {
+        cause: error,
+      });
+    }
   }
 };
 

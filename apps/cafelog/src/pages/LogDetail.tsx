@@ -15,6 +15,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { CafeLogForm } from "@/components/CafeLogForm";
+import { FloatingNotice } from "@/components/FloatingNotice";
 import { CoffeeAttributes } from "@/components/CoffeeAttributes";
 import { LogImages } from "@/components/LogImages";
 import { OriginFlag } from "@/components/OriginFlag";
@@ -86,6 +87,7 @@ const LogDetailPage = () => {
   const log = logQuery.data ?? null;
   const [isEditMode, setIsEditMode] = useState(navigationState?.edit ?? false);
   const [imageCount, setImageCount] = useState(0);
+  const [isSaving, setIsSaving] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
   const [photoUploadError, setPhotoUploadError] = useState<string | null>(
@@ -97,11 +99,16 @@ const LogDetailPage = () => {
   const queryError = logQuery.error
     ? getErrorMessage(logQuery.error, "通信エラーが発生しました。")
     : null;
-  const isSubmitting = updateMutation.isPending || deleteMutation.isPending;
+  const isSubmitting = isSaving || deleteMutation.isPending;
+  const photoWarning = photoUploadError
+    ? `記録は保存済みです。${photoUploadError} 未保存の写真を選んで、もう一度保存してください。`
+    : null;
 
   const handleSave = async (values: CafeLogFormValues) => {
-    if (!id) return;
+    if (!id || isSaving) return;
+    setIsSaving(true);
     setActionError(null);
+    setPhotoUploadError(null);
     try {
       const updatedLog = await updateMutation.mutateAsync({ id, values });
       analytics.trackEvent("record_update_success");
@@ -117,11 +124,14 @@ const LogDetailPage = () => {
       } catch (uploadError: unknown) {
         console.error("Error uploading images", uploadError);
         setPhotoUploadError(getErrorMessage(uploadError, "写真のアップロードに失敗しました。"));
+        await queryClient.invalidateQueries({ queryKey: cafelogQueries.images(id).queryKey });
       }
     } catch (error: unknown) {
       analytics.trackEvent("record_update_error");
       console.error("Error updating log", error);
       setActionError(getErrorMessage(error, "通信エラーが発生しました。"));
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -202,15 +212,12 @@ const LogDetailPage = () => {
         )}
       </div>
 
-      {(queryError || actionError) && (
-        <div className="bg-red-50 border border-red-200 text-red-600 text-xs p-4 rounded-xl font-semibold">
-          {queryError || actionError}
-        </div>
-      )}
-      {photoUploadError && (
-        <div className="bg-amber-50 border border-amber-200 text-amber-700 text-xs p-4 rounded-xl font-semibold">
-          記録は保存済みです。{photoUploadError} 写真を選び直して保存してください。
-        </div>
+      {!isEditMode && (queryError || actionError || photoWarning) && (
+        <FloatingNotice
+          key={queryError || actionError || photoWarning}
+          message={queryError || actionError || photoWarning || ""}
+          warning={!queryError && !actionError}
+        />
       )}
 
       {showDeleteConfirm && (
@@ -247,7 +254,8 @@ const LogDetailPage = () => {
         <CafeLogForm
           defaultValues={defaultValues}
           onSubmit={handleSave}
-          error={actionError}
+          error={actionError || queryError}
+          warning={photoWarning}
           submitLabel="保存する"
           isSubmitting={isSubmitting}
           onCancel={() => setIsEditMode(false)}

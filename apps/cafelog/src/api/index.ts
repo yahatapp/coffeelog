@@ -201,13 +201,21 @@ const api = app
   .post("/api/logs/:id/images", async (c) => {
     const logId = c.req.param("id");
     const { db } = await assertOwnedLog(c.env.DATABASE_URL, logId, c.get("lineUserId"));
+    const body = await c.req.parseBody();
+    const imageIdResult = z.uuid().safeParse(body.imageId ?? crypto.randomUUID());
+    if (!imageIdResult.success) {
+      throw new HTTPException(400, { message: "Invalid image ID" });
+    }
+    const imageId = imageIdResult.data;
     const existing = await db.query.cafeLogImages.findMany({
       where: eq(cafeLogImages.cafeLogId, logId),
     });
+    // A response may be lost after saving; acknowledge retries before checking the limit.
+    const saved = existing.find((image) => image.id === imageId);
+    if (saved) return c.json({ id: saved.id, position: saved.position });
     if (existing.length >= MAX_IMAGES) {
       throw new HTTPException(400, { message: "Up to 5 images can be uploaded" });
     }
-    const body = await c.req.parseBody();
     const file = body.image;
     if (!(file instanceof File) || file.type !== "image/jpeg") {
       throw new HTTPException(400, { message: "A JPEG image is required" });
@@ -219,8 +227,8 @@ const api = app
     if (bytes[0] !== 0xff || bytes[1] !== 0xd8 || bytes.at(-2) !== 0xff || bytes.at(-1) !== 0xd9) {
       throw new HTTPException(400, { message: "Invalid JPEG data" });
     }
-    const imageId = crypto.randomUUID();
-    const objectKey = `logs/${logId}/${imageId}.jpg`;
+    // Each attempt owns its object, so concurrent retries cannot delete a saved photo.
+    const objectKey = `logs/${logId}/${crypto.randomUUID()}.jpg`;
     await c.env.CAFELOG_IMAGES.put(objectKey, bytes, {
       httpMetadata: { contentType: "image/jpeg" },
     });
@@ -235,14 +243,25 @@ const api = app
           contentType: "image/jpeg",
           byteSize: file.size,
         })
-        .onConflictDoNothing({ target: [cafeLogImages.cafeLogId, cafeLogImages.position] })
+        .onConflictDoNothing()
         .returning();
       if (!image) {
-        throw new HTTPException(400, { message: "Up to 5 images can be uploaded" });
+        const duplicate = await db.query.cafeLogImages.findFirst({
+          where: and(eq(cafeLogImages.id, imageId), eq(cafeLogImages.cafeLogId, logId)),
+        });
+        await c.env.CAFELOG_IMAGES.delete(objectKey);
+        if (duplicate) return c.json({ id: duplicate.id, position: duplicate.position });
+        throw new HTTPException(409, {
+          message: "Another image is being saved. Retry the upload.",
+        });
       }
       return c.json({ id: image.id, position: image.position }, 201);
     } catch (error) {
-      await c.env.CAFELOG_IMAGES.delete(objectKey);
+      // If the DB connection failed after committing, keep the referenced object.
+      const persisted = await db.query.cafeLogImages.findFirst({
+        where: eq(cafeLogImages.objectKey, objectKey),
+      });
+      if (!persisted) await c.env.CAFELOG_IMAGES.delete(objectKey);
       throw error;
     }
   })
