@@ -53,17 +53,28 @@ const toFormValues = (log: LogResponse): CafeLogFormValues => ({
 
 const renderStars = (rating: number | null | undefined) => {
   if (rating == null) return <span className="text-xs text-cafe-secondary/40">評価なし</span>;
+  const fullStars = Math.floor(rating);
+  const hasHalf = rating % 1 !== 0;
+
   return (
-    <div className="flex items-center space-x-0.5">
-      {Array.from({ length: 5 }, (_, index) => (
-        <Star
-          key={index}
-          size={16}
-          className={
-            index + 1 <= rating ? "fill-cafe-accent text-cafe-accent" : "text-cafe-secondary/20"
-          }
-        />
-      ))}
+    <div aria-hidden="true" className="flex items-center space-x-0.5">
+      {Array.from({ length: 5 }, (_, index) => {
+        const starNumber = index + 1;
+        if (starNumber <= fullStars) {
+          return <Star key={starNumber} size={16} className="fill-cafe-accent text-cafe-accent" />;
+        }
+        if (starNumber === fullStars + 1 && hasHalf) {
+          return (
+            <div key={starNumber} className="relative inline-block">
+              <Star size={16} className="text-cafe-secondary/20" />
+              <div className="absolute top-0 left-0 w-1/2 overflow-hidden">
+                <Star size={16} className="fill-cafe-accent text-cafe-accent" />
+              </div>
+            </div>
+          );
+        }
+        return <Star key={starNumber} size={16} className="text-cafe-secondary/20" />;
+      })}
     </div>
   );
 };
