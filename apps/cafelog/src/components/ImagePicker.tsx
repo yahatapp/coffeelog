@@ -12,7 +12,7 @@ export const ImagePicker = ({
 }: {
   images: SelectedImage[];
   onChange: (images: SelectedImage[]) => void;
-  onError: (message: string) => void;
+  onError: (message: string | null) => void;
   maxImages?: number;
 }) => {
   const imagesRef = useRef(images);
@@ -26,7 +26,8 @@ export const ImagePicker = ({
 
   const select = (files: FileList | null) => {
     if (!files) return;
-    const available = maxImages - images.length;
+    onError(null);
+    const available = Math.max(0, maxImages - images.length);
     if (files.length > available) onError("写真は1つの記録につき5枚までです。");
     const additions = Array.from(files)
       .slice(0, available)

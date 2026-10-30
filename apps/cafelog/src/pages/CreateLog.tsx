@@ -41,10 +41,7 @@ const CreateLogPage = () => {
       void navigate(`/logs/${newLog.id}`, {
         state: {
           edit: true,
-          photoUploadError: getErrorMessage(
-            uploadError,
-            "記録は保存されましたが、写真のアップロードに失敗しました。",
-          ),
+          photoUploadError: getErrorMessage(uploadError, "写真のアップロードに失敗しました。"),
         },
       });
     } finally {
