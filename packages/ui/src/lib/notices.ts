@@ -1,34 +1,22 @@
+import { useCallback } from "react";
+import { Toast } from "@base-ui/react/toast";
+
 export type NoticeVariant = "success" | "warning" | "error";
-export type Notice = {
-  id: number;
-  message: string;
-  variant: NoticeVariant;
-};
+export type Notice = { message: string; variant: NoticeVariant };
 
-let nextId = 0;
-let notices: Notice[] = [];
-const listeners = new Set<() => void>();
+export const noticeManager = Toast.createToastManager<Record<string, never>>();
 
-const emit = () => listeners.forEach((listener) => listener());
+const options = ({ message, variant }: Notice) => ({
+  title: message,
+  type: variant,
+  timeout: variant === "success" ? 5000 : 0,
+  priority: variant === "success" ? ("low" as const) : ("high" as const),
+});
 
-export const noticeStore = {
-  subscribe: (listener: () => void) => {
-    listeners.add(listener);
-    return () => {
-      listeners.delete(listener);
-    };
-  },
-  getSnapshot: () => notices,
-  dismiss: (id: number) => {
-    notices = notices.filter((notice) => notice.id !== id);
-    emit();
-  },
-};
+export const notify = (notice: Notice) => noticeManager.add(options(notice));
 
-// Keep notices outside route components so navigation cannot discard an operation's result.
-export const notify = (notice: Omit<Notice, "id">) => {
-  const id = ++nextId;
-  notices = [...notices, { ...notice, id }];
-  emit();
-  return id;
+export const useNotice = () => {
+  const { add, close } = Toast.useToastManager<Record<string, never>>();
+  const notify = useCallback((notice: Notice) => add(options(notice)), [add]);
+  return { notify, close };
 };

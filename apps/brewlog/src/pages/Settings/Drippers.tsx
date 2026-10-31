@@ -1,3 +1,4 @@
+import { mutationNotices } from "@/lib/mutationNotices";
 import { useForm } from "@tanstack/react-form";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
@@ -39,6 +40,7 @@ const Drippers = () => {
   });
 
   const createMutation = useMutation({
+    meta: mutationNotices.createDripper,
     mutationFn: (value: DripperFormValues) => mutations.createDripper({ json: value }),
     onSuccess: async () => {
       form.reset(emptyValues);
@@ -46,6 +48,7 @@ const Drippers = () => {
     },
   });
   const updateMutation = useMutation({
+    meta: mutationNotices.updateDripper,
     mutationFn: ({ id, value }: { id: string; value: DripperFormValues }) =>
       mutations.updateDripper({ param: { id }, json: value }),
     onSuccess: async () => {
@@ -55,6 +58,7 @@ const Drippers = () => {
     },
   });
   const defaultMutation = useMutation({
+    meta: mutationNotices.defaultDripper,
     mutationFn: (id: string) =>
       mutations.updateDripper({ param: { id }, json: { isDefault: true } }),
     onSuccess: async () => {
@@ -62,6 +66,7 @@ const Drippers = () => {
     },
   });
   const deleteMutation = useMutation({
+    meta: mutationNotices.deleteDripper,
     mutationFn: (id: string) => mutations.deleteDripper(id),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: queryKeys.drippers });

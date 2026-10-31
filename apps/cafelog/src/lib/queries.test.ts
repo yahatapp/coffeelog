@@ -1,12 +1,16 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { noticeStore } from "@yahatapp/ui";
+import { MutationObserver, QueryClient } from "@tanstack/react-query";
+import { createMutationNoticeCache, noticeManager } from "@yahatapp/ui";
 import { deleteLog, uploadLogImages } from "./queries";
 import { resizeToJpeg } from "./images";
-import { createCafeLogDefaults } from "./cafeLogForm";
+import { createCafeLogDefaults, type CafeLogFormValues } from "./cafeLogForm";
 import { saveLogWithImages } from "./saveLog";
+import { mutationNotices } from "./mutationNotices";
 
 vi.mock("./images", () => ({ resizeToJpeg: vi.fn() }));
 const fetchMock = vi.fn<typeof fetch>();
+const addNotice = vi.spyOn(noticeManager, "add");
+let client: QueryClient;
 const photo = () => ({
   file: new File(["original"], "photo.jpg", { type: "image/jpeg" }),
   previewUrl: "blob:preview",
@@ -15,16 +19,30 @@ const sentId = (init?: RequestInit) => {
   if (!(init?.body instanceof FormData)) throw new Error("Expected multipart upload");
   return init.body.get("imageId");
 };
+const save = ({ id, values }: { id?: string; values: CafeLogFormValues }) =>
+  new MutationObserver(client, {
+    mutationFn: saveLogWithImages,
+    meta: id ? mutationNotices.updateLog : mutationNotices.createLog,
+  }).mutate({ id, values });
+const remove = () =>
+  new MutationObserver(client, { mutationFn: deleteLog, meta: mutationNotices.deleteLog }).mutate(
+    "log",
+  );
 
 beforeEach(() => {
   vi.useFakeTimers();
   vi.stubGlobal("fetch", fetchMock);
+  addNotice.mockReturnValue("notice-id");
+  client = new QueryClient({
+    mutationCache: createMutationNoticeCache(),
+    defaultOptions: { mutations: { gcTime: Infinity } },
+  });
   vi.mocked(resizeToJpeg).mockResolvedValue(
     new File(["jpeg"], "photo.jpg", { type: "image/jpeg" }),
   );
 });
 afterEach(() => {
-  for (const notice of noticeStore.getSnapshot()) noticeStore.dismiss(notice.id);
+  client.clear();
   vi.useRealTimers();
   vi.unstubAllGlobals();
   vi.resetAllMocks();
@@ -38,28 +56,27 @@ describe("記録と写真の保存結果の通知", () => {
       fetchMock
         .mockResolvedValueOnce(Response.json({ id: "log" }))
         .mockReturnValueOnce(upload.promise);
-      const values = { ...createCafeLogDefaults(), images: [photo()] };
-      const pending = saveLogWithImages({ id, values });
+      const pending = save({ id, values: { ...createCafeLogDefaults(), images: [photo()] } });
       await vi.advanceTimersByTimeAsync(0);
       expect(fetchMock).toHaveBeenCalledTimes(2);
       expect(fetchMock.mock.calls[0][1]?.method).toBe(id ? "PATCH" : "POST");
-      expect(noticeStore.getSnapshot()).toEqual([]);
+      expect(addNotice).not.toHaveBeenCalled();
       upload.resolve(new Response(null, { status: 201 }));
-      await expect(pending).resolves.toEqual({ id: "log" });
-      expect(noticeStore.getSnapshot()).toEqual([
-        expect.objectContaining({
-          variant: "success",
-          message: id ? "記録を更新しました。" : "記録を保存しました。",
-        }),
-      ]);
+      await expect(pending).resolves.toEqual({ data: { id: "log" } });
+      expect(addNotice).toHaveBeenCalledExactlyOnceWith({
+        title: id ? "記録を更新しました。" : "記録を保存しました。",
+        type: "success",
+        timeout: 5000,
+        priority: "low",
+      });
     },
   );
 
   it("写真なしの保存でも成功を通知する", async () => {
     fetchMock.mockResolvedValue(Response.json({ id: "log" }));
-    await saveLogWithImages({ values: createCafeLogDefaults() });
+    await save({ values: createCafeLogDefaults() });
     expect(fetchMock).toHaveBeenCalledTimes(1);
-    expect(noticeStore.getSnapshot()).toEqual([expect.objectContaining({ variant: "success" })]);
+    expect(addNotice).toHaveBeenCalledTimes(1);
   });
 
   it.each([undefined, "log"])(
@@ -69,13 +86,15 @@ describe("記録と写真の保存結果の通知", () => {
         .mockResolvedValueOnce(Response.json({ id: "log" }))
         .mockResolvedValueOnce(new Response("Invalid image", { status: 400 }));
       await expect(
-        saveLogWithImages({ id, values: { ...createCafeLogDefaults(), images: [photo()] } }),
-      ).resolves.toEqual({ id: "log" });
-      expect(noticeStore.getSnapshot()).toEqual([expect.objectContaining({ variant: "warning" })]);
-      expect(noticeStore.getSnapshot()[0].message).toContain("記録は保存済みです。");
-      expect(noticeStore.getSnapshot()[0].message).toContain(
-        "編集画面からもう一度追加してください。",
+        save({ id, values: { ...createCafeLogDefaults(), images: [photo()] } }),
+      ).resolves.toMatchObject({ data: { id: "log" }, notice: { variant: "warning" } });
+      expect(addNotice).toHaveBeenCalledTimes(1);
+      expect(addNotice).toHaveBeenCalledWith(
+        expect.objectContaining({ type: "warning", timeout: 0, priority: "high" }),
       );
+      const message = addNotice.mock.calls[0][0].title;
+      expect(message).toContain("記録は保存済みです。");
+      expect(message).toContain("編集画面からもう一度追加してください。");
     },
   );
 
@@ -84,26 +103,35 @@ describe("記録と写真の保存結果の通知", () => {
     async (id) => {
       fetchMock.mockResolvedValue(new Response("保存できませんでした。", { status: 500 }));
       await expect(
-        saveLogWithImages({ id, values: { ...createCafeLogDefaults(), images: [photo()] } }),
+        save({ id, values: { ...createCafeLogDefaults(), images: [photo()] } }),
       ).rejects.toThrow();
       expect(fetchMock).toHaveBeenCalledTimes(1);
-      expect(noticeStore.getSnapshot()).toEqual([expect.objectContaining({ variant: "error" })]);
+      expect(addNotice).toHaveBeenCalledExactlyOnceWith({
+        title: "保存できませんでした。",
+        type: "error",
+        timeout: 0,
+        priority: "high",
+      });
     },
   );
 
   it("削除成功を通知する", async () => {
     fetchMock.mockResolvedValue(Response.json({ id: "log" }));
-    await deleteLog("log");
-    expect(noticeStore.getSnapshot()).toEqual([
-      expect.objectContaining({ variant: "success", message: "記録を削除しました。" }),
-    ]);
+    await remove();
+    expect(addNotice).toHaveBeenCalledExactlyOnceWith({
+      title: "記録を削除しました。",
+      type: "success",
+      timeout: 5000,
+      priority: "low",
+    });
   });
 
-  it("削除の通信エラーを通知し、呼び出し元にも返す", async () => {
+  it("削除の通信エラーを一度だけ通知し、呼び出し元にも返す", async () => {
     const error = new TypeError("Failed to fetch");
     fetchMock.mockRejectedValue(error);
-    await expect(deleteLog("log")).rejects.toBe(error);
-    expect(noticeStore.getSnapshot()).toEqual([expect.objectContaining({ variant: "error" })]);
+    await expect(remove()).rejects.toBe(error);
+    expect(addNotice).toHaveBeenCalledTimes(1);
+    expect(addNotice).toHaveBeenCalledWith(expect.objectContaining({ type: "error" }));
   });
 });
 

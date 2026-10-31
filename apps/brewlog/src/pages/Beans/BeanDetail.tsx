@@ -1,3 +1,5 @@
+import type { MutationNoticeResult } from "@yahatapp/ui";
+import { mutationNotices } from "@/lib/mutationNotices";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import {
@@ -35,14 +37,24 @@ const BeanDetail = () => {
   const queryClient = useQueryClient();
   const beanQuery = useQuery(beanQueries.detail(id ?? ""));
   const archiveMutation = useMutation({
-    mutationFn: ({ beanId, isArchived }: { beanId: string; isArchived: boolean }) =>
-      mutations.setBeanArchived({ id: beanId, isArchived }),
-    onSuccess: async (bean) => {
+    meta: mutationNotices.setBeanArchived,
+    mutationFn: async ({ beanId, isArchived }: { beanId: string; isArchived: boolean }) => {
+      const bean = await mutations.setBeanArchived({ id: beanId, isArchived });
+      return {
+        data: bean,
+        notice: {
+          variant: "success",
+          message: isArchived ? "豆をアーカイブしました。" : "豆をアーカイブから戻しました。",
+        },
+      } satisfies MutationNoticeResult<typeof bean>;
+    },
+    onSuccess: async ({ data: bean }) => {
       queryClient.setQueryData(queryKeys.bean(bean.id), bean);
       await queryClient.invalidateQueries({ queryKey: queryKeys.beans });
     },
   });
   const deleteMutation = useMutation({
+    meta: mutationNotices.deleteBean,
     mutationFn: mutations.deleteBean,
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: queryKeys.beans });

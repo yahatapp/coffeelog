@@ -1,3 +1,4 @@
+import { mutationNotices } from "@/lib/mutationNotices";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -13,8 +14,9 @@ const CreateLogPage = () => {
   const queryClient = useQueryClient();
   const defaultValues = useMemo(() => createCafeLogDefaults(), []);
   const createMutation = useMutation({
+    meta: mutationNotices.createLog,
     mutationFn: (values: CafeLogFormValues) => saveLogWithImages({ values }),
-    onSuccess: async (newLog) => {
+    onSuccess: async ({ data: newLog }) => {
       analytics.trackEvent("record_create_success");
       await queryClient.invalidateQueries({ queryKey: cafelogQueries.all });
       void navigate(`/logs/${newLog.id}`);

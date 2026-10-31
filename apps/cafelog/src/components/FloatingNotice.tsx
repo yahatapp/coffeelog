@@ -1,4 +1,4 @@
-import { noticeStore, notify } from "@yahatapp/ui";
+import { useNotice } from "@yahatapp/ui";
 import { useEffect } from "react";
 
 export const FloatingNotice = ({
@@ -8,10 +8,11 @@ export const FloatingNotice = ({
   message: string;
   warning?: boolean;
 }) => {
+  const { notify, close } = useNotice();
   useEffect(() => {
     const id = notify({ message, variant: warning ? "warning" : "error" });
-    return () => noticeStore.dismiss(id);
-  }, [message, warning]);
+    return () => close(id);
+  }, [message, warning, notify, close]);
 
   return null;
 };

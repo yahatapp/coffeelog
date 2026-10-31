@@ -1,3 +1,4 @@
+import { mutationNotices } from "@/lib/mutationNotices";
 import { useForm } from "@tanstack/react-form";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
@@ -154,6 +155,7 @@ const Grinders = () => {
   const [editingId, setEditingId] = useState<string | null>(null);
 
   const createMutation = useMutation({
+    meta: mutationNotices.createGrinder,
     mutationFn: (value: GrinderFormValues) => mutations.createGrinder({ json: toPayload(value) }),
     onSuccess: async () => {
       form.reset(emptyValues);
@@ -161,6 +163,7 @@ const Grinders = () => {
     },
   });
   const updateMutation = useMutation({
+    meta: mutationNotices.updateGrinder,
     mutationFn: ({ id, value }: { id: string; value: GrinderFormValues }) =>
       mutations.updateGrinder({ param: { id }, json: toPayload(value) }),
     onSuccess: async () => {
@@ -170,6 +173,7 @@ const Grinders = () => {
     },
   });
   const defaultMutation = useMutation({
+    meta: mutationNotices.defaultGrinder,
     mutationFn: (id: string) =>
       mutations.updateGrinder({ param: { id }, json: { isDefault: true } }),
     onSuccess: async () => {
@@ -177,6 +181,7 @@ const Grinders = () => {
     },
   });
   const deleteMutation = useMutation({
+    meta: mutationNotices.deleteGrinder,
     mutationFn: (id: string) => mutations.deleteGrinder(id),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: queryKeys.grinders });

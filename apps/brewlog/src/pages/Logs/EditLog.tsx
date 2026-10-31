@@ -1,3 +1,4 @@
+import { mutationNotices } from "@/lib/mutationNotices";
 import { useEffect, useState } from "react";
 import { useForm } from "@tanstack/react-form";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -109,6 +110,7 @@ const EditLogForm = ({
   const [originalValues] = useState(() => toFormValues(log));
 
   const updateMutation = useMutation({
+    meta: mutationNotices.updateLog,
     mutationFn: (values: LogFormValues) => {
       if (!values.beanId) throw new Error("コーヒー豆を選択してください。");
       if (!values.dripperId) throw new Error("ドリッパーを選択してください。");

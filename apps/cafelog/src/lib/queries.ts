@@ -1,10 +1,8 @@
 import { queryOptions } from "@tanstack/react-query";
-import { notify } from "@yahatapp/ui";
 import type { InferRequestType, InferResponseType } from "hono/client";
 import { api, ApiError, assertOk, authorizedFetch } from "@/lib/api";
 import { resizeToJpeg } from "@/lib/images";
 import { toCafeLogPayload, type CafeLogFormValues } from "@/lib/cafeLogForm";
-import { getErrorMessage } from "@/lib/errors";
 
 export type LogsResponse = InferResponseType<typeof api.api.logs.$get>;
 export type LogResponse = InferResponseType<(typeof api.api.logs)[":id"]["$get"]>;
@@ -67,15 +65,8 @@ export const updateLog = async ({ id, values }: { id: string; values: CafeLogFor
 };
 
 export const deleteLog = async (id: string) => {
-  try {
-    const response = await api.api.logs[":id"].$delete({ param: { id } });
-    const log = await parseJson<LogResponse>(response);
-    notify({ variant: "success", message: "記録を削除しました。" });
-    return log;
-  } catch (error) {
-    notify({ variant: "error", message: getErrorMessage(error, "記録の削除に失敗しました。") });
-    throw error;
-  }
+  const response = await api.api.logs[":id"].$delete({ param: { id } });
+  return parseJson<LogResponse>(response);
 };
 
 // Retain the identity across automatic retries and another save of the same selection.

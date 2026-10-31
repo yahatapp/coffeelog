@@ -1,3 +1,4 @@
+import { mutationNotices } from "@/lib/mutationNotices";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { FaGlobe, FaMapLocationDot } from "react-icons/fa6";
@@ -93,8 +94,11 @@ const LogDetailPage = () => {
   const [imageCount, setImageCount] = useState(0);
   const [isSaving, setIsSaving] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const updateMutation = useMutation({ mutationFn: saveLogWithImages });
-  const deleteMutation = useMutation({ mutationFn: deleteLog });
+  const updateMutation = useMutation({
+    mutationFn: saveLogWithImages,
+    meta: mutationNotices.updateLog,
+  });
+  const deleteMutation = useMutation({ mutationFn: deleteLog, meta: mutationNotices.deleteLog });
   const defaultValues = useMemo(() => (log ? toFormValues(log) : null), [log]);
   const queryError = logQuery.error
     ? getErrorMessage(logQuery.error, "通信エラーが発生しました。")
@@ -105,7 +109,7 @@ const LogDetailPage = () => {
     if (!id || isSaving) return;
     setIsSaving(true);
     try {
-      const updatedLog = await updateMutation.mutateAsync({ id, values });
+      const { data: updatedLog } = await updateMutation.mutateAsync({ id, values });
       analytics.trackEvent("record_update_success");
       queryClient.setQueryData(cafelogQueries.log(id).queryKey, (current) =>
         current ? { ...current, ...updatedLog } : updatedLog,
