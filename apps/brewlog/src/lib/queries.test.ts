@@ -11,10 +11,10 @@ const cases: [string, () => Promise<unknown>][] = [
     () => mutations.createBean({ json: { name: "豆", coffeeType: "regular" } }),
   ],
   ["豆を更新しました。", () => mutations.updateBean({ param, json: { name: "豆" } })],
-  ["豆をアーカイブしました。", () => mutations.updateBean({ param, json: { isArchived: true } })],
+  ["豆をアーカイブしました。", () => mutations.setBeanArchived({ id: param.id, isArchived: true })],
   [
     "豆をアーカイブから戻しました。",
-    () => mutations.updateBean({ param, json: { isArchived: false } }),
+    () => mutations.setBeanArchived({ id: param.id, isArchived: false }),
   ],
   ["豆を削除しました。", () => mutations.deleteBean(param.id)],
   ["抽出記録を保存しました。", () => mutations.createLog({ json: { beanId: param.id } })],
@@ -52,6 +52,17 @@ afterEach(() => {
 });
 
 describe("更新APIのフローティング通知", () => {
+  it.each([false, true])("通常の編集はisArchived=%sでも更新成功を通知する", async (isArchived) => {
+    const payload = { name: "変更後の豆", note: "変更後のメモ", isArchived };
+    fetchMock.mockResolvedValue(Response.json({ id: param.id, ...payload }));
+    await mutations.updateBean({ param, json: payload });
+    expect(fetchMock.mock.calls[0][1]?.method).toBe("PATCH");
+    expect(fetchMock.mock.calls[0][1]?.body).toBe(JSON.stringify(payload));
+    expect(noticeStore.getSnapshot()).toEqual([
+      expect.objectContaining({ variant: "success", message: "豆を更新しました。" }),
+    ]);
+  });
+
   it.each(cases)("成功: %s", async (message, mutate) => {
     fetchMock.mockResolvedValue(Response.json({ id: param.id }));
     await expect(mutate()).resolves.toEqual({ id: param.id });

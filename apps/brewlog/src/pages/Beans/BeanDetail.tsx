@@ -36,7 +36,7 @@ const BeanDetail = () => {
   const beanQuery = useQuery(beanQueries.detail(id ?? ""));
   const archiveMutation = useMutation({
     mutationFn: ({ beanId, isArchived }: { beanId: string; isArchived: boolean }) =>
-      mutations.updateBean({ param: { id: beanId }, json: { isArchived } }),
+      mutations.setBeanArchived({ id: beanId, isArchived }),
     onSuccess: async (bean) => {
       queryClient.setQueryData(queryKeys.bean(bean.id), bean);
       await queryClient.invalidateQueries({ queryKey: queryKeys.beans });

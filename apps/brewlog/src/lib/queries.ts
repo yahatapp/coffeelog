@@ -127,12 +127,14 @@ export const mutations = {
   updateBean: (options: UpdateBeanRequest) =>
     parseMutationResponse(
       api.api.beans[":id"].$patch(options),
-      options.json.isArchived === true
-        ? "豆をアーカイブしました。"
-        : options.json.isArchived === false
-          ? "豆をアーカイブから戻しました。"
-          : "豆を更新しました。",
+      "豆を更新しました。",
       "豆の更新に失敗しました。",
+    ),
+  setBeanArchived: ({ id, isArchived }: { id: string; isArchived: boolean }) =>
+    parseMutationResponse(
+      api.api.beans[":id"].$patch({ param: { id }, json: { isArchived } }),
+      isArchived ? "豆をアーカイブしました。" : "豆をアーカイブから戻しました。",
+      isArchived ? "豆のアーカイブに失敗しました。" : "豆のアーカイブ解除に失敗しました。",
     ),
   deleteBean: (id: string) =>
     parseMutationResponse(
