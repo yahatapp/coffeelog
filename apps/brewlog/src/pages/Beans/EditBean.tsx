@@ -1,3 +1,4 @@
+import { mutationNotices } from "@/lib/mutationNotices";
 import { useEffect } from "react";
 import { useForm } from "@tanstack/react-form";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -16,6 +17,7 @@ const EditBean = () => {
   const beanQuery = useQuery(beanQueries.detail(id ?? ""));
 
   const updateMutation = useMutation({
+    meta: mutationNotices.updateBean,
     mutationFn: (values: BeanFormValues) => {
       if (!id) throw new Error("豆IDがありません。");
       const payload = toBeanUpdateInput(values);
@@ -117,7 +119,8 @@ const EditBean = () => {
         onSubmit={(event) => {
           event.preventDefault();
           event.stopPropagation();
-          void form.handleSubmit();
+          // Mutation errors are shown by the shared notices and the form error state.
+          void form.handleSubmit().catch(() => undefined);
         }}
         className="space-y-4"
       >

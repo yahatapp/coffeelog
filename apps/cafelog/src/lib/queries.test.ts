@@ -1,9 +1,16 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { uploadLogImages } from "./queries";
+import { MutationObserver, QueryClient } from "@tanstack/react-query";
+import { createMutationNoticeCache, noticeManager } from "@yahatapp/ui";
+import { deleteLog, uploadLogImages } from "./queries";
 import { resizeToJpeg } from "./images";
+import { createCafeLogDefaults, type CafeLogFormValues } from "./cafeLogForm";
+import { saveLogWithImages } from "./saveLog";
+import { mutationNotices } from "./mutationNotices";
 
 vi.mock("./images", () => ({ resizeToJpeg: vi.fn() }));
 const fetchMock = vi.fn<typeof fetch>();
+const addNotice = vi.spyOn(noticeManager, "add");
+let client: QueryClient;
 const photo = () => ({
   file: new File(["original"], "photo.jpg", { type: "image/jpeg" }),
   previewUrl: "blob:preview",
@@ -12,18 +19,120 @@ const sentId = (init?: RequestInit) => {
   if (!(init?.body instanceof FormData)) throw new Error("Expected multipart upload");
   return init.body.get("imageId");
 };
+const save = ({ id, values }: { id?: string; values: CafeLogFormValues }) =>
+  new MutationObserver(client, {
+    mutationFn: saveLogWithImages,
+    meta: id ? mutationNotices.updateLog : mutationNotices.createLog,
+  }).mutate({ id, values });
+const remove = () =>
+  new MutationObserver(client, { mutationFn: deleteLog, meta: mutationNotices.deleteLog }).mutate(
+    "log",
+  );
 
 beforeEach(() => {
   vi.useFakeTimers();
   vi.stubGlobal("fetch", fetchMock);
+  addNotice.mockReturnValue("notice-id");
+  client = new QueryClient({
+    mutationCache: createMutationNoticeCache(),
+    defaultOptions: { mutations: { gcTime: Infinity } },
+  });
   vi.mocked(resizeToJpeg).mockResolvedValue(
     new File(["jpeg"], "photo.jpg", { type: "image/jpeg" }),
   );
 });
 afterEach(() => {
+  client.clear();
   vi.useRealTimers();
   vi.unstubAllGlobals();
   vi.resetAllMocks();
+});
+
+describe("記録と写真の保存結果の通知", () => {
+  it.each([undefined, "log"])(
+    "写真も保存し終えてから一度だけ成功を通知する（id: %s）",
+    async (id) => {
+      const upload = Promise.withResolvers<Response>();
+      fetchMock
+        .mockResolvedValueOnce(Response.json({ id: "log" }))
+        .mockReturnValueOnce(upload.promise);
+      const pending = save({ id, values: { ...createCafeLogDefaults(), images: [photo()] } });
+      await vi.advanceTimersByTimeAsync(0);
+      expect(fetchMock).toHaveBeenCalledTimes(2);
+      expect(fetchMock.mock.calls[0][1]?.method).toBe(id ? "PATCH" : "POST");
+      expect(addNotice).not.toHaveBeenCalled();
+      upload.resolve(new Response(null, { status: 201 }));
+      await expect(pending).resolves.toEqual({ data: { id: "log" } });
+      expect(addNotice).toHaveBeenCalledExactlyOnceWith({
+        title: id ? "記録を更新しました。" : "記録を保存しました。",
+        type: "success",
+        timeout: 5000,
+        priority: "low",
+      });
+    },
+  );
+
+  it("写真なしの保存でも成功を通知する", async () => {
+    fetchMock.mockResolvedValue(Response.json({ id: "log" }));
+    await save({ values: createCafeLogDefaults() });
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(addNotice).toHaveBeenCalledTimes(1);
+  });
+
+  it.each([undefined, "log"])(
+    "写真だけ失敗したら保存済みの記録を返し、警告だけを通知する（id: %s）",
+    async (id) => {
+      fetchMock
+        .mockResolvedValueOnce(Response.json({ id: "log" }))
+        .mockResolvedValueOnce(new Response("Invalid image", { status: 400 }));
+      await expect(
+        save({ id, values: { ...createCafeLogDefaults(), images: [photo()] } }),
+      ).resolves.toMatchObject({ data: { id: "log" }, notice: { variant: "warning" } });
+      expect(addNotice).toHaveBeenCalledTimes(1);
+      expect(addNotice).toHaveBeenCalledWith(
+        expect.objectContaining({ type: "warning", timeout: 0, priority: "high" }),
+      );
+      const message = addNotice.mock.calls[0][0].title;
+      expect(message).toContain("記録は保存済みです。");
+      expect(message).toContain("編集画面からもう一度追加してください。");
+    },
+  );
+
+  it.each([undefined, "log"])(
+    "記録が保存できない場合は写真を送らず、エラーだけを通知する（id: %s）",
+    async (id) => {
+      fetchMock.mockResolvedValue(new Response("保存できませんでした。", { status: 500 }));
+      await expect(
+        save({ id, values: { ...createCafeLogDefaults(), images: [photo()] } }),
+      ).rejects.toThrow();
+      expect(fetchMock).toHaveBeenCalledTimes(1);
+      expect(addNotice).toHaveBeenCalledExactlyOnceWith({
+        title: "保存できませんでした。",
+        type: "error",
+        timeout: 0,
+        priority: "high",
+      });
+    },
+  );
+
+  it("削除成功を通知する", async () => {
+    fetchMock.mockResolvedValue(Response.json({ id: "log" }));
+    await remove();
+    expect(addNotice).toHaveBeenCalledExactlyOnceWith({
+      title: "記録を削除しました。",
+      type: "success",
+      timeout: 5000,
+      priority: "low",
+    });
+  });
+
+  it("削除の通信エラーを一度だけ通知し、呼び出し元にも返す", async () => {
+    const error = new TypeError("Failed to fetch");
+    fetchMock.mockRejectedValue(error);
+    await expect(remove()).rejects.toBe(error);
+    expect(addNotice).toHaveBeenCalledTimes(1);
+    expect(addNotice).toHaveBeenCalledWith(expect.objectContaining({ type: "error" }));
+  });
 });
 
 describe("写真アップロードの再送", () => {

@@ -14,6 +14,13 @@ export { PageLayout, type PageLayoutProps } from "./components/layout";
 export { Select } from "./components/select";
 export { Segment, type SegmentOption, type SegmentProps } from "./components/segment";
 export { Textarea } from "./components/textarea";
+export { NoticeProvider } from "./components/notices";
+export { notify, useNotice, noticeManager, type Notice, type NoticeVariant } from "./lib/notices";
+export {
+  createMutationNoticeCache,
+  type MutationNoticeMeta,
+  type MutationNoticeResult,
+} from "./lib/mutation-notices";
 export { StoreHistory, StoreList, type StoreInfo } from "./components/store-history";
 export {
   EmptyState,

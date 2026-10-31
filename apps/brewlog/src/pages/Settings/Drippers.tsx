@@ -1,3 +1,4 @@
+import { mutationNotices } from "@/lib/mutationNotices";
 import { useForm } from "@tanstack/react-form";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
@@ -39,6 +40,7 @@ const Drippers = () => {
   });
 
   const createMutation = useMutation({
+    meta: mutationNotices.createDripper,
     mutationFn: (value: DripperFormValues) => mutations.createDripper({ json: value }),
     onSuccess: async () => {
       form.reset(emptyValues);
@@ -46,6 +48,7 @@ const Drippers = () => {
     },
   });
   const updateMutation = useMutation({
+    meta: mutationNotices.updateDripper,
     mutationFn: ({ id, value }: { id: string; value: DripperFormValues }) =>
       mutations.updateDripper({ param: { id }, json: value }),
     onSuccess: async () => {
@@ -55,6 +58,7 @@ const Drippers = () => {
     },
   });
   const defaultMutation = useMutation({
+    meta: mutationNotices.defaultDripper,
     mutationFn: (id: string) =>
       mutations.updateDripper({ param: { id }, json: { isDefault: true } }),
     onSuccess: async () => {
@@ -62,6 +66,7 @@ const Drippers = () => {
     },
   });
   const deleteMutation = useMutation({
+    meta: mutationNotices.deleteDripper,
     mutationFn: (id: string) => mutations.deleteDripper(id),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: queryKeys.drippers });
@@ -95,7 +100,8 @@ const Drippers = () => {
         onSubmit={(event) => {
           event.preventDefault();
           event.stopPropagation();
-          void form.handleSubmit();
+          // Mutation errors are shown by the shared notices and the form error state.
+          void form.handleSubmit().catch(() => undefined);
         }}
         className="space-y-3 bg-white p-4 rounded-2xl border border-coffee-secondary/15 shadow-sm"
       >
@@ -193,7 +199,7 @@ const Drippers = () => {
                 <div className="flex items-center space-x-3 flex-1 mr-2">
                   <button
                     type="button"
-                    onClick={() => void defaultMutation.mutateAsync(dripper.id)}
+                    onClick={() => defaultMutation.mutate(dripper.id)}
                     className={`p-1 rounded-full transition-colors ${dripper.isDefault ? "text-coffee-primary" : "text-coffee-secondary/30 hover:text-coffee-primary"}`}
                     title={dripper.isDefault ? "デフォルト" : "デフォルトに設定"}
                     disabled={editingId !== null || defaultMutation.isPending}
@@ -225,7 +231,7 @@ const Drippers = () => {
                     type="button"
                     onClick={() => {
                       if (confirm("このドリッパーを削除しますか？"))
-                        void deleteMutation.mutateAsync(dripper.id);
+                        deleteMutation.mutate(dripper.id);
                     }}
                     className="text-coffee-secondary/40 hover:text-red-500 p-1.5 rounded-full"
                     title="削除"

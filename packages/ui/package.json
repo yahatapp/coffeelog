@@ -3,7 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "sideEffects": ["./src/styles/tokens.css"],
+  "sideEffects": [
+    "./src/styles/tokens.css"
+  ],
   "exports": {
     ".": "./src/index.ts",
     "./styles.css": "./src/styles/tokens.css"
@@ -13,16 +15,20 @@
     "build": "tsc --noEmit"
   },
   "dependencies": {
+    "@base-ui/react": "catalog:",
     "@radix-ui/react-slot": "catalog:",
+    "@tanstack/react-query": "catalog:",
     "clsx": "catalog:",
     "tailwind-merge": "catalog:"
   },
   "devDependencies": {
     "@types/react": "catalog:",
     "react": "catalog:",
+    "react-dom": "catalog:",
     "typescript": "catalog:"
   },
   "peerDependencies": {
-    "react": "^19.0.0"
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
   }
 }

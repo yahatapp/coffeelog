@@ -1,3 +1,4 @@
+import { mutationNotices } from "@/lib/mutationNotices";
 import { useEffect, useMemo } from "react";
 import { useForm } from "@tanstack/react-form";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -20,6 +21,7 @@ const AddBean = () => {
   const parentQuery = useQuery(beanQueries.detail(parentBeanId ?? ""));
 
   const createMutation = useMutation({
+    meta: mutationNotices.createBean,
     mutationFn: (values: BeanFormValues) => {
       const payload = toBeanCreateInput(values, parentBeanId);
       const parsed = beanCreateSchema.safeParse(payload);
@@ -113,7 +115,8 @@ const AddBean = () => {
         onSubmit={(event) => {
           event.preventDefault();
           event.stopPropagation();
-          void form.handleSubmit();
+          // Mutation errors are shown by the shared notices and the form error state.
+          void form.handleSubmit().catch(() => undefined);
         }}
         className="space-y-4"
       >
