@@ -1,6 +1,7 @@
 import { parseResponse } from "hono/client";
 import type { ClientResponse, InferRequestType, InferResponseType } from "hono/client";
 import { queryOptions } from "@tanstack/react-query";
+import { notify } from "@yahatapp/ui";
 import { api } from "./api";
 
 const parseOkResponse = async <T extends ClientResponse<unknown>>(responsePromise: Promise<T>) => {
@@ -101,22 +102,94 @@ export type UpdateDripperRequest = InferRequestType<(typeof api.api.drippers)[":
 export type CreateGrinderRequest = InferRequestType<typeof api.api.grinders.$post>;
 export type UpdateGrinderRequest = InferRequestType<(typeof api.api.grinders)[":id"]["$patch"]>;
 
+const parseMutationResponse = async <T extends ClientResponse<unknown>>(
+  response: Promise<T>,
+  success: string,
+  error: string,
+) => {
+  try {
+    const result = await parseOkResponse(response);
+    notify({ variant: "success", message: success });
+    return result;
+  } catch (cause) {
+    notify({ variant: "error", message: error });
+    throw cause;
+  }
+};
+
 export const mutations = {
-  createBean: (options: CreateBeanRequest) => parseOkResponse(api.api.beans.$post(options)),
-  updateBean: (options: UpdateBeanRequest) => parseOkResponse(api.api.beans[":id"].$patch(options)),
-  deleteBean: (id: string) => parseOkResponse(api.api.beans[":id"].$delete({ param: { id } })),
-  createLog: (options: CreateLogRequest) => parseOkResponse(api.api.logs.$post(options)),
-  updateLog: (options: UpdateLogRequest) => parseOkResponse(api.api.logs[":id"].$patch(options)),
+  createBean: (options: CreateBeanRequest) =>
+    parseMutationResponse(
+      api.api.beans.$post(options),
+      "豆を登録しました。",
+      "豆の登録に失敗しました。",
+    ),
+  updateBean: (options: UpdateBeanRequest) =>
+    parseMutationResponse(
+      api.api.beans[":id"].$patch(options),
+      options.json.isArchived === true
+        ? "豆をアーカイブしました。"
+        : options.json.isArchived === false
+          ? "豆をアーカイブから戻しました。"
+          : "豆を更新しました。",
+      "豆の更新に失敗しました。",
+    ),
+  deleteBean: (id: string) =>
+    parseMutationResponse(
+      api.api.beans[":id"].$delete({ param: { id } }),
+      "豆を削除しました。",
+      "豆の削除に失敗しました。",
+    ),
+  createLog: (options: CreateLogRequest) =>
+    parseMutationResponse(
+      api.api.logs.$post(options),
+      "抽出記録を保存しました。",
+      "抽出記録の保存に失敗しました。",
+    ),
+  updateLog: (options: UpdateLogRequest) =>
+    parseMutationResponse(
+      api.api.logs[":id"].$patch(options),
+      "抽出記録を更新しました。",
+      "抽出記録の更新に失敗しました。",
+    ),
   createDripper: (options: CreateDripperRequest) =>
-    parseOkResponse(api.api.drippers.$post(options)),
+    parseMutationResponse(
+      api.api.drippers.$post(options),
+      "ドリッパーを登録しました。",
+      "ドリッパーの登録に失敗しました。",
+    ),
   updateDripper: (options: UpdateDripperRequest) =>
-    parseOkResponse(api.api.drippers[":id"].$patch(options)),
+    parseMutationResponse(
+      api.api.drippers[":id"].$patch(options),
+      options.json.isDefault === true
+        ? "デフォルトのドリッパーを設定しました。"
+        : "ドリッパーを更新しました。",
+      "ドリッパーの更新に失敗しました。",
+    ),
   deleteDripper: (id: string) =>
-    parseOkResponse(api.api.drippers[":id"].$delete({ param: { id } })),
+    parseMutationResponse(
+      api.api.drippers[":id"].$delete({ param: { id } }),
+      "ドリッパーを削除しました。",
+      "ドリッパーの削除に失敗しました。",
+    ),
   createGrinder: (options: CreateGrinderRequest) =>
-    parseOkResponse(api.api.grinders.$post(options)),
+    parseMutationResponse(
+      api.api.grinders.$post(options),
+      "グラインダーを登録しました。",
+      "グラインダーの登録に失敗しました。",
+    ),
   updateGrinder: (options: UpdateGrinderRequest) =>
-    parseOkResponse(api.api.grinders[":id"].$patch(options)),
+    parseMutationResponse(
+      api.api.grinders[":id"].$patch(options),
+      options.json.isDefault === true
+        ? "デフォルトのグラインダーを設定しました。"
+        : "グラインダーを更新しました。",
+      "グラインダーの更新に失敗しました。",
+    ),
   deleteGrinder: (id: string) =>
-    parseOkResponse(api.api.grinders[":id"].$delete({ param: { id } })),
+    parseMutationResponse(
+      api.api.grinders[":id"].$delete({ param: { id } }),
+      "グラインダーを削除しました。",
+      "グラインダーの削除に失敗しました。",
+    ),
 };

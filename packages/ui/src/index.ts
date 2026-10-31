@@ -14,6 +14,8 @@ export { PageLayout, type PageLayoutProps } from "./components/layout";
 export { Select } from "./components/select";
 export { Segment, type SegmentOption, type SegmentProps } from "./components/segment";
 export { Textarea } from "./components/textarea";
+export { FloatingNotice, NoticeViewport } from "./components/notices";
+export { notify, noticeStore, type Notice, type NoticeVariant } from "./lib/notices";
 export { StoreHistory, StoreList, type StoreInfo } from "./components/store-history";
 export {
   EmptyState,

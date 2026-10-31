@@ -225,7 +225,8 @@ const Grinders = () => {
         onSubmit={(event) => {
           event.preventDefault();
           event.stopPropagation();
-          void form.handleSubmit();
+          // Mutation errors are shown by the shared notices and the form error state.
+          void form.handleSubmit().catch(() => undefined);
         }}
         className="space-y-3 bg-white p-4 rounded-2xl border border-coffee-secondary/15 shadow-sm"
       >
@@ -312,7 +313,7 @@ const Grinders = () => {
                   <div className="flex items-center space-x-3">
                     <button
                       type="button"
-                      onClick={() => void defaultMutation.mutateAsync(grinder.id)}
+                      onClick={() => defaultMutation.mutate(grinder.id)}
                       className={`p-1 rounded-full ${grinder.isDefault ? "text-coffee-primary" : "text-coffee-secondary/30"}`}
                       title={grinder.isDefault ? "デフォルト" : "デフォルトに設定"}
                       disabled={editingId !== null || defaultMutation.isPending}
@@ -344,7 +345,7 @@ const Grinders = () => {
                       type="button"
                       onClick={() => {
                         if (confirm("このグラインダーを削除しますか？"))
-                          void deleteMutation.mutateAsync(grinder.id);
+                          deleteMutation.mutate(grinder.id);
                       }}
                       className="text-coffee-secondary/40 hover:text-red-500 p-1.5 rounded-full"
                       title="削除"

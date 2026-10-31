@@ -113,7 +113,8 @@ const AddLog = () => {
         onSubmit={(event) => {
           event.preventDefault();
           event.stopPropagation();
-          void form.handleSubmit();
+          // Mutation errors are shown by the shared notices and the form error state.
+          void form.handleSubmit().catch(() => undefined);
         }}
         className="space-y-4"
       >

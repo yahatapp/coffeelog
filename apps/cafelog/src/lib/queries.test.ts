@@ -1,6 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { uploadLogImages } from "./queries";
+import { noticeStore } from "@yahatapp/ui";
+import { deleteLog, uploadLogImages } from "./queries";
 import { resizeToJpeg } from "./images";
+import { createCafeLogDefaults } from "./cafeLogForm";
+import { saveLogWithImages } from "./saveLog";
 
 vi.mock("./images", () => ({ resizeToJpeg: vi.fn() }));
 const fetchMock = vi.fn<typeof fetch>();
@@ -21,9 +24,87 @@ beforeEach(() => {
   );
 });
 afterEach(() => {
+  for (const notice of noticeStore.getSnapshot()) noticeStore.dismiss(notice.id);
   vi.useRealTimers();
   vi.unstubAllGlobals();
   vi.resetAllMocks();
+});
+
+describe("記録と写真の保存結果の通知", () => {
+  it.each([undefined, "log"])(
+    "写真も保存し終えてから一度だけ成功を通知する（id: %s）",
+    async (id) => {
+      const upload = Promise.withResolvers<Response>();
+      fetchMock
+        .mockResolvedValueOnce(Response.json({ id: "log" }))
+        .mockReturnValueOnce(upload.promise);
+      const values = { ...createCafeLogDefaults(), images: [photo()] };
+      const pending = saveLogWithImages({ id, values });
+      await vi.advanceTimersByTimeAsync(0);
+      expect(fetchMock).toHaveBeenCalledTimes(2);
+      expect(fetchMock.mock.calls[0][1]?.method).toBe(id ? "PATCH" : "POST");
+      expect(noticeStore.getSnapshot()).toEqual([]);
+      upload.resolve(new Response(null, { status: 201 }));
+      await expect(pending).resolves.toEqual({ id: "log" });
+      expect(noticeStore.getSnapshot()).toEqual([
+        expect.objectContaining({
+          variant: "success",
+          message: id ? "記録を更新しました。" : "記録を保存しました。",
+        }),
+      ]);
+    },
+  );
+
+  it("写真なしの保存でも成功を通知する", async () => {
+    fetchMock.mockResolvedValue(Response.json({ id: "log" }));
+    await saveLogWithImages({ values: createCafeLogDefaults() });
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(noticeStore.getSnapshot()).toEqual([expect.objectContaining({ variant: "success" })]);
+  });
+
+  it.each([undefined, "log"])(
+    "写真だけ失敗したら保存済みの記録を返し、警告だけを通知する（id: %s）",
+    async (id) => {
+      fetchMock
+        .mockResolvedValueOnce(Response.json({ id: "log" }))
+        .mockResolvedValueOnce(new Response("Invalid image", { status: 400 }));
+      await expect(
+        saveLogWithImages({ id, values: { ...createCafeLogDefaults(), images: [photo()] } }),
+      ).resolves.toEqual({ id: "log" });
+      expect(noticeStore.getSnapshot()).toEqual([expect.objectContaining({ variant: "warning" })]);
+      expect(noticeStore.getSnapshot()[0].message).toContain("記録は保存済みです。");
+      expect(noticeStore.getSnapshot()[0].message).toContain(
+        "編集画面からもう一度追加してください。",
+      );
+    },
+  );
+
+  it.each([undefined, "log"])(
+    "記録が保存できない場合は写真を送らず、エラーだけを通知する（id: %s）",
+    async (id) => {
+      fetchMock.mockResolvedValue(new Response("保存できませんでした。", { status: 500 }));
+      await expect(
+        saveLogWithImages({ id, values: { ...createCafeLogDefaults(), images: [photo()] } }),
+      ).rejects.toThrow();
+      expect(fetchMock).toHaveBeenCalledTimes(1);
+      expect(noticeStore.getSnapshot()).toEqual([expect.objectContaining({ variant: "error" })]);
+    },
+  );
+
+  it("削除成功を通知する", async () => {
+    fetchMock.mockResolvedValue(Response.json({ id: "log" }));
+    await deleteLog("log");
+    expect(noticeStore.getSnapshot()).toEqual([
+      expect.objectContaining({ variant: "success", message: "記録を削除しました。" }),
+    ]);
+  });
+
+  it("削除の通信エラーを通知し、呼び出し元にも返す", async () => {
+    const error = new TypeError("Failed to fetch");
+    fetchMock.mockRejectedValue(error);
+    await expect(deleteLog("log")).rejects.toBe(error);
+    expect(noticeStore.getSnapshot()).toEqual([expect.objectContaining({ variant: "error" })]);
+  });
 });
 
 describe("写真アップロードの再送", () => {

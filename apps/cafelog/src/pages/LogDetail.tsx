@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { FaGlobe, FaMapLocationDot } from "react-icons/fa6";
-import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import {
   ArrowLeft,
   Calendar,
@@ -22,13 +22,8 @@ import { OriginFlag } from "@/components/OriginFlag";
 import type { CafeLogFormValues } from "@/lib/cafeLogForm";
 import { getErrorMessage } from "@/lib/errors";
 import { analytics } from "@/lib/analytics";
-import {
-  cafelogQueries,
-  deleteLog,
-  type LogResponse,
-  updateLog,
-  uploadLogImages,
-} from "@/lib/queries";
+import { cafelogQueries, deleteLog, type LogResponse } from "@/lib/queries";
+import { saveLogWithImages } from "@/lib/saveLog";
 
 const toFormValues = (log: LogResponse): CafeLogFormValues => ({
   cafeName: log.cafeName,
@@ -91,8 +86,6 @@ const formatDate = (value: string | null | undefined) =>
 const LogDetailPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const location = useLocation();
-  const navigationState = location.state as { photoUploadError?: string } | null;
   const queryClient = useQueryClient();
   const logQuery = useQuery(cafelogQueries.log(id ?? ""));
   const log = logQuery.data ?? null;
@@ -100,26 +93,17 @@ const LogDetailPage = () => {
   const [imageCount, setImageCount] = useState(0);
   const [isSaving, setIsSaving] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [actionError, setActionError] = useState<string | null>(null);
-  const [photoUploadError, setPhotoUploadError] = useState<string | null>(
-    navigationState?.photoUploadError ?? null,
-  );
-  const updateMutation = useMutation({ mutationFn: updateLog });
+  const updateMutation = useMutation({ mutationFn: saveLogWithImages });
   const deleteMutation = useMutation({ mutationFn: deleteLog });
   const defaultValues = useMemo(() => (log ? toFormValues(log) : null), [log]);
   const queryError = logQuery.error
     ? getErrorMessage(logQuery.error, "通信エラーが発生しました。")
     : null;
   const isSubmitting = isSaving || deleteMutation.isPending;
-  const photoWarning = photoUploadError
-    ? `記録は保存済みです。${photoUploadError} 未保存の写真は、編集画面からもう一度追加してください。`
-    : null;
 
   const handleSave = async (values: CafeLogFormValues) => {
     if (!id || isSaving) return;
     setIsSaving(true);
-    setActionError(null);
-    setPhotoUploadError(null);
     try {
       const updatedLog = await updateMutation.mutateAsync({ id, values });
       analytics.trackEvent("record_update_success");
@@ -127,18 +111,10 @@ const LogDetailPage = () => {
         current ? { ...current, ...updatedLog } : updatedLog,
       );
       await queryClient.invalidateQueries({ queryKey: cafelogQueries.all });
-      try {
-        await uploadLogImages(id, values.images);
-      } catch (uploadError: unknown) {
-        console.error("Error uploading images", uploadError);
-        setPhotoUploadError(getErrorMessage(uploadError, "写真のアップロードに失敗しました。"));
-      }
-      await queryClient.invalidateQueries({ queryKey: cafelogQueries.images(id).queryKey });
       setIsEditMode(false);
     } catch (error: unknown) {
       analytics.trackEvent("record_update_error");
       console.error("Error updating log", error);
-      setActionError(getErrorMessage(error, "通信エラーが発生しました。"));
     } finally {
       setIsSaving(false);
     }
@@ -146,7 +122,6 @@ const LogDetailPage = () => {
 
   const handleDelete = async () => {
     if (!id) return;
-    setActionError(null);
     try {
       await deleteMutation.mutateAsync(id);
       queryClient.removeQueries({ queryKey: cafelogQueries.log(id).queryKey });
@@ -154,7 +129,6 @@ const LogDetailPage = () => {
       void navigate("/logs");
     } catch (error: unknown) {
       console.error("Error deleting log", error);
-      setActionError(getErrorMessage(error, "通信エラーが発生しました。"));
       setShowDeleteConfirm(false);
     }
   };
@@ -221,13 +195,7 @@ const LogDetailPage = () => {
         )}
       </div>
 
-      {!isEditMode && (queryError || actionError || photoWarning) && (
-        <FloatingNotice
-          key={queryError || actionError || photoWarning}
-          message={queryError || actionError || photoWarning || ""}
-          warning={!queryError && !actionError}
-        />
-      )}
+      {!isEditMode && queryError && <FloatingNotice key={queryError} message={queryError} />}
 
       {showDeleteConfirm && (
         <div className="bg-red-50 border border-red-200 rounded-2xl p-5 shadow-sm space-y-4">
@@ -263,7 +231,7 @@ const LogDetailPage = () => {
         <CafeLogForm
           defaultValues={defaultValues}
           onSubmit={handleSave}
-          error={actionError || queryError}
+          error={queryError}
           submitLabel="保存する"
           isSubmitting={isSubmitting}
           onCancel={() => setIsEditMode(false)}

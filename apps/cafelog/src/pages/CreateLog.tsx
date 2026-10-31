@@ -1,51 +1,33 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { CafeLogForm } from "@/components/CafeLogForm";
 import { createCafeLogDefaults, type CafeLogFormValues } from "@/lib/cafeLogForm";
-import { getErrorMessage } from "@/lib/errors";
-import { cafelogQueries, createLog, uploadLogImages } from "@/lib/queries";
+import { cafelogQueries } from "@/lib/queries";
+import { saveLogWithImages } from "@/lib/saveLog";
 import { analytics } from "@/lib/analytics";
 
 const CreateLogPage = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const defaultValues = useMemo(() => createCafeLogDefaults(), []);
-  const [error, setError] = useState<string | null>(null);
-  const [isUploading, setIsUploading] = useState(false);
-  const createMutation = useMutation({ mutationFn: createLog });
+  const createMutation = useMutation({
+    mutationFn: (values: CafeLogFormValues) => saveLogWithImages({ values }),
+    onSuccess: async (newLog) => {
+      analytics.trackEvent("record_create_success");
+      await queryClient.invalidateQueries({ queryKey: cafelogQueries.all });
+      void navigate(`/logs/${newLog.id}`);
+    },
+  });
 
   const handleSubmit = async (values: CafeLogFormValues) => {
-    setError(null);
-
-    let newLog;
     try {
-      newLog = await createMutation.mutateAsync(values);
+      await createMutation.mutateAsync(values);
     } catch (submissionError: unknown) {
       analytics.trackEvent("record_create_error");
       console.error("Error saving log", submissionError);
-      setError(getErrorMessage(submissionError, "通信エラーが発生しました。"));
       return;
-    }
-
-    analytics.trackEvent("record_create_success");
-
-    setIsUploading(true);
-    try {
-      let photoUploadError: string | null = null;
-      try {
-        await uploadLogImages(newLog.id, values.images);
-      } catch (uploadError: unknown) {
-        console.error("Error uploading images", uploadError);
-        photoUploadError = getErrorMessage(uploadError, "写真のアップロードに失敗しました。");
-      }
-      await queryClient.invalidateQueries({ queryKey: cafelogQueries.all });
-      void navigate(`/logs/${newLog.id}`, {
-        state: photoUploadError ? { photoUploadError } : null,
-      });
-    } finally {
-      setIsUploading(false);
     }
   };
 
@@ -64,9 +46,8 @@ const CreateLogPage = () => {
       <CafeLogForm
         defaultValues={defaultValues}
         onSubmit={handleSubmit}
-        error={error}
         submitLabel="この内容で保存する"
-        isSubmitting={createMutation.isPending || isUploading}
+        isSubmitting={createMutation.isPending}
       />
     </div>
   );
