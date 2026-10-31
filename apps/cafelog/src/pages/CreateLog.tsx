@@ -33,16 +33,16 @@ const CreateLogPage = () => {
 
     setIsUploading(true);
     try {
-      await uploadLogImages(newLog.id, values.images);
+      let photoUploadError: string | null = null;
+      try {
+        await uploadLogImages(newLog.id, values.images);
+      } catch (uploadError: unknown) {
+        console.error("Error uploading images", uploadError);
+        photoUploadError = getErrorMessage(uploadError, "写真のアップロードに失敗しました。");
+      }
       await queryClient.invalidateQueries({ queryKey: cafelogQueries.all });
-      void navigate("/logs");
-    } catch (uploadError: unknown) {
-      console.error("Error uploading images", uploadError);
       void navigate(`/logs/${newLog.id}`, {
-        state: {
-          edit: true,
-          photoUploadError: getErrorMessage(uploadError, "写真のアップロードに失敗しました。"),
-        },
+        state: photoUploadError ? { photoUploadError } : null,
       });
     } finally {
       setIsUploading(false);

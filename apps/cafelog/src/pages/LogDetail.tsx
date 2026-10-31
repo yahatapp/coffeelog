@@ -92,11 +92,11 @@ const LogDetailPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const location = useLocation();
-  const navigationState = location.state as { edit?: boolean; photoUploadError?: string } | null;
+  const navigationState = location.state as { photoUploadError?: string } | null;
   const queryClient = useQueryClient();
   const logQuery = useQuery(cafelogQueries.log(id ?? ""));
   const log = logQuery.data ?? null;
-  const [isEditMode, setIsEditMode] = useState(navigationState?.edit ?? false);
+  const [isEditMode, setIsEditMode] = useState(false);
   const [imageCount, setImageCount] = useState(0);
   const [isSaving, setIsSaving] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -112,7 +112,7 @@ const LogDetailPage = () => {
     : null;
   const isSubmitting = isSaving || deleteMutation.isPending;
   const photoWarning = photoUploadError
-    ? `記録は保存済みです。${photoUploadError} 未保存の写真を選んで、もう一度保存してください。`
+    ? `記録は保存済みです。${photoUploadError} 未保存の写真は、編集画面からもう一度追加してください。`
     : null;
 
   const handleSave = async (values: CafeLogFormValues) => {
@@ -129,14 +129,12 @@ const LogDetailPage = () => {
       await queryClient.invalidateQueries({ queryKey: cafelogQueries.all });
       try {
         await uploadLogImages(id, values.images);
-        await queryClient.invalidateQueries({ queryKey: cafelogQueries.images(id).queryKey });
-        setPhotoUploadError(null);
-        setIsEditMode(false);
       } catch (uploadError: unknown) {
         console.error("Error uploading images", uploadError);
         setPhotoUploadError(getErrorMessage(uploadError, "写真のアップロードに失敗しました。"));
-        await queryClient.invalidateQueries({ queryKey: cafelogQueries.images(id).queryKey });
       }
+      await queryClient.invalidateQueries({ queryKey: cafelogQueries.images(id).queryKey });
+      setIsEditMode(false);
     } catch (error: unknown) {
       analytics.trackEvent("record_update_error");
       console.error("Error updating log", error);
@@ -266,7 +264,6 @@ const LogDetailPage = () => {
           defaultValues={defaultValues}
           onSubmit={handleSave}
           error={actionError || queryError}
-          warning={photoWarning}
           submitLabel="保存する"
           isSubmitting={isSubmitting}
           onCancel={() => setIsEditMode(false)}
