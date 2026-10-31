@@ -1,4 +1,5 @@
 declare const styles: {
+  readonly fullWidth: string;
   readonly ghost: string;
   readonly icon: string;
   readonly large: string;

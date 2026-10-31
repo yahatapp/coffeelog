@@ -1,9 +1,11 @@
+import { Loading, ErrorState, EmptyState } from "@yahatapp/ui";
+import styles from "../form-page.module.css";
 import { mutationNotices } from "@/lib/mutationNotices";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm } from "@tanstack/react-form";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, Loader2, Save } from "lucide-react";
+import { ArrowLeft, Save } from "lucide-react";
 import { logUpdateSchema } from "@/contracts";
 import { BrewLogFields } from "@/components/forms/BrewLogFields";
 import { Button } from "@/components/ui/button";
@@ -21,17 +23,14 @@ import {
   type Grinder,
 } from "@/lib/queries";
 import { getTodayJSTString, toLogUpdateInput, type LogFormValues } from "@/lib/form-values";
-
 const parseTempType = (value: string | null | undefined): "hot" | "ice" =>
   value === "ice" ? "ice" : "hot";
-
 const parsePourType = (
   value: string | null | undefined,
 ): "all" | "center_around" | "center_only" => {
   if (value === "center_around" || value === "center_only") return value;
   return "all";
 };
-
 const toFormValues = (log: BrewLogResponse): LogFormValues => ({
   beanId: log.beanId,
   brewDate:
@@ -60,7 +59,6 @@ const toFormValues = (log: BrewLogResponse): LogFormValues => ({
       pourType: parsePourType(pour.pourType),
     })) ?? [],
 });
-
 const dirtyFieldLabels: Record<keyof LogFormValues, string> = {
   beanId: "コーヒー豆",
   brewDate: "抽出日",
@@ -81,10 +79,8 @@ const dirtyFieldLabels: Record<keyof LogFormValues, string> = {
   hasBypass: "加水",
   pours: "注ぎ方",
 };
-
 const valuesEqual = (left: unknown, right: unknown) =>
   JSON.stringify(left) === JSON.stringify(right);
-
 type EditLogFormProps = {
   id: string;
   log: BrewLogResponse;
@@ -94,7 +90,6 @@ type EditLogFormProps = {
   masterDataError: boolean;
   onRetryMasterData: () => void;
 };
-
 const EditLogForm = ({
   id,
   log,
@@ -108,7 +103,6 @@ const EditLogForm = ({
   const queryClient = useQueryClient();
   const [error, setError] = useState<string | null>(null);
   const [originalValues] = useState(() => toFormValues(log));
-
   const updateMutation = useMutation({
     meta: mutationNotices.updateLog,
     mutationFn: (values: LogFormValues) => {
@@ -124,16 +118,26 @@ const EditLogForm = ({
         throw new Error("仕上がり量には0より大きい数値を入力してください。");
       if (values.tempType === "ice" && (values.iceAmount === "" || values.iceAmount <= 0))
         throw new Error("氷の量には0より大きい数値を入力してください。");
-
       const parsed = logUpdateSchema.safeParse(toLogUpdateInput(values));
       if (!parsed.success) throw new Error("入力内容を確認してください。");
-      return mutations.updateLog({ param: { id }, json: parsed.data });
+      return mutations.updateLog({
+        param: {
+          id,
+        },
+        json: parsed.data,
+      });
     },
     onSuccess: async () => {
       analytics.trackEvent("record_update_success");
-      await queryClient.invalidateQueries({ queryKey: queryKeys.logs });
-      await queryClient.invalidateQueries({ queryKey: queryKeys.stores });
-      await queryClient.invalidateQueries({ queryKey: queryKeys.log(id) });
+      await queryClient.invalidateQueries({
+        queryKey: queryKeys.logs,
+      });
+      await queryClient.invalidateQueries({
+        queryKey: queryKeys.stores,
+      });
+      await queryClient.invalidateQueries({
+        queryKey: queryKeys.log(id),
+      });
       void navigate(`/logs/${id}`);
     },
     onError: (mutationError) => {
@@ -141,7 +145,6 @@ const EditLogForm = ({
       setError(mutationError instanceof Error ? mutationError.message : "更新に失敗しました。");
     },
   });
-
   const form = useForm<
     LogFormValues,
     undefined,
@@ -162,14 +165,13 @@ const EditLogForm = ({
       await updateMutation.mutateAsync(value);
     },
   });
-
   return (
-    <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 space-y-6">
-      <div className="flex items-center space-x-2">
-        <Button variant="ghost" size="icon" onClick={() => navigate(-1)} className="rounded-full">
-          <ArrowLeft size={20} />
+    <div className={styles.page}>
+      <div className={styles.row}>
+        <Button variant="ghost" size="icon" onClick={() => navigate(-1)} aria-label="戻る">
+          <ArrowLeft size={20} aria-hidden={true} />
         </Button>
-        <h2 className="text-xl font-bold text-coffee-primary">抽出記録を編集</h2>
+        <h2 className={styles.pageHeading}>抽出記録を編集</h2>
       </div>
 
       <form
@@ -179,7 +181,7 @@ const EditLogForm = ({
           // Mutation errors are shown by the shared notices and the form error state.
           void form.handleSubmit().catch(() => undefined);
         }}
-        className="space-y-4"
+        className={styles.stack}
       >
         <BrewLogFields
           form={form}
@@ -190,14 +192,9 @@ const EditLogForm = ({
         />
 
         {masterDataError && (
-          <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-600">
+          <div className={styles.error}>
             <p>マスターデータの取得に失敗しました。</p>
-            <Button
-              type="button"
-              variant="ghost"
-              className="mt-2 h-auto px-0 text-xs underline"
-              onClick={onRetryMasterData}
-            >
+            <Button type="button" variant="ghost" onClick={onRetryMasterData}>
               再読み込み
             </Button>
           </div>
@@ -210,7 +207,7 @@ const EditLogForm = ({
             ).filter((key) => !valuesEqual(values[key], originalValues[key]));
             if (changedFields.length === 0) return null;
             return (
-              <div className="bg-amber-50 border border-amber-200 text-amber-700 px-4 py-3 rounded-2xl text-sm font-medium">
+              <div className={styles.warning}>
                 <span>未保存の変更があります：</span>{" "}
                 {changedFields.map((key) => dirtyFieldLabels[key]).join("、")}
               </div>
@@ -218,22 +215,20 @@ const EditLogForm = ({
           }}
         </form.Subscribe>
 
-        {error && (
-          <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-2xl text-sm font-medium">
-            ⚠️ {error}
-          </div>
-        )}
+        {error && <div className={styles.error}>⚠️ {error}</div>}
 
         <Button
           type="submit"
-          className="w-full rounded-2xl h-12 text-base shadow-lg bg-coffee-primary hover:bg-coffee-primary/90"
           disabled={updateMutation.isPending}
+          fullWidth
+          size="lg"
+          loading={updateMutation.isPending}
         >
           {updateMutation.isPending ? (
-            <Loader2 className="h-5 w-5 animate-spin" />
+            "保存中..."
           ) : (
             <>
-              <Save size={18} className="mr-2" />
+              <Save size={18} className={styles.icon} aria-hidden={true} />
               変更を保存する
             </>
           )}
@@ -242,33 +237,23 @@ const EditLogForm = ({
     </div>
   );
 };
-
 const EditLog = () => {
-  const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
+  const { id } = useParams<{
+    id: string;
+  }>();
   const logQuery = useQuery(logQueries.detail(id ?? ""));
   const beansQuery = useQuery(beanQueries.all());
   const drippersQuery = useQuery(dripperQueries.all());
   const grindersQuery = useQuery(grinderQueries.all());
-
-  useEffect(() => {
-    if (!id || logQuery.isError) void navigate("/logs");
-  }, [id, logQuery.isError, navigate]);
-
   const isLoading =
     logQuery.isPending ||
     beansQuery.isPending ||
     drippersQuery.isPending ||
     grindersQuery.isPending;
-
+  if (!id) return <EmptyState title="記録が見つかりませんでした。" />;
   if (isLoading) {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <Loader2 className="animate-spin text-coffee-primary" size={32} />
-      </div>
-    );
+    return <Loading />;
   }
-
   const queryError = beansQuery.error ?? drippersQuery.error ?? grindersQuery.error;
   const isMasterDataUnavailable =
     (beansQuery.isError && !beansQuery.data) ||
@@ -276,12 +261,19 @@ const EditLog = () => {
     (grindersQuery.isError && !grindersQuery.data);
   if (!id || !logQuery.data || isMasterDataUnavailable) {
     return (
-      <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-600">
-        ⚠️ 編集データの取得に失敗しました。再読み込みしてください。
-      </div>
+      <ErrorState
+        message="編集データの取得に失敗しました。"
+        onRetry={() => {
+          void Promise.all([
+            logQuery.refetch(),
+            beansQuery.refetch(),
+            drippersQuery.refetch(),
+            grindersQuery.refetch(),
+          ]);
+        }}
+      />
     );
   }
-
   return (
     <EditLogForm
       key={id}
@@ -297,5 +289,4 @@ const EditLog = () => {
     />
   );
 };
-
 export default EditLog;

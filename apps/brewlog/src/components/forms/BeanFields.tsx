@@ -1,4 +1,8 @@
-import { Card, CardContent } from "../ui/card";
+import styles from "./forms.module.css";
+import { Slider } from "../ui/slider";
+import { getFirstValidationError } from "./formValidation";
+import { Field, Select, Textarea, Checkbox } from "@yahatapp/ui";
+import { Card } from "../ui/card";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { Segment } from "../ui/segment";
@@ -6,24 +10,29 @@ import { COFFEE_COUNTRIES } from "@/utils/flag";
 import { getRoastLabel, PROCESS_METHODS } from "@/lib/form-values";
 import type { BeanFormApi } from "./types";
 import { BeanStoreFields } from "./BeanStoreFields";
-
 type BeanFieldsProps = {
   form: BeanFormApi;
   isVersionMode: boolean;
 };
-
 const coffeeTypeOptions = [
-  { label: "レギュラーコーヒー", value: "regular" },
-  { label: "スペシャルティコーヒー", value: "specialty" },
+  {
+    label: "レギュラーコーヒー",
+    value: "regular",
+  },
+  {
+    label: "スペシャルティコーヒー",
+    value: "specialty",
+  },
 ] as const;
-
 export const BeanFields = ({ form, isVersionMode }: BeanFieldsProps) => (
   <Card>
-    <CardContent className="p-6 space-y-4">
+    <div className={styles.content}>
       <form.Field name="coffeeType">
         {(field) => (
-          <div className="space-y-2">
-            <Label>コーヒーの種類</Label>
+          <div className={styles.field} role="group" aria-labelledby="beanfields-group-1">
+            <span id="beanfields-group-1" className={styles.groupLabel}>
+              コーヒーの種類
+            </span>
             <Segment
               ariaLabel="コーヒーの種類"
               value={field.state.value}
@@ -37,41 +46,60 @@ export const BeanFields = ({ form, isVersionMode }: BeanFieldsProps) => (
 
       <form.Field name="name">
         {(field) => (
-          <div className="space-y-2">
-            <Label htmlFor="name">豆の名前</Label>
-            <Input
+          <div className={styles.field}>
+            <Field
               id="name"
-              placeholder="例: エチオピア イルガチェフェ"
+              label={<>豆の名前</>}
               required
-              value={field.state.value}
-              onChange={(event) => field.handleChange(event.target.value)}
-              onBlur={field.handleBlur}
-              className="rounded-xl border-coffee-secondary/20 focus:ring-coffee-primary"
-              disabled={isVersionMode}
-            />
+              error={getFirstValidationError(field.state.meta.errors)}
+            >
+              {(control) => (
+                <>
+                  <Input
+                    {...control}
+                    id="name"
+                    placeholder="例: エチオピア イルガチェフェ"
+                    required
+                    value={field.state.value}
+                    onChange={(event) => field.handleChange(event.target.value)}
+                    onBlur={field.handleBlur}
+                    disabled={isVersionMode}
+                  />
+                </>
+              )}
+            </Field>
           </div>
         )}
       </form.Field>
 
       <form.Field name="origin">
         {(field) => (
-          <div className="space-y-2">
-            <Label htmlFor="origin">産地</Label>
-            <Input
+          <div className={styles.field}>
+            <Field
               id="origin"
-              list="origins"
-              placeholder="例: エチオピア (候補から選択も可能)"
-              value={field.state.value}
-              onChange={(event) => field.handleChange(event.target.value)}
-              onBlur={field.handleBlur}
-              className="rounded-xl border-coffee-secondary/20"
-              disabled={isVersionMode}
-            />
-            <datalist id="origins">
-              {COFFEE_COUNTRIES.map((country) => (
-                <option key={country.code} value={country.name} />
-              ))}
-            </datalist>
+              label={<>産地</>}
+              error={getFirstValidationError(field.state.meta.errors)}
+            >
+              {(control) => (
+                <>
+                  <Input
+                    {...control}
+                    id="origin"
+                    list="origins"
+                    placeholder="例: エチオピア (候補から選択も可能)"
+                    value={field.state.value}
+                    onChange={(event) => field.handleChange(event.target.value)}
+                    onBlur={field.handleBlur}
+                    disabled={isVersionMode}
+                  />
+                  <datalist id="origins">
+                    {COFFEE_COUNTRIES.map((country) => (
+                      <option key={country.code} value={country.name} />
+                    ))}
+                  </datalist>
+                </>
+              )}
+            </Field>
           </div>
         )}
       </form.Field>
@@ -79,78 +107,114 @@ export const BeanFields = ({ form, isVersionMode }: BeanFieldsProps) => (
       <form.Subscribe selector={(state) => state.values.coffeeType}>
         {(coffeeType) =>
           coffeeType === "specialty" ? (
-            <div className="space-y-4 rounded-2xl bg-coffee-primary/5 p-4">
+            <div className={styles.panel}>
               <div>
-                <h3 className="text-sm font-bold text-coffee-primary">生産情報</h3>
-                <p className="mt-1 text-xs text-coffee-secondary">
+                <h3 className={styles.heading}>生産情報</h3>
+                <p className={styles.helperSpaced}>
                   スペシャルティコーヒーの詳しい属性を記録できます。
                 </p>
               </div>
 
               <form.Field name="region">
                 {(field) => (
-                  <div className="space-y-2">
-                    <Label htmlFor="region">地域</Label>
-                    <Input
+                  <div className={styles.field}>
+                    <Field
                       id="region"
-                      placeholder="例: シダマ"
-                      value={field.state.value}
-                      onChange={(event) => field.handleChange(event.target.value)}
-                      onBlur={field.handleBlur}
-                      className="rounded-xl border-coffee-secondary/20"
-                      disabled={isVersionMode}
-                    />
+                      label={<>地域</>}
+                      error={getFirstValidationError(field.state.meta.errors)}
+                    >
+                      {(control) => (
+                        <>
+                          <Input
+                            {...control}
+                            id="region"
+                            placeholder="例: シダマ"
+                            value={field.state.value}
+                            onChange={(event) => field.handleChange(event.target.value)}
+                            onBlur={field.handleBlur}
+                            disabled={isVersionMode}
+                          />
+                        </>
+                      )}
+                    </Field>
                   </div>
                 )}
               </form.Field>
 
               <form.Field name="variety">
                 {(field) => (
-                  <div className="space-y-2">
-                    <Label htmlFor="variety">品種</Label>
-                    <Input
+                  <div className={styles.field}>
+                    <Field
                       id="variety"
-                      placeholder="例: ゲイシャ"
-                      value={field.state.value}
-                      onChange={(event) => field.handleChange(event.target.value)}
-                      onBlur={field.handleBlur}
-                      className="rounded-xl border-coffee-secondary/20"
-                      disabled={isVersionMode}
-                    />
+                      label={<>品種</>}
+                      error={getFirstValidationError(field.state.meta.errors)}
+                    >
+                      {(control) => (
+                        <>
+                          <Input
+                            {...control}
+                            id="variety"
+                            placeholder="例: ゲイシャ"
+                            value={field.state.value}
+                            onChange={(event) => field.handleChange(event.target.value)}
+                            onBlur={field.handleBlur}
+                            disabled={isVersionMode}
+                          />
+                        </>
+                      )}
+                    </Field>
                   </div>
                 )}
               </form.Field>
 
               <form.Field name="farm">
                 {(field) => (
-                  <div className="space-y-2">
-                    <Label htmlFor="farm">農園</Label>
-                    <Input
+                  <div className={styles.field}>
+                    <Field
                       id="farm"
-                      placeholder="例: コピア農園"
-                      value={field.state.value}
-                      onChange={(event) => field.handleChange(event.target.value)}
-                      onBlur={field.handleBlur}
-                      className="rounded-xl border-coffee-secondary/20"
-                      disabled={isVersionMode}
-                    />
+                      label={<>農園</>}
+                      error={getFirstValidationError(field.state.meta.errors)}
+                    >
+                      {(control) => (
+                        <>
+                          <Input
+                            {...control}
+                            id="farm"
+                            placeholder="例: コピア農園"
+                            value={field.state.value}
+                            onChange={(event) => field.handleChange(event.target.value)}
+                            onBlur={field.handleBlur}
+                            disabled={isVersionMode}
+                          />
+                        </>
+                      )}
+                    </Field>
                   </div>
                 )}
               </form.Field>
 
               <form.Field name="producer">
                 {(field) => (
-                  <div className="space-y-2">
-                    <Label htmlFor="producer">生産者</Label>
-                    <Input
+                  <div className={styles.field}>
+                    <Field
                       id="producer"
-                      placeholder="例: ホセ・ヒラルド"
-                      value={field.state.value}
-                      onChange={(event) => field.handleChange(event.target.value)}
-                      onBlur={field.handleBlur}
-                      className="rounded-xl border-coffee-secondary/20"
-                      disabled={isVersionMode}
-                    />
+                      label={<>生産者</>}
+                      error={getFirstValidationError(field.state.meta.errors)}
+                    >
+                      {(control) => (
+                        <>
+                          <Input
+                            {...control}
+                            id="producer"
+                            placeholder="例: ホセ・ヒラルド"
+                            value={field.state.value}
+                            onChange={(event) => field.handleChange(event.target.value)}
+                            onBlur={field.handleBlur}
+                            disabled={isVersionMode}
+                          />
+                        </>
+                      )}
+                    </Field>
                   </div>
                 )}
               </form.Field>
@@ -166,17 +230,26 @@ export const BeanFields = ({ form, isVersionMode }: BeanFieldsProps) => (
           ) : (
             <form.Field name="purchaseStore">
               {(field) => (
-                <div className="space-y-2">
-                  <Label htmlFor="purchaseStore">購入店</Label>
-                  <Input
+                <div className={styles.field}>
+                  <Field
                     id="purchaseStore"
-                    placeholder="例: ブルーボトルコーヒー"
-                    value={field.state.value}
-                    onChange={(event) => field.handleChange(event.target.value)}
-                    onBlur={field.handleBlur}
-                    className="rounded-xl border-coffee-secondary/20"
-                    disabled={isVersionMode}
-                  />
+                    label={<>購入店</>}
+                    error={getFirstValidationError(field.state.meta.errors)}
+                  >
+                    {(control) => (
+                      <>
+                        <Input
+                          {...control}
+                          id="purchaseStore"
+                          placeholder="例: ブルーボトルコーヒー"
+                          value={field.state.value}
+                          onChange={(event) => field.handleChange(event.target.value)}
+                          onBlur={field.handleBlur}
+                          disabled={isVersionMode}
+                        />
+                      </>
+                    )}
+                  </Field>
                 </div>
               )}
             </form.Field>
@@ -186,72 +259,90 @@ export const BeanFields = ({ form, isVersionMode }: BeanFieldsProps) => (
 
       <form.Field name="processMethod">
         {(field) => (
-          <div className="space-y-2">
-            <Label htmlFor="processMethod">精製方法</Label>
-            <select
+          <div className={styles.field}>
+            <Field
               id="processMethod"
-              className="flex h-10 w-full rounded-xl border border-coffee-secondary/20 bg-white px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coffee-primary transition-all text-coffee-text"
-              value={field.state.value}
-              onChange={(event) => field.handleChange(event.target.value)}
-              onBlur={field.handleBlur}
-              disabled={isVersionMode}
+              label={<>精製方法</>}
+              error={getFirstValidationError(field.state.meta.errors)}
             >
-              <option value="">選択してください (任意)</option>
-              {PROCESS_METHODS.map((method) => (
-                <option key={method.value} value={method.value}>
-                  {method.label}
-                </option>
-              ))}
-            </select>
+              {(control) => (
+                <>
+                  <Select
+                    {...control}
+                    id="processMethod"
+                    value={field.state.value}
+                    onChange={(event) => field.handleChange(event.target.value)}
+                    onBlur={field.handleBlur}
+                    disabled={isVersionMode}
+                  >
+                    <option value="">選択してください (任意)</option>
+                    {PROCESS_METHODS.map((method) => (
+                      <option key={method.value} value={method.value}>
+                        {method.label}
+                      </option>
+                    ))}
+                  </Select>
+                </>
+              )}
+            </Field>
           </div>
         )}
       </form.Field>
 
       <form.Field name="roastLevel">
         {(field) => (
-          <div className="space-y-2">
-            <div className="flex justify-between items-center">
-              <Label htmlFor="roast">焙煎度</Label>
-              <span className="text-sm font-bold text-coffee-primary">
-                {getRoastLabel(field.state.value)}
-              </span>
-            </div>
-            <div className="px-1">
-              <input
-                type="range"
-                id="roast"
-                min="1"
-                max="5"
-                step="1"
-                className="w-full h-2 bg-coffee-secondary/20 rounded-lg appearance-none cursor-pointer accent-coffee-primary disabled:opacity-50"
-                value={field.state.value}
-                onChange={(event) => field.handleChange(Number(event.target.value))}
-                onBlur={field.handleBlur}
-                disabled={isVersionMode}
-              />
-              <div className="flex justify-between mt-2 text-[10px] text-coffee-secondary">
-                <span>浅煎り</span>
-                <span>中煎り</span>
-                <span>深煎り</span>
-              </div>
-            </div>
-          </div>
+          <Slider
+            id="roast"
+            label="焙煎度"
+            valueDescription={getRoastLabel(field.state.value)}
+            min={1}
+            max={5}
+            value={field.state.value}
+            marks={[
+              {
+                value: 1,
+                label: "浅煎り",
+              },
+              {
+                value: 3,
+                label: "中煎り",
+              },
+              {
+                value: 5,
+                label: "深煎り",
+              },
+            ]}
+            disabled={isVersionMode}
+            onValueChange={field.handleChange}
+            onBlur={field.handleBlur}
+            getValueText={getRoastLabel}
+          />
         )}
       </form.Field>
 
       {isVersionMode && (
         <form.Field name="version">
           {(field) => (
-            <div className="space-y-2 pt-4 border-t border-coffee-secondary/10">
-              <Label htmlFor="version">バージョン名</Label>
-              <Input
+            <div className={styles.divider}>
+              <Field
                 id="version"
+                label={<>バージョン名</>}
                 required
-                value={field.state.value}
-                onChange={(event) => field.handleChange(event.target.value)}
-                onBlur={field.handleBlur}
-                className="rounded-xl border-coffee-secondary/20 focus:ring-coffee-primary"
-              />
+                error={getFirstValidationError(field.state.meta.errors)}
+              >
+                {(control) => (
+                  <>
+                    <Input
+                      {...control}
+                      id="version"
+                      required
+                      value={field.state.value}
+                      onChange={(event) => field.handleChange(event.target.value)}
+                      onBlur={field.handleBlur}
+                    />
+                  </>
+                )}
+              </Field>
             </div>
           )}
         </form.Field>
@@ -259,60 +350,85 @@ export const BeanFields = ({ form, isVersionMode }: BeanFieldsProps) => (
 
       <form.Field name="roastDate">
         {(field) => (
-          <div className="space-y-2">
-            <Label htmlFor="roastDate">焙煎日</Label>
-            <Input
+          <div className={styles.field}>
+            <Field
               id="roastDate"
-              type="date"
-              value={field.state.value}
-              onChange={(event) => field.handleChange(event.target.value)}
-              onBlur={field.handleBlur}
-              className="rounded-xl border-coffee-secondary/20 focus:ring-coffee-primary"
-            />
+              label={<>焙煎日</>}
+              error={getFirstValidationError(field.state.meta.errors)}
+            >
+              {(control) => (
+                <>
+                  <Input
+                    {...control}
+                    id="roastDate"
+                    type="date"
+                    value={field.state.value}
+                    onChange={(event) => field.handleChange(event.target.value)}
+                    onBlur={field.handleBlur}
+                  />
+                </>
+              )}
+            </Field>
           </div>
         )}
       </form.Field>
 
       <form.Field name="purchaseDate">
         {(field) => (
-          <div className="space-y-2">
-            <Label htmlFor="date">購入日</Label>
-            <Input
+          <div className={styles.field}>
+            <Field
               id="date"
-              type="date"
-              value={field.state.value}
-              onChange={(event) => {
-                const nextDate = event.target.value;
-                const shouldSyncVersion =
-                  isVersionMode &&
-                  form.getFieldValue("version") === field.state.value.replace(/-/g, ".");
-
-                field.handleChange(nextDate);
-
-                if (shouldSyncVersion) {
-                  form.setFieldValue("version", nextDate.replace(/-/g, "."));
-                }
-              }}
-              onBlur={field.handleBlur}
-              className="rounded-xl border-coffee-secondary/20 focus:ring-coffee-primary"
-            />
+              label={<>購入日</>}
+              error={getFirstValidationError(field.state.meta.errors)}
+            >
+              {(control) => (
+                <>
+                  <Input
+                    {...control}
+                    id="date"
+                    type="date"
+                    value={field.state.value}
+                    onChange={(event) => {
+                      const nextDate = event.target.value;
+                      const shouldSyncVersion =
+                        isVersionMode &&
+                        form.getFieldValue("version") === field.state.value.replace(/-/g, ".");
+                      field.handleChange(nextDate);
+                      if (shouldSyncVersion) {
+                        form.setFieldValue("version", nextDate.replace(/-/g, "."));
+                      }
+                    }}
+                    onBlur={field.handleBlur}
+                  />
+                </>
+              )}
+            </Field>
           </div>
         )}
       </form.Field>
 
       <form.Field name="note">
         {(field) => (
-          <div className="space-y-2">
-            <Label htmlFor="note">メモ</Label>
-            <textarea
+          <div className={styles.field}>
+            <Field
               id="note"
-              rows={4}
-              placeholder="豆の特徴や購入時の情報などを自由に記録できます"
-              value={field.state.value}
-              onChange={(event) => field.handleChange(event.target.value)}
-              onBlur={field.handleBlur}
-              className="flex min-h-24 w-full resize-y rounded-xl border border-coffee-secondary/20 bg-white px-3 py-2 text-sm text-coffee-text ring-offset-white transition-all placeholder:text-coffee-secondary/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coffee-primary focus-visible:ring-offset-2"
-            />
+              label={<>メモ</>}
+              error={getFirstValidationError(field.state.meta.errors)}
+            >
+              {(control) => (
+                <>
+                  <Textarea
+                    {...control}
+                    id="note"
+                    rows={4}
+                    placeholder="豆の特徴や購入時の情報などを自由に記録できます"
+                    value={field.state.value}
+                    onChange={(event) => field.handleChange(event.target.value)}
+                    onBlur={field.handleBlur}
+                  />
+                </>
+              )}
+            </Field>
           </div>
         )}
       </form.Field>
@@ -320,24 +436,18 @@ export const BeanFields = ({ form, isVersionMode }: BeanFieldsProps) => (
       {!isVersionMode && (
         <form.Field name="isArchived">
           {(field) => (
-            <div className="flex items-center space-x-2 pt-2">
-              <input
+            <div className={styles.row}>
+              <Checkbox
                 id="archive"
                 type="checkbox"
                 checked={field.state.value}
                 onChange={(event) => field.handleChange(event.target.checked)}
-                className="h-4 w-4 rounded border-coffee-secondary/35 text-coffee-primary focus:ring-coffee-primary focus:ring-offset-0"
               />
-              <Label
-                htmlFor="archive"
-                className="text-sm font-medium cursor-pointer text-coffee-text"
-              >
-                この豆をアーカイブする (一覧に表示されなくなります)
-              </Label>
+              <Label htmlFor="archive">この豆をアーカイブする (一覧に表示されなくなります)</Label>
             </div>
           )}
         </form.Field>
       )}
-    </CardContent>
+    </div>
   </Card>
 );

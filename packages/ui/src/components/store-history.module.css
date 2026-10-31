@@ -231,5 +231,9 @@
   .footnote {
     text-align: end;
   }
-  @media (min-width: 40rem) { .overlay { align-items: center; } }
+  @media (min-width: 40rem) {
+    .overlay {
+      align-items: center;
+    }
+  }
 }

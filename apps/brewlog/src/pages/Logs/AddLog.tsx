@@ -1,9 +1,10 @@
+import styles from "../form-page.module.css";
 import { mutationNotices } from "@/lib/mutationNotices";
 import { useEffect, useMemo, useState } from "react";
 import { useForm } from "@tanstack/react-form";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { ArrowLeft, Loader2, Save } from "lucide-react";
+import { ArrowLeft, Save } from "lucide-react";
 import { logCreateSchema } from "@/contracts";
 import { beanQueries, dripperQueries, grinderQueries, mutations, queryKeys } from "@/lib/queries";
 import { getTodayJSTString, toLogCreateInput, type LogFormValues } from "@/lib/form-values";
@@ -11,7 +12,6 @@ import { BrewLogFields } from "@/components/forms/BrewLogFields";
 import { Button } from "@/components/ui/button";
 import { getBrewableBeans } from "@/lib/bean-versions";
 import { analytics } from "@/lib/analytics";
-
 const AddLog = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -28,7 +28,6 @@ const AddLog = () => {
   const drippers = drippersQuery.data;
   const grinders = grindersQuery.data;
   const queryError = beansQuery.error ?? drippersQuery.error ?? grindersQuery.error;
-
   const createMutation = useMutation({
     meta: mutationNotices.createLog,
     mutationFn: (values: LogFormValues) => {
@@ -47,12 +46,18 @@ const AddLog = () => {
       const payload = toLogCreateInput(values);
       const parsed = logCreateSchema.safeParse(payload);
       if (!parsed.success) throw new Error("入力内容を確認してください。");
-      return mutations.createLog({ json: parsed.data });
+      return mutations.createLog({
+        json: parsed.data,
+      });
     },
     onSuccess: async () => {
       analytics.trackEvent("record_create_success");
-      await queryClient.invalidateQueries({ queryKey: queryKeys.logs });
-      await queryClient.invalidateQueries({ queryKey: queryKeys.stores });
+      await queryClient.invalidateQueries({
+        queryKey: queryKeys.logs,
+      });
+      await queryClient.invalidateQueries({
+        queryKey: queryKeys.stores,
+      });
       void navigate("/logs");
     },
     onError: (mutationError) => {
@@ -60,7 +65,6 @@ const AddLog = () => {
       setError(mutationError instanceof Error ? mutationError.message : "保存に失敗しました。");
     },
   });
-
   const defaultValues: LogFormValues = {
     beanId: searchParams.get("beanId") ?? "",
     brewDate: getTodayJSTString(),
@@ -88,7 +92,6 @@ const AddLog = () => {
       await createMutation.mutateAsync(value);
     },
   });
-
   useEffect(() => {
     if (!form.getFieldValue("dripperId")) {
       const defaultDripper = drippers?.find((dripper) => dripper.isDefault);
@@ -99,17 +102,15 @@ const AddLog = () => {
       if (defaultGrinder) form.setFieldValue("grinderId", defaultGrinder.id);
     }
   }, [drippers, form, grinders]);
-
   const isFetchingMasters =
     beansQuery.isPending || drippersQuery.isPending || grindersQuery.isPending;
-
   return (
-    <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 space-y-6">
-      <div className="flex items-center space-x-2">
-        <Button variant="ghost" size="icon" onClick={() => navigate(-1)} className="rounded-full">
-          <ArrowLeft size={20} />
+    <div className={styles.page}>
+      <div className={styles.row}>
+        <Button variant="ghost" size="icon" onClick={() => navigate(-1)} aria-label="戻る">
+          <ArrowLeft size={20} aria-hidden={true} />
         </Button>
-        <h2 className="text-xl font-bold text-coffee-primary">抽出を記録する</h2>
+        <h2 className={styles.pageHeading}>抽出を記録する</h2>
       </div>
       <form
         onSubmit={(event) => {
@@ -118,7 +119,7 @@ const AddLog = () => {
           // Mutation errors are shown by the shared notices and the form error state.
           void form.handleSubmit().catch(() => undefined);
         }}
-        className="space-y-4"
+        className={styles.stack}
       >
         <BrewLogFields
           form={form}
@@ -129,12 +130,11 @@ const AddLog = () => {
           navigate={(path) => void navigate(path)}
         />
         {queryError && (
-          <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-600">
+          <div className={styles.error}>
             <p>マスターデータの取得に失敗しました。</p>
             <Button
               type="button"
               variant="ghost"
-              className="mt-2 h-auto px-0 text-xs underline"
               onClick={() => {
                 void Promise.all([
                   beansQuery.refetch(),
@@ -147,21 +147,19 @@ const AddLog = () => {
             </Button>
           </div>
         )}
-        {error && (
-          <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-2xl text-sm font-medium">
-            ⚠️ {error}
-          </div>
-        )}
+        {error && <div className={styles.error}>⚠️ {error}</div>}
         <Button
           type="submit"
-          className="w-full rounded-2xl h-12 text-base shadow-lg bg-coffee-primary hover:bg-coffee-primary/90"
           disabled={createMutation.isPending || beans.length === 0}
+          fullWidth
+          size="lg"
+          loading={createMutation.isPending}
         >
           {createMutation.isPending ? (
-            <Loader2 className="h-5 w-5 animate-spin" />
+            "保存中..."
           ) : (
             <>
-              <Save size={18} className="mr-2" />
+              <Save size={18} className={styles.icon} aria-hidden={true} />
               記録を保存する
             </>
           )}
@@ -170,5 +168,4 @@ const AddLog = () => {
     </div>
   );
 };
-
 export default AddLog;

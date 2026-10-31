@@ -242,5 +242,37 @@
   "--cl-size-dialog-max": {
     "type": "length",
     "required": true
+  },
+  "--cl-size-viewport": {
+    "type": "length",
+    "required": true
+  },
+  "--cl-size-nav-icon": {
+    "type": "length",
+    "required": true
+  },
+  "--cl-size-state-min": {
+    "type": "length",
+    "required": true
+  },
+  "--cl-size-icon": {
+    "type": "length",
+    "required": true
+  },
+  "--cl-space-slider-inline": {
+    "type": "length",
+    "required": true
+  },
+  "--cl-size-slider-thumb": {
+    "type": "length",
+    "required": true
+  },
+  "--cl-size-slider-track": {
+    "type": "length",
+    "required": true
+  },
+  "--cl-size-slider-labels": {
+    "type": "length",
+    "required": true
   }
 }

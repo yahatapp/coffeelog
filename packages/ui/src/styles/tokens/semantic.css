@@ -36,4 +36,12 @@
   --cl-motion-loading: 1s;
   --cl-size-notice-max: 75dvh;
   --cl-size-dialog-max: 85dvh;
+  --cl-size-viewport: 100dvh;
+  --cl-size-nav-icon: 2rem;
+  --cl-size-state-min: 16rem;
+  --cl-size-icon: 1.25rem;
+  --cl-space-slider-inline: var(--cl-ref-space-3);
+  --cl-size-slider-thumb: 1.25rem;
+  --cl-size-slider-track: 0.5rem;
+  --cl-size-slider-labels: 2.5rem;
 }

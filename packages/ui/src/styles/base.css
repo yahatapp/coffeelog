@@ -41,3 +41,15 @@ input[type="number"] {
     transition-duration: 0.01ms !important;
   }
 }
+
+:root {
+  scroll-padding-block-end: calc(
+    var(--cl-size-nav) + env(safe-area-inset-bottom) + var(--cl-space-page-inline)
+  );
+}
+#root main :where(button, input, select, textarea, a, [tabindex]) {
+  scroll-margin-block-start: var(--cl-space-page-inline);
+  scroll-margin-block-end: calc(
+    var(--cl-size-nav) + env(safe-area-inset-bottom) + var(--cl-space-page-inline)
+  );
+}

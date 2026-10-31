@@ -1,3 +1,4 @@
+import styles from "./slider.module.css";
 import { useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import { Slider as SliderPrimitive } from "@base-ui/react/slider";
 import { cn } from "./button";
@@ -91,29 +92,25 @@ export const Slider = ({
       disabled={disabled}
       onValueChange={onValueChange}
       thumbAlignment="center"
-      className="space-y-1 data-disabled:opacity-50"
+      className={styles.root}
     >
-      <div className="flex items-center justify-between gap-2">
+      <div className={styles.heading}>
         <SliderPrimitive.Label render={<Label />}>{label}</SliderPrimitive.Label>
-        {valueDescription && (
-          <span className="shrink-0 rounded-full bg-coffee-primary/10 px-3 py-0.5 text-sm font-bold text-coffee-primary">
-            {valueDescription}
-          </span>
-        )}
+        {valueDescription && <span className={styles.value}>{valueDescription}</span>}
       </div>
       {/* The thumb, tick marks, and labels share exactly the same track width. */}
       <div>
-        <SliderPrimitive.Control className="relative flex min-h-11 w-full touch-pan-y cursor-pointer items-center px-3 select-none data-disabled:cursor-default">
-          <SliderPrimitive.Track className="relative h-2 w-full rounded-full bg-coffee-secondary/20">
-            <SliderPrimitive.Indicator className="rounded-full bg-coffee-primary" />
+        <SliderPrimitive.Control className={styles.control}>
+          <SliderPrimitive.Track data-slider-track className={styles.track}>
+            <SliderPrimitive.Indicator className={styles.indicator} />
             {visibleMarks.map((mark) => (
               <span
                 key={mark.value}
                 aria-hidden="true"
                 data-slider-mark={mark.value}
                 className={cn(
-                  "pointer-events-none absolute top-1/2 size-1 -translate-x-1/2 -translate-y-1/2 rounded-full",
-                  mark.value <= value ? "bg-white/70" : "bg-coffee-primary/50",
+                  styles.tick,
+                  mark.value <= value ? styles.tickDone : styles.tickPending,
                 )}
                 style={{ left: position(mark.value) }}
               />
@@ -121,22 +118,19 @@ export const Slider = ({
             <SliderPrimitive.Thumb
               onBlur={onBlur}
               getAriaValueText={(_formatted, nextValue) => getValueText(nextValue)}
-              className="size-5 rounded-full border-2 border-white bg-coffee-primary shadow-sm outline-none has-focus-visible:ring-2 has-focus-visible:ring-ring has-focus-visible:ring-offset-2 data-dragging:ring-4 data-dragging:ring-coffee-primary/15"
+              className={styles.thumb}
             />
           </SliderPrimitive.Track>
         </SliderPrimitive.Control>
-        <div ref={labelsRef} aria-hidden="true" className="relative mx-3 -mt-1 h-7">
+        <div ref={labelsRef} aria-hidden="true" className={styles.labels}>
           {visibleMarks.map((mark) => (
             <span
               key={mark.value}
               data-slider-label={mark.value}
-              className={cn(
-                "absolute top-0 flex -translate-x-1/2 flex-col items-center whitespace-nowrap text-[10px] leading-3.5 text-coffee-primary",
-                hiddenLabels.includes(mark.value) && "invisible",
-              )}
+              className={cn(styles.markLabel, hiddenLabels.includes(mark.value) && styles.hidden)}
               style={{ left: position(mark.value) }}
             >
-              <span className="font-medium tabular-nums">{mark.value}</span>
+              <span className={styles.markValue}>{mark.value}</span>
               <span>{mark.label}</span>
             </span>
           ))}

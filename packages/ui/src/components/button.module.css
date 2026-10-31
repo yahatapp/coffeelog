@@ -67,7 +67,11 @@
     padding: var(--cl-space-page-inline);
   }
   .icon {
+    min-width: var(--cl-size-target-min);
     width: var(--cl-size-target-min);
     padding: 0;
+  }
+  .fullWidth {
+    width: 100%;
   }
 }

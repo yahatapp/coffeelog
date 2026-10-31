@@ -1,8 +1,11 @@
+import styles from "./forms.module.css";
+import { getFirstValidationError } from "./formValidation";
+import { Field, Select, Textarea } from "@yahatapp/ui";
 import { Minus, Plus, Star } from "lucide-react";
 import { Button, cn } from "../ui/button";
 import { Input } from "../ui/input";
-import { Label } from "../ui/label";
-import { Card, CardContent } from "../ui/card";
+import "../ui/label";
+import { Card } from "../ui/card";
 import { Slider } from "../ui/slider";
 import type { Bean, Dripper, Grinder } from "@/lib/queries";
 import {
@@ -14,7 +17,6 @@ import {
   type LogFormValues,
 } from "@/lib/form-values";
 import type { LogFormApi } from "./types";
-
 type BrewLogFieldsProps = {
   form: LogFormApi;
   beans: Bean[];
@@ -23,25 +25,28 @@ type BrewLogFieldsProps = {
   isFetchingMasters?: boolean;
   navigate: (to: string) => void;
 };
-
 const parseNumber = (value: string, integer = false): number | "" => {
   if (value === "") return "";
   const parsed = integer ? Number.parseInt(value, 10) : Number.parseFloat(value);
   return Number.isNaN(parsed) ? "" : parsed;
 };
-
 const parsePourType = (value: string): "all" | "center_around" | "center_only" => {
   if (value === "center_around" || value === "center_only") return value;
   return "all";
 };
-
 const updatePour = (
   values: LogFormValues,
   index: number,
   update: Partial<LogFormValues["pours"][number]>,
 ): LogFormValues["pours"] =>
-  values.pours.map((pour, pourIndex) => (pourIndex === index ? { ...pour, ...update } : pour));
-
+  values.pours.map((pour, pourIndex) =>
+    pourIndex === index
+      ? {
+          ...pour,
+          ...update,
+        }
+      : pour,
+  );
 export const BrewLogFields = ({
   form,
   beans,
@@ -79,7 +84,6 @@ export const BrewLogFields = ({
           value,
           label: getGrindLabel(value, selectedGrinder).replace("挽き", ""),
         }));
-
       const setTempType = (tempType: "hot" | "ice") => {
         if (tempType === "ice") {
           form.setFieldValue("tempType", "ice");
@@ -95,7 +99,6 @@ export const BrewLogFields = ({
           if (values.waterAmount === 120) form.setFieldValue("waterAmount", 150);
         }
       };
-
       const setPourCount = (count: number) => {
         const target = Math.max(0, Math.min(10, count));
         const next = values.pours.slice(0, target);
@@ -104,7 +107,6 @@ export const BrewLogFields = ({
         }
         form.setFieldValue("pours", next);
       };
-
       const setDrawdownPart = (part: "minutes" | "seconds", value: string) => {
         const current = values.drawdownTime === "" ? 0 : values.drawdownTime;
         const minutes = Math.floor(current / 60);
@@ -116,136 +118,160 @@ export const BrewLogFields = ({
           nextMinutes === 0 && nextSeconds === 0 ? "" : nextMinutes * 60 + nextSeconds,
         );
       };
-
       return (
         <Card>
-          <CardContent className="p-6 space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="bean">コーヒー豆</Label>
-              {isFetchingMasters ? (
-                <div className="h-10 w-full animate-pulse bg-coffee-secondary/10 rounded-xl" />
-              ) : (
-                <form.Field name="beanId">
-                  {(field) => (
-                    <select
-                      id="bean"
-                      value={field.state.value}
-                      onChange={(event) => field.handleChange(event.target.value)}
-                      onBlur={field.handleBlur}
-                      required
-                      className="flex h-10 w-full rounded-xl border border-coffee-secondary/20 bg-white px-3 py-2 text-sm"
-                    >
-                      <option value="" disabled>
-                        豆を選択してください
-                      </option>
-                      {beans.map((bean) => (
-                        <option key={bean.id} value={bean.id}>
-                          {bean.name}
-                        </option>
-                      ))}
-                    </select>
-                  )}
-                </form.Field>
-              )}
-              {beans.length === 0 && !isFetchingMasters && (
-                <p className="text-[10px] text-red-500">
-                  豆が登録されていません。{" "}
-                  <button
-                    type="button"
-                    onClick={() => navigate("/beans/new")}
-                    className="underline font-bold"
-                  >
-                    先に豆を登録してください。
-                  </button>
-                </p>
-              )}
+          <div className={styles.content}>
+            <div className={styles.field}>
+              <Field id="bean" label={<>コーヒー豆</>} required>
+                {(control) => (
+                  <>
+                    {isFetchingMasters ? (
+                      <div className={styles.placeholder} />
+                    ) : (
+                      <form.Field name="beanId">
+                        {(field) => (
+                          <Select
+                            {...control}
+                            id="bean"
+                            value={field.state.value}
+                            onChange={(event) => field.handleChange(event.target.value)}
+                            onBlur={field.handleBlur}
+                            required
+                          >
+                            <option value="" disabled>
+                              豆を選択してください
+                            </option>
+                            {beans.map((bean) => (
+                              <option key={bean.id} value={bean.id}>
+                                {bean.name}
+                              </option>
+                            ))}
+                          </Select>
+                        )}
+                      </form.Field>
+                    )}
+                    {beans.length === 0 && !isFetchingMasters && (
+                      <p className={styles.error}>
+                        豆が登録されていません。{" "}
+                        <button
+                          type="button"
+                          onClick={() => navigate("/beans/new")}
+                          className={styles.textAction}
+                        >
+                          先に豆を登録してください。
+                        </button>
+                      </p>
+                    )}
+                  </>
+                )}
+              </Field>
             </div>
 
             <form.Field name="brewDate">
               {(field) => (
-                <div className="space-y-2">
-                  <Label htmlFor="brewDate">抽出日</Label>
-                  <Input
+                <div className={styles.field}>
+                  <Field
                     id="brewDate"
-                    type="date"
-                    value={field.state.value}
-                    onChange={(event) => field.handleChange(event.target.value)}
-                    onBlur={field.handleBlur}
-                    className="rounded-xl border-coffee-secondary/20"
+                    label={<>抽出日</>}
                     required
-                  />
+                    error={getFirstValidationError(field.state.meta.errors)}
+                  >
+                    {(control) => (
+                      <>
+                        <Input
+                          {...control}
+                          id="brewDate"
+                          type="date"
+                          value={field.state.value}
+                          onChange={(event) => field.handleChange(event.target.value)}
+                          onBlur={field.handleBlur}
+                          required
+                        />
+                      </>
+                    )}
+                  </Field>
                 </div>
               )}
             </form.Field>
 
-            <div className="space-y-2">
-              <Label htmlFor="dripper">ドリッパー</Label>
-              {isFetchingMasters ? (
-                <div className="h-10 w-full animate-pulse bg-coffee-secondary/10 rounded-xl" />
-              ) : (
-                <form.Field name="dripperId">
-                  {(field) => (
-                    <select
-                      id="dripper"
-                      value={field.state.value}
-                      onChange={(event) => field.handleChange(event.target.value)}
-                      onBlur={field.handleBlur}
-                      required
-                      className="flex h-10 w-full rounded-xl border border-coffee-secondary/20 bg-white px-3 py-2 text-sm"
-                    >
-                      <option value="" disabled>
-                        ドリッパーを選択してください
-                      </option>
-                      {drippers.map((dripper) => (
-                        <option key={dripper.id} value={dripper.id}>
-                          {dripper.name}
-                        </option>
-                      ))}
-                    </select>
-                  )}
-                </form.Field>
-              )}
-              {drippers.length === 0 && !isFetchingMasters && (
-                <p className="text-[10px] text-red-500">
-                  ドリッパーが登録されていません。{" "}
-                  <button
-                    type="button"
-                    onClick={() => navigate("/settings/drippers")}
-                    className="underline font-bold"
-                  >
-                    設定から登録してください
-                  </button>
-                </p>
-              )}
+            <div className={styles.field}>
+              <Field id="dripper" label={<>ドリッパー</>} required>
+                {(control) => (
+                  <>
+                    {isFetchingMasters ? (
+                      <div className={styles.placeholder} />
+                    ) : (
+                      <form.Field name="dripperId">
+                        {(field) => (
+                          <Select
+                            {...control}
+                            id="dripper"
+                            value={field.state.value}
+                            onChange={(event) => field.handleChange(event.target.value)}
+                            onBlur={field.handleBlur}
+                            required
+                          >
+                            <option value="" disabled>
+                              ドリッパーを選択してください
+                            </option>
+                            {drippers.map((dripper) => (
+                              <option key={dripper.id} value={dripper.id}>
+                                {dripper.name}
+                              </option>
+                            ))}
+                          </Select>
+                        )}
+                      </form.Field>
+                    )}
+                    {drippers.length === 0 && !isFetchingMasters && (
+                      <p className={styles.error}>
+                        ドリッパーが登録されていません。{" "}
+                        <button
+                          type="button"
+                          onClick={() => navigate("/settings/drippers")}
+                          className={styles.textAction}
+                        >
+                          設定から登録してください
+                        </button>
+                      </p>
+                    )}
+                  </>
+                )}
+              </Field>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="grinder">グラインダー</Label>
-              {isFetchingMasters ? (
-                <div className="h-10 w-full animate-pulse bg-coffee-secondary/10 rounded-xl" />
-              ) : (
-                <form.Field name="grinderId">
-                  {(field) => (
-                    <select
-                      id="grinder"
-                      value={field.state.value}
-                      onChange={(event) => field.handleChange(event.target.value)}
-                      onBlur={field.handleBlur}
-                      className="flex h-10 w-full rounded-xl border border-coffee-secondary/20 bg-white px-3 py-2 text-sm"
-                    >
-                      <option value="">選択してください</option>
-                      {grinders.map((grinder) => (
-                        <option key={grinder.id} value={grinder.id}>
-                          {grinder.name}
-                        </option>
-                      ))}
-                    </select>
-                  )}
-                </form.Field>
-              )}
+            <div className={styles.field}>
+              <Field id="grinder" label={<>グラインダー</>}>
+                {(control) => (
+                  <>
+                    {isFetchingMasters ? (
+                      <div className={styles.placeholder} />
+                    ) : (
+                      <form.Field name="grinderId">
+                        {(field) => (
+                          <Select
+                            {...control}
+                            id="grinder"
+                            value={field.state.value}
+                            onChange={(event) => field.handleChange(event.target.value)}
+                            onBlur={field.handleBlur}
+                          >
+                            <option value="">選択してください</option>
+                            {grinders.map((grinder) => (
+                              <option key={grinder.id} value={grinder.id}>
+                                {grinder.name}
+                              </option>
+                            ))}
+                          </Select>
+                        )}
+                      </form.Field>
+                    )}
+                  </>
+                )}
+              </Field>
             </div>
 
-            <div className="space-y-2 pt-1">
+            <div className={styles.field}>
               <form.Field name="grindSize">
                 {(field) => (
                   <Slider
@@ -253,7 +279,7 @@ export const BrewLogFields = ({
                     label={
                       <>
                         挽き目 (クリック数:{" "}
-                        <span className="font-bold text-coffee-primary">{field.state.value}</span>)
+                        <span className={styles.strong}>{field.state.value}</span>)
                       </>
                     }
                     valueDescription={getGrindLabel(field.state.value, selectedGrinder)}
@@ -271,18 +297,19 @@ export const BrewLogFields = ({
               </form.Field>
             </div>
 
-            <div className="space-y-2 pt-1">
-              <Label>抽出タイプ</Label>
-              <div className="grid grid-cols-2 gap-2 bg-coffee-secondary/10 p-1 rounded-2xl">
+            <div className={styles.field} role="group" aria-labelledby="brewlogfields-group-1">
+              <span id="brewlogfields-group-1" className={styles.groupLabel}>
+                抽出タイプ
+              </span>
+              <div className={styles.choices}>
                 <button
                   type="button"
                   onClick={() => setTempType("hot")}
                   className={cn(
-                    "py-2 px-4 rounded-xl text-sm font-bold",
-                    values.tempType === "hot"
-                      ? "bg-white text-orange-700 shadow-sm"
-                      : "text-coffee-secondary",
+                    styles.choice,
+                    values.tempType === "hot" ? styles.choiceHot : styles.muted,
                   )}
+                  aria-pressed={values.tempType === "hot"}
                 >
                   ☕ ホット
                 </button>
@@ -290,11 +317,10 @@ export const BrewLogFields = ({
                   type="button"
                   onClick={() => setTempType("ice")}
                   className={cn(
-                    "py-2 px-4 rounded-xl text-sm font-bold",
-                    values.tempType === "ice"
-                      ? "bg-white text-blue-700 shadow-sm"
-                      : "text-coffee-secondary",
+                    styles.choice,
+                    values.tempType === "ice" ? styles.choiceIced : styles.muted,
                   )}
+                  aria-pressed={values.tempType === "ice"}
                 >
                   ❄️ アイス
                 </button>
@@ -304,140 +330,189 @@ export const BrewLogFields = ({
             {values.tempType === "ice" && (
               <form.Field name="iceAmount">
                 {(field) => (
-                  <div className="space-y-2">
-                    <Label htmlFor="iceAmt" className="text-blue-700">
-                      🧊 氷の量 (g)
-                    </Label>
-                    <Input
+                  <div className={styles.field}>
+                    <Field
                       id="iceAmt"
-                      type="number"
-                      step="0.1"
-                      value={field.state.value}
-                      onChange={(event) => field.handleChange(parseNumber(event.target.value))}
-                      onBlur={field.handleBlur}
-                      className="rounded-xl border-blue-200"
+                      label={<>🧊 氷の量 (g)</>}
                       required
-                    />
+                      error={getFirstValidationError(field.state.meta.errors)}
+                    >
+                      {(control) => (
+                        <>
+                          <Input
+                            {...control}
+                            id="iceAmt"
+                            type="number"
+                            step="0.1"
+                            value={field.state.value}
+                            onChange={(event) =>
+                              field.handleChange(parseNumber(event.target.value))
+                            }
+                            onBlur={field.handleBlur}
+                            required
+                          />
+                        </>
+                      )}
+                    </Field>
                   </div>
                 )}
               </form.Field>
             )}
 
-            <div className="grid grid-cols-3 gap-4 pt-1">
+            <div className={styles.measurements}>
               <form.Field name="waterTemp">
                 {(field) => (
-                  <div className="space-y-2">
-                    <Label htmlFor="temp">湯温 (℃)</Label>
-                    <Input
+                  <div className={styles.field}>
+                    <Field
                       id="temp"
-                      type="number"
-                      value={field.state.value}
-                      onChange={(event) =>
-                        field.handleChange(parseNumber(event.target.value, true))
-                      }
-                      onBlur={field.handleBlur}
-                      className="rounded-xl border-coffee-secondary/20"
+                      label={<>湯温 (℃)</>}
                       required
-                    />
+                      error={getFirstValidationError(field.state.meta.errors)}
+                    >
+                      {(control) => (
+                        <>
+                          <Input
+                            {...control}
+                            id="temp"
+                            type="number"
+                            value={field.state.value}
+                            onChange={(event) =>
+                              field.handleChange(parseNumber(event.target.value, true))
+                            }
+                            onBlur={field.handleBlur}
+                            required
+                          />
+                        </>
+                      )}
+                    </Field>
                   </div>
                 )}
               </form.Field>
               <form.Field name="beanAmount">
                 {(field) => (
-                  <div className="space-y-2">
-                    <Label htmlFor="beanAmt">豆量 (g)</Label>
-                    <Input
+                  <div className={styles.field}>
+                    <Field
                       id="beanAmt"
-                      type="number"
-                      step="0.1"
-                      value={field.state.value}
-                      onChange={(event) => field.handleChange(parseNumber(event.target.value))}
-                      onBlur={field.handleBlur}
-                      className="rounded-xl border-coffee-secondary/20"
+                      label={<>豆量 (g)</>}
                       required
-                    />
+                      error={getFirstValidationError(field.state.meta.errors)}
+                    >
+                      {(control) => (
+                        <>
+                          <Input
+                            {...control}
+                            id="beanAmt"
+                            type="number"
+                            step="0.1"
+                            value={field.state.value}
+                            onChange={(event) =>
+                              field.handleChange(parseNumber(event.target.value))
+                            }
+                            onBlur={field.handleBlur}
+                            required
+                          />
+                        </>
+                      )}
+                    </Field>
                   </div>
                 )}
               </form.Field>
               <form.Field name="waterAmount">
                 {(field) => (
-                  <div className="space-y-2">
-                    <Label htmlFor="waterAmt">注水量 (ml)</Label>
-                    <Input
+                  <div className={styles.field}>
+                    <Field
                       id="waterAmt"
-                      type="number"
-                      value={field.state.value}
-                      onChange={(event) => {
-                        const parsed = parseNumber(event.target.value, true);
-                        field.handleChange(parsed);
-                        form.setFieldValue("yieldAmount", parsed);
-                      }}
-                      onBlur={field.handleBlur}
-                      className="rounded-xl border-coffee-secondary/20"
+                      label={<>注水量 (ml)</>}
                       required
-                    />
+                      error={getFirstValidationError(field.state.meta.errors)}
+                    >
+                      {(control) => (
+                        <>
+                          <Input
+                            {...control}
+                            id="waterAmt"
+                            type="number"
+                            value={field.state.value}
+                            onChange={(event) => {
+                              const parsed = parseNumber(event.target.value, true);
+                              field.handleChange(parsed);
+                              form.setFieldValue("yieldAmount", parsed);
+                            }}
+                            onBlur={field.handleBlur}
+                            required
+                          />
+                        </>
+                      )}
+                    </Field>
                   </div>
                 )}
               </form.Field>
             </div>
 
-            <div className="space-y-2 pt-1">
-              <Label>評価</Label>
-              <div className="flex items-center justify-between bg-coffee-secondary/5 border border-coffee-secondary/10 p-3.5 rounded-2xl">
-                <button
+            <div className={styles.field} role="group" aria-labelledby="brewlogfields-group-2">
+              <span id="brewlogfields-group-2" className={styles.groupLabel}>
+                評価
+              </span>
+              <div className={styles.rating}>
+                <Button
                   type="button"
                   onClick={() => form.setFieldValue("rating", Math.max(1, values.rating - 0.5))}
                   disabled={values.rating <= 1}
-                  className="flex items-center justify-center w-10 h-10 rounded-xl bg-white border border-coffee-secondary/20 text-coffee-primary disabled:opacity-40"
                   aria-label="評価下げる"
+                  variant="outline"
+                  size="icon"
                 >
-                  <Minus size={18} />
-                </button>
-                <div className="flex flex-col items-center">
-                  <div className="flex space-x-1">
+                  <Minus size={18} aria-hidden={true} />
+                </Button>
+                <div className={styles.center}>
+                  <div className={styles.stars}>
                     {[1, 2, 3, 4, 5].map((star) => (
                       <Star
                         key={star}
                         size={22}
                         className={
                           star <= values.rating
-                            ? "fill-yellow-400 text-yellow-400"
+                            ? styles.starFilled
                             : star - 0.5 <= values.rating
-                              ? "fill-yellow-200 text-yellow-400"
-                              : "text-coffee-secondary/20"
+                              ? styles.starHalf
+                              : styles.starEmpty
                         }
+                        aria-hidden={true}
                       />
                     ))}
                   </div>
-                  <span className="text-xl font-extrabold text-coffee-primary">
+                  <span className={styles.ratingValue}>
                     {values.rating.toFixed(1)}
-                    <small className="text-[10px] text-coffee-secondary"> / 5.0</small>
+                    <small className={styles.helper}> / 5.0</small>
                   </span>
                 </div>
-                <button
+                <Button
                   type="button"
                   onClick={() => form.setFieldValue("rating", Math.min(5, values.rating + 0.5))}
                   disabled={values.rating >= 5}
-                  className="flex items-center justify-center w-10 h-10 rounded-xl bg-white border border-coffee-secondary/20 text-coffee-primary disabled:opacity-40"
                   aria-label="評価上げる"
+                  variant="outline"
+                  size="icon"
                 >
-                  <Plus size={18} />
-                </button>
+                  <Plus size={18} aria-hidden={true} />
+                </Button>
               </div>
             </div>
 
-            <div className="space-y-4 pt-4 border-t border-coffee-secondary/10">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="p-3 rounded-2xl bg-coffee-secondary/5 border border-coffee-secondary/10 space-y-2">
-                  <Label className="text-xs font-bold text-coffee-primary">注ぎ回数 (投)</Label>
-                  <div className="flex items-center space-x-2">
+            <div className={styles.divider}>
+              <div className={styles.twoColumns}>
+                <div className={styles.panel} role="group" aria-labelledby="brewlogfields-group-3">
+                  <span id="brewlogfields-group-3" className={styles.groupLabel}>
+                    注ぎ回数 (投)
+                  </span>
+                  <div className={styles.row}>
                     <Button
                       type="button"
                       variant="outline"
                       size="icon"
-                      className="h-8 w-8"
                       onClick={() => setPourCount(values.pours.length - 1)}
                       disabled={values.pours.length <= 0}
+                      aria-label="注ぎ回数を減らす"
                     >
                       -
                     </Button>
@@ -449,15 +524,15 @@ export const BrewLogFields = ({
                       onChange={(event) =>
                         setPourCount(Number.parseInt(event.target.value, 10) || 0)
                       }
-                      className="h-8 text-center"
+                      aria-label="注ぎ回数 (投)"
                     />
                     <Button
                       type="button"
                       variant="outline"
                       size="icon"
-                      className="h-8 w-8"
                       onClick={() => setPourCount(values.pours.length + 1)}
                       disabled={values.pours.length >= 10}
+                      aria-label="注ぎ回数を増やす"
                     >
                       +
                     </Button>
@@ -465,28 +540,34 @@ export const BrewLogFields = ({
                 </div>
                 <form.Field name="bloomingTime">
                   {(field) => (
-                    <div className="p-3 rounded-2xl bg-coffee-secondary/5 border border-coffee-secondary/10 space-y-2">
-                      <Label
-                        htmlFor="bloomingTime"
-                        className="text-xs font-bold text-coffee-primary"
-                      >
-                        蒸らし時間 (秒)
-                      </Label>
-                      <Input
+                    <div className={styles.panel}>
+                      <Field
                         id="bloomingTime"
-                        type="number"
-                        value={field.state.value}
-                        onChange={(event) => {
-                          const value = parseNumber(event.target.value, true);
-                          field.handleChange(value);
-                          if (values.pours.length > 0)
-                            form.setFieldValue(
-                              "pours",
-                              updatePour(values, 0, { duration: value === "" ? 0 : value }),
-                            );
-                        }}
-                        className="h-8 text-center"
-                      />
+                        label={<>蒸らし時間 (秒)</>}
+                        error={getFirstValidationError(field.state.meta.errors)}
+                      >
+                        {(control) => (
+                          <>
+                            <Input
+                              {...control}
+                              id="bloomingTime"
+                              type="number"
+                              value={field.state.value}
+                              onChange={(event) => {
+                                const value = parseNumber(event.target.value, true);
+                                field.handleChange(value);
+                                if (values.pours.length > 0)
+                                  form.setFieldValue(
+                                    "pours",
+                                    updatePour(values, 0, {
+                                      duration: value === "" ? 0 : value,
+                                    }),
+                                  );
+                              }}
+                            />
+                          </>
+                        )}
+                      </Field>
                     </div>
                   )}
                 </form.Field>
@@ -494,111 +575,120 @@ export const BrewLogFields = ({
               <form.Field name="pours" mode="array">
                 {(field) =>
                   values.pours.length === 0 ? (
-                    <p className="text-xs text-coffee-secondary italic text-center py-4 bg-coffee-secondary/5 rounded-2xl">
+                    <p className={styles.hint}>
                       投数を増やすと、ここに注ぎ方の詳細入力欄が表示されます。
                     </p>
                   ) : (
-                    <div className="space-y-2 border border-coffee-secondary/10 p-3 rounded-2xl">
-                      <div className="flex items-center space-x-2 text-[10px] font-bold text-coffee-secondary px-1 border-b pb-1">
-                        <span className="w-12 text-center">ステップ</span>
-                        <span className="flex-1 text-center">注水量</span>
-                        <span className="flex-1 text-center">時間</span>
-                        <span className="w-20 text-center">注ぎ方</span>
+                    <div className={styles.panel}>
+                      <div className={styles.pourHeader}>
+                        <span className={styles.stepTitle}>ステップ</span>
+                        <span className={styles.cellTitle}>注水量</span>
+                        <span className={styles.cellTitle}>時間</span>
+                        <span className={styles.cellTitle}>注ぎ方</span>
                       </div>
                       {field.state.value.map((pour, index) => (
-                        <div
-                          key={`${pour.pourNumber}-${index}`}
-                          className="flex items-center space-x-2 pt-2"
-                        >
-                          <span className="w-12 text-[10px] font-black text-coffee-primary text-center bg-coffee-primary/10 py-1.5 rounded-lg">
-                            {pour.pourNumber}投目
-                          </span>
-                          <select
-                            value={pour.waterAmount}
-                            onChange={(event) =>
-                              field.handleChange(
-                                updatePour(values, index, {
-                                  waterAmount: Number(event.target.value),
-                                }),
-                              )
-                            }
-                            className="h-8 flex-1 rounded-lg border border-coffee-secondary/20 bg-white px-1 text-xs text-center"
-                            required
-                          >
-                            {optionsWithCurrent(waterAmountOptions, pour.waterAmount).map(
-                              (amount) => (
-                                <option key={amount} value={amount}>
-                                  {amount}
-                                </option>
-                              ),
+                        <div key={`${pour.pourNumber}-${index}`} className={styles.pourRow}>
+                          <span className={styles.step}>{pour.pourNumber}投目</span>
+                          <Field id={`pour-${index}-amount`} label="注水量 (ml)" required>
+                            {(control) => (
+                              <Select
+                                {...control}
+                                value={pour.waterAmount}
+                                onChange={(event) =>
+                                  field.handleChange(
+                                    updatePour(values, index, {
+                                      waterAmount: Number(event.target.value),
+                                    }),
+                                  )
+                                }
+                                required
+                              >
+                                {optionsWithCurrent(waterAmountOptions, pour.waterAmount).map(
+                                  (amount) => (
+                                    <option key={amount} value={amount}>
+                                      {amount}
+                                    </option>
+                                  ),
+                                )}
+                              </Select>
                             )}
-                          </select>
+                          </Field>
                           {index === values.pours.length - 1 ? (
-                            <select
-                              disabled
-                              value=""
-                              className="h-8 flex-1 rounded-lg border border-coffee-secondary/20 bg-coffee-secondary/5 px-1 text-xs text-center"
-                            >
-                              <option value="">不要</option>
-                            </select>
-                          ) : (
-                            <select
-                              value={pour.duration}
-                              onChange={(event) => {
-                                const duration = Number(event.target.value);
-                                field.handleChange(
-                                  updatePour(values, index, {
-                                    duration,
-                                  }),
-                                );
-                                if (index === 0) form.setFieldValue("bloomingTime", duration);
-                              }}
-                              className="h-8 flex-1 rounded-lg border border-coffee-secondary/20 bg-white px-1 text-xs text-center"
-                              required
-                            >
-                              {optionsWithCurrent(durationOptions, pour.duration).map(
-                                (duration) => (
-                                  <option key={duration} value={duration}>
-                                    {duration}
-                                  </option>
-                                ),
+                            <Field id={`pour-${index}-duration`} label="時間 (秒)">
+                              {(control) => (
+                                <Select {...control} disabled value="">
+                                  <option value="">不要</option>
+                                </Select>
                               )}
-                            </select>
+                            </Field>
+                          ) : (
+                            <Field id={`pour-${index}-duration`} label="時間 (秒)" required>
+                              {(control) => (
+                                <Select
+                                  {...control}
+                                  value={pour.duration}
+                                  onChange={(event) => {
+                                    const duration = Number(event.target.value);
+                                    field.handleChange(
+                                      updatePour(values, index, {
+                                        duration,
+                                      }),
+                                    );
+                                    if (index === 0) form.setFieldValue("bloomingTime", duration);
+                                  }}
+                                  required
+                                >
+                                  {optionsWithCurrent(durationOptions, pour.duration).map(
+                                    (duration) => (
+                                      <option key={duration} value={duration}>
+                                        {duration}
+                                      </option>
+                                    ),
+                                  )}
+                                </Select>
+                              )}
+                            </Field>
                           )}
-                          <select
-                            value={pour.pourType}
-                            onChange={(event) =>
-                              field.handleChange(
-                                updatePour(values, index, {
-                                  pourType: parsePourType(event.target.value),
-                                }),
-                              )
-                            }
-                            className="h-8 w-20 rounded-lg border border-coffee-secondary/20 bg-white px-1 text-xs text-center"
-                          >
-                            <option value="all">全体に</option>
-                            <option value="center_around">中心付近</option>
-                            <option value="center_only">中心のみ</option>
-                          </select>
+                          <div className={styles.pourMode}>
+                            <Field id={`pour-${index}-mode`} label="注ぎ方">
+                              {(control) => (
+                                <Select
+                                  {...control}
+                                  value={pour.pourType}
+                                  onChange={(event) =>
+                                    field.handleChange(
+                                      updatePour(values, index, {
+                                        pourType: parsePourType(event.target.value),
+                                      }),
+                                    )
+                                  }
+                                >
+                                  <option value="all">全体に</option>
+                                  <option value="center_around">中心付近</option>
+                                  <option value="center_only">中心のみ</option>
+                                </Select>
+                              )}
+                            </Field>
+                          </div>
                         </div>
                       ))}
                     </div>
                   )
                 }
               </form.Field>
-              <div className="space-y-2 pt-2 border-t border-coffee-secondary/5">
-                <div className="flex justify-between items-center">
-                  <Label className="text-xs font-bold text-coffee-secondary">落ち切り時間</Label>
-                  <span className="text-[9px] text-coffee-secondary">
-                    ※注ぎ始めからドリッパーを外すまで
+              <div className={styles.divider}>
+                <div className={styles.spread} role="group" aria-labelledby="brewlogfields-group-4">
+                  <span id="brewlogfields-group-4" className={styles.groupLabel}>
+                    落ち切り時間
                   </span>
+                  <span className={styles.helper}>※注ぎ始めからドリッパーを外すまで</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <div className="flex items-center gap-1.5 flex-1">
-                    <select
+                <div className={styles.row}>
+                  <div className={styles.growRow}>
+                    <Select
                       value={values.drawdownTime === "" ? "" : Math.floor(values.drawdownTime / 60)}
                       onChange={(event) => setDrawdownPart("minutes", event.target.value)}
-                      className="flex h-10 w-full rounded-xl border border-coffee-secondary/20 bg-white px-3 py-2 text-sm"
+                      aria-label="落ち切り時間 (分)"
                     >
                       <option value="">-</option>
                       {[0, 1, 2, 3, 4, 5].map((minute) => (
@@ -606,64 +696,75 @@ export const BrewLogFields = ({
                           {minute}
                         </option>
                       ))}
-                    </select>
-                    <span className="text-sm">分</span>
+                    </Select>
+                    <span className={styles.text}>分</span>
                   </div>
-                  <div className="flex items-center gap-1.5 flex-1">
-                    <select
+                  <div className={styles.growRow}>
+                    <Select
                       value={values.drawdownTime === "" ? "" : values.drawdownTime % 60}
                       onChange={(event) => setDrawdownPart("seconds", event.target.value)}
-                      className="flex h-10 w-full rounded-xl border border-coffee-secondary/20 bg-white px-3 py-2 text-sm"
+                      aria-label="落ち切り時間 (秒)"
                     >
                       <option value="">-</option>
-                      {Array.from({ length: 12 }, (_, index) => index * 5).map((second) => (
+                      {Array.from(
+                        {
+                          length: 12,
+                        },
+                        (_, index) => index * 5,
+                      ).map((second) => (
                         <option key={second} value={second}>
                           {second}
                         </option>
                       ))}
-                    </select>
-                    <span className="text-sm">秒</span>
+                    </Select>
+                    <span className={styles.text}>秒</span>
                   </div>
                 </div>
               </div>
               <form.Field name="yieldAmount">
                 {(field) => (
-                  <div className="space-y-2 pt-2 border-t border-coffee-secondary/5">
-                    <Label
-                      htmlFor="yieldAmt"
-                      className={
-                        values.tempType === "ice" ? "text-blue-700" : "text-coffee-secondary"
-                      }
-                    >
-                      {values.tempType === "ice" ? "🥛 " : ""}仕上がり量 (ml)
-                    </Label>
-                    <Input
+                  <div className={styles.divider}>
+                    <Field
                       id="yieldAmt"
-                      type="number"
-                      value={field.state.value}
-                      onChange={(event) =>
-                        field.handleChange(parseNumber(event.target.value, true))
-                      }
-                      onBlur={field.handleBlur}
-                      placeholder={values.waterAmount ? String(values.waterAmount) : "例: 150"}
-                      className="rounded-xl"
+                      label={<>{values.tempType === "ice" ? "🥛 " : ""}仕上がり量 (ml)</>}
                       required
-                    />
+                      error={getFirstValidationError(field.state.meta.errors)}
+                    >
+                      {(control) => (
+                        <>
+                          <Input
+                            {...control}
+                            id="yieldAmt"
+                            type="number"
+                            value={field.state.value}
+                            onChange={(event) =>
+                              field.handleChange(parseNumber(event.target.value, true))
+                            }
+                            onBlur={field.handleBlur}
+                            placeholder={
+                              values.waterAmount ? String(values.waterAmount) : "例: 150"
+                            }
+                            required
+                          />
+                        </>
+                      )}
+                    </Field>
                   </div>
                 )}
               </form.Field>
-              <div className="space-y-2 pt-2 border-t border-coffee-secondary/5">
-                <Label>加水</Label>
-                <div className="grid grid-cols-2 gap-2 bg-coffee-secondary/10 p-1 rounded-2xl">
+              <div className={styles.divider} role="group" aria-labelledby="brewlogfields-group-5">
+                <span id="brewlogfields-group-5" className={styles.groupLabel}>
+                  加水
+                </span>
+                <div className={styles.choices}>
                   <button
                     type="button"
                     onClick={() => form.setFieldValue("hasBypass", false)}
                     className={cn(
-                      "py-2 px-4 rounded-xl text-sm font-bold",
-                      !values.hasBypass
-                        ? "bg-white text-coffee-primary shadow-sm"
-                        : "text-coffee-secondary",
+                      styles.choice,
+                      !values.hasBypass ? styles.choiceActive : styles.muted,
                     )}
+                    aria-pressed={!values.hasBypass}
                   >
                     なし
                   </button>
@@ -671,11 +772,10 @@ export const BrewLogFields = ({
                     type="button"
                     onClick={() => form.setFieldValue("hasBypass", true)}
                     className={cn(
-                      "py-2 px-4 rounded-xl text-sm font-bold",
-                      values.hasBypass
-                        ? "bg-white text-coffee-primary shadow-sm"
-                        : "text-coffee-secondary",
+                      styles.choice,
+                      values.hasBypass ? styles.choiceActive : styles.muted,
                     )}
+                    aria-pressed={values.hasBypass}
                   >
                     あり
                   </button>
@@ -683,38 +783,56 @@ export const BrewLogFields = ({
               </div>
               <form.Field name="brewComment">
                 {(field) => (
-                  <div className="space-y-2 pt-2 border-t border-coffee-secondary/5">
-                    <Label htmlFor="brewComment">抽出コメント</Label>
-                    <textarea
+                  <div className={styles.divider}>
+                    <Field
                       id="brewComment"
-                      rows={3}
-                      value={field.state.value}
-                      onChange={(event) => field.handleChange(event.target.value)}
-                      onBlur={field.handleBlur}
-                      className="flex w-full rounded-xl border border-coffee-secondary/20 bg-white px-3 py-2 text-sm"
-                      placeholder="ステアや温度調整など..."
-                    />
+                      label={<>抽出コメント</>}
+                      error={getFirstValidationError(field.state.meta.errors)}
+                    >
+                      {(control) => (
+                        <>
+                          <Textarea
+                            {...control}
+                            id="brewComment"
+                            rows={3}
+                            value={field.state.value}
+                            onChange={(event) => field.handleChange(event.target.value)}
+                            onBlur={field.handleBlur}
+                            placeholder="ステアや温度調整など..."
+                          />
+                        </>
+                      )}
+                    </Field>
                   </div>
                 )}
               </form.Field>
               <form.Field name="note">
                 {(field) => (
-                  <div className="space-y-2 pt-2 border-t border-coffee-secondary/5">
-                    <Label htmlFor="note">テイスティングノート</Label>
-                    <textarea
+                  <div className={styles.divider}>
+                    <Field
                       id="note"
-                      rows={3}
-                      value={field.state.value}
-                      onChange={(event) => field.handleChange(event.target.value)}
-                      onBlur={field.handleBlur}
-                      className="flex w-full rounded-xl border border-coffee-secondary/20 bg-white px-3 py-2 text-sm"
-                      placeholder="味の感想など..."
-                    />
+                      label={<>テイスティングノート</>}
+                      error={getFirstValidationError(field.state.meta.errors)}
+                    >
+                      {(control) => (
+                        <>
+                          <Textarea
+                            {...control}
+                            id="note"
+                            rows={3}
+                            value={field.state.value}
+                            onChange={(event) => field.handleChange(event.target.value)}
+                            onBlur={field.handleBlur}
+                            placeholder="味の感想など..."
+                          />
+                        </>
+                      )}
+                    </Field>
                   </div>
                 )}
               </form.Field>
             </div>
-          </CardContent>
+          </div>
         </Card>
       );
     }}

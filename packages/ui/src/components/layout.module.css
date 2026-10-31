@@ -4,6 +4,7 @@
     max-width: var(--cl-size-content-max);
     margin-inline: auto;
     padding-inline: var(--cl-space-page-inline);
+    padding-top: var(--cl-space-page-inline);
     padding-bottom: calc(
       var(--cl-size-nav) + env(safe-area-inset-bottom) + var(--cl-space-page-inline)
     );

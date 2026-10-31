@@ -6,6 +6,7 @@ import { cn } from "../lib/cn";
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   asChild?: boolean;
   loading?: boolean;
+  fullWidth?: boolean;
   variant?: "primary" | "secondary" | "outline" | "ghost";
   size?: "sm" | "md" | "lg" | "icon";
 }
@@ -26,6 +27,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       size = "md",
       asChild = false,
       loading = false,
+      fullWidth = false,
       disabled,
       children,
       ...props
@@ -36,7 +38,13 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 
     return (
       <Comp
-        className={cn(styles.root, variants[variant], sizes[size], className)}
+        className={cn(
+          styles.root,
+          variants[variant],
+          sizes[size],
+          fullWidth && styles.fullWidth,
+          className,
+        )}
         aria-busy={loading || undefined}
         aria-disabled={disabled || loading || undefined}
         disabled={asChild ? undefined : disabled || loading}

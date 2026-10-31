@@ -27,9 +27,9 @@ import "@yahatapp/ui/themes/brewlog.css";
 import "@yahatapp/ui/themes/cafelog.css";
 function Catalog() {
   const [value, setValue] = useState<"hot" | "iced" | null>("hot");
-  const [filter,setFilter]=useState<LogTemperatureFilter>('all');
-  const [sort,setSort]=useState<'date'|'rating'>('date');
-  const [order,setOrder]=useState<LogSortOrder>('desc');
+  const [filter, setFilter] = useState<LogTemperatureFilter>("all");
+  const [sort, setSort] = useState<"date" | "rating">("date");
+  const [order, setOrder] = useState<LogSortOrder>("desc");
   return (
     <main>
       <h1>UI部品の確認</h1>
@@ -87,7 +87,23 @@ function Catalog() {
           </CardContent>
         </Card>
       </section>
-      <section aria-label="一覧の操作"><LogListControls filter={filter} counts={{all:3,hot:2,iced:1}} onFilterChange={setFilter} sortBy={sort} sortOrder={order} sortOptions={[{value:'date',label:'日付',initialOrder:'desc'},{value:'rating',label:'評価',initialOrder:'desc'}]} onSortChange={next=>{setOrder(next===sort?(order==='desc'?'asc':'desc'):'desc');setSort(next);}}/></section>
+      <section aria-label="一覧の操作">
+        <LogListControls
+          filter={filter}
+          counts={{ all: 3, hot: 2, iced: 1 }}
+          onFilterChange={setFilter}
+          sortBy={sort}
+          sortOrder={order}
+          sortOptions={[
+            { value: "date", label: "日付", initialOrder: "desc" },
+            { value: "rating", label: "評価", initialOrder: "desc" },
+          ]}
+          onSortChange={(next) => {
+            setOrder(next === sort ? (order === "desc" ? "asc" : "desc") : "desc");
+            setSort(next);
+          }}
+        />
+      </section>
       <section aria-label="画面の状態">
         <Loading />
         <ErrorState onRetry={() => {}} />

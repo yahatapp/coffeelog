@@ -8,7 +8,9 @@ const liff = {
   isLoggedIn: () => true,
   getProfile: async () => ({ userId: "fixture-user", displayName: "確認用ユーザー" }),
   getIDToken: () => "fixture-token",
-  login: () => {},
+  login: () => {
+    globalThis.__uiLoginCount = (globalThis.__uiLoginCount ?? 0) + 1;
+  },
   logout: () => {},
   isInClient: () => false,
 };
