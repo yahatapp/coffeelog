@@ -1,3 +1,4 @@
+import styles from "./segment.module.css";
 import { useId } from "react";
 import { cn } from "../lib/cn";
 
@@ -30,7 +31,7 @@ export function Segment<T extends string>({
       role="radiogroup"
       aria-label={ariaLabel}
       aria-disabled={disabled}
-      className={cn("grid grid-flow-col auto-cols-fr gap-1 rounded-2xl bg-muted/10 p-1", className)}
+      className={cn(styles.root, className)}
     >
       {options.map((option) => {
         const selected = value === option.value;
@@ -38,13 +39,9 @@ export function Segment<T extends string>({
         return (
           <label
             key={option.value}
-            className={cn(
-              "rounded-xl px-3 py-2.5 text-center text-xs font-bold transition-all has-focus-visible:ring-2 has-focus-visible:ring-ring",
-              disabled ? "cursor-not-allowed opacity-50" : "cursor-pointer active:scale-[0.98]",
-              selected
-                ? "bg-surface text-primary shadow-sm"
-                : cn("text-muted", !disabled && "hover:bg-surface/60 hover:text-primary"),
-            )}
+            className={styles.option}
+            data-selected={selected || undefined}
+            data-disabled={disabled || undefined}
           >
             <input
               type="radio"
@@ -53,7 +50,7 @@ export function Segment<T extends string>({
               checked={selected}
               disabled={disabled}
               onChange={() => onValueChange(option.value)}
-              className="sr-only"
+              className={styles.radio}
             />
             {option.label}
           </label>

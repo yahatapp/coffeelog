@@ -1,0 +1,170 @@
+[
+  {
+    "app": "brewlog",
+    "width": 320,
+    "path": "/",
+    "errors": [],
+    "inputs": 0
+  },
+  {
+    "app": "brewlog",
+    "width": 320,
+    "path": "/beans/new",
+    "errors": [],
+    "inputs": 9
+  },
+  {
+    "app": "brewlog",
+    "width": 320,
+    "path": "/stores",
+    "errors": [],
+    "inputs": 0
+  },
+  {
+    "app": "brewlog",
+    "width": 320,
+    "path": "/settings",
+    "errors": [],
+    "inputs": 0
+  },
+  {
+    "app": "brewlog",
+    "width": 320,
+    "path": "/stores/fixture-store",
+    "errors": [],
+    "inputs": 0
+  },
+  {
+    "app": "brewlog",
+    "width": 320,
+    "path": "notification",
+    "closed": true,
+    "errors": []
+  },
+  {
+    "app": "brewlog",
+    "width": 390,
+    "path": "/",
+    "errors": [],
+    "inputs": 0
+  },
+  {
+    "app": "brewlog",
+    "width": 390,
+    "path": "/beans/new",
+    "errors": [],
+    "inputs": 9
+  },
+  {
+    "app": "brewlog",
+    "width": 390,
+    "path": "/stores",
+    "errors": [],
+    "inputs": 0
+  },
+  {
+    "app": "brewlog",
+    "width": 390,
+    "path": "/settings",
+    "errors": [],
+    "inputs": 0
+  },
+  {
+    "app": "brewlog",
+    "width": 390,
+    "path": "/stores/fixture-store",
+    "errors": [],
+    "inputs": 0
+  },
+  {
+    "app": "brewlog",
+    "width": 390,
+    "path": "notification",
+    "closed": true,
+    "errors": []
+  },
+  {
+    "app": "cafelog",
+    "width": 320,
+    "path": "/",
+    "errors": [],
+    "inputs": 0
+  },
+  {
+    "app": "cafelog",
+    "width": 320,
+    "path": "/logs/new",
+    "errors": [],
+    "inputs": 16
+  },
+  {
+    "app": "cafelog",
+    "width": 320,
+    "path": "/stores",
+    "errors": [],
+    "inputs": 0
+  },
+  {
+    "app": "cafelog",
+    "width": 320,
+    "path": "/settings",
+    "errors": [],
+    "inputs": 0
+  },
+  {
+    "app": "cafelog",
+    "width": 320,
+    "path": "/stores/fixture-store",
+    "errors": [],
+    "inputs": 0
+  },
+  {
+    "app": "cafelog",
+    "width": 320,
+    "path": "notification",
+    "closed": true,
+    "errors": []
+  },
+  {
+    "app": "cafelog",
+    "width": 390,
+    "path": "/",
+    "errors": [],
+    "inputs": 0
+  },
+  {
+    "app": "cafelog",
+    "width": 390,
+    "path": "/logs/new",
+    "errors": [],
+    "inputs": 16
+  },
+  {
+    "app": "cafelog",
+    "width": 390,
+    "path": "/stores",
+    "errors": [],
+    "inputs": 0
+  },
+  {
+    "app": "cafelog",
+    "width": 390,
+    "path": "/settings",
+    "errors": [],
+    "inputs": 0
+  },
+  {
+    "app": "cafelog",
+    "width": 390,
+    "path": "/stores/fixture-store",
+    "errors": [],
+    "inputs": 0
+  },
+  {
+    "app": "cafelog",
+    "width": 390,
+    "path": "notification",
+    "closed": true,
+    "errors": []
+  }
+]

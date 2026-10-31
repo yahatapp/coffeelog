@@ -1,2 +1,12 @@
-declare const styles: { readonly root: string; readonly primary: string; readonly secondary: string; readonly outline: string; readonly ghost: string; readonly small: string; readonly medium: string; readonly large: string; readonly icon: string; };
+declare const styles: {
+  readonly ghost: string;
+  readonly icon: string;
+  readonly large: string;
+  readonly medium: string;
+  readonly outline: string;
+  readonly primary: string;
+  readonly root: string;
+  readonly secondary: string;
+  readonly small: string;
+};
 export default styles;

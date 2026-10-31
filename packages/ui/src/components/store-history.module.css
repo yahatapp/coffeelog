@@ -1,0 +1,235 @@
+@layer components {
+  .stack,
+  .sectionStack,
+  .list,
+  .links {
+    display: flex;
+    flex-direction: column;
+    gap: var(--cl-space-page-inline);
+  }
+  .sectionStack {
+    gap: var(--cl-space-section-gap);
+  }
+  .links {
+    gap: var(--cl-space-field-gap);
+  }
+  .toolbar,
+  .modalHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--cl-space-field-gap);
+  }
+  .modalHeader {
+    align-items: flex-start;
+  }
+  .sortGroup {
+    display: flex;
+    padding: var(--cl-space-tight);
+    border-radius: var(--cl-radius-action);
+    background: var(--cl-color-surface-tonal);
+  }
+  .sortOption {
+    min-height: var(--cl-size-target-min);
+    padding-inline: var(--cl-space-field-gap);
+    border-radius: var(--cl-radius-action);
+    color: var(--cl-color-text-muted);
+    font-size: var(--cl-font-size-helper);
+    font-weight: var(--cl-font-weight-medium);
+    cursor: pointer;
+  }
+  .sortOption[aria-pressed="true"] {
+    background: var(--cl-color-surface);
+    color: var(--cl-color-action-primary);
+    box-shadow: var(--cl-shadow-card);
+  }
+  .iconButton {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: var(--cl-size-target-min);
+    height: var(--cl-size-target-min);
+    border-radius: var(--cl-radius-action);
+    color: var(--cl-color-action-primary);
+    cursor: pointer;
+  }
+  .largeIcon {
+    font-size: var(--cl-font-size-heading);
+  }
+  .label {
+    display: block;
+    font-size: var(--cl-font-size-label);
+    font-weight: var(--cl-font-weight-medium);
+    color: var(--cl-color-text);
+  }
+  .visuallyHidden {
+    position: absolute;
+    width: var(--cl-border-width);
+    height: var(--cl-border-width);
+    clip-path: inset(50%);
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  .storeButton,
+  .recordButton,
+  .record,
+  .panel {
+    display: block;
+    width: 100%;
+    border: var(--cl-border-width) solid var(--cl-color-border-decorative);
+    border-radius: var(--cl-radius-card);
+    padding: var(--cl-space-page-inline);
+    text-align: start;
+    background: var(--cl-color-surface);
+    color: var(--cl-color-text);
+  }
+  .storeButton,
+  .recordButton {
+    min-height: var(--cl-size-target-min);
+    cursor: pointer;
+  }
+  .storeButton:hover,
+  .recordButton:hover,
+  .iconButton:hover {
+    background: var(--cl-color-surface-tonal);
+  }
+  .storeButton:focus-visible,
+  .recordButton:focus-visible,
+  .sortOption:focus-visible,
+  .iconButton:focus-visible,
+  .brewAction:focus-visible,
+  .link:focus-visible {
+    outline: var(--cl-focus-width) solid var(--cl-color-focus);
+    outline-offset: var(--cl-focus-offset);
+  }
+  .storeName,
+  .rating {
+    overflow-wrap: anywhere;
+    font-weight: var(--cl-font-weight-strong);
+    color: var(--cl-color-action-primary);
+  }
+  .storeMeta,
+  .helper,
+  .footnote {
+    display: block;
+    font-size: var(--cl-font-size-helper);
+    color: var(--cl-color-text-muted);
+  }
+  .storeMeta {
+    margin-top: var(--cl-space-tight);
+  }
+  .icon {
+    width: var(--cl-font-size-heading);
+    height: var(--cl-font-size-heading);
+  }
+  .backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: var(--cl-layer-overlay);
+    background: var(--cl-color-overlay);
+  }
+  .overlay {
+    position: fixed;
+    inset: 0;
+    z-index: var(--cl-layer-overlay);
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding: max(var(--cl-space-page-inline), env(safe-area-inset-top)) var(--cl-space-page-inline)
+      max(var(--cl-space-page-inline), env(safe-area-inset-bottom));
+  }
+  .modal {
+    width: 100%;
+    max-width: var(--cl-size-content-max);
+    max-height: var(--cl-size-dialog-max);
+    overflow-y: auto;
+    padding: var(--cl-space-section-gap);
+    border-radius: var(--cl-radius-card);
+    background: var(--cl-color-surface);
+    color: var(--cl-color-text);
+    box-shadow: var(--cl-shadow-card);
+  }
+  .modalTitle,
+  .heading {
+    overflow-wrap: anywhere;
+    font-size: var(--cl-font-size-heading);
+    font-weight: var(--cl-font-weight-strong);
+    color: var(--cl-color-action-primary);
+  }
+  .details {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: var(--cl-space-field-gap) var(--cl-space-page-inline);
+    margin-top: var(--cl-space-page-inline);
+    font-size: var(--cl-font-size-label);
+  }
+  .detailRow {
+    display: contents;
+  }
+  .muted {
+    color: var(--cl-color-text-muted);
+  }
+  .detailValue {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    color: var(--cl-color-text);
+    margin: 0;
+  }
+  .open {
+    margin-top: var(--cl-space-section-gap);
+    width: 100%;
+  }
+  .description,
+  .summary {
+    font-size: var(--cl-font-size-label);
+    color: var(--cl-color-text-muted);
+  }
+  .description {
+    margin-top: var(--cl-space-field-gap);
+  }
+  .link {
+    display: inline-block;
+    min-height: var(--cl-size-target-min);
+    overflow-wrap: anywhere;
+    padding-block: var(--cl-space-field-gap);
+    font-size: var(--cl-font-size-label);
+    color: var(--cl-color-action-primary);
+    text-decoration: underline;
+  }
+  .recordButton,
+  .record {
+    display: flex;
+    flex-direction: column;
+    gap: var(--cl-space-field-gap);
+  }
+  .title,
+  .recordTitle {
+    overflow-wrap: anywhere;
+    font-weight: var(--cl-font-weight-medium);
+    color: var(--cl-color-text);
+  }
+  .divided {
+    display: flex;
+    flex-direction: column;
+  }
+  .brewAction,
+  .brewSummary {
+    display: flex;
+    min-height: var(--cl-size-target-min);
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--cl-space-field-gap);
+    padding-block: var(--cl-space-field-gap);
+    border-bottom: var(--cl-border-width) solid var(--cl-color-border-decorative);
+    text-align: start;
+  }
+  .brewAction {
+    cursor: pointer;
+  }
+  .footnote {
+    text-align: end;
+  }
+  @media (min-width: 40rem) { .overlay { align-items: center; } }
+}

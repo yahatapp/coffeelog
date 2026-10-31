@@ -6,10 +6,6 @@ export const Textarea = React.forwardRef<
   HTMLTextAreaElement,
   React.TextareaHTMLAttributes<HTMLTextAreaElement>
 >(({ className, ...props }, ref) => (
-  <textarea
-    ref={ref}
-    className={cn(styles.root, className)}
-    {...props}
-  />
+  <textarea ref={ref} className={cn(styles.root, className)} {...props} />
 ));
 Textarea.displayName = "Textarea";

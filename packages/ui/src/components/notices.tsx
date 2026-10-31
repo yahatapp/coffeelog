@@ -1,11 +1,12 @@
+import css from "./notices.module.css";
 import type { ReactNode } from "react";
 import { Toast } from "@base-ui/react/toast";
 import { noticeManager, type NoticeVariant } from "../lib/notices";
 
 const styles = {
-  success: "border-emerald-200 text-emerald-800",
-  warning: "border-amber-200 text-amber-800",
-  error: "border-red-200 text-red-700",
+  success: css.success,
+  warning: css.warning,
+  error: css.error,
 } satisfies Record<NoticeVariant, string>;
 
 const NoticeIcon = ({ variant }: { variant: NoticeVariant }) => (
@@ -17,7 +18,7 @@ const NoticeIcon = ({ variant }: { variant: NoticeVariant }) => (
     strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
-    className="mt-0.5 size-5 shrink-0"
+    className={css.icon}
   >
     {variant === "success" ? (
       <>
@@ -42,10 +43,7 @@ const NoticeViewport = () => {
   const { toasts } = Toast.useToastManager();
   return (
     <Toast.Portal>
-      <Toast.Viewport
-        aria-label="操作結果の通知"
-        className="pointer-events-none fixed inset-x-0 top-[max(1rem,env(safe-area-inset-top))] z-[100] mx-auto flex max-h-[75dvh] max-w-md flex-col gap-3 overflow-y-auto px-4 pb-4 outline-none"
-      >
+      <Toast.Viewport aria-label="操作結果の通知" className={css.viewport}>
         {toasts.map((toast) => {
           const variant =
             toast.type === "warning" || toast.type === "error" ? toast.type : "success";
@@ -54,15 +52,12 @@ const NoticeViewport = () => {
               key={toast.id}
               toast={toast}
               swipeDirection={["up", "right"]}
-              className={`pointer-events-auto w-full shrink-0 rounded-2xl border bg-white/95 p-4 shadow-xl backdrop-blur-xl outline-none focus-visible:ring-2 focus-visible:ring-current data-[ending-style]:hidden ${styles[variant]}`}
+              className={`${css.toast} ${styles[variant]}`}
             >
-              <Toast.Content className="flex items-start gap-3">
+              <Toast.Content className={css.content}>
                 <NoticeIcon variant={variant} />
-                <Toast.Title className="min-w-0 flex-1 break-words text-sm font-semibold leading-relaxed" />
-                <Toast.Close
-                  aria-label="通知を閉じる"
-                  className="-mr-2 -mt-2 flex size-11 shrink-0 items-center justify-center rounded-full hover:bg-black/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-current"
-                >
+                <Toast.Title className={css.title} />
+                <Toast.Close aria-label="通知を閉じる" className={css.close}>
                   <svg
                     aria-hidden="true"
                     viewBox="0 0 24 24"
@@ -70,7 +65,7 @@ const NoticeViewport = () => {
                     stroke="currentColor"
                     strokeWidth="2"
                     strokeLinecap="round"
-                    className="size-[18px]"
+                    className={css.closeIcon}
                   >
                     <path d="m6 6 12 12M6 18 18 6" />
                   </svg>

@@ -1,6 +1,6 @@
+@import "@yahatapp/ui/foundation.css";
 @import "tailwindcss";
 @import "@yahatapp/ui/styles.css";
-@import "@yahatapp/ui/foundation.css";
 @import "@yahatapp/ui/themes/cafelog.css";
 @source "../../../packages/ui/src";
 @plugin "tailwindcss-animate";

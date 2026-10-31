@@ -1,0 +1,76 @@
+@layer components {
+  .root {
+    display: flex;
+    flex-direction: column;
+    gap: var(--cl-space-field-gap);
+  }
+  .filters {
+    display: flex;
+    gap: var(--cl-space-tight);
+    padding: var(--cl-space-tight);
+    border-radius: var(--cl-radius-control);
+    background: var(--cl-color-surface-tonal);
+  }
+  .option {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+    gap: var(--cl-space-tight);
+    min-height: var(--cl-size-target-min);
+    border-radius: var(--cl-radius-control);
+    padding-inline: var(--cl-space-field-gap);
+    color: var(--cl-color-text-muted);
+    font-size: var(--cl-font-size-helper);
+    font-weight: var(--cl-font-weight-medium);
+    cursor: pointer;
+  }
+  .option[aria-pressed="true"] {
+    color: var(--cl-color-action-primary);
+    background: var(--cl-color-surface);
+    box-shadow: var(--cl-shadow-card);
+  }
+  .option[aria-pressed="true"][data-temperature="hot"] {
+    color: var(--cl-color-temperature-hot);
+    background: var(--cl-color-temperature-hot-surface);
+  }
+  .option[aria-pressed="true"][data-temperature="iced"] {
+    color: var(--cl-color-temperature-iced);
+    background: var(--cl-color-temperature-iced-surface);
+  }
+  .option:focus-visible {
+    outline: var(--cl-focus-width) solid var(--cl-color-focus);
+    outline-offset: var(--cl-focus-offset);
+  }
+  .marker {
+    width: var(--cl-space-tight);
+    height: var(--cl-space-tight);
+    border-radius: var(--cl-radius-action);
+    background: var(--cl-color-temperature-hot);
+  }
+  .marker[data-temperature="iced"] {
+    background: var(--cl-color-temperature-iced);
+  }
+  .count {
+    padding-inline: var(--cl-space-tight);
+  }
+  .sort {
+    display: flex;
+    align-items: center;
+    gap: var(--cl-space-field-gap);
+    border: var(--cl-border-width) solid var(--cl-color-border-decorative);
+    border-radius: var(--cl-radius-control);
+    padding: var(--cl-space-field-gap);
+    font-size: var(--cl-font-size-helper);
+    color: var(--cl-color-text);
+  }
+  .sortOptions {
+    display: grid;
+    min-width: 0;
+    flex: 1;
+    gap: var(--cl-space-tight);
+    padding: var(--cl-space-tight);
+    border-radius: var(--cl-radius-control);
+    background: var(--cl-color-surface-tonal);
+  }
+}

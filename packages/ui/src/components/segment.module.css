@@ -1,0 +1,45 @@
+@layer components {
+  .root {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(0, 1fr);
+    gap: var(--cl-space-tight);
+    border-radius: var(--cl-radius-card);
+    padding: var(--cl-space-tight);
+    background: var(--cl-color-surface-tonal);
+  }
+  .option {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: var(--cl-size-target-min);
+    border-radius: var(--cl-radius-control);
+    padding: var(--cl-space-field-gap);
+    color: var(--cl-color-text-muted);
+    font-size: var(--cl-font-size-label);
+    font-weight: var(--cl-font-weight-medium);
+    cursor: pointer;
+  }
+  .option[data-selected] {
+    color: var(--cl-color-action-primary);
+    background: var(--cl-color-surface);
+    box-shadow: var(--cl-shadow-card);
+  }
+  .option:has(:focus-visible) {
+    outline: var(--cl-focus-width) solid var(--cl-color-focus);
+    outline-offset: var(--cl-focus-offset);
+  }
+  .option[data-disabled] {
+    cursor: not-allowed;
+    opacity: var(--cl-opacity-disabled);
+  }
+  .radio {
+    position: absolute;
+    width: var(--cl-border-width);
+    height: var(--cl-border-width);
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}

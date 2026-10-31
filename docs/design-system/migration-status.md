@@ -72,3 +72,39 @@
 - トークン契約：43項目を両テーマで検証。欠落・参照切れ・循環・型の不一致を検出するテスト成功。
 - 現時点：T02とT04の一部を実装。Button・入力・選択・ラベルをCSS Modulesへ変更。Tailwind削除、Field、全画面移行、Stylelint、画面検証、CI接続は未完了。
 - 公開：未実施。
+
+## T01 完了確認
+
+- 基準コミット5054e9eの旧UIを隔離起動し、[対象一覧](evidence/inventory.json)に82ファイルと担当タスク、再公開のみの区別、className・styleの使用数を記録。全ルートは実装計画末尾の一覧と照合した。
+- [画面記録](evidence/before/results.json)：両アプリ×320/390px×ホーム・フォーム・店舗・設定・店舗モーダル・通知の24ケース。ブラウザー例外なし。フォームへの日本語入力と通知のキーボードで閉じる操作を確認。PNGは同ディレクトリに保存した。
+- 旧通知の閉じるボタンはaria-hiddenを持つため、role検索では検出できなかった。DOMのaria-labelで指定してフォーカス・Enter操作を確認した。T05でアクセシビリティを再評価する。
+- 起動時の入場アニメーション完了後を記録した。画面は実装前のコードで、実機や本番データによる記録ではない。
+- 変更前の指定環境でcheck・test・buildが成功していることを再確認。意図した配色・操作領域の変更は本文の記録を参照。
+
+## T02 完了確認
+
+- トークン契約と両テーマの参照検査、文字8組のコントラスト4.5:1以上と入力境界3:1以上をテストで確認。
+- [現在の描画記録](evidence/foundation/results.json)24ケースでhtmlとbodyの用途別primary値を確認。通知も表示・キーボード操作が成功した。テーマは初期HTMLに付与し、bodyへ継承する。
+- 両アプリのproduction CSSに共通寸法と各テーマの定義が含まれることを確認。check・test・buildは指定環境で成功。
+- exportsとsideEffects、部品のCSS Modules型宣言を確認した。全画面の移行完了を示す確認ではない。
+
+## T03 完了確認
+
+- `pnpm check:design`で全CSSのStylelint、トークン、CSS Modulesのlayer・値・クラス参照・型宣言一致が成功。`pnpm test:design`で不正CSS、未知プロパティ、欠落クラス、不正トークン等が検出されることを確認。
+- 開発専用の部品一覧を両テーマ・320/390pxで起動し、axe検査を実行した。記録はevidence/verification/のcatalog画像とaxe.json。各テーマ3要素の旧部品のコントラスト指摘は、T04/T05で解消する。検証基盤の完了を、部品の品質検証完了とは区別する。
+- 認証待機・認証失敗・API待機・取得失敗・更新失敗をfixturesで指定できる。利用方法はREADMEを参照。
+
+## T04 完了確認
+
+- Button・入力・選択・Label・Card・Segment・FieldをCSS Modules化。クラス結合をclsxへ変更。
+- 型検査、CSS規約・クラス参照検査、検証基盤の7テストが成功。基本部品を対象にしたaxe検査は両テーマ・320/390pxで指摘なし。
+- 同じ4条件で、loadingボタンの無効化、loadingリンクの遷移抑止、Fieldの関連付け、Segmentのマウス・キーボード選択、Button各サイズ44px以上、hover色、focusの輪郭を確認。evidence/t04/に画面と全体のaxe結果を保存した。
+- 検査中にリセットlayerによる背景の上書きを発見し、共通CSSを先に読む順序へ修正して再検査済み。部品以外の旧状態表示の指摘はT05の対象として残る。
+
+## T05 完了確認
+
+- 共有UIの通知・Loading/ErrorState/EmptyState・PageLayout・LogListControls・StoreList/StoreHistoryをCSS Modules化。店舗モーダルをBase UI Dialogへ移し、背景の操作制限・スクロール固定・フォーカス管理を共通化した。
+- 両テーマ×320/390pxで店舗の並び替え・検索・検索なしへの復帰、絞り込み・ソート、モーダル内のTab移動・Escape終了・フォーカス復帰、通知のフォーカス時の操作名とEnter終了を確認。通知のaria-hiddenはBase UIの未展開・未フォーカス時の仕様で、フォーカス時に操作名が公開されることを確認した。
+- 部品一覧全体、モーダル、通知のaxe検査は指摘なし。reduced-motionでLoadingのアニメーションが停止し、ラベルが残ることを確認。evidence/t05/に記録。実機の読み上げ監査はT13で別途行う。
+- 目視で発見した実アプリのlayer順序の問題を修正。両main.tsxでCSSを最初に読み、モーダルの実際の余白が16px以上あることも検査した。
+- CSS規約・型検査・検証テスト・既存テスト・両アプリのビルドが成功。

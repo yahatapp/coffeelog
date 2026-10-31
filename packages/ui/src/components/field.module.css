@@ -1,0 +1,15 @@
+@layer components {
+  .root {
+    display: flex;
+    flex-direction: column;
+    gap: var(--cl-space-field-gap);
+  }
+  .description {
+    font-size: var(--cl-font-size-helper);
+    color: var(--cl-color-text-muted);
+  }
+  .error {
+    font-size: var(--cl-font-size-helper);
+    color: var(--cl-color-error);
+  }
+}

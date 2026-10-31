@@ -8,12 +8,36 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
 }
-body { min-width: 320px; min-height: 100dvh; }
-#root { width: 100%; }
-:focus-visible { outline: 2px solid var(--cl-color-focus); outline-offset: 2px; }
-input[type="date"] { appearance: none; overflow: hidden; }
-input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { appearance: none; margin: 0; }
-input[type="number"] { -moz-appearance: textfield; }
+body {
+  min-width: 320px;
+  min-height: 100dvh;
+}
+#root {
+  width: 100%;
+}
+:focus-visible {
+  outline: 2px solid var(--cl-color-focus);
+  outline-offset: 2px;
+}
+input[type="date"] {
+  appearance: none;
+  overflow: hidden;
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

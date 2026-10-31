@@ -13,10 +13,16 @@
     "db:migrate": "node scripts/db-migrate.mjs all",
     "hooks:install": "lefthook install",
     "deploy:brewlog": "pnpm --filter brewlog deploy",
-    "deploy:cafelog": "pnpm --filter cafelog deploy"
+    "deploy:cafelog": "pnpm --filter cafelog deploy",
+    "check:design": "stylelint \"packages/ui/src/**/*.css\" \"apps/*/src/**/*.css\" && node scripts/check-design-tokens.mjs && node scripts/check-css-modules.mjs",
+    "test:design": "node --test scripts/check-design-tokens.test.mjs scripts/check-css-modules.test.mjs scripts/check-stylelint.test.mjs",
+    "test:ui": "UI_SOURCE=. UI_PHASE=verification UI_CATALOG=1 node scripts/ui/baseline.mjs"
   },
   "devDependencies": {
+    "@axe-core/playwright": "4.14.0",
     "lefthook": "catalog:",
+    "postcss": "catalog:",
+    "stylelint": "17.16.0",
     "turbo": "^2.11.10",
     "vite-plus": "1.3.0"
   },

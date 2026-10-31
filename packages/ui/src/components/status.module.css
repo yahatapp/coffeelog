@@ -1,0 +1,63 @@
+@layer components {
+  .loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--cl-space-field-gap);
+    padding: var(--cl-space-section-gap);
+    color: var(--cl-color-text-muted);
+  }
+  .spinner {
+    width: var(--cl-size-target-min);
+    height: var(--cl-size-target-min);
+    border: var(--cl-focus-width) solid var(--cl-color-border-decorative);
+    border-top-color: var(--cl-color-action-primary);
+    border-radius: var(--cl-radius-action);
+    animation: spin var(--cl-motion-loading) linear infinite;
+  }
+  .text {
+    font-size: var(--cl-font-size-label);
+  }
+  .title {
+    font-size: var(--cl-font-size-label);
+    font-weight: var(--cl-font-weight-medium);
+  }
+  .error {
+    border: var(--cl-border-width) solid var(--cl-color-error);
+    border-radius: var(--cl-radius-card);
+    background: var(--cl-color-error-surface);
+    color: var(--cl-color-error);
+    padding: var(--cl-space-section-gap);
+    text-align: center;
+  }
+  .retry {
+    margin-top: var(--cl-space-page-inline);
+  }
+  .empty {
+    border: var(--cl-border-width) dashed var(--cl-color-border-decorative);
+    border-radius: var(--cl-radius-card);
+    background: var(--cl-color-surface);
+    color: var(--cl-color-text);
+    padding: var(--cl-space-section-gap);
+    text-align: center;
+  }
+  .description {
+    margin-top: var(--cl-space-field-gap);
+    font-size: var(--cl-font-size-label);
+    color: var(--cl-color-text-muted);
+  }
+  .action {
+    margin-top: var(--cl-space-section-gap);
+  }
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .spinner {
+      animation: none;
+    }
+  }
+}

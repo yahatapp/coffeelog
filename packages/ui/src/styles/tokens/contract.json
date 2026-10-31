@@ -170,5 +170,77 @@
   "--cl-color-overlay": {
     "type": "color",
     "required": true
+  },
+  "--cl-size-textarea-min": {
+    "type": "length",
+    "required": true
+  },
+  "--cl-focus-width": {
+    "type": "length",
+    "required": true
+  },
+  "--cl-focus-offset": {
+    "type": "length",
+    "required": true
+  },
+  "--cl-font-weight-medium": {
+    "type": "number",
+    "required": true
+  },
+  "--cl-opacity-disabled": {
+    "type": "number",
+    "required": true
+  },
+  "--cl-font-size-heading": {
+    "type": "length",
+    "required": true
+  },
+  "--cl-font-weight-strong": {
+    "type": "number",
+    "required": true
+  },
+  "--cl-space-tight": {
+    "type": "length",
+    "required": true
+  },
+  "--cl-shadow-card": {
+    "type": "shadow",
+    "required": true
+  },
+  "--cl-color-action-primary-hover": {
+    "type": "color",
+    "required": true
+  },
+  "--cl-color-action-secondary-hover": {
+    "type": "color",
+    "required": true
+  },
+  "--cl-color-temperature-hot": {
+    "type": "color",
+    "required": true
+  },
+  "--cl-color-temperature-hot-surface": {
+    "type": "color",
+    "required": true
+  },
+  "--cl-color-temperature-iced": {
+    "type": "color",
+    "required": true
+  },
+  "--cl-color-temperature-iced-surface": {
+    "type": "color",
+    "required": true
+  },
+  "--cl-motion-loading": {
+    "type": "duration",
+    "required": true
+  },
+  "--cl-size-notice-max": {
+    "type": "length",
+    "required": true
+  },
+  "--cl-size-dialog-max": {
+    "type": "length",
+    "required": true
   }
 }

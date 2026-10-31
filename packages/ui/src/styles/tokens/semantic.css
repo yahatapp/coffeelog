@@ -20,4 +20,20 @@
   --cl-layer-overlay: 50;
   --cl-layer-notice: 100;
   --cl-border-width: 1px;
+  --cl-size-textarea-min: 6rem;
+  --cl-focus-width: 2px;
+  --cl-focus-offset: 2px;
+  --cl-font-weight-medium: 600;
+  --cl-opacity-disabled: 0.6;
+  --cl-font-size-heading: 1.125rem;
+  --cl-font-weight-strong: 700;
+  --cl-space-tight: var(--cl-ref-space-1);
+  --cl-shadow-card: 0 1px 3px rgb(0 0 0 / 10%);
+  --cl-color-temperature-hot: #9a3412;
+  --cl-color-temperature-hot-surface: #fff7ed;
+  --cl-color-temperature-iced: #1e40af;
+  --cl-color-temperature-iced-surface: #eff6ff;
+  --cl-motion-loading: 1s;
+  --cl-size-notice-max: 75dvh;
+  --cl-size-dialog-max: 85dvh;
 }
