@@ -4,11 +4,14 @@
   "private": true,
   "type": "module",
   "sideEffects": [
-    "./src/styles/tokens.css"
+    "**/*.css"
   ],
   "exports": {
     ".": "./src/index.ts",
-    "./styles.css": "./src/styles/tokens.css"
+    "./styles.css": "./src/styles/tokens.css",
+    "./foundation.css": "./src/styles/index.css",
+    "./themes/brewlog.css": "./src/styles/themes/brewlog.css",
+    "./themes/cafelog.css": "./src/styles/themes/cafelog.css"
   },
   "scripts": {
     "check": "tsc --noEmit",

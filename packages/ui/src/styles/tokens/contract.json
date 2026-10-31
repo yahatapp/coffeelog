@@ -1,0 +1,174 @@
+{
+  "--cl-font-body": {
+    "type": "font",
+    "required": true
+  },
+  "--cl-font-size-body": {
+    "type": "length",
+    "required": true
+  },
+  "--cl-font-size-label": {
+    "type": "length",
+    "required": true
+  },
+  "--cl-font-size-helper": {
+    "type": "length",
+    "required": true
+  },
+  "--cl-line-height-body": {
+    "type": "number",
+    "required": true
+  },
+  "--cl-space-page-inline": {
+    "type": "length",
+    "required": true
+  },
+  "--cl-space-field-gap": {
+    "type": "length",
+    "required": true
+  },
+  "--cl-space-section-gap": {
+    "type": "length",
+    "required": true
+  },
+  "--cl-size-content-max": {
+    "type": "length",
+    "required": true
+  },
+  "--cl-size-target-min": {
+    "type": "length",
+    "required": true
+  },
+  "--cl-size-input": {
+    "type": "length",
+    "required": true
+  },
+  "--cl-size-nav": {
+    "type": "length",
+    "required": true
+  },
+  "--cl-radius-control": {
+    "type": "length",
+    "required": true
+  },
+  "--cl-radius-card": {
+    "type": "length",
+    "required": true
+  },
+  "--cl-radius-action": {
+    "type": "length",
+    "required": true
+  },
+  "--cl-motion-fast": {
+    "type": "duration",
+    "required": true
+  },
+  "--cl-motion-normal": {
+    "type": "duration",
+    "required": true
+  },
+  "--cl-layer-nav": {
+    "type": "number",
+    "required": true
+  },
+  "--cl-layer-overlay": {
+    "type": "number",
+    "required": true
+  },
+  "--cl-layer-notice": {
+    "type": "number",
+    "required": true
+  },
+  "--cl-border-width": {
+    "type": "length",
+    "required": true
+  },
+  "--cl-color-text": {
+    "type": "color",
+    "required": true
+  },
+  "--cl-color-text-muted": {
+    "type": "color",
+    "required": true
+  },
+  "--cl-color-background": {
+    "type": "color",
+    "required": true
+  },
+  "--cl-color-surface": {
+    "type": "color",
+    "required": true
+  },
+  "--cl-color-surface-tonal": {
+    "type": "color",
+    "required": true
+  },
+  "--cl-color-action-primary": {
+    "type": "color",
+    "required": true
+  },
+  "--cl-color-on-action-primary": {
+    "type": "color",
+    "required": true
+  },
+  "--cl-color-action-secondary": {
+    "type": "color",
+    "required": true
+  },
+  "--cl-color-on-action-secondary": {
+    "type": "color",
+    "required": true
+  },
+  "--cl-color-border-decorative": {
+    "type": "color",
+    "required": true
+  },
+  "--cl-color-border-input": {
+    "type": "color",
+    "required": true
+  },
+  "--cl-color-focus": {
+    "type": "color",
+    "required": true
+  },
+  "--cl-color-success": {
+    "type": "color",
+    "required": true
+  },
+  "--cl-color-on-success": {
+    "type": "color",
+    "required": true
+  },
+  "--cl-color-success-surface": {
+    "type": "color",
+    "required": true
+  },
+  "--cl-color-warning": {
+    "type": "color",
+    "required": true
+  },
+  "--cl-color-on-warning": {
+    "type": "color",
+    "required": true
+  },
+  "--cl-color-warning-surface": {
+    "type": "color",
+    "required": true
+  },
+  "--cl-color-error": {
+    "type": "color",
+    "required": true
+  },
+  "--cl-color-on-error": {
+    "type": "color",
+    "required": true
+  },
+  "--cl-color-error-surface": {
+    "type": "color",
+    "required": true
+  },
+  "--cl-color-overlay": {
+    "type": "color",
+    "required": true
+  }
+}

@@ -1,0 +1,23 @@
+:root {
+  --cl-font-body: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  --cl-font-size-body: 1rem;
+  --cl-font-size-label: 0.875rem;
+  --cl-font-size-helper: 0.75rem;
+  --cl-line-height-body: 1.5;
+  --cl-space-page-inline: var(--cl-ref-space-4);
+  --cl-space-field-gap: var(--cl-ref-space-2);
+  --cl-space-section-gap: var(--cl-ref-space-6);
+  --cl-size-content-max: 28rem;
+  --cl-size-target-min: 2.75rem;
+  --cl-size-input: 2.75rem;
+  --cl-size-nav: 4.5rem;
+  --cl-radius-control: var(--cl-ref-radius-sm);
+  --cl-radius-card: var(--cl-ref-radius-md);
+  --cl-radius-action: var(--cl-ref-radius-pill);
+  --cl-motion-fast: var(--cl-ref-duration-fast);
+  --cl-motion-normal: var(--cl-ref-duration-normal);
+  --cl-layer-nav: 20;
+  --cl-layer-overlay: 50;
+  --cl-layer-notice: 100;
+  --cl-border-width: 1px;
+}

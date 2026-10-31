@@ -1,0 +1,5 @@
+@layer components {
+.root { width: var(--cl-size-target-min); height: var(--cl-size-target-min); accent-color: var(--cl-color-action-primary); cursor: pointer; }
+.root:focus-visible { outline: 2px solid var(--cl-color-focus); outline-offset: 2px; }
+.root:disabled { cursor: not-allowed; opacity: 0.6; }
+}
