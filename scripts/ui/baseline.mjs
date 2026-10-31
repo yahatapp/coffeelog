@@ -1,3 +1,4 @@
+import {verifyBrewPages} from "./brew-pages.mjs";
 import { verifyBrewForms } from "./brew-forms.mjs";
 import { createBrewFixtures, brewIds } from "./brew-fixtures.mjs";
 import { createRequire } from "node:module";
@@ -17,6 +18,7 @@ const browser = await chromium.launch({ headless: true });
 const results = [];
 try {
   for (const [index, app] of ["brewlog", "cafelog"].entries()) {
+    if(process.env.UI_APP && process.env.UI_APP!==app)continue;
     const root = resolve(baseline, "apps", app);
     const server = await createServer({
       configFile: false,
@@ -101,7 +103,7 @@ try {
     });
     await server.listen();
     try {
-      for (const width of [320, 390]) {
+      for (const width of (process.env.UI_WIDTH ? [Number(process.env.UI_WIDTH)] : [320, 390])) {
         const context = await browser.newContext({
           viewport: { width, height: 844 },
           reducedMotion: "reduce",
@@ -116,7 +118,7 @@ try {
         }
         page.setDefaultTimeout(10000);
         const errors = [];
-        const brewFixtures = createBrewFixtures();
+        let brewFixtures = createBrewFixtures();
         let saveMode = "success",
           saveCount = 0,
           releaseSave = null,
@@ -125,10 +127,19 @@ try {
           errors.push(error.message);
           console.log("browser error", error.message);
         });
-        await page.route("https://**/*", (route) => route.abort());
+        await page.route("https://**/*", async route=>{
+          const url=new URL(route.request().url());
+          if(url.hostname==='flagcdn.com'||url.href==='https://example.com/avatar.svg')await route.fulfill({contentType:'image/svg+xml',body:'<svg xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 18"><path fill="#527a37" d="M0 0h24v6H0z"/><path fill="#e9d892" d="M0 6h24v6H0z"/><path fill="#994b38" d="M0 12h24v6H0z"/></svg>'});else await route.abort();
+        });
         await page.route("**/api/**", async (route) => {
           const path = new URL(route.request().url()).pathname;
           const scenario = process.env.UI_SCENARIO;
+          if(process.env.UI_BREW_PAGES==='1'&&app==='brewlog'&&route.request().method()==='GET'&&path!=='/api/auth/init'){
+            if(readMode==='loading')await new Promise(resolve=>setTimeout(resolve,2000));
+            if(readMode==='all-error'){await route.fulfill({status:500,contentType:'application/json',body:JSON.stringify({error:'fixture'})});return;}
+            if(readMode==='empty'&&['/api/beans','/api/logs','/api/stores','/api/drippers','/api/grinders'].includes(path)){await route.fulfill({contentType:'application/json',body:'[]'});return;}
+          }
+
           if (
             path === "/api/auth/init" &&
             new URL(page.url()).searchParams.get("uiAuth") === "expired"
@@ -233,6 +244,7 @@ try {
             body: JSON.stringify(data),
           });
         });
+        if(process.env.UI_FOCUSED !== "1") {
         for (const [name, path] of [
           ["home", "/"],
           ["form", app === "brewlog" ? "/beans/new" : "/logs/new"],
@@ -399,6 +411,8 @@ try {
           errors: [...errors],
         });
 
+        }
+
         if (process.env.UI_SHELL === "1") {
           for (const [label, value] of [
             ["許可する", "enabled"],
@@ -445,7 +459,7 @@ try {
             errors: [...errors],
           });
         }
-        if (process.env.UI_BREW_FORMS === "1" && app === "brewlog") {
+        if (process.env.UI_BREW_FORMS === "1" && process.env.UI_BREW_PAGES !== "1" && app === "brewlog") {
           await verifyBrewForms(page, {
             baseURL: `http://127.0.0.1:${5271 + index}`,
             output,
@@ -465,6 +479,11 @@ try {
             },
           });
           results.push({ app, width, path: "brew-forms", verified: true, errors: [...errors] });
+        }
+
+        if(process.env.UI_BREW_PAGES==='1'&&app==='brewlog'){
+          const routes=await verifyBrewPages(page,{baseURL:`http://127.0.0.1:${5271+index}`,output,width,ids:brewIds,reset:()=>{brewFixtures=createBrewFixtures();saveMode='success';readMode='success';return brewFixtures;},readMode:value=>{readMode=value;}});
+          results.push({app,width,path:'brew-pages',routes,errors:[...errors]});
         }
         if (process.env.UI_CATALOG === "1") {
           await page.goto(`http://127.0.0.1:${5271 + index}/__catalog`);

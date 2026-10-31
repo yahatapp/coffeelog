@@ -2,9 +2,11 @@ import styles from "./card.module.css";
 import * as React from "react";
 import { cn } from "../lib/cn";
 
-export const Card = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
-  ({ className, ...props }, ref) => (
-    <div ref={ref} className={cn(styles.root, className)} {...props} />
+type CardProps = React.HTMLAttributes<HTMLDivElement> & { selected?: boolean };
+
+export const Card = React.forwardRef<HTMLDivElement, CardProps>(
+  ({ className, selected = false, ...props }, ref) => (
+    <div ref={ref} className={cn(styles.root, selected && styles.selected, className)} {...props} />
   ),
 );
 Card.displayName = "Card";

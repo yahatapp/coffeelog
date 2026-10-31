@@ -1,0 +1,47 @@
+@layer components {
+  .root {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--cl-space-tight);
+    padding: var(--cl-space-tight) var(--cl-space-field-gap);
+    border: var(--cl-border-width) solid var(--cl-color-border-decorative);
+    border-radius: var(--cl-radius-action);
+    background: var(--cl-color-surface-tonal);
+    flex-shrink: 0;
+  }
+  .dot {
+    width: var(--cl-space-field-gap);
+    height: var(--cl-space-field-gap);
+    border-radius: var(--cl-radius-action);
+    background: var(--cl-color-text-muted);
+    flex-shrink: 0;
+  }
+  .dot[data-level="1"] {
+    background: var(--cl-color-roast-light);
+  }
+  .dot[data-level="2"] {
+    background: var(--cl-color-roast-medium-light);
+  }
+  .dot[data-level="3"] {
+    background: var(--cl-color-roast-medium);
+  }
+  .dot[data-level="4"] {
+    background: var(--cl-color-roast-medium-dark);
+  }
+  .dot[data-level="5"] {
+    background: var(--cl-color-roast-dark);
+  }
+  .label {
+    font-size: var(--cl-font-size-helper);
+    font-weight: var(--cl-font-weight-medium);
+    color: var(--cl-color-text);
+  }
+  .visuallyHidden {
+    position: absolute;
+    width: var(--cl-border-width);
+    height: var(--cl-border-width);
+    clip-path: inset(50%);
+    overflow: hidden;
+    white-space: nowrap;
+  }
+}

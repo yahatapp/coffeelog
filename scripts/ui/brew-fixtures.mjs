@@ -66,8 +66,7 @@ export function createBrewFixtures() {
     method: null,
     user: { displayName: "確認用ユーザー", avatarUrl: null },
   };
-  const beans = [bean],
-    logs = [log];
+  const beans = [bean], logs = [log], drippers = [dripper], grinders = [grinder];
   let next = 6;
   const id = () => `00000000-0000-4000-8000-${String(next++).padStart(12, "0")}`;
   return {
@@ -76,6 +75,7 @@ export function createBrewFixtures() {
     store,
     dripper,
     grinder,
+    beans, logs, drippers, grinders,
     respond(path, method = "GET", payload = {}) {
       if (path === "/api/beans") {
         if (method === "GET") return beans;
@@ -83,19 +83,37 @@ export function createBrewFixtures() {
         beans.unshift(created);
         return created;
       }
-      if (path.startsWith("/api/beans/"))
-        return method === "GET" ? bean : Object.assign(bean, payload);
+      if(path.startsWith('/api/beans/')){
+        const target=beans.find(x=>x.id===path.split('/').at(-1))??bean;
+        if(method==='DELETE'){beans.splice(beans.indexOf(target),1);return {success:true};}
+        return method==='GET'?target:Object.assign(target,payload);
+      }
       if (path === "/api/logs") {
         if (method === "GET") return logs;
         const created = { ...log, ...payload, id: id() };
         logs.unshift(created);
         return created;
       }
-      if (path.startsWith("/api/logs/"))
-        return method === "GET" ? log : Object.assign(log, payload);
-      if (path === "/api/drippers") return [dripper];
-      if (path === "/api/grinders") return [grinder];
+      if(path.startsWith('/api/logs/')){
+        const target=logs.find(x=>x.id===path.split('/').at(-1))??log;
+        if(method==='DELETE'){logs.splice(logs.indexOf(target),1);return {success:true};}
+        return method==='GET'?target:Object.assign(target,payload);
+      }
+      for(const [kind,items,seed] of [['drippers',drippers,dripper],['grinders',grinders,grinder]]){
+        if(path===`/api/${kind}`){
+          if(method==='GET')return items;
+          if(payload.isDefault)items.forEach(x=>{x.isDefault=false;});
+          const created={...seed,...payload,id:id()};items.push(created);return created;
+        }
+        if(path.startsWith(`/api/${kind}/`)){
+          const target=items.find(x=>x.id===path.split('/').at(-1));
+          if(method==='DELETE'){items.splice(items.indexOf(target),1);return {success:true};}
+          if(payload.isDefault)items.forEach(x=>{x.isDefault=false;});
+          return method==='GET'?target:Object.assign(target,payload);
+        }
+      }
       if (path === "/api/stores") return [store];
+      if(path===`/api/stores/${store.id}`)return {store,cafeRecords:[],brewRecords:[{...log,beanName:bean.name,beanVersion:bean.version,origin:bean.origin,region:bean.region,process:bean.processMethod}]};
       return undefined;
     },
   };

@@ -6,43 +6,43 @@
 
 | ファイル | 担当 | 確認結果 |
 | --- | --- | --- |
-| `packages/ui/src/components/button.tsx` | T04/T05 | 未実施 |
-| `packages/ui/src/components/card.tsx` | T04/T05 | 未実施 |
-| `packages/ui/src/components/checkbox.tsx` | T04/T05 | 未実施 |
-| `packages/ui/src/components/input.tsx` | T04/T05 | 未実施 |
-| `packages/ui/src/components/label.tsx` | T04/T05 | 未実施 |
-| `packages/ui/src/components/layout.tsx` | T04/T05 | 未実施 |
-| `packages/ui/src/components/log-list-controls.tsx` | T04/T05 | 未実施 |
-| `packages/ui/src/components/notices.tsx` | T04/T05 | 未実施 |
-| `packages/ui/src/components/segment.tsx` | T04/T05 | 未実施 |
-| `packages/ui/src/components/select.tsx` | T04/T05 | 未実施 |
-| `packages/ui/src/components/status.tsx` | T04/T05 | 未実施 |
-| `packages/ui/src/components/store-history.tsx` | T04/T05 | 未実施 |
-| `packages/ui/src/components/textarea.tsx` | T04/T05 | 未実施 |
-| `apps/brewlog/src/App.tsx` | T06 | 未実施 |
-| `apps/brewlog/src/components/BeanVersionHistory.tsx` | T07/T08 | 未実施 |
-| `apps/brewlog/src/components/forms/BeanFields.tsx` | T07/T08 | 未実施 |
-| `apps/brewlog/src/components/forms/BeanStoreFields.tsx` | T07/T08 | 未実施 |
-| `apps/brewlog/src/components/forms/BrewLogFields.tsx` | T07/T08 | 未実施 |
-| `apps/brewlog/src/components/ui/CoffeeBeansIcon.tsx` | T07/T08 | 未実施 |
-| `apps/brewlog/src/components/ui/OriginFlag.tsx` | T07/T08 | 未実施 |
-| `apps/brewlog/src/components/ui/RoastLevelIndicator.tsx` | T07/T08 | 未実施 |
-| `apps/brewlog/src/components/ui/slider.tsx` | T07/T08 | 未実施 |
-| `apps/brewlog/src/pages/Beans/AddBean.tsx` | T07/T08 | 未実施 |
-| `apps/brewlog/src/pages/Beans/BeanDetail.tsx` | T07/T08 | 未実施 |
-| `apps/brewlog/src/pages/Beans/BeansList.tsx` | T07/T08 | 未実施 |
-| `apps/brewlog/src/pages/Beans/EditBean.tsx` | T07/T08 | 未実施 |
-| `apps/brewlog/src/pages/Home.tsx` | T07/T08 | 未実施 |
-| `apps/brewlog/src/pages/Logs/AddLog.tsx` | T07/T08 | 未実施 |
-| `apps/brewlog/src/pages/Logs/EditLog.tsx` | T07/T08 | 未実施 |
-| `apps/brewlog/src/pages/Logs/LogDetail.tsx` | T07/T08 | 未実施 |
-| `apps/brewlog/src/pages/Logs/LogsList.tsx` | T07/T08 | 未実施 |
-| `apps/brewlog/src/pages/NotFound.tsx` | T07/T08 | 未実施 |
-| `apps/brewlog/src/pages/Settings/Drippers.tsx` | T07/T08 | 未実施 |
-| `apps/brewlog/src/pages/Settings/Grinders.tsx` | T07/T08 | 未実施 |
-| `apps/brewlog/src/pages/Settings.tsx` | T07/T08 | 未実施 |
-| `apps/brewlog/src/pages/Stores.tsx` | T07/T08 | 未実施 |
-| `apps/cafelog/src/App.tsx` | T06 | 未実施 |
+| `packages/ui/src/components/button.tsx` | T04/T05 | 完了（T04〜T06） |
+| `packages/ui/src/components/card.tsx` | T04/T05 | 完了（T04〜T06） |
+| `packages/ui/src/components/checkbox.tsx` | T04/T05 | 完了（T04〜T06） |
+| `packages/ui/src/components/input.tsx` | T04/T05 | 完了（T04〜T06） |
+| `packages/ui/src/components/label.tsx` | T04/T05 | 完了（T04〜T06） |
+| `packages/ui/src/components/layout.tsx` | T04/T05 | 完了（T04〜T06） |
+| `packages/ui/src/components/log-list-controls.tsx` | T04/T05 | 完了（T04〜T06） |
+| `packages/ui/src/components/notices.tsx` | T04/T05 | 完了（T04〜T06） |
+| `packages/ui/src/components/segment.tsx` | T04/T05 | 完了（T04〜T06） |
+| `packages/ui/src/components/select.tsx` | T04/T05 | 完了（T04〜T06） |
+| `packages/ui/src/components/status.tsx` | T04/T05 | 完了（T04〜T06） |
+| `packages/ui/src/components/store-history.tsx` | T04/T05 | 完了（T04〜T06） |
+| `packages/ui/src/components/textarea.tsx` | T04/T05 | 完了（T04〜T06） |
+| `apps/brewlog/src/App.tsx` | T06 | 完了（T04〜T06） |
+| `apps/brewlog/src/components/BeanVersionHistory.tsx` | T07/T08 | 完了（T08） |
+| `apps/brewlog/src/components/forms/BeanFields.tsx` | T07/T08 | 完了（T07） |
+| `apps/brewlog/src/components/forms/BeanStoreFields.tsx` | T07/T08 | 完了（T07） |
+| `apps/brewlog/src/components/forms/BrewLogFields.tsx` | T07/T08 | 完了（T07） |
+| `apps/brewlog/src/components/ui/CoffeeBeansIcon.tsx` | T07/T08 | 完了（T08） |
+| `apps/brewlog/src/components/ui/OriginFlag.tsx` | T07/T08 | 完了（T08） |
+| `apps/brewlog/src/components/ui/RoastLevelIndicator.tsx` | T07/T08 | 完了（T08） |
+| `apps/brewlog/src/components/ui/slider.tsx` | T07/T08 | 完了（T07） |
+| `apps/brewlog/src/pages/Beans/AddBean.tsx` | T07/T08 | 完了（T07） |
+| `apps/brewlog/src/pages/Beans/BeanDetail.tsx` | T07/T08 | 完了（T08） |
+| `apps/brewlog/src/pages/Beans/BeansList.tsx` | T07/T08 | 完了（T08） |
+| `apps/brewlog/src/pages/Beans/EditBean.tsx` | T07/T08 | 完了（T07） |
+| `apps/brewlog/src/pages/Home.tsx` | T07/T08 | 完了（T08） |
+| `apps/brewlog/src/pages/Logs/AddLog.tsx` | T07/T08 | 完了（T07） |
+| `apps/brewlog/src/pages/Logs/EditLog.tsx` | T07/T08 | 完了（T07） |
+| `apps/brewlog/src/pages/Logs/LogDetail.tsx` | T07/T08 | 完了（T08） |
+| `apps/brewlog/src/pages/Logs/LogsList.tsx` | T07/T08 | 完了（T08） |
+| `apps/brewlog/src/pages/NotFound.tsx` | T07/T08 | 完了（T08） |
+| `apps/brewlog/src/pages/Settings/Drippers.tsx` | T07/T08 | 完了（T08） |
+| `apps/brewlog/src/pages/Settings/Grinders.tsx` | T07/T08 | 完了（T08） |
+| `apps/brewlog/src/pages/Settings.tsx` | T07/T08 | 完了（T08） |
+| `apps/brewlog/src/pages/Stores.tsx` | T07/T08 | 完了（T08） |
+| `apps/cafelog/src/App.tsx` | T06 | 完了（T04〜T06） |
 | `apps/cafelog/src/components/CafeLogForm.tsx` | T09/T10 | 未実施 |
 | `apps/cafelog/src/components/CafeLogListCard.tsx` | T09/T10 | 未実施 |
 | `apps/cafelog/src/components/CoffeeAttributes.tsx` | T09/T10 | 未実施 |
@@ -62,15 +62,14 @@
 
 補助文字と背景を分離し、secondaryボタンは前景と背景を組み合わせて定義する。入力境界、フォーカス、操作領域を改善計画に合わせる。
 
-## 未実施
+## 残る確認
 
-変更前の画面記録、LINE実機、読み上げ、全ルートの操作と画像・通知の確認は未実施。
+T09以降の画面・操作、LINE実機、スクリーンリーダー、本番公開の確認を進める。タスク別の完了結果は以下に記録する。
 
 ## 検証記録
 
 - 変更前：check・build成功。Node 20でtest失敗（Promise.withResolvers未対応）。指定のNix環境（Node 24.22.1）ではtest全成功。
-- トークン契約：43項目を両テーマで検証。欠落・参照切れ・循環・型の不一致を検出するテスト成功。
-- 現時点：T02とT04の一部を実装。Button・入力・選択・ラベルをCSS Modulesへ変更。Tailwind削除、Field、全画面移行、Stylelint、画面検証、CI接続は未完了。
+- T01〜T07の検証は完了。詳細は各タスクの完了確認を参照。
 - 公開：未実施。
 
 ## T01 完了確認
@@ -123,3 +122,11 @@
 - Sliderはキーボードとポインター操作、目盛りとラベルの中心差1.5px以内、可視ラベルの重なりなしを確認。動的な注ぎと評価、温度も操作した。フォームのaxe検査は指摘なし。
 - 目視で見つけた増減ボタンの横幅不足と狭い画面のラベルのずれを修正。44pxの反応領域、横はみ出しなし、保存ボタンがナビに重ならず操作できることを検査した。スクロール余白も共通化した。evidence/t07/に結果と画面を保存。
 - CSS・型検査、検証基盤のテスト、既存のフォーム値・版管理を含むテスト、両アプリのビルドが成功。
+
+## T08 完了確認
+
+- Brewlogの残る全ページ、豆の版履歴、産地・焙煎度表示を移行。固有表示の寸法と色を公開トークンで定義し、削除用Buttonと選択状態のCardを正式なAPIに追加した。
+- 320/390pxで11ルートと空・取得失敗・長文を含む各32ケースを検証。絞り込み・並び替え、アーカイブと復帰、器具の作成・デフォルト変更・編集・削除、店舗履歴から記録への遷移、ログアウト、豆削除を実際に操作した。作成・編集から戻る流れはT07で確認済み。
+- 取得がある9画面の待機・失敗・再試行を確認。設定の器具取得と複数版の履歴遷移は追加検証した。長い豆名・店舗名・URL・メモ、注ぎのタイムラインにも横はみ出しがなく、axe検査は指摘なし。記録はevidence/t08/とevidence/t08-final/を参照。
+- 目視で見つけた器具管理の名前と操作の詰まりを修正。編集時に初期値が空へ戻る不具合も直し、入力の復元と保存を確認した。アイコン操作は共通Buttonで44px以上を確保する。
+- 型・lint・CSS規約と83トークンの契約検査、既存テスト、両アプリのビルドが成功。BrewlogのTSXにTailwindクラスと旧トークン参照は残っていない。入口CSSに残る旧定義はT11で削除する。

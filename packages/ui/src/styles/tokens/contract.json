@@ -274,5 +274,61 @@
   "--cl-size-slider-labels": {
     "type": "length",
     "required": true
+  },
+  "--cl-font-size-page-title": {
+    "type": "length",
+    "required": true
+  },
+  "--cl-font-size-section-title": {
+    "type": "length",
+    "required": true
+  },
+  "--cl-color-rating": {
+    "type": "color",
+    "required": true
+  },
+  "--cl-color-error-hover": {
+    "type": "color",
+    "required": true
+  },
+  "--cl-size-flag-small": {
+    "type": "length",
+    "required": true
+  },
+  "--cl-size-flag-medium": {
+    "type": "length",
+    "required": true
+  },
+  "--cl-size-flag-large": {
+    "type": "length",
+    "required": true
+  },
+  "--cl-color-roast-light": {
+    "type": "color",
+    "required": true
+  },
+  "--cl-color-roast-medium-light": {
+    "type": "color",
+    "required": true
+  },
+  "--cl-color-roast-medium": {
+    "type": "color",
+    "required": true
+  },
+  "--cl-color-roast-medium-dark": {
+    "type": "color",
+    "required": true
+  },
+  "--cl-color-roast-dark": {
+    "type": "color",
+    "required": true
+  },
+  "--cl-size-avatar": {
+    "type": "length",
+    "required": true
+  },
+  "--cl-size-brand-icon": {
+    "type": "length",
+    "required": true
   }
 }

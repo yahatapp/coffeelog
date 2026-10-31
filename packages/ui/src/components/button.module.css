@@ -74,4 +74,11 @@
   .fullWidth {
     width: 100%;
   }
+  .danger {
+    color: var(--cl-color-on-error);
+    background: var(--cl-color-error);
+  }
+  .danger:hover:not([aria-disabled="true"]) {
+    background: var(--cl-color-error-hover);
+  }
 }

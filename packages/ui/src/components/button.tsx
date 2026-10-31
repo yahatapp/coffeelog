@@ -7,12 +7,13 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
   asChild?: boolean;
   loading?: boolean;
   fullWidth?: boolean;
-  variant?: "primary" | "secondary" | "outline" | "ghost";
+  variant?: "primary" | "secondary" | "outline" | "ghost" | "danger";
   size?: "sm" | "md" | "lg" | "icon";
 }
 
 const variants = {
   primary: styles.primary,
+  danger: styles.danger,
   secondary: styles.secondary,
   outline: styles.outline,
   ghost: styles.ghost,

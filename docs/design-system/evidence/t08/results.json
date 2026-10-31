@@ -1,0 +1,212 @@
+[
+  {
+    "app": "brewlog",
+    "width": 320,
+    "path": "/",
+    "tokens": {
+      "theme": "brewlog",
+      "primary": "#6f4e37"
+    },
+    "errors": [],
+    "inputs": 0
+  },
+  {
+    "app": "brewlog",
+    "width": 320,
+    "path": "/beans/new",
+    "tokens": {
+      "theme": "brewlog",
+      "primary": "#6f4e37"
+    },
+    "errors": [],
+    "inputs": 9
+  },
+  {
+    "app": "brewlog",
+    "width": 320,
+    "path": "/stores",
+    "tokens": {
+      "theme": "brewlog",
+      "primary": "#6f4e37"
+    },
+    "errors": [],
+    "inputs": 0
+  },
+  {
+    "app": "brewlog",
+    "width": 320,
+    "path": "/settings",
+    "tokens": {
+      "theme": "brewlog",
+      "primary": "#6f4e37"
+    },
+    "errors": [],
+    "inputs": 0
+  },
+  {
+    "app": "brewlog",
+    "width": 320,
+    "path": "/stores/fixture-store",
+    "tokens": {
+      "theme": "brewlog",
+      "primary": "#6f4e37"
+    },
+    "errors": [],
+    "inputs": 0
+  },
+  {
+    "app": "brewlog",
+    "width": 320,
+    "path": "notification",
+    "closed": true,
+    "tokens": {
+      "primary": "#6f4e37"
+    },
+    "errors": []
+  },
+  {
+    "app": "brewlog",
+    "width": 320,
+    "path": "brew-pages",
+    "routes": [
+      "home",
+      "beans",
+      "bean-detail",
+      "logs",
+      "log-detail",
+      "stores",
+      "store-detail",
+      "settings",
+      "drippers",
+      "grinders",
+      "not-found",
+      "home-error",
+      "beans-error",
+      "bean-detail-error",
+      "logs-error",
+      "log-detail-error",
+      "stores-error",
+      "store-detail-error",
+      "drippers-error",
+      "grinders-error",
+      "--empty",
+      "-beans-empty",
+      "-logs-empty",
+      "-stores-empty",
+      "-settings-drippers-empty",
+      "-settings-grinders-empty",
+      "beans-long",
+      "bean-detail-long",
+      "logs-long",
+      "log-detail-long",
+      "stores-long",
+      "store-detail-long"
+    ],
+    "errors": []
+  },
+  {
+    "app": "brewlog",
+    "width": 390,
+    "path": "/",
+    "tokens": {
+      "theme": "brewlog",
+      "primary": "#6f4e37"
+    },
+    "errors": [],
+    "inputs": 0
+  },
+  {
+    "app": "brewlog",
+    "width": 390,
+    "path": "/beans/new",
+    "tokens": {
+      "theme": "brewlog",
+      "primary": "#6f4e37"
+    },
+    "errors": [],
+    "inputs": 9
+  },
+  {
+    "app": "brewlog",
+    "width": 390,
+    "path": "/stores",
+    "tokens": {
+      "theme": "brewlog",
+      "primary": "#6f4e37"
+    },
+    "errors": [],
+    "inputs": 0
+  },
+  {
+    "app": "brewlog",
+    "width": 390,
+    "path": "/settings",
+    "tokens": {
+      "theme": "brewlog",
+      "primary": "#6f4e37"
+    },
+    "errors": [],
+    "inputs": 0
+  },
+  {
+    "app": "brewlog",
+    "width": 390,
+    "path": "/stores/fixture-store",
+    "tokens": {
+      "theme": "brewlog",
+      "primary": "#6f4e37"
+    },
+    "errors": [],
+    "inputs": 0
+  },
+  {
+    "app": "brewlog",
+    "width": 390,
+    "path": "notification",
+    "closed": true,
+    "tokens": {
+      "primary": "#6f4e37"
+    },
+    "errors": []
+  },
+  {
+    "app": "brewlog",
+    "width": 390,
+    "path": "brew-pages",
+    "routes": [
+      "home",
+      "beans",
+      "bean-detail",
+      "logs",
+      "log-detail",
+      "stores",
+      "store-detail",
+      "settings",
+      "drippers",
+      "grinders",
+      "not-found",
+      "home-error",
+      "beans-error",
+      "bean-detail-error",
+      "logs-error",
+      "log-detail-error",
+      "stores-error",
+      "store-detail-error",
+      "drippers-error",
+      "grinders-error",
+      "--empty",
+      "-beans-empty",
+      "-logs-empty",
+      "-stores-empty",
+      "-settings-drippers-empty",
+      "-settings-grinders-empty",
+      "beans-long",
+      "bean-detail-long",
+      "logs-long",
+      "log-detail-long",
+      "stores-long",
+      "store-detail-long"
+    ],
+    "errors": []
+  }
+]

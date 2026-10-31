@@ -44,4 +44,18 @@
   --cl-size-slider-thumb: 1.25rem;
   --cl-size-slider-track: 0.5rem;
   --cl-size-slider-labels: 2.5rem;
+  --cl-font-size-page-title: 1.5rem;
+  --cl-font-size-section-title: 1.25rem;
+  --cl-color-rating: #854d0e;
+  --cl-color-error-hover: #7f1d1d;
+  --cl-size-flag-small: 0.75rem;
+  --cl-size-flag-medium: 1rem;
+  --cl-size-flag-large: 1.5rem;
+  --cl-color-roast-light: #d4a373;
+  --cl-color-roast-medium-light: #b5835a;
+  --cl-color-roast-medium: #9c6644;
+  --cl-color-roast-medium-dark: #7f4f24;
+  --cl-color-roast-dark: #582f0e;
+  --cl-size-avatar: 5rem;
+  --cl-size-brand-icon: 1.5rem;
 }

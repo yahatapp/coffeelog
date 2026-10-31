@@ -1,0 +1,30 @@
+[
+  {
+    "app": "brewlog",
+    "width": 320,
+    "path": "brew-pages",
+    "routes": [
+      "bean-version-navigation",
+      "home",
+      "drippers",
+      "grinders",
+      "settings-error",
+      "settings-recovered"
+    ],
+    "errors": []
+  },
+  {
+    "app": "brewlog",
+    "width": 390,
+    "path": "brew-pages",
+    "routes": [
+      "bean-version-navigation",
+      "home",
+      "drippers",
+      "grinders",
+      "settings-error",
+      "settings-recovered"
+    ],
+    "errors": []
+  }
+]

@@ -25,4 +25,8 @@
     align-items: center;
     padding: 0 var(--cl-space-section-gap) var(--cl-space-section-gap);
   }
+  .selected {
+    border-color: var(--cl-color-focus);
+    background: var(--cl-color-surface-tonal);
+  }
 }
