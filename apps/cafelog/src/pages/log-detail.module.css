@@ -1,0 +1,25 @@
+@layer pages {
+  .root {
+    display: flex;
+    flex-direction: column;
+    gap: var(--cl-space-section-gap);
+    min-width: 0;
+  }
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--cl-space-field-gap);
+    flex-wrap: wrap;
+  }
+  .titleRow {
+    display: flex;
+    align-items: center;
+    gap: var(--cl-space-field-gap);
+  }
+  .heading {
+    font-size: var(--cl-font-size-section-title);
+    font-weight: var(--cl-font-weight-medium);
+    color: var(--cl-color-text);
+  }
+}

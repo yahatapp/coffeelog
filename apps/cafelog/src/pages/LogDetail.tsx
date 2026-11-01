@@ -1,3 +1,5 @@
+import { Button } from "@yahatapp/ui";
+import styles from "./log-detail.module.css";
 import { mutationNotices } from "@/lib/mutationNotices";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
@@ -166,16 +168,15 @@ const LogDetailPage = () => {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-2">
-          <Link
-            to="/logs"
-            className="p-1.5 hover:bg-cafe-primary/5 text-cafe-secondary hover:text-cafe-primary rounded-lg transition-all"
-          >
-            <ArrowLeft size={20} />
-          </Link>
-          <h2 className="text-xl font-bold text-cafe-text">記録の詳細</h2>
+    <div className={styles.root}>
+      <div className={styles.header}>
+        <div className={styles.titleRow}>
+          <Button asChild variant="ghost" size="icon">
+            <Link to="/logs" aria-label="記録一覧に戻る">
+              <ArrowLeft size={20} aria-hidden="true" />
+            </Link>
+          </Button>
+          <h2 className={styles.heading}>記録の詳細</h2>
         </div>
         {!isEditMode && !showDeleteConfirm && (
           <div className="flex space-x-1.5">
@@ -184,6 +185,7 @@ const LogDetailPage = () => {
               onClick={() => setIsEditMode(true)}
               className="p-2 text-cafe-secondary hover:text-cafe-primary hover:bg-cafe-primary/5 rounded-xl active:scale-95 transition-all"
               title="編集"
+              aria-label="編集"
             >
               <Edit2 size={18} />
             </button>

@@ -1,3 +1,5 @@
+import { Button } from "@yahatapp/ui";
+import styles from "./create-log.module.css";
 import { mutationNotices } from "@/lib/mutationNotices";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useMemo } from "react";
@@ -34,15 +36,14 @@ const CreateLogPage = () => {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center space-x-2">
-        <Link
-          to="/logs"
-          className="p-1.5 hover:bg-cafe-primary/5 text-cafe-secondary hover:text-cafe-primary rounded-lg transition-all"
-        >
-          <ArrowLeft size={20} />
-        </Link>
-        <h2 className="text-xl font-bold text-cafe-text">記録を追加</h2>
+    <div className={styles.root}>
+      <div className={styles.header}>
+        <Button asChild variant="ghost" size="icon">
+          <Link to="/logs" aria-label="記録一覧に戻る">
+            <ArrowLeft size={20} aria-hidden="true" />
+          </Link>
+        </Button>
+        <h2 className={styles.heading}>記録を追加</h2>
       </div>
 
       <CafeLogForm

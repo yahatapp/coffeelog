@@ -1,0 +1,20 @@
+declare const styles: {
+  readonly actions: string;
+  readonly coffeeFields: string;
+  readonly dynamicRow: string;
+  readonly error: string;
+  readonly fields: string;
+  readonly form: string;
+  readonly group: string;
+  readonly legend: string;
+  readonly measurements: string;
+  readonly panel: string;
+  readonly rating: string;
+  readonly ratingValue: string;
+  readonly remove: string;
+  readonly star: string;
+  readonly starEmpty: string;
+  readonly starFill: string;
+  readonly stars: string;
+};
+export default styles;

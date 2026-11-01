@@ -1,3 +1,5 @@
+import {createCafeFixtures,cafeIds,cafePhoto} from "./cafe-fixtures.mjs";
+import {verifyCafeForms} from "./cafe-forms.mjs";
 import {verifyBrewPages} from "./brew-pages.mjs";
 import { verifyBrewForms } from "./brew-forms.mjs";
 import { createBrewFixtures, brewIds } from "./brew-fixtures.mjs";
@@ -54,7 +56,7 @@ try {
         {
           name: "ui-notice-fixture",
           transform(code, id) {
-            if (process.env.UI_BREW_FORMS === "1" && id.endsWith("/src/main.tsx"))
+            if ((process.env.UI_BREW_FORMS === "1" || process.env.UI_CAFE_FORMS === "1") && id.endsWith("/src/main.tsx"))
               return code.replace("queries: {", "queries: { retry: false,");
             if (process.env.UI_SHELL === "1" && id.endsWith("/src/lib/analytics.ts"))
               return code
@@ -119,6 +121,7 @@ try {
         page.setDefaultTimeout(10000);
         const errors = [];
         let brewFixtures = createBrewFixtures();
+        let cafeFixtures=createCafeFixtures(), releaseUpload=null;
         let saveMode = "success",
           saveCount = 0,
           releaseSave = null,
@@ -167,6 +170,25 @@ try {
               body: JSON.stringify({ error: "検証用の通信エラー" }),
             });
             return;
+          }
+          if(process.env.UI_CAFE_FORMS==='1'&&app==='cafelog'){
+            const method=route.request().method();
+            if(path!=='/api/auth/init'&&method==='GET'){
+              if(readMode==='loading')await new Promise(resolve=>setTimeout(resolve,2000));
+              if(readMode==='all-error'||(readMode==='images-error'&&path.includes('/images'))){await route.fulfill({status:500,contentType:'application/json',body:JSON.stringify({error:'fixture'})});return;}
+              if(readMode==='empty'&&['/api/logs','/api/stores'].includes(path)){await route.fulfill({contentType:'application/json',body:'[]'});return;}
+            }
+            const imagePost=method==='POST'&&path.endsWith('/images');
+            const payload=method==='GET'||method==='DELETE'||imagePost?{}:route.request().postDataJSON();
+            if(method!=='GET'&&path.startsWith('/api/logs')){
+              saveCount++;
+              if((saveMode==='hold'&&!imagePost)||(saveMode==='upload-hold'&&imagePost)){
+                await new Promise(resolve=>{const release=async status=>{const response=status===200?cafeFixtures.respond(path,method,payload):{error:'fixture'};await route.fulfill({status,contentType:'application/json',body:JSON.stringify(response)});resolve();};if(imagePost)releaseUpload=release;else releaseSave=release;});return;
+              }
+              if(imagePost&&saveMode==='upload-error'){await route.fulfill({status:400,body:'Invalid image'});return;}
+            }
+            const response=cafeFixtures.respond(path,method,payload);
+            if(response!==undefined){await route.fulfill({status:200,contentType:Buffer.isBuffer(response)?'image/png':'application/json',body:Buffer.isBuffer(response)?response:JSON.stringify(response)});return;}
           }
           if (process.env.UI_BREW_FORMS === "1" && app === "brewlog") {
             if (
@@ -484,6 +506,10 @@ try {
         if(process.env.UI_BREW_PAGES==='1'&&app==='brewlog'){
           const routes=await verifyBrewPages(page,{baseURL:`http://127.0.0.1:${5271+index}`,output,width,ids:brewIds,reset:()=>{brewFixtures=createBrewFixtures();saveMode='success';readMode='success';return brewFixtures;},readMode:value=>{readMode=value;}});
           results.push({app,width,path:'brew-pages',routes,errors:[...errors]});
+        }
+        if(process.env.UI_CAFE_FORMS==='1'&&process.env.UI_CAFE_PAGES!=='1'&&app==='cafelog'){
+          const routes=await verifyCafeForms(page,{baseURL:`http://127.0.0.1:${5271+index}`,output,width,ids:cafeIds,photo:cafePhoto,reset:()=>{cafeFixtures=createCafeFixtures();readMode='success';saveMode='success';return cafeFixtures;},hold:()=>{saveMode='hold';releaseSave=null;},mode:value=>{saveMode=value;},readMode:value=>{readMode=value;},count:()=>saveCount,release:async status=>{if(!releaseSave)throw new Error('No pending save');saveMode='success';await releaseSave(status);},releaseUpload:async status=>{if(!releaseUpload)throw new Error('No pending upload');saveMode='success';await releaseUpload(status);}});
+          results.push({app,width,path:'cafe-forms',routes,errors:[...errors]});
         }
         if (process.env.UI_CATALOG === "1") {
           await page.goto(`http://127.0.0.1:${5271 + index}/__catalog`);

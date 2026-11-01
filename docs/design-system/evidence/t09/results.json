@@ -1,0 +1,28 @@
+[
+  {
+    "app": "cafelog",
+    "width": 320,
+    "path": "cafe-forms",
+    "routes": [
+      "create-empty",
+      "invalid-link",
+      "create-with-image",
+      "create-save-error",
+      "edit-save-error"
+    ],
+    "errors": []
+  },
+  {
+    "app": "cafelog",
+    "width": 390,
+    "path": "cafe-forms",
+    "routes": [
+      "create-empty",
+      "invalid-link",
+      "create-with-image",
+      "create-save-error",
+      "edit-save-error"
+    ],
+    "errors": []
+  }
+]
