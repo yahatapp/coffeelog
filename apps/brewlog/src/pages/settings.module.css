@@ -1,0 +1,43 @@
+@layer pages {
+  .menu {
+    display: flex;
+    flex-direction: column;
+    border-radius: inherit;
+  }
+  .item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--cl-space-field-gap);
+    min-height: var(--cl-size-target-min);
+    width: 100%;
+    padding: var(--cl-space-page-inline);
+    color: var(--cl-color-text);
+    background: var(--cl-color-surface);
+    font-size: var(--cl-font-size-label);
+    text-align: start;
+    cursor: pointer;
+  }
+  .item + .item {
+    border-top: var(--cl-border-width) solid var(--cl-color-border-decorative);
+  }
+  .item:first-child {
+    border-start-start-radius: inherit;
+    border-start-end-radius: inherit;
+  }
+  .item:last-child {
+    border-end-start-radius: inherit;
+    border-end-end-radius: inherit;
+  }
+  .item:hover {
+    background: var(--cl-color-surface-tonal);
+  }
+  .item:focus-visible {
+    outline: var(--cl-focus-width) solid var(--cl-color-focus);
+    outline-offset: calc(-1 * var(--cl-focus-width));
+  }
+  .danger {
+    justify-content: flex-start;
+    color: var(--cl-color-error);
+  }
+}

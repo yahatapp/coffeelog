@@ -1,5 +1,6 @@
 import { ErrorState, Loading } from "@yahatapp/ui";
 import styles from "./content.module.css";
+import menuStyles from "./settings.module.css";
 import { useQuery } from "@tanstack/react-query";
 import { Link, useNavigate } from "react-router-dom";
 import { User, LogOut, ChevronRight, Settings2 } from "lucide-react";
@@ -78,17 +79,10 @@ const Settings = () => {
           <h3 className={[styles.body, styles.strong, styles.accent].join(" ")}>器具マスタ管理</h3>
         </div>
         <Card>
-          <div className={styles.divided}>
+          <div className={menuStyles.menu}>
             <button
               onClick={() => navigate("/settings/drippers")}
-              className={[
-                styles.tonal,
-                styles.content,
-                styles.row,
-                styles.spread,
-                styles.fullWidth,
-                styles.body,
-              ].join(" ")}
+              className={menuStyles.item}
               type="button"
             >
               <span className={styles.foreground}>ドリッパー管理</span>
@@ -109,14 +103,7 @@ const Settings = () => {
             </button>
             <button
               onClick={() => navigate("/settings/grinders")}
-              className={[
-                styles.tonal,
-                styles.content,
-                styles.row,
-                styles.spread,
-                styles.fullWidth,
-                styles.body,
-              ].join(" ")}
+              className={menuStyles.item}
               type="button"
             >
               <span className={styles.foreground}>グラインダー管理</span>
@@ -200,45 +187,18 @@ const Settings = () => {
       <section className={[styles.fieldStack, styles.separated].join(" ")}>
         <h3 className={[styles.helper, styles.strong, styles.muted].join(" ")}>アプリについて</h3>
         <Card>
-          <div className={styles.divided}>
-            <button
-              className={[
-                styles.tonal,
-                styles.content,
-                styles.row,
-                styles.spread,
-                styles.fullWidth,
-                styles.body,
-              ].join(" ")}
-              type="button"
-            >
+          <div className={menuStyles.menu}>
+            <button className={menuStyles.item} type="button">
               <span className={styles.foreground}>利用規約</span>
               <ChevronRight size={16} className={styles.muted} />
             </button>
-            <button
-              className={[
-                styles.tonal,
-                styles.content,
-                styles.row,
-                styles.spread,
-                styles.fullWidth,
-                styles.body,
-              ].join(" ")}
-              type="button"
-            >
+            <button className={menuStyles.item} type="button">
               <span className={styles.foreground}>プライバシーポリシー</span>
               <ChevronRight size={16} className={styles.muted} />
             </button>
             <button
               onClick={handleLogout}
-              className={[
-                styles.errorPanel,
-                styles.content,
-                styles.row,
-                styles.fullWidth,
-                styles.body,
-                styles.dangerText,
-              ].join(" ")}
+              className={[menuStyles.item, menuStyles.danger].join(" ")}
               type="button"
             >
               <LogOut size={16} />
