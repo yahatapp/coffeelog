@@ -1,0 +1,62 @@
+[
+  {
+    "app": "cafelog",
+    "width": 320,
+    "path": "cafe-pages",
+    "routes": [
+      "home",
+      "logs",
+      "log-detail",
+      "stores",
+      "store-detail",
+      "settings",
+      "not-found",
+      "home-error",
+      "logs-error",
+      "log-detail-error",
+      "stores-error",
+      "store-detail-error",
+      "home-empty",
+      "logs-empty",
+      "stores-empty",
+      "home-long",
+      "logs-long",
+      "log-detail-long",
+      "stores-long",
+      "store-detail-long",
+      "detail-without-optional",
+      "delete-confirmation"
+    ],
+    "errors": []
+  },
+  {
+    "app": "cafelog",
+    "width": 390,
+    "path": "cafe-pages",
+    "routes": [
+      "home",
+      "logs",
+      "log-detail",
+      "stores",
+      "store-detail",
+      "settings",
+      "not-found",
+      "home-error",
+      "logs-error",
+      "log-detail-error",
+      "stores-error",
+      "store-detail-error",
+      "home-empty",
+      "logs-empty",
+      "stores-empty",
+      "home-long",
+      "logs-long",
+      "log-detail-long",
+      "stores-long",
+      "store-detail-long",
+      "detail-without-optional",
+      "delete-confirmation"
+    ],
+    "errors": []
+  }
+]

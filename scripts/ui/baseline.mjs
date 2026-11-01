@@ -1,3 +1,4 @@
+import {verifyCafePages} from "./cafe-pages.mjs";
 import {createCafeFixtures,cafeIds,cafePhoto} from "./cafe-fixtures.mjs";
 import {verifyCafeForms} from "./cafe-forms.mjs";
 import {verifyBrewPages} from "./brew-pages.mjs";
@@ -56,7 +57,7 @@ try {
         {
           name: "ui-notice-fixture",
           transform(code, id) {
-            if ((process.env.UI_BREW_FORMS === "1" || process.env.UI_CAFE_FORMS === "1") && id.endsWith("/src/main.tsx"))
+            if ((process.env.UI_BREW_FORMS === "1" || process.env.UI_CAFE_FORMS === "1") && (id.endsWith("/src/main.tsx") || id.endsWith("/src/lib/queryClient.ts")))
               return code.replace("queries: {", "queries: { retry: false,");
             if (process.env.UI_SHELL === "1" && id.endsWith("/src/lib/analytics.ts"))
               return code
@@ -510,6 +511,10 @@ try {
         if(process.env.UI_CAFE_FORMS==='1'&&process.env.UI_CAFE_PAGES!=='1'&&app==='cafelog'){
           const routes=await verifyCafeForms(page,{baseURL:`http://127.0.0.1:${5271+index}`,output,width,ids:cafeIds,photo:cafePhoto,reset:()=>{cafeFixtures=createCafeFixtures();readMode='success';saveMode='success';return cafeFixtures;},hold:()=>{saveMode='hold';releaseSave=null;},mode:value=>{saveMode=value;},readMode:value=>{readMode=value;},count:()=>saveCount,release:async status=>{if(!releaseSave)throw new Error('No pending save');saveMode='success';await releaseSave(status);},releaseUpload:async status=>{if(!releaseUpload)throw new Error('No pending upload');saveMode='success';await releaseUpload(status);}});
           results.push({app,width,path:'cafe-forms',routes,errors:[...errors]});
+        }
+        if(process.env.UI_CAFE_PAGES==='1'&&app==='cafelog'){
+          const routes=await verifyCafePages(page,{baseURL:`http://127.0.0.1:${5271+index}`,output,width,ids:cafeIds,reset:()=>{cafeFixtures=createCafeFixtures();readMode='success';saveMode='success';return cafeFixtures;},readMode:value=>{readMode=value;},hold:()=>{saveMode='hold';releaseSave=null;},count:()=>saveCount,release:async status=>{await expect.poll(()=>Boolean(releaseSave)).toBe(true);saveMode='success';await releaseSave(status);}});
+          results.push({app,width,path:'cafe-pages',routes,errors:[...errors]});
         }
         if (process.env.UI_CATALOG === "1") {
           await page.goto(`http://127.0.0.1:${5271 + index}/__catalog`);

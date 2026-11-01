@@ -1,0 +1,26 @@
+@layer components {
+  .root {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    line-height: 1;
+    color: var(--cl-color-action-primary);
+    width: var(--_size);
+    height: var(--_size);
+    font-size: var(--_size);
+  }
+  .small {
+    --_size: var(--cl-size-flag-medium);
+  }
+  .medium {
+    --_size: var(--cl-size-brand-icon);
+  }
+  .large {
+    --_size: var(--cl-size-target-min);
+  }
+  .globe {
+    width: 100%;
+    height: 100%;
+  }
+}

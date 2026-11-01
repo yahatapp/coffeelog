@@ -12,7 +12,7 @@ export function createCafeFixtures(){
   if(path===`/api/stores/${store.id}`)return{store,cafeRecords:logs.map(item=>({...item,links:item.links.map(link=>link.url),app:'cafelog'})),brewRecords:[]};
   const apply=(target,payload)=>Object.assign(target,payload,{links:(payload.cafeLinks??target.links.map(link=>link.url)).map((url,index)=>({id:'link-'+index,url,type:'website'}))});
   if(path==='/api/logs'){if(method==='GET')return logs;const created=apply({...log,id:id()},payload);logs.unshift(created);images.set(created.id,[]);writes.push(payload);return created;}
-  const match=path.match(/^\/api\/logs\/([^/]+)$/);if(match){const target=logs.find(item=>item.id===match[1]);if(method==='DELETE'){logs.splice(logs.indexOf(target),1);return target;}if(method==='GET')return target;writes.push(payload);return apply(target,payload);}
+  const match=path.match(/^\/api\/logs\/([^/]+)$/);if(match){const target=logs.find(item=>item.id===match[1]);if(method==='DELETE'){logs.splice(logs.indexOf(target),1);return target;}if(method==='GET')return target??null;writes.push(payload);return apply(target,payload);}
   return undefined;
  }};
 }

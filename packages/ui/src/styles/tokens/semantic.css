@@ -60,4 +60,6 @@
   --cl-size-brand-icon: 1.5rem;
   --cl-color-media-surface: #111827;
   --cl-color-on-media: #ffffff;
+  --cl-size-floating-action: 3.5rem;
+  --cl-layer-floating: 10;
 }

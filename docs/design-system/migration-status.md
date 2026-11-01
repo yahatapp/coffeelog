@@ -44,19 +44,19 @@
 | `apps/brewlog/src/pages/Stores.tsx` | T07/T08 | 完了（T08） |
 | `apps/cafelog/src/App.tsx` | T06 | 完了（T04〜T06） |
 | `apps/cafelog/src/components/CafeLogForm.tsx` | T09/T10 | 完了（T09） |
-| `apps/cafelog/src/components/CafeLogListCard.tsx` | T09/T10 | 未実施 |
-| `apps/cafelog/src/components/CoffeeAttributes.tsx` | T09/T10 | 未実施 |
+| `apps/cafelog/src/components/CafeLogListCard.tsx` | T09/T10 | 完了（T10） |
+| `apps/cafelog/src/components/CoffeeAttributes.tsx` | T09/T10 | 完了（T10） |
 | `apps/cafelog/src/components/ImagePicker.tsx` | T09/T10 | 完了（T09） |
 | `apps/cafelog/src/components/LogImages.tsx` | T09/T10 | 完了（T09） |
-| `apps/cafelog/src/components/OriginFlag.tsx` | T09/T10 | 未実施 |
+| `apps/cafelog/src/components/OriginFlag.tsx` | T09/T10 | 完了（T10） |
 | `apps/cafelog/src/components/ProcessField.tsx` | T09/T10 | 完了（T09） |
 | `apps/cafelog/src/pages/CreateLog.tsx` | T09/T10 | 完了（T09） |
-| `apps/cafelog/src/pages/Home.tsx` | T09/T10 | 未実施 |
-| `apps/cafelog/src/pages/LogDetail.tsx` | T09/T10 | 未実施 |
-| `apps/cafelog/src/pages/Logs.tsx` | T09/T10 | 未実施 |
-| `apps/cafelog/src/pages/NotFound.tsx` | T09/T10 | 未実施 |
-| `apps/cafelog/src/pages/Settings.tsx` | T09/T10 | 未実施 |
-| `apps/cafelog/src/pages/Stores.tsx` | T09/T10 | 未実施 |
+| `apps/cafelog/src/pages/Home.tsx` | T09/T10 | 完了（T10） |
+| `apps/cafelog/src/pages/LogDetail.tsx` | T09/T10 | 完了（T10） |
+| `apps/cafelog/src/pages/Logs.tsx` | T09/T10 | 完了（T10） |
+| `apps/cafelog/src/pages/NotFound.tsx` | T09/T10 | 完了（T10） |
+| `apps/cafelog/src/pages/Settings.tsx` | T09/T10 | 完了（T10） |
+| `apps/cafelog/src/pages/Stores.tsx` | T09/T10 | 完了（T10） |
 
 ## 意図した変更
 
@@ -64,7 +64,7 @@
 
 ## 残る確認
 
-T10以降の画面・操作、LINE実機、スクリーンリーダー、本番公開の確認を進める。タスク別の完了結果は以下に記録する。
+Tailwind削除後の全体検証と本番公開、LINE実機、スクリーンリーダー、本番公開の確認を進める。タスク別の完了結果は以下に記録する。
 
 ## 検証記録
 
@@ -138,3 +138,11 @@ T10以降の画面・操作、LINE実機、スクリーンリーダー、本番�
 - 6枚選択時の上限、画像の削除・選択時と保存後の拡大を確認。Base UI Dialog内のTab移動、Escapeと閉じるボタン、元の操作へのフォーカス復帰、画像取得失敗後の再試行を確認した。通知が表示中でも閉じる操作を隠さないよう、画像ビューアーの操作を下部に配置する。
 - 画像処理・送信中はフォームを無効化。画像だけ送信に失敗した場合は保存済みの記録を保持し、警告後の編集・再追加が成功した。実際にブラウザーでPNGをJPEGへ変換する経路を通した。
 - フォームと画像ダイアログのaxe検査は指摘なし。CSS・85トークン・型・lint検査、Cafelog既存テスト54件、両アプリのビルドが成功。evidence/t09/に画像と結果を保存した。
+
+## T10 完了確認
+
+- Cafelogの残る全ページ、記録カード・属性・国旗を移行。通知は既存の共有Noticeを使用する。ページの固定追加操作にも、ナビとセーフエリアを避ける余白と操作領域を定義した。
+- 320/390pxで7ルートと失敗・空・長文・任意情報なし・削除確認を含む各22ケースを検証。絞り込み・並び替え、店舗履歴と詳細への遷移、コピー・再ログイン、編集キャンセル、削除の待機・失敗・再実行を確認した。
+- 編集開始時は店舗名へ移動し、編集・削除のキャンセル後は元の操作へフォーカスを戻す。T09の作成・編集・画像の保存フローも新しい詳細画面で再検証済み。
+- 長い店舗名・産地・品種・フレーバー・URL・メモは折り返して表示し、横はみ出しなし。44件の画面全体のaxe検査は指摘なし。画像なし・評価なし・メモなしも確認した。evidence/t10/とevidence/t10-forms/を参照。
+- 型・lint・CSS・87トークンの契約検査、Cafelog既存テスト54件、両アプリのビルドが成功。両アプリのTSXからTailwindクラスと旧トークン参照を除去した。

@@ -338,5 +338,13 @@
   "--cl-color-on-media": {
     "type": "color",
     "required": true
+  },
+  "--cl-size-floating-action": {
+    "type": "length",
+    "required": true
+  },
+  "--cl-layer-floating": {
+    "type": "number",
+    "required": true
   }
 }

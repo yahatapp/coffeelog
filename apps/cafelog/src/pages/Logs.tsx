@@ -1,10 +1,19 @@
+import styles from "./content.module.css";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import { LogListControls, type LogSortOrder, type LogTemperatureFilter } from "@yahatapp/ui";
+import {
+  Button,
+  Loading,
+  ErrorState,
+  EmptyState,
+  LogListControls,
+  type LogSortOrder,
+  type LogTemperatureFilter,
+} from "@yahatapp/ui";
 import { getErrorMessage } from "@/lib/errors";
 import { cafelogQueries } from "@/lib/queries";
-import { ClipboardList, Plus, Loader2 } from "lucide-react";
+import { ClipboardList, Plus } from "lucide-react";
 import { CafeLogListCard } from "@/components/CafeLogListCard";
 import { analytics } from "@/lib/analytics";
 
@@ -47,55 +56,23 @@ const LogsPage = () => {
     return sortOrder === "desc" ? b.rating - a.rating : a.rating - b.rating;
   });
 
-  if (isLoading) {
-    return (
-      <div className="flex flex-col items-center justify-center py-32">
-        <Loader2 className="animate-spin text-cafe-primary mb-4" size={32} />
-        <p className="text-cafe-secondary text-sm">ログを読み込み中...</p>
-      </div>
-    );
-  }
-
-  if (errorMessage) {
-    return (
-      <div className="bg-white/80 backdrop-blur-md rounded-2xl border border-red-100 p-6 text-center shadow-sm">
-        <p className="text-red-500 font-semibold mb-4">{errorMessage}</p>
-        <button
-          onClick={() => void refetch()}
-          className="bg-cafe-primary text-white font-semibold py-2 px-6 rounded-xl hover:bg-cafe-primary/90 transition-all active:scale-95 text-sm"
-        >
-          再読み込み
-        </button>
-      </div>
-    );
-  }
-
+  if (isLoading) return <Loading label="記録を読み込み中..." />;
+  if (errorMessage)
+    return <ErrorState message="記録一覧を取得できませんでした。" onRetry={() => void refetch()} />;
   return (
-    <div className="space-y-6 relative">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-2">
-          <ClipboardList className="text-cafe-primary" size={24} />
-          <h2 className="text-2xl font-bold text-cafe-text">記録一覧</h2>
+    <div className={styles.listPage}>
+      <header className={styles.header}>
+        <div className={styles.titleRow}>
+          <ClipboardList size={24} aria-hidden="true" />
+          <h2 className={styles.heading}>記録一覧</h2>
         </div>
-        <Link
-          to="/logs/new"
-          className="bg-cafe-primary text-white p-2 rounded-full shadow-md hover:bg-cafe-primary/95 active:scale-95 transition-all md:hidden"
-          title="新規追加"
-        >
-          <Plus size={20} />
-        </Link>
-      </div>
-
-      <div className="hidden md:block">
-        <Link
-          to="/logs/new"
-          className="bg-cafe-primary text-white font-semibold py-2.5 px-4 rounded-xl shadow-md hover:bg-cafe-primary/90 active:scale-[0.98] transition-all flex items-center justify-center space-x-2 w-full text-sm"
-        >
-          <Plus size={16} />
-          <span>新しい記録を追加する</span>
-        </Link>
-      </div>
-
+        <Button asChild variant="secondary">
+          <Link to="/logs/new">
+            <Plus size={18} aria-hidden="true" />
+            追加
+          </Link>
+        </Button>
+      </header>
       {logs.length > 0 && (
         <LogListControls
           filter={filter}
@@ -104,9 +81,9 @@ const LogsPage = () => {
             hot: logs.filter((log) => log.servingStyle === "hot").length,
             iced: logs.filter((log) => log.servingStyle === "iced").length,
           }}
-          onFilterChange={(nextFilter) => {
+          onFilterChange={(next) => {
             analytics.trackEvent("filter_change");
-            setFilter(nextFilter);
+            setFilter(next);
           }}
           sortBy={sortBy}
           sortOrder={sortOrder}
@@ -118,61 +95,41 @@ const LogsPage = () => {
           onSortChange={changeSort}
         />
       )}
-
       {logs.length === 0 ? (
-        <div className="bg-white/80 backdrop-blur-md rounded-2xl border border-cafe-secondary/20 p-12 text-center shadow-sm space-y-6">
-          <div className="w-16 h-16 rounded-full bg-cafe-primary/5 flex items-center justify-center mx-auto border border-cafe-primary/10">
-            <ClipboardList className="text-cafe-secondary" size={28} />
-          </div>
-          <div className="space-y-2">
-            <h3 className="font-bold text-cafe-text">まだ記録がありません</h3>
-            <p className="text-sm text-cafe-secondary max-w-xs mx-auto leading-relaxed">
-              カフェで飲んだ美味しい一杯やお店の雰囲気を記録しましょう！
-            </p>
-          </div>
-          <Link
-            to="/logs/new"
-            className="inline-flex items-center justify-center bg-cafe-primary text-white font-semibold py-3 px-6 rounded-xl shadow-md hover:bg-cafe-primary/90 active:scale-[0.98] transition-all space-x-2 text-sm"
-          >
-            <Plus size={18} />
-            <span>最初の記録を追加</span>
-          </Link>
-        </div>
+        <EmptyState
+          title="まだ記録がありません"
+          description="カフェで飲んだ一杯やお店の雰囲気を記録しましょう。"
+          action={
+            <Button asChild>
+              <Link to="/logs/new">
+                <Plus size={18} aria-hidden="true" />
+                最初の記録を追加
+              </Link>
+            </Button>
+          }
+        />
       ) : filteredLogs.length === 0 ? (
-        <div className="rounded-2xl border-2 border-dashed border-cafe-secondary/20 bg-white/70 p-10 text-center">
-          <ClipboardList className="mx-auto mb-3 text-cafe-secondary/40" size={36} />
-          <p className="text-sm font-semibold text-cafe-secondary">
-            {filter === "hot" ? "ホット" : "アイス"}の記録はまだありません。
-          </p>
-        </div>
+        <EmptyState title={`${filter === "hot" ? "ホット" : "アイス"}の記録はまだありません。`} />
       ) : (
-        <div className="grid gap-4">
+        <div className={styles.section}>
           {sortedLogs.map((log) => (
             <Link
               key={log.id}
               to={`/logs/${log.id}`}
-              className="block min-w-0 overflow-hidden rounded-2xl border border-cafe-secondary/15 bg-white/80 p-5 shadow-sm backdrop-blur-md transition-all hover:border-cafe-primary/20 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cafe-primary active:scale-[0.99]"
+              className={styles.recordLink}
+              aria-label={`${log.cafeName}の記録（${log.visitDate ?? "日付未登録"}）`}
             >
               <CafeLogListCard log={log} />
             </Link>
           ))}
         </div>
       )}
-
-      {/* Floating Action Button for Mobile */}
       {logs.length > 0 && (
-        <div className="fixed bottom-24 right-6 z-10 md:hidden">
-          <Link
-            to="/logs/new"
-            className="flex items-center justify-center w-14 h-14 bg-cafe-primary text-white rounded-full shadow-lg shadow-cafe-primary/25 hover:bg-cafe-primary/95 active:scale-95 transition-all"
-            title="新規追加"
-          >
-            <Plus size={24} />
-          </Link>
-        </div>
+        <Link to="/logs/new" className={styles.floatingAction} aria-label="新規追加">
+          <Plus size={24} aria-hidden="true" />
+        </Link>
       )}
     </div>
   );
 };
-
 export default LogsPage;
