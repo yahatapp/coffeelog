@@ -620,6 +620,14 @@ try {
             await page.goto(`http://127.0.0.1:${portBase + index}/__catalog`);
             await page.getByRole("heading", { name: "UI部品の確認" }).waitFor();
             await page.waitForLoadState("networkidle");
+            await expect(page.getByText("ヘッダーなしの本文").locator("..")).toHaveCSS(
+              "padding-top",
+              "24px",
+            );
+            await expect(page.getByLabel("名前", { exact: true }).locator("..")).toHaveCSS(
+              "padding-top",
+              "0px",
+            );
             const { default: AxeBuilder } = await import("@axe-core/playwright");
             const audit = await new AxeBuilder({ page })
               .withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"])

@@ -96,6 +96,12 @@ export async function verifyCafePages(
   await page.getByRole("button", { name: "キャンセル", exact: true }).click();
   await expect(page.getByRole("button", { name: "編集", exact: true })).toBeFocused();
   await visit("/settings");
+  await expect(
+    page.getByRole("heading", { name: "確認用ユーザー", exact: true }).locator("../../.."),
+  ).toHaveCSS("padding-top", "24px");
+  await expect(
+    page.getByRole("heading", { name: "アプリ情報", exact: true }).locator("../.."),
+  ).toHaveCSS("padding-top", "24px");
   await page.context().grantPermissions(["clipboard-read", "clipboard-write"], { origin: baseURL });
   await page.getByRole("button", { name: "ユーザーIDをコピー", exact: true }).click();
   await expect.poll(() => page.evaluate(() => navigator.clipboard.readText())).toBe("fixture-user");
