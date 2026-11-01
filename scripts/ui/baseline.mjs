@@ -1,7 +1,7 @@
 import { startUIServer } from "./server.mjs";
 import { verifyCafePages } from "./cafe-pages.mjs";
 import { createCafeFixtures, cafeIds, cafePhoto } from "./cafe-fixtures.mjs";
-import { verifyCafeForms } from "./cafe-forms.mjs";
+import { verifyCafeForms, verifyCafeControlHeights } from "./cafe-forms.mjs";
 import { verifyBrewPages } from "./brew-pages.mjs";
 import { verifyBrewForms } from "./brew-forms.mjs";
 import { createBrewFixtures, brewIds } from "./brew-fixtures.mjs";
@@ -11,14 +11,17 @@ import { realpathSync } from "node:fs";
 import { mkdir, writeFile, readFile } from "node:fs/promises";
 const repo = process.cwd();
 const require = createRequire(resolve(repo, "apps/brewlog/package.json"));
-const { chromium, expect } = require("@playwright/test");
+const { chromium, webkit, expect } = require("@playwright/test");
 const baseline = realpathSync(process.env.UI_SOURCE || repo);
 const output = process.env.UI_OUTPUT
   ? resolve(process.env.UI_OUTPUT)
   : resolve(repo, "docs/design-system/evidence", process.env.UI_PHASE || "verification");
 const portBase = Number(process.env.UI_PORT_BASE || 5371);
 await mkdir(output, { recursive: true });
-const browser = await chromium.launch({ headless: true });
+const browserName = process.env.UI_BROWSER || "chromium";
+const browserType = { chromium, webkit }[browserName];
+if (!browserType) throw new Error(`Unsupported UI_BROWSER: ${browserName}`);
+const browser = await browserType.launch({ headless: true });
 const results = [];
 try {
   for (const [index, app] of ["brewlog", "cafelog"].entries()) {
@@ -305,6 +308,7 @@ try {
                   throw new Error("Analytics mask missing");
               }
 
+              if (name === "form" && app === "cafelog") await verifyCafeControlHeights(page);
               if (name === "form")
                 await page
                   .locator(
@@ -628,6 +632,14 @@ try {
               "padding-top",
               "0px",
             );
+            const inputHeight = await page
+              .locator("#catalog-input")
+              .evaluate((el) => el.getBoundingClientRect().height);
+            for (const select of await page.locator("select").all()) {
+              expect(await select.evaluate((el) => el.getBoundingClientRect().height)).toBe(
+                inputHeight,
+              );
+            }
             const { default: AxeBuilder } = await import("@axe-core/playwright");
             const audit = await new AxeBuilder({ page })
               .withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"])
@@ -770,6 +782,7 @@ try {
       {
         platform: process.platform,
         node: process.version,
+        browserName,
         browser: browser.version(),
         locale: "ja-JP",
         timezone: "Asia/Tokyo",
