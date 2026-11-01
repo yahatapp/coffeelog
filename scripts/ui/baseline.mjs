@@ -12,9 +12,8 @@ const repo = process.cwd();
 const require = createRequire(resolve(repo, "apps/brewlog/package.json"));
 const { createServer } = await import(require.resolve("vite"));
 const { default: react } = await import(require.resolve("@vitejs/plugin-react"));
-const { default: tailwind } = await import(require.resolve("@tailwindcss/vite"));
 const { chromium, expect } = require("@playwright/test");
-const baseline = realpathSync(process.env.UI_SOURCE || "/tmp/coffeelog-baseline");
+const baseline = realpathSync(process.env.UI_SOURCE || repo);
 const output = resolve(repo, "docs/design-system/evidence", process.env.UI_PHASE || "before");
 await mkdir(output, { recursive: true });
 const browser = await chromium.launch({ headless: true });
@@ -53,7 +52,6 @@ try {
           },
         },
         react(),
-        tailwind(),
         {
           name: "ui-notice-fixture",
           transform(code, id) {
@@ -77,10 +75,6 @@ try {
             replacement: require.resolve("react/jsx-dev-runtime"),
           },
           {
-            find: "@yahatapp/ui/foundation.css",
-            replacement: resolve(repo, "packages/ui/src/styles/index.css"),
-          },
-          {
             find: "@yahatapp/ui/themes/brewlog.css",
             replacement: resolve(repo, "packages/ui/src/styles/themes/brewlog.css"),
           },
@@ -91,7 +85,7 @@ try {
           { find: "@line/liff", replacement: resolve(repo, "scripts/ui/liff-fixture.mjs") },
           {
             find: "@yahatapp/ui/styles.css",
-            replacement: resolve(baseline, "packages/ui/src/styles/tokens.css"),
+            replacement: resolve(baseline, "packages/ui/src/styles/index.css"),
           },
           { find: /^@yahatapp\/ui$/, replacement: resolve(baseline, "packages/ui/src/index.ts") },
           { find: "@", replacement: resolve(root, "src") },
@@ -123,6 +117,7 @@ try {
         const errors = [];
         let brewFixtures = createBrewFixtures();
         let cafeFixtures=createCafeFixtures(), releaseUpload=null;
+        let fixturePhase="base";
         let saveMode = "success",
           saveCount = 0,
           releaseSave = null,
@@ -138,7 +133,7 @@ try {
         await page.route("**/api/**", async (route) => {
           const path = new URL(route.request().url()).pathname;
           const scenario = process.env.UI_SCENARIO;
-          if(process.env.UI_BREW_PAGES==='1'&&app==='brewlog'&&route.request().method()==='GET'&&path!=='/api/auth/init'){
+          if(process.env.UI_BREW_PAGES==='1'&&app==='brewlog'&&fixturePhase==='data'&&route.request().method()==='GET'&&path!=='/api/auth/init'){
             if(readMode==='loading')await new Promise(resolve=>setTimeout(resolve,2000));
             if(readMode==='all-error'){await route.fulfill({status:500,contentType:'application/json',body:JSON.stringify({error:'fixture'})});return;}
             if(readMode==='empty'&&['/api/beans','/api/logs','/api/stores','/api/drippers','/api/grinders'].includes(path)){await route.fulfill({contentType:'application/json',body:'[]'});return;}
@@ -172,7 +167,7 @@ try {
             });
             return;
           }
-          if(process.env.UI_CAFE_FORMS==='1'&&app==='cafelog'){
+          if(process.env.UI_CAFE_FORMS==='1'&&app==='cafelog'&&fixturePhase==='data'){
             const method=route.request().method();
             if(path!=='/api/auth/init'&&method==='GET'){
               if(readMode==='loading')await new Promise(resolve=>setTimeout(resolve,2000));
@@ -191,7 +186,7 @@ try {
             const response=cafeFixtures.respond(path,method,payload);
             if(response!==undefined){await route.fulfill({status:200,contentType:Buffer.isBuffer(response)?'image/png':'application/json',body:Buffer.isBuffer(response)?response:JSON.stringify(response)});return;}
           }
-          if (process.env.UI_BREW_FORMS === "1" && app === "brewlog") {
+          if (process.env.UI_BREW_FORMS === "1" && app === "brewlog" && fixturePhase === "data") {
             if (
               readMode === "error" &&
               route.request().method() === "GET" &&
@@ -437,6 +432,7 @@ try {
         }
 
         if (process.env.UI_SHELL === "1") {
+          if(page.url() === "about:blank") await page.goto(`http://127.0.0.1:${5271 + index}/`);
           for (const [label, value] of [
             ["許可する", "enabled"],
             ["許可しない", "disabled"],
@@ -482,7 +478,8 @@ try {
             errors: [...errors],
           });
         }
-        if (process.env.UI_BREW_FORMS === "1" && process.env.UI_BREW_PAGES !== "1" && app === "brewlog") {
+        fixturePhase="data";
+        if (process.env.UI_BREW_FORMS === "1" && (process.env.UI_BREW_PAGES !== "1" || process.env.UI_ALL === "1") && app === "brewlog") {
           await verifyBrewForms(page, {
             baseURL: `http://127.0.0.1:${5271 + index}`,
             output,
@@ -508,7 +505,7 @@ try {
           const routes=await verifyBrewPages(page,{baseURL:`http://127.0.0.1:${5271+index}`,output,width,ids:brewIds,reset:()=>{brewFixtures=createBrewFixtures();saveMode='success';readMode='success';return brewFixtures;},readMode:value=>{readMode=value;}});
           results.push({app,width,path:'brew-pages',routes,errors:[...errors]});
         }
-        if(process.env.UI_CAFE_FORMS==='1'&&process.env.UI_CAFE_PAGES!=='1'&&app==='cafelog'){
+        if(process.env.UI_CAFE_FORMS==='1'&&(process.env.UI_CAFE_PAGES!=='1'||process.env.UI_ALL==='1')&&app==='cafelog'){
           const routes=await verifyCafeForms(page,{baseURL:`http://127.0.0.1:${5271+index}`,output,width,ids:cafeIds,photo:cafePhoto,reset:()=>{cafeFixtures=createCafeFixtures();readMode='success';saveMode='success';return cafeFixtures;},hold:()=>{saveMode='hold';releaseSave=null;},mode:value=>{saveMode=value;},readMode:value=>{readMode=value;},count:()=>saveCount,release:async status=>{if(!releaseSave)throw new Error('No pending save');saveMode='success';await releaseSave(status);},releaseUpload:async status=>{if(!releaseUpload)throw new Error('No pending upload');saveMode='success';await releaseUpload(status);}});
           results.push({app,width,path:'cafe-forms',routes,errors:[...errors]});
         }
@@ -519,6 +516,7 @@ try {
         if (process.env.UI_CATALOG === "1") {
           await page.goto(`http://127.0.0.1:${5271 + index}/__catalog`);
           await page.getByRole("heading", { name: "UI部品の確認" }).waitFor();
+          await page.waitForLoadState("networkidle");
           const { default: AxeBuilder } = await import("@axe-core/playwright");
           const audit = await new AxeBuilder({ page })
             .withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"])

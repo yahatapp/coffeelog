@@ -24,9 +24,12 @@ export async function verifyBrewForms(
       throw new Error(
         `${name}: ${JSON.stringify(result.violations.map((v) => ({ id: v.id, nodes: v.nodes.map((n) => n.target) })))}`,
       );
+    await page.waitForTimeout(200);
     await page.screenshot({
       path: resolve(output, `brewlog-${name}-${width}.png`),
       fullPage: true,
+      animations: "allow",
+      timeout: 30000,
     });
   };
   const save = async ({ success, path, preserve }) => {

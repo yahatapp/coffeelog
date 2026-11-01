@@ -20,6 +20,7 @@ body {
   outline-offset: 2px;
 }
 input[type="date"] {
+  -webkit-appearance: none;
   appearance: none;
   overflow: hidden;
 }

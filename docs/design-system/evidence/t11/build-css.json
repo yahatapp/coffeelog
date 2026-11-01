@@ -1,0 +1,20 @@
+[
+  {
+    "app": "brewlog",
+    "files": [
+      "index-DLg2JmZK.css"
+    ],
+    "bytes": 40703,
+    "gzipBytes": 7087,
+    "legacyCss": false
+  },
+  {
+    "app": "cafelog",
+    "files": [
+      "index-VIs1UHzr.css"
+    ],
+    "bytes": 46202,
+    "gzipBytes": 7302,
+    "legacyCss": false
+  }
+]

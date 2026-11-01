@@ -1,6 +1,5 @@
 import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react";
-import tailwindcss from "@tailwindcss/vite";
 import { fileURLToPath } from "url";
 import path from "path";
 import { cloudflare } from "@cloudflare/vite-plugin";
@@ -49,7 +48,7 @@ export default defineConfig(({ mode }) => {
     },
     // Vitest runs in a regular Node environment. The Cloudflare plugin rejects
     // Vitest's Node externals, so only load it for development and builds.
-    plugins: [react(), tailwindcss(), ...(mode === "test" ? [] : [cloudflare()])],
+    plugins: [react(), ...(mode === "test" ? [] : [cloudflare()])],
     test: {
       globals: true,
     },

@@ -1,3 +1,6 @@
+import "@yahatapp/ui/styles.css";
+import "@yahatapp/ui/themes/brewlog.css";
+import "@yahatapp/ui/themes/cafelog.css";
 import { useState } from "react";
 import { createRoot } from "react-dom/client";
 import {
@@ -22,9 +25,6 @@ import {
   type LogTemperatureFilter,
   type LogSortOrder,
 } from "@yahatapp/ui";
-import "@yahatapp/ui/foundation.css";
-import "@yahatapp/ui/themes/brewlog.css";
-import "@yahatapp/ui/themes/cafelog.css";
 function Catalog() {
   const [value, setValue] = useState<"hot" | "iced" | null>("hot");
   const [filter, setFilter] = useState<LogTemperatureFilter>("all");

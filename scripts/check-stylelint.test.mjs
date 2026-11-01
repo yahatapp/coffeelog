@@ -16,3 +16,11 @@ test("Stylelint rejects invalid syntax and unknown properties", async () => {
     false,
   );
 });
+test("Stylelint rejects removed directives and legacy variable declarations", async () => {
+  for (const code of [
+    "@theme { --color-old: red; }",
+    '@source "./legacy";',
+    '@plugin "legacy";',
+    ".root { --app-color-primary: red; }",
+  ]) assert.ok((await lint(code)).errored);
+});

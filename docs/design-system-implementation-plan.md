@@ -189,13 +189,13 @@ variantとsize、必要な状態を部品内に集約する。呼び出し側の
 
 両アプリのVite設定・CSSと、共通UIのcnを対象にする。依存の管理では、関連package.json・pnpm-workspace.yaml・pnpm-lock.yamlを更新する。ここでTailwindを実際に外し、残った暗黙の依存を検出する。
 
-- [ ] Tailwind本体、Viteプラグイン、animate、mergeの直接依存・catalog・peer設定とコード参照を削除した。
-- [ ] `@theme`・`@source`・`@plugin`・Tailwindのimportと、Viteプラグイン登録を削除した。
-- [ ] 全TSX・CSSを調べ、ブランド色以外のクラス、任意値、状態・レスポンシブのクラス、動的な文字列にも置換漏れがない。
-- [ ] 旧`--app-color-*`等のトークンと重複した色値を削除し、必要なreset・keyframesが明示されている。
-- [ ] postcss・autoprefixerの直接利用と対象ブラウザーを確認し、残すか削除するかを理由付きで記録した。
-- [ ] pnpmでロックファイルを更新し、固定した依存でインストール・両アプリのbuildが成功する。
-- [ ] Tailwind削除後の出力CSSと画面を確認し、境界・フォーム・画像・アイコン等に既定値の差による意図しない変化がない。
+- [x] Tailwind本体、Viteプラグイン、animate、mergeの直接依存・catalog・peer設定とコード参照を削除した。
+- [x] `@theme`・`@source`・`@plugin`・Tailwindのimportと、Viteプラグイン登録を削除した。
+- [x] 全TSX・CSSを調べ、ブランド色以外のクラス、任意値、状態・レスポンシブのクラス、動的な文字列にも置換漏れがない。
+- [x] 旧`--app-color-*`等のトークンと重複した色値を削除し、必要なreset・keyframesが明示されている。
+- [x] postcss・autoprefixerの直接利用と対象ブラウザーを確認し、残すか削除するかを理由付きで記録した。
+- [x] pnpmでロックファイルを更新し、固定した依存でインストール・両アプリのbuildが成功する。
+- [x] Tailwind削除後の出力CSSと画面を確認し、境界・フォーム・画像・アイコン等に既定値の差による意図しない変化がない。
 
 ## T12：ガイド・AI向け指示・CIを仕上げる
 

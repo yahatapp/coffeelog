@@ -9,14 +9,24 @@ h1,
 h2,
 h3,
 h4,
+h5,
+h6,
 p,
-figure {
+figure,
+blockquote,
+dl,
+dd,
+fieldset,
+legend {
   margin: 0;
+  padding: 0;
 }
 h1,
 h2,
 h3,
-h4 {
+h4,
+h5,
+h6 {
   font-size: inherit;
   font-weight: inherit;
 }
@@ -38,6 +48,7 @@ button,
 input,
 select,
 textarea {
+  padding: 0;
   background: transparent;
   border-radius: 0;
 }
@@ -68,4 +79,11 @@ textarea {
 }
 [hidden] {
   display: none !important;
+}
+
+fieldset {
+  min-inline-size: 0;
+}
+legend {
+  max-width: 100%;
 }
