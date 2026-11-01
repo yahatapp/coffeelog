@@ -10,6 +10,7 @@
 | 情報のまとまり   | [Card](../../packages/ui/src/components/card.tsx)                                                                                                                         | 標準のHeader・Contentを使う。独自の中身は自分のラッパーに配置を書く |
 
 - variant・size・状態の正確な型は定義元を参照する。
+- CardContentはカードの先頭に置くと全方向に余白が入り、CardHeaderの後では上の余白を省く。
 - iconボタンには操作名を付ける。装飾アイコンは読み上げ対象から外す。
 - ButtonにclassNameを渡して見た目を変える前に、既存の型付きAPIで表せるか確認する。
 - 必須、invalid、read-only、disabled、loading、hover、focusは、利用する部品の状態として確認する。

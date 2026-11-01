@@ -53,6 +53,11 @@ function Catalog() {
       </section>
       <section className={styles.section} aria-label="入力部品">
         <Card>
+          <CardContent>
+            <p>ヘッダーなしの本文</p>
+          </CardContent>
+        </Card>
+        <Card>
           <CardHeader>
             <CardTitle>入力と選択</CardTitle>
           </CardHeader>

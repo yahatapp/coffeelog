@@ -20,6 +20,9 @@
   .content {
     padding: 0 var(--cl-space-section-gap) var(--cl-space-section-gap);
   }
+  .content:first-child {
+    padding-top: var(--cl-space-section-gap);
+  }
   .footer {
     display: flex;
     align-items: center;
