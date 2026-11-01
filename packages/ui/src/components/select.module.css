@@ -3,6 +3,8 @@
     display: block;
     width: 100%;
     min-width: 0;
+    /* WebKit's native select can ignore min-height. */
+    height: var(--cl-size-input);
     min-height: var(--cl-size-input);
     border: var(--cl-border-width) solid var(--cl-color-border-input);
     border-radius: var(--cl-radius-control);

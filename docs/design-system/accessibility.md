@@ -19,6 +19,12 @@
 
 - 日時、認証、API、外部画像はfixtureで固定する。ブラウザーは依存に対応するPlaywrightのChromiumを使う。
 - 検証環境のlocaleはja-JP、タイムゾーンはAsia/Tokyoに固定する。
+- Safari系の入力部品を確認する場合は、`pnpm --filter brewlog exec playwright install webkit`を一度実行し、次のコマンドで両テーマの基本画面・部品一覧とCafelogの記録入力欄の高さを検証する。全操作を対象とする標準のChromium検証も実行する。
+
+  ```sh
+  UI_BROWSER=webkit UI_CATALOG=1 UI_OUTPUT=test-results/ui-webkit node scripts/ui/baseline.mjs
+  ```
+
 - 保存失敗や取得失敗を意図的に起こすケースのconsole.errorと、未処理のブラウザー例外を区別する。未処理例外は検証を失敗させる。
 - axeだけでは、文章の意味や全操作の使いやすさを判定できない。画像と実操作も確認する。
 

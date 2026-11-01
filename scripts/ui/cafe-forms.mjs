@@ -3,6 +3,14 @@ import { resolve } from "node:path";
 import { writeFile } from "node:fs/promises";
 const require = createRequire(resolve("apps/cafelog/package.json"));
 const { expect } = require("@playwright/test");
+export async function verifyCafeControlHeights(page) {
+  const processBox = await page
+    .getByRole("combobox", { name: "精製方法", exact: true })
+    .boundingBox();
+  const roastBox = await page.getByRole("textbox", { name: "焙煎度", exact: true }).boundingBox();
+  expect(processBox.height).toBe(roastBox.height);
+  expect(processBox.y).toBe(roastBox.y);
+}
 export async function verifyCafeForms(
   page,
   { baseURL, output, width, ids, reset, hold, mode, count, release, releaseUpload, readMode },
@@ -14,6 +22,7 @@ export async function verifyCafeForms(
     await page.getByRole("navigation").waitFor();
   };
   const audit = async (name) => {
+    await verifyCafeControlHeights(page);
     const result = await new AxeBuilder({ page })
       .include("form")
       .withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"])
