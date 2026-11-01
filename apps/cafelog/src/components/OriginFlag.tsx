@@ -1,28 +1,22 @@
 import { getCountryCode } from "@yahatapp/coffee-reference";
 import { Globe } from "lucide-react";
-
-type OriginFlagProps = {
-  origin: string | null | undefined;
-  size?: number;
-};
-
-const toFlagEmoji = (countryCode: string) =>
+import styles from "./origin-flag.module.css";
+type OriginFlagProps = { origin: string | null | undefined; size?: "sm" | "md" | "lg" };
+const toFlagEmoji = (code: string) =>
   String.fromCodePoint(
-    countryCode.toUpperCase().charCodeAt(0) + 127397,
-    countryCode.toUpperCase().charCodeAt(1) + 127397,
+    code.toUpperCase().charCodeAt(0) + 127397,
+    code.toUpperCase().charCodeAt(1) + 127397,
   );
-
-export const OriginFlag = ({ origin, size = 24 }: OriginFlagProps) => {
-  const countryCode = getCountryCode(origin);
-
+const sizes = { sm: styles.small, md: styles.medium, lg: styles.large };
+export const OriginFlag = ({ origin, size = "md" }: OriginFlagProps) => {
+  const code = getCountryCode(origin);
   return (
     <span
-      className="flex shrink-0 items-center justify-center leading-none text-cafe-primary"
-      style={{ width: size, height: size, fontSize: size }}
+      className={[styles.root, sizes[size]].join(" ")}
       role="img"
-      aria-label={countryCode ? `${origin}の国旗` : origin ? `${origin}（国旗なし）` : "産地未登録"}
+      aria-label={code ? `${origin}の国旗` : origin ? `${origin}（国旗なし）` : "産地未登録"}
     >
-      {countryCode ? toFlagEmoji(countryCode) : <Globe aria-hidden="true" size={size} />}
+      {code ? toFlagEmoji(code) : <Globe aria-hidden="true" className={styles.globe} />}
     </span>
   );
 };

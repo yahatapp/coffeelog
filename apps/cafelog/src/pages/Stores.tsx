@@ -1,19 +1,18 @@
+import styles from "./content.module.css";
 import { useQuery } from "@tanstack/react-query";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
-import { EmptyState, ErrorState, Loading, StoreHistory, StoreList } from "@yahatapp/ui";
+import { Button, EmptyState, ErrorState, Loading, StoreHistory, StoreList } from "@yahatapp/ui";
 import { cafelogQueries } from "@/lib/queries";
 
 const StoreHeader = () => (
-  <div className="flex items-center gap-2">
-    <Link
-      to="/settings"
-      aria-label="設定へ戻る"
-      className="flex size-11 items-center justify-center rounded-full text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-    >
-      <ArrowLeft size={20} />
-    </Link>
-    <h2 className="text-xl font-bold text-primary">お店</h2>
+  <div className={styles.titleRow}>
+    <Button asChild variant="ghost" size="icon">
+      <Link to="/settings" aria-label="設定へ戻る">
+        <ArrowLeft size={20} aria-hidden="true" />
+      </Link>
+    </Button>
+    <h2 className={styles.heading}>お店</h2>
   </div>
 );
 
@@ -21,7 +20,7 @@ export default function StoresPage() {
   const navigate = useNavigate();
   const query = useQuery(cafelogQueries.stores());
   return (
-    <div className="space-y-5">
+    <div className={styles.page}>
       <StoreHeader />
       {query.isPending ? (
         <Loading label="店舗を読み込み中..." />
@@ -42,14 +41,15 @@ export function StoreDetailPage() {
   const navigate = useNavigate();
   const query = useQuery(cafelogQueries.store(id ?? ""));
   return (
-    <div className="space-y-5">
-      <Link
-        to="/stores"
-        className="inline-flex min-h-11 items-center gap-2 rounded-full px-3 text-sm text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-      >
-        <ArrowLeft size={18} />
-        店舗一覧へ
-      </Link>
+    <div className={styles.page}>
+      <div>
+        <Button asChild variant="ghost">
+          <Link to="/stores">
+            <ArrowLeft size={18} aria-hidden="true" />
+            店舗一覧へ
+          </Link>
+        </Button>
+      </div>
       {!id ? (
         <EmptyState title="店舗が見つかりませんでした。" />
       ) : query.isPending ? (

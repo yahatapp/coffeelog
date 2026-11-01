@@ -1,0 +1,103 @@
+@layer components {
+  .root {
+    display: flex;
+    flex-direction: column;
+    gap: var(--cl-space-tight);
+  }
+  .root[data-disabled] {
+    opacity: var(--cl-opacity-disabled);
+  }
+  .heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--cl-space-field-gap);
+  }
+  .value {
+    flex-shrink: 0;
+    padding: var(--cl-space-tight) var(--cl-space-field-gap);
+    border-radius: var(--cl-radius-action);
+    color: var(--cl-color-action-primary);
+    background: var(--cl-color-surface-tonal);
+    font-size: var(--cl-font-size-label);
+    font-weight: var(--cl-font-weight-medium);
+  }
+  .control {
+    position: relative;
+    display: flex;
+    min-height: var(--cl-size-target-min);
+    width: 100%;
+    align-items: center;
+    padding-inline: var(--cl-space-slider-inline);
+    touch-action: pan-y;
+    user-select: none;
+    cursor: pointer;
+  }
+  .control[data-disabled] {
+    cursor: default;
+  }
+  .track {
+    position: relative;
+    width: 100%;
+    height: var(--cl-size-slider-track);
+    border: var(--cl-border-width) solid var(--cl-color-border-input);
+    border-radius: var(--cl-radius-action);
+    background: var(--cl-color-surface-tonal);
+  }
+  .indicator {
+    height: 100%;
+    border-radius: var(--cl-radius-action);
+    background: var(--cl-color-action-primary);
+  }
+  .thumb {
+    width: var(--cl-size-slider-thumb);
+    height: var(--cl-size-slider-thumb);
+    border: var(--cl-focus-width) solid var(--cl-color-surface);
+    border-radius: var(--cl-radius-action);
+    background: var(--cl-color-action-primary);
+    box-shadow: var(--cl-shadow-card);
+  }
+  .thumb:has(:focus-visible),
+  .thumb[data-dragging] {
+    outline: var(--cl-focus-width) solid var(--cl-color-focus);
+    outline-offset: var(--cl-focus-offset);
+  }
+  .tick {
+    position: absolute;
+    pointer-events: none;
+    top: 50%;
+    width: var(--cl-space-tight);
+    height: var(--cl-space-tight);
+    transform: translate(-50%, -50%);
+    border-radius: var(--cl-radius-action);
+  }
+  .tickDone {
+    background: var(--cl-color-on-action-primary);
+  }
+  .tickPending {
+    background: var(--cl-color-action-primary);
+  }
+  .labels {
+    position: relative;
+    margin-inline: var(--cl-space-slider-inline);
+    height: var(--cl-size-slider-labels);
+  }
+  .markLabel {
+    position: absolute;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    color: var(--cl-color-text-muted);
+    font-size: var(--cl-font-size-helper);
+  }
+  .markValue {
+    font-weight: var(--cl-font-weight-medium);
+    font-variant-numeric: tabular-nums;
+  }
+  .hidden {
+    visibility: hidden;
+  }
+}

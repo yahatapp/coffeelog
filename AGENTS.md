@@ -16,6 +16,14 @@
 - Write code review comments in Japanese.
 - When creating a pull request based on an issue, include `Close #<issue-number>` in the pull request description.
 
+## UI development
+
+- Read [the shared UI guide](docs/design-system/README.md) before changing either app or shared UI.
+- Use standard CSS custom properties and co-located CSS Modules. Keep values in CSS and the public token contract in `packages/ui/src/styles/tokens/contract.json`.
+- Use shared Field, controls, states and layouts. Keep variants and interaction states in typed component APIs.
+- Update CSS declarations with `pnpm css:types`, then run `pnpm check`, `pnpm test`, `pnpm build` and `pnpm test:ui`. Include both themes and keep validation enabled.
+- Record a new styling exception in [exceptions.md](docs/design-system/exceptions.md) with its reason, scope and verification.
+
 <!-- BEGIN:turborepo-agent-rules -->
 
 # This is NOT the Turborepo you know

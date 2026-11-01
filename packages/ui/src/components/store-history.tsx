@@ -1,3 +1,7 @@
+import styles from "./store-history.module.css";
+import { Dialog } from "@base-ui/react/dialog";
+import { Button } from "./button";
+import { Input } from "./input";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { EmptyState } from "./status";
 
@@ -128,9 +132,9 @@ export function StoreList({
   }, [isSearchOpen]);
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between gap-3">
-        <div className="flex rounded-full bg-primary/10 p-1" aria-label="並び順">
+    <div className={styles.stack}>
+      <div className={styles.toolbar}>
+        <div className={styles.sortGroup} role="group" aria-label="並び順">
           {(
             [
               ["name", "名前順"],
@@ -142,7 +146,7 @@ export function StoreList({
               type="button"
               onClick={() => setSort(value)}
               aria-pressed={sort === value}
-              className={`min-h-10 rounded-full px-3 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${sort === value ? "bg-surface text-primary shadow-sm" : "text-muted"}`}
+              className={styles.sortOption}
             >
               {label}
             </button>
@@ -156,10 +160,10 @@ export function StoreList({
             setIsSearchOpen((open) => !open);
             if (isSearchOpen) setSearch("");
           }}
-          className="flex size-11 shrink-0 items-center justify-center rounded-full text-primary hover:bg-primary/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className={styles.iconButton}
         >
           {isSearchOpen ? (
-            <span className="text-2xl leading-none" aria-hidden="true">
+            <span className={styles.largeIcon} aria-hidden="true">
               ×
             </span>
           ) : (
@@ -168,15 +172,14 @@ export function StoreList({
         </button>
       </div>
       {isSearchOpen && (
-        <label className="block text-sm font-semibold text-foreground">
-          <span className="sr-only">店舗を検索</span>
-          <input
+        <label className={styles.label}>
+          <span className={styles.visuallyHidden}>店舗を検索</span>
+          <Input
             ref={searchRef}
             type="search"
             value={search}
             onChange={(event) => setSearch(event.target.value)}
             placeholder="店舗名・都道府県"
-            className="min-h-11 w-full rounded-xl border border-border bg-surface px-4 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           />
         </label>
       )}
@@ -190,18 +193,16 @@ export function StoreList({
           }
         />
       ) : (
-        <ul className="space-y-3">
+        <ul className={styles.list}>
           {filtered.map((store) => (
             <li key={store.id}>
               <button
                 type="button"
                 onClick={() => onSelect(store.id)}
-                className="min-h-16 w-full rounded-2xl border border-border bg-surface p-4 text-left shadow-sm transition-colors hover:bg-primary/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                className={styles.storeButton}
               >
-                <span className="block break-words font-bold text-primary">{store.name}</span>
-                <span className="mt-1 block text-xs text-muted">
-                  {store.prefecture || "都道府県未登録"}
-                </span>
+                <span className={styles.storeName}>{store.name}</span>
+                <span className={styles.storeMeta}>{store.prefecture || "都道府県未登録"}</span>
               </button>
             </li>
           ))}
@@ -216,7 +217,7 @@ function SearchIcon() {
     <svg
       aria-hidden="true"
       viewBox="0 0 24 24"
-      className="size-5"
+      className={styles.icon}
       fill="none"
       stroke="currentColor"
       strokeWidth="2"
@@ -230,9 +231,7 @@ function SearchIcon() {
 const dateLabel = (date: string | null) => date?.replaceAll("-", ".") || "日付未登録";
 
 function Rating({ rating }: { rating: number | null }) {
-  return (
-    <span className="font-bold text-primary">{rating == null ? "評価なし" : `★ ${rating}`}</span>
-  );
+  return <span className={styles.rating}>{rating == null ? "評価なし" : `★ ${rating}`}</span>;
 }
 
 function CafeRecordModal({
@@ -244,13 +243,11 @@ function CafeRecordModal({
   onClose: () => void;
   onOpen?: () => void;
 }) {
-  useEffect(() => {
-    const closeOnEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape") onClose();
-    };
-    document.addEventListener("keydown", closeOnEscape);
-    return () => document.removeEventListener("keydown", closeOnEscape);
-  }, [onClose]);
+  const returnFocus = useRef<HTMLElement | null>(
+    typeof document !== "undefined" && document.activeElement instanceof HTMLElement
+      ? document.activeElement
+      : null,
+  );
   const details = [
     ["豆の種類", record.isBlend == null ? null : record.isBlend ? "ブレンド" : "シングル"],
     ["国", record.origin],
@@ -265,55 +262,44 @@ function CafeRecordModal({
     ["コメント", record.note],
   ] as const;
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-end justify-center bg-black/45 p-4 sm:items-center"
-      onMouseDown={(event) => {
-        if (event.currentTarget === event.target) onClose();
+    <Dialog.Root
+      open
+      onOpenChange={(open) => {
+        if (!open) onClose();
       }}
     >
-      <section
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="cafe-record-title"
-        className="max-h-[85vh] w-full max-w-md overflow-y-auto rounded-3xl bg-surface p-5 shadow-xl"
-      >
-        <div className="flex items-start justify-between gap-3">
-          <div>
-            <p className="text-xs text-muted">{dateLabel(record.visitDate)}</p>
-            <h4 id="cafe-record-title" className="mt-1 text-lg font-bold text-primary">
-              飲んだコーヒーの詳細
-            </h4>
-          </div>
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="閉じる"
-            className="flex size-11 items-center justify-center rounded-full text-2xl text-muted hover:bg-primary/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-          >
-            ×
-          </button>
-        </div>
-        <dl className="mt-4 grid grid-cols-[auto_minmax(0,1fr)] gap-x-4 gap-y-3 text-sm">
-          {details
-            .filter(([, value]) => value != null && value !== "")
-            .map(([label, value]) => (
-              <div key={label} className="contents">
-                <dt className="text-muted">{label}</dt>
-                <dd className="whitespace-pre-wrap break-words text-foreground">{value}</dd>
+      <Dialog.Portal>
+        <Dialog.Backdrop className={styles.backdrop} />
+        <Dialog.Viewport className={styles.overlay}>
+          <Dialog.Popup className={styles.modal} finalFocus={returnFocus}>
+            <div className={styles.modalHeader}>
+              <div>
+                <p className={styles.helper}>{dateLabel(record.visitDate)}</p>
+                <Dialog.Title className={styles.modalTitle}>飲んだコーヒーの詳細</Dialog.Title>
               </div>
-            ))}
-        </dl>
-        {onOpen && (
-          <button
-            type="button"
-            onClick={onOpen}
-            className="mt-5 min-h-11 w-full rounded-full bg-primary px-4 text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-          >
-            記録ページを開く
-          </button>
-        )}
-      </section>
-    </div>
+              <Dialog.Close render={<Button variant="ghost" size="icon" />} aria-label="閉じる">
+                ×
+              </Dialog.Close>
+            </div>
+            <dl className={styles.details}>
+              {details
+                .filter(([, value]) => value != null && value !== "")
+                .map(([label, value]) => (
+                  <div key={label} className={styles.detailRow}>
+                    <dt className={styles.muted}>{label}</dt>
+                    <dd className={styles.detailValue}>{value}</dd>
+                  </div>
+                ))}
+            </dl>
+            {onOpen && (
+              <Button type="button" onClick={onOpen} className={styles.open}>
+                記録ページを開く
+              </Button>
+            )}
+          </Dialog.Popup>
+        </Dialog.Viewport>
+      </Dialog.Portal>
+    </Dialog.Root>
   );
 }
 
@@ -341,20 +327,15 @@ export function StoreHistory({
     return [...groups.values()];
   }, [brewRecords]);
   return (
-    <div className="space-y-6">
-      <header className="rounded-2xl border border-border bg-surface p-5 shadow-sm">
-        <h2 className="break-words text-xl font-bold text-primary">{store.name}</h2>
-        <p className="mt-2 text-sm text-muted">{store.prefecture || "都道府県未登録"}</p>
+    <div className={styles.sectionStack}>
+      <header className={styles.panel}>
+        <h2 className={styles.heading}>{store.name}</h2>
+        <p className={styles.description}>{store.prefecture || "都道府県未登録"}</p>
         {store.links.length > 0 && (
-          <ul className="mt-3 space-y-2">
+          <ul className={styles.links}>
             {store.links.map((url, index) => (
               <li key={url}>
-                <a
-                  href={url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-block min-h-11 break-all py-2 text-sm text-primary underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                >
+                <a href={url} target="_blank" rel="noopener noreferrer" className={styles.link}>
                   お店のリンク {index + 1}
                 </a>
               </li>
@@ -362,8 +343,8 @@ export function StoreHistory({
           </ul>
         )}
       </header>
-      <section aria-labelledby="store-cafe-records" className="space-y-3">
-        <h3 id="store-cafe-records" className="font-bold text-primary">
+      <section aria-labelledby="store-cafe-records" className={styles.list}>
+        <h3 id="store-cafe-records" className={styles.rating}>
           店で飲んだコーヒー ({cafeRecords.length})
         </h3>
         {cafeRecords.length === 0 ? (
@@ -374,13 +355,13 @@ export function StoreHistory({
               type="button"
               onClick={() => setSelectedCafeRecord(record)}
               key={record.id}
-              className="block w-full space-y-3 rounded-2xl border border-border bg-surface p-4 text-left transition-colors hover:bg-primary/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              className={styles.recordButton}
             >
-              <div className="flex items-center justify-between gap-3">
-                <h4 className="font-semibold text-foreground">{dateLabel(record.visitDate)}</h4>
+              <div className={styles.toolbar}>
+                <h4 className={styles.title}>{dateLabel(record.visitDate)}</h4>
                 <Rating rating={record.rating} />
               </div>
-              <p className="text-sm text-muted">
+              <p className={styles.summary}>
                 {record.servingStyle === "iced"
                   ? "アイス"
                   : record.servingStyle === "hot"
@@ -393,8 +374,8 @@ export function StoreHistory({
           ))
         )}
       </section>
-      <section aria-labelledby="store-brew-records" className="space-y-3">
-        <h3 id="store-brew-records" className="font-bold text-primary">
+      <section aria-labelledby="store-brew-records" className={styles.list}>
+        <h3 id="store-brew-records" className={styles.rating}>
           お店の豆で抽出した記録 ({brewRecords.length})
         </h3>
         {brewRecords.length === 0 ? (
@@ -403,15 +384,12 @@ export function StoreHistory({
           brewGroups.map((records) => {
             const bean = records[0];
             return (
-              <article
-                key={bean.beanId}
-                className="space-y-3 rounded-2xl border border-border bg-surface p-4"
-              >
-                <h4 className="break-words font-semibold text-foreground">
+              <article key={bean.beanId} className={styles.record}>
+                <h4 className={styles.recordTitle}>
                   {bean.beanName}
                   {bean.beanVersion ? ` (${bean.beanVersion})` : ""}
                 </h4>
-                <p className="text-xs text-muted">
+                <p className={styles.helper}>
                   {[
                     bean.roastLevel == null ? null : `焙煎 ${bean.roastLevel}/5`,
                     bean.origin,
@@ -420,11 +398,11 @@ export function StoreHistory({
                     .filter(Boolean)
                     .join(" · ") || "豆情報未登録"}
                 </p>
-                <ul className="divide-y divide-border">
+                <ul className={styles.divided}>
                   {records.slice(0, 3).map((record) => {
                     const details = (
                       <>
-                        <span className="text-xs text-muted">
+                        <span className={styles.helper}>
                           {dateLabel(record.brewDate)} ·{" "}
                           {record.tempType === "ice" ? "アイス" : "ホット"}
                         </span>
@@ -437,23 +415,19 @@ export function StoreHistory({
                           <button
                             type="button"
                             onClick={() => onOpenBrewRecord(record.id)}
-                            className="flex min-h-14 w-full items-center justify-between gap-3 py-2 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                            className={styles.brewAction}
                           >
                             {details}
                           </button>
                         ) : (
-                          <div className="flex min-h-14 w-full items-center justify-between gap-3 py-2 text-left">
-                            {details}
-                          </div>
+                          <div className={styles.brewSummary}>{details}</div>
                         )}
                       </li>
                     );
                   })}
                 </ul>
                 {records.length > 3 && (
-                  <p className="text-right text-xs text-muted">
-                    最新3件を表示（全{records.length}件）
-                  </p>
+                  <p className={styles.footnote}>最新3件を表示（全{records.length}件）</p>
                 )}
               </article>
             );

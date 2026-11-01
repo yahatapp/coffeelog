@@ -1,0 +1,56 @@
+:root {
+  font-family: var(--cl-font-body);
+  font-size: var(--cl-font-size-body);
+  line-height: var(--cl-line-height-body);
+  color: var(--cl-color-text);
+  background: var(--cl-color-background);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+body {
+  min-width: 320px;
+  min-height: 100dvh;
+}
+#root {
+  width: 100%;
+}
+:focus-visible {
+  outline: 2px solid var(--cl-color-focus);
+  outline-offset: 2px;
+}
+input[type="date"] {
+  -webkit-appearance: none;
+  appearance: none;
+  overflow: hidden;
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+:root {
+  scroll-padding-block-end: calc(
+    var(--cl-size-nav) + env(safe-area-inset-bottom) + var(--cl-space-page-inline)
+  );
+}
+#root main :where(button, input, select, textarea, a, [tabindex]) {
+  scroll-margin-block-start: var(--cl-space-page-inline);
+  scroll-margin-block-end: calc(
+    var(--cl-size-nav) + env(safe-area-inset-bottom) + var(--cl-space-page-inline)
+  );
+}

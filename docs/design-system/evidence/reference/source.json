@@ -1,0 +1,7 @@
+{
+  "commit": "3edf0946512f711d98fb41daa03ceffe7d0ffd4b",
+  "suite": "40 cases; current catalog includes 4 supplemental cases",
+  "images": 198,
+  "ci": "https://github.com/yahatapp/coffeelog/actions/runs/41265576965",
+  "review": "Contrast corrections, 44px targets, explicit resets, semantic controls, safe-area reservations and dialogs checked against before/ and t11/."
+}

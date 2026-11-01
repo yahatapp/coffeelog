@@ -1,0 +1,32 @@
+@layer components {
+  .root {
+    border: var(--cl-border-width) solid var(--cl-color-border-decorative);
+    border-radius: var(--cl-radius-card);
+    color: var(--cl-color-text);
+    background: var(--cl-color-surface);
+    box-shadow: var(--cl-shadow-card);
+  }
+  .header {
+    display: flex;
+    flex-direction: column;
+    gap: var(--cl-space-field-gap);
+    padding: var(--cl-space-section-gap);
+  }
+  .title {
+    font-size: var(--cl-font-size-heading);
+    font-weight: var(--cl-font-weight-medium);
+    color: var(--cl-color-action-primary);
+  }
+  .content {
+    padding: 0 var(--cl-space-section-gap) var(--cl-space-section-gap);
+  }
+  .footer {
+    display: flex;
+    align-items: center;
+    padding: 0 var(--cl-space-section-gap) var(--cl-space-section-gap);
+  }
+  .selected {
+    border-color: var(--cl-color-focus);
+    background: var(--cl-color-surface-tonal);
+  }
+}

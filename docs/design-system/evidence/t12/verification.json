@@ -1,0 +1,545 @@
+{
+  "cases": 40,
+  "results": [
+    {
+      "app": "brewlog",
+      "width": 320,
+      "path": "/",
+      "tokens": {
+        "theme": "brewlog",
+        "primary": "#6f4e37"
+      },
+      "errors": [],
+      "inputs": 0
+    },
+    {
+      "app": "brewlog",
+      "width": 320,
+      "path": "/beans/new",
+      "tokens": {
+        "theme": "brewlog",
+        "primary": "#6f4e37"
+      },
+      "errors": [],
+      "inputs": 9
+    },
+    {
+      "app": "brewlog",
+      "width": 320,
+      "path": "/stores",
+      "tokens": {
+        "theme": "brewlog",
+        "primary": "#6f4e37"
+      },
+      "errors": [],
+      "inputs": 0
+    },
+    {
+      "app": "brewlog",
+      "width": 320,
+      "path": "/settings",
+      "tokens": {
+        "theme": "brewlog",
+        "primary": "#6f4e37"
+      },
+      "errors": [],
+      "inputs": 0
+    },
+    {
+      "app": "brewlog",
+      "width": 320,
+      "path": "/stores/fixture-store",
+      "tokens": {
+        "theme": "brewlog",
+        "primary": "#6f4e37"
+      },
+      "errors": [],
+      "inputs": 0
+    },
+    {
+      "app": "brewlog",
+      "width": 320,
+      "path": "notification",
+      "closed": true,
+      "tokens": {
+        "primary": "#6f4e37"
+      },
+      "errors": []
+    },
+    {
+      "app": "brewlog",
+      "width": 320,
+      "path": "shell",
+      "consent": true,
+      "auth": true,
+      "navigation": true,
+      "errors": []
+    },
+    {
+      "app": "brewlog",
+      "width": 320,
+      "path": "brew-forms",
+      "verified": true,
+      "errors": []
+    },
+    {
+      "app": "brewlog",
+      "width": 320,
+      "path": "brew-pages",
+      "routes": [
+        "home",
+        "beans",
+        "bean-detail",
+        "logs",
+        "log-detail",
+        "stores",
+        "store-detail",
+        "settings",
+        "drippers",
+        "grinders",
+        "not-found",
+        "home-error",
+        "home-recovered",
+        "beans-error",
+        "beans-recovered",
+        "bean-detail-error",
+        "bean-detail-recovered",
+        "logs-error",
+        "logs-recovered",
+        "log-detail-error",
+        "log-detail-recovered",
+        "stores-error",
+        "stores-recovered",
+        "store-detail-error",
+        "store-detail-recovered",
+        "drippers-error",
+        "drippers-recovered",
+        "grinders-error",
+        "grinders-recovered",
+        "--empty",
+        "-beans-empty",
+        "-logs-empty",
+        "-stores-empty",
+        "-settings-drippers-empty",
+        "-settings-grinders-empty",
+        "beans-long",
+        "bean-detail-long",
+        "logs-long",
+        "log-detail-long",
+        "stores-long",
+        "store-detail-long"
+      ],
+      "errors": []
+    },
+    {
+      "app": "brewlog",
+      "width": 320,
+      "path": "catalog",
+      "verified": true,
+      "errors": []
+    },
+    {
+      "app": "brewlog",
+      "width": 390,
+      "path": "/",
+      "tokens": {
+        "theme": "brewlog",
+        "primary": "#6f4e37"
+      },
+      "errors": [],
+      "inputs": 0
+    },
+    {
+      "app": "brewlog",
+      "width": 390,
+      "path": "/beans/new",
+      "tokens": {
+        "theme": "brewlog",
+        "primary": "#6f4e37"
+      },
+      "errors": [],
+      "inputs": 9
+    },
+    {
+      "app": "brewlog",
+      "width": 390,
+      "path": "/stores",
+      "tokens": {
+        "theme": "brewlog",
+        "primary": "#6f4e37"
+      },
+      "errors": [],
+      "inputs": 0
+    },
+    {
+      "app": "brewlog",
+      "width": 390,
+      "path": "/settings",
+      "tokens": {
+        "theme": "brewlog",
+        "primary": "#6f4e37"
+      },
+      "errors": [],
+      "inputs": 0
+    },
+    {
+      "app": "brewlog",
+      "width": 390,
+      "path": "/stores/fixture-store",
+      "tokens": {
+        "theme": "brewlog",
+        "primary": "#6f4e37"
+      },
+      "errors": [],
+      "inputs": 0
+    },
+    {
+      "app": "brewlog",
+      "width": 390,
+      "path": "notification",
+      "closed": true,
+      "tokens": {
+        "primary": "#6f4e37"
+      },
+      "errors": []
+    },
+    {
+      "app": "brewlog",
+      "width": 390,
+      "path": "shell",
+      "consent": true,
+      "auth": true,
+      "navigation": true,
+      "errors": []
+    },
+    {
+      "app": "brewlog",
+      "width": 390,
+      "path": "brew-forms",
+      "verified": true,
+      "errors": []
+    },
+    {
+      "app": "brewlog",
+      "width": 390,
+      "path": "brew-pages",
+      "routes": [
+        "home",
+        "beans",
+        "bean-detail",
+        "logs",
+        "log-detail",
+        "stores",
+        "store-detail",
+        "settings",
+        "drippers",
+        "grinders",
+        "not-found",
+        "home-error",
+        "home-recovered",
+        "beans-error",
+        "beans-recovered",
+        "bean-detail-error",
+        "bean-detail-recovered",
+        "logs-error",
+        "logs-recovered",
+        "log-detail-error",
+        "log-detail-recovered",
+        "stores-error",
+        "stores-recovered",
+        "store-detail-error",
+        "store-detail-recovered",
+        "drippers-error",
+        "drippers-recovered",
+        "grinders-error",
+        "grinders-recovered",
+        "--empty",
+        "-beans-empty",
+        "-logs-empty",
+        "-stores-empty",
+        "-settings-drippers-empty",
+        "-settings-grinders-empty",
+        "beans-long",
+        "bean-detail-long",
+        "logs-long",
+        "log-detail-long",
+        "stores-long",
+        "store-detail-long"
+      ],
+      "errors": []
+    },
+    {
+      "app": "brewlog",
+      "width": 390,
+      "path": "catalog",
+      "verified": true,
+      "errors": []
+    },
+    {
+      "app": "cafelog",
+      "width": 320,
+      "path": "/",
+      "tokens": {
+        "theme": "cafelog",
+        "primary": "#2d5016"
+      },
+      "errors": [],
+      "inputs": 0
+    },
+    {
+      "app": "cafelog",
+      "width": 320,
+      "path": "/logs/new",
+      "tokens": {
+        "theme": "cafelog",
+        "primary": "#2d5016"
+      },
+      "errors": [],
+      "inputs": 16
+    },
+    {
+      "app": "cafelog",
+      "width": 320,
+      "path": "/stores",
+      "tokens": {
+        "theme": "cafelog",
+        "primary": "#2d5016"
+      },
+      "errors": [],
+      "inputs": 0
+    },
+    {
+      "app": "cafelog",
+      "width": 320,
+      "path": "/settings",
+      "tokens": {
+        "theme": "cafelog",
+        "primary": "#2d5016"
+      },
+      "errors": [],
+      "inputs": 0
+    },
+    {
+      "app": "cafelog",
+      "width": 320,
+      "path": "/stores/fixture-store",
+      "tokens": {
+        "theme": "cafelog",
+        "primary": "#2d5016"
+      },
+      "errors": [],
+      "inputs": 0
+    },
+    {
+      "app": "cafelog",
+      "width": 320,
+      "path": "notification",
+      "closed": true,
+      "tokens": {
+        "primary": "#2d5016"
+      },
+      "errors": []
+    },
+    {
+      "app": "cafelog",
+      "width": 320,
+      "path": "shell",
+      "consent": true,
+      "auth": true,
+      "navigation": true,
+      "errors": []
+    },
+    {
+      "app": "cafelog",
+      "width": 320,
+      "path": "cafe-forms",
+      "routes": [
+        "create-empty",
+        "invalid-link",
+        "create-with-image",
+        "create-save-error",
+        "edit-save-error"
+      ],
+      "errors": []
+    },
+    {
+      "app": "cafelog",
+      "width": 320,
+      "path": "cafe-pages",
+      "routes": [
+        "home",
+        "logs",
+        "log-detail",
+        "stores",
+        "store-detail",
+        "settings",
+        "not-found",
+        "home-error",
+        "logs-error",
+        "log-detail-error",
+        "stores-error",
+        "store-detail-error",
+        "home-empty",
+        "logs-empty",
+        "stores-empty",
+        "home-long",
+        "logs-long",
+        "log-detail-long",
+        "stores-long",
+        "store-detail-long",
+        "detail-without-optional",
+        "delete-confirmation"
+      ],
+      "errors": []
+    },
+    {
+      "app": "cafelog",
+      "width": 320,
+      "path": "catalog",
+      "verified": true,
+      "errors": []
+    },
+    {
+      "app": "cafelog",
+      "width": 390,
+      "path": "/",
+      "tokens": {
+        "theme": "cafelog",
+        "primary": "#2d5016"
+      },
+      "errors": [],
+      "inputs": 0
+    },
+    {
+      "app": "cafelog",
+      "width": 390,
+      "path": "/logs/new",
+      "tokens": {
+        "theme": "cafelog",
+        "primary": "#2d5016"
+      },
+      "errors": [],
+      "inputs": 16
+    },
+    {
+      "app": "cafelog",
+      "width": 390,
+      "path": "/stores",
+      "tokens": {
+        "theme": "cafelog",
+        "primary": "#2d5016"
+      },
+      "errors": [],
+      "inputs": 0
+    },
+    {
+      "app": "cafelog",
+      "width": 390,
+      "path": "/settings",
+      "tokens": {
+        "theme": "cafelog",
+        "primary": "#2d5016"
+      },
+      "errors": [],
+      "inputs": 0
+    },
+    {
+      "app": "cafelog",
+      "width": 390,
+      "path": "/stores/fixture-store",
+      "tokens": {
+        "theme": "cafelog",
+        "primary": "#2d5016"
+      },
+      "errors": [],
+      "inputs": 0
+    },
+    {
+      "app": "cafelog",
+      "width": 390,
+      "path": "notification",
+      "closed": true,
+      "tokens": {
+        "primary": "#2d5016"
+      },
+      "errors": []
+    },
+    {
+      "app": "cafelog",
+      "width": 390,
+      "path": "shell",
+      "consent": true,
+      "auth": true,
+      "navigation": true,
+      "errors": []
+    },
+    {
+      "app": "cafelog",
+      "width": 390,
+      "path": "cafe-forms",
+      "routes": [
+        "create-empty",
+        "invalid-link",
+        "create-with-image",
+        "create-save-error",
+        "edit-save-error"
+      ],
+      "errors": []
+    },
+    {
+      "app": "cafelog",
+      "width": 390,
+      "path": "cafe-pages",
+      "routes": [
+        "home",
+        "logs",
+        "log-detail",
+        "stores",
+        "store-detail",
+        "settings",
+        "not-found",
+        "home-error",
+        "logs-error",
+        "log-detail-error",
+        "stores-error",
+        "store-detail-error",
+        "home-empty",
+        "logs-empty",
+        "stores-empty",
+        "home-long",
+        "logs-long",
+        "log-detail-long",
+        "stores-long",
+        "store-detail-long",
+        "detail-without-optional",
+        "delete-confirmation"
+      ],
+      "errors": []
+    },
+    {
+      "app": "cafelog",
+      "width": 390,
+      "path": "catalog",
+      "verified": true,
+      "errors": []
+    }
+  ],
+  "environment": {
+    "platform": "darwin",
+    "node": "v24.22.1",
+    "browser": "156.0.8078.4",
+    "locale": "ja-JP",
+    "timezone": "Asia/Tokyo",
+    "viewports": [
+      320,
+      390
+    ]
+  },
+  "checks": {
+    "check": "passed",
+    "test": "passed",
+    "build": "passed",
+    "guard:changes": "passed",
+    "catalogSupplement": "4 cases passed"
+  }
+}

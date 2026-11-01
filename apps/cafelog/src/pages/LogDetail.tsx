@@ -1,13 +1,14 @@
+import { Button, Loading, ErrorState, EmptyState } from "@yahatapp/ui";
+import styles from "./log-detail.module.css";
 import { mutationNotices } from "@/lib/mutationNotices";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { FaGlobe, FaMapLocationDot } from "react-icons/fa6";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import {
   ArrowLeft,
   Calendar,
   Edit2,
-  Loader2,
   MessageSquare,
   MapPin,
   Snowflake,
@@ -47,33 +48,20 @@ const toFormValues = (log: LogResponse): CafeLogFormValues => ({
   images: [],
 });
 
-const renderStars = (rating: number | null | undefined) => {
-  if (rating == null) return <span className="text-xs text-cafe-secondary/40">評価なし</span>;
-  const fullStars = Math.floor(rating);
-  const hasHalf = rating % 1 !== 0;
-
-  return (
-    <div aria-hidden="true" className="flex items-center space-x-0.5">
-      {Array.from({ length: 5 }, (_, index) => {
-        const starNumber = index + 1;
-        if (starNumber <= fullStars) {
-          return <Star key={starNumber} size={16} className="fill-cafe-accent text-cafe-accent" />;
-        }
-        if (starNumber === fullStars + 1 && hasHalf) {
-          return (
-            <div key={starNumber} className="relative inline-block">
-              <Star size={16} className="text-cafe-secondary/20" />
-              <div className="absolute top-0 left-0 w-1/2 overflow-hidden">
-                <Star size={16} className="fill-cafe-accent text-cafe-accent" />
-              </div>
-            </div>
-          );
-        }
-        return <Star key={starNumber} size={16} className="text-cafe-secondary/20" />;
-      })}
-    </div>
-  );
-};
+const renderStars = (rating: number) => (
+  <span className={styles.stars} aria-hidden="true">
+    {Array.from({ length: 5 }, (_, index) => (
+      <span key={index} className={styles.star}>
+        <Star size={16} className={styles.starEmpty} />
+        {rating > index && (
+          <span className={styles.starFill} data-half={rating < index + 1 || undefined}>
+            <Star size={16} />
+          </span>
+        )}
+      </span>
+    ))}
+  </span>
+);
 
 const formatDate = (value: string | null | undefined) =>
   value
@@ -137,158 +125,164 @@ const LogDetailPage = () => {
     }
   };
 
-  if (id && logQuery.isPending) {
+  const editButton = useRef<HTMLButtonElement>(null),
+    deleteButton = useRef<HTMLButtonElement>(null),
+    confirmation = useRef<HTMLHeadingElement>(null);
+  const wasEditing = useRef(false),
+    wasConfirming = useRef(false);
+  useEffect(() => {
+    if (isEditMode) document.getElementById("cafe-name")?.focus();
+    else if (wasEditing.current) editButton.current?.focus();
+    wasEditing.current = isEditMode;
+  }, [isEditMode]);
+  useEffect(() => {
+    if (showDeleteConfirm) confirmation.current?.focus();
+    else if (wasConfirming.current) deleteButton.current?.focus();
+    wasConfirming.current = showDeleteConfirm;
+  }, [showDeleteConfirm]);
+  if (id && logQuery.isPending) return <Loading label="記録を読み込み中..." />;
+  if (logQuery.isError && !log)
     return (
-      <div className="flex flex-col items-center justify-center py-32">
-        <Loader2 className="animate-spin text-cafe-primary mb-4" size={32} />
-        <p className="text-cafe-secondary text-sm">記録を読み込み中...</p>
-      </div>
+      <ErrorState message="記録を取得できませんでした。" onRetry={() => void logQuery.refetch()} />
     );
-  }
-
-  if (!log) {
+  if (!log)
     return (
-      <div className="space-y-4 text-center py-10">
-        <div className="bg-white/80 backdrop-blur-md rounded-2xl border border-cafe-secondary/20 p-6 shadow-sm">
-          <p className="text-red-500 font-semibold mb-6">
-            {queryError || "データが見つかりませんでした。"}
-          </p>
-          <Link
-            to="/logs"
-            className="inline-flex items-center space-x-2 bg-cafe-primary text-white font-semibold py-2.5 px-6 rounded-xl shadow-md hover:bg-cafe-primary/90 transition-all active:scale-95 text-sm"
-          >
-            <ArrowLeft size={16} />
-            <span>一覧へ戻る</span>
-          </Link>
-        </div>
-      </div>
+      <EmptyState
+        title="データが見つかりませんでした。"
+        action={
+          <Button asChild>
+            <Link to="/logs">一覧へ戻る</Link>
+          </Button>
+        }
+      />
     );
-  }
-
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-2">
-          <Link
-            to="/logs"
-            className="p-1.5 hover:bg-cafe-primary/5 text-cafe-secondary hover:text-cafe-primary rounded-lg transition-all"
-          >
-            <ArrowLeft size={20} />
-          </Link>
-          <h2 className="text-xl font-bold text-cafe-text">記録の詳細</h2>
+    <div className={styles.root}>
+      <header className={styles.header}>
+        <div className={styles.titleRow}>
+          <Button asChild variant="ghost" size="icon">
+            <Link to="/logs" aria-label="記録一覧に戻る">
+              <ArrowLeft size={20} aria-hidden="true" />
+            </Link>
+          </Button>
+          <h2 className={styles.heading}>{isEditMode ? "記録の編集" : "記録の詳細"}</h2>
         </div>
         {!isEditMode && !showDeleteConfirm && (
-          <div className="flex space-x-1.5">
-            <button
+          <div className={styles.actions}>
+            <Button
+              ref={editButton}
               type="button"
+              variant="ghost"
+              size="icon"
+              aria-label="編集"
               onClick={() => setIsEditMode(true)}
-              className="p-2 text-cafe-secondary hover:text-cafe-primary hover:bg-cafe-primary/5 rounded-xl active:scale-95 transition-all"
-              title="編集"
             >
-              <Edit2 size={18} />
-            </button>
-            <button
+              <Edit2 size={18} aria-hidden="true" />
+            </Button>
+            <Button
+              ref={deleteButton}
               type="button"
+              variant="ghost"
+              size="icon"
+              aria-label="削除"
               onClick={() => setShowDeleteConfirm(true)}
-              className="p-2 text-red-500 hover:text-red-600 hover:bg-red-50 rounded-xl active:scale-95 transition-all"
-              title="削除"
             >
-              <Trash2 size={18} />
-            </button>
+              <Trash2 size={18} aria-hidden="true" />
+            </Button>
           </div>
         )}
-      </div>
-
-      {!isEditMode && queryError && <FloatingNotice key={queryError} message={queryError} />}
-
+      </header>
+      {!isEditMode && queryError && (
+        <FloatingNotice
+          key={queryError}
+          message="最新の記録を取得できませんでした。画面を開き直してお試しください。"
+        />
+      )}
       {showDeleteConfirm && (
-        <div className="bg-red-50 border border-red-200 rounded-2xl p-5 shadow-sm space-y-4">
-          <div className="space-y-1">
-            <h4 className="text-red-700 font-bold text-sm">記録を削除しますか？</h4>
-            <p className="text-xs text-red-600 leading-relaxed">
-              この操作は取り消せません。&ldquo;{log.cafeName}
-              &rdquo;の記録を本当に削除してもよろしいですか？
-            </p>
-          </div>
-          <div className="flex space-x-3">
-            <button
+        <section aria-labelledby="delete-confirmation-title" className={styles.confirmation}>
+          <h3
+            ref={confirmation}
+            id="delete-confirmation-title"
+            tabIndex={-1}
+            className={styles.confirmationTitle}
+          >
+            記録を削除しますか？
+          </h3>
+          <p>この操作は取り消せません。「{log.cafeName}」の記録を削除しますか？</p>
+          <div className={styles.actions}>
+            <Button
               type="button"
+              variant="danger"
+              loading={deleteMutation.isPending}
               onClick={() => void handleDelete()}
-              disabled={isSubmitting}
-              className="flex-1 bg-red-600 hover:bg-red-700 text-white font-semibold py-2.5 px-4 rounded-xl text-xs shadow-md transition-all active:scale-95 disabled:opacity-50"
             >
               {deleteMutation.isPending ? "削除中..." : "削除する"}
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
-              onClick={() => setShowDeleteConfirm(false)}
+              variant="outline"
               disabled={isSubmitting}
-              className="flex-1 bg-white hover:bg-red-50 border border-red-200 text-red-700 font-semibold py-2.5 px-4 rounded-xl text-xs transition-all active:scale-95"
+              onClick={() => setShowDeleteConfirm(false)}
             >
               キャンセル
-            </button>
+            </Button>
           </div>
-        </div>
+        </section>
       )}
-
       {isEditMode && defaultValues ? (
         <CafeLogForm
           defaultValues={defaultValues}
           onSubmit={handleSave}
-          error={queryError}
+          error={queryError ? "最新の記録を取得できませんでした。" : null}
           submitLabel="保存する"
           isSubmitting={isSubmitting}
           onCancel={() => setIsEditMode(false)}
           maxImages={Math.max(0, 5 - imageCount)}
         />
       ) : (
-        <div className="bg-white/80 backdrop-blur-md rounded-2xl border border-cafe-secondary/15 p-5 sm:p-6 shadow-sm space-y-6">
-          <div className="flex items-start gap-3">
-            <div className="flex shrink-0 flex-col items-center gap-1.5">
-              <OriginFlag origin={log.origin} size={24} />
-              <span className="text-center text-[10px] font-bold text-cafe-secondary">
+        <article className={styles.panel}>
+          <div className={styles.coffeeHeader}>
+            <div className={styles.origin}>
+              <OriginFlag origin={log.origin} />
+              <span className={styles.muted}>
                 {log.isBlend == null ? "未登録" : log.isBlend ? "ブレンド" : "シングル"}
               </span>
             </div>
-            <div className="space-y-2 flex-1 min-w-0">
-              <h3 className="text-xl font-bold text-cafe-text leading-tight break-words">
-                {log.cafeName}
-              </h3>
-              <Link
-                to={`/stores/${log.storeId}`}
-                className="inline-flex min-h-11 items-center text-xs font-bold text-cafe-primary underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cafe-primary"
-              >
+            <div className={styles.coffeeTitle}>
+              <h3 className={styles.heading}>{log.cafeName}</h3>
+              <Link to={`/stores/${log.storeId}`} className={styles.storeLink}>
                 このお店のコーヒー記録
               </Link>
               {log.prefecture && (
-                <p className="flex items-center gap-1 text-xs font-semibold text-cafe-secondary">
-                  <MapPin size={12} />
+                <p className={styles.metadata}>
+                  <MapPin size={12} aria-hidden="true" />
                   {log.prefecture}
                 </p>
               )}
-              <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
-                <div
-                  className="flex items-center gap-1.5"
-                  aria-label={log.rating == null ? "評価なし" : `評価 ${log.rating} / 5`}
-                >
-                  {renderStars(log.rating)}
-                  {log.rating != null && (
-                    <span className="text-sm font-extrabold text-cafe-primary">{log.rating}</span>
-                  )}
-                </div>
+              <div className={styles.metadata}>
+                {log.rating == null ? (
+                  <span className={styles.muted}>評価なし</span>
+                ) : (
+                  <span className={styles.rating} role="img" aria-label={`評価 ${log.rating} / 5`}>
+                    {renderStars(log.rating)}
+                    <span>{log.rating}</span>
+                  </span>
+                )}
                 {log.servingStyle === "iced" && (
-                  <span className="inline-flex items-center gap-1 rounded-full bg-blue-100 px-2.5 py-1 text-xs font-bold text-blue-700 ring-1 ring-blue-200">
-                    <Snowflake aria-hidden="true" size={15} /> アイス
+                  <span className={styles.temperature} data-temperature="iced">
+                    <Snowflake size={15} aria-hidden="true" />
+                    アイス
                   </span>
                 )}
                 {log.servingStyle === "hot" && (
-                  <span className="inline-flex items-center gap-1 rounded-full bg-orange-100 px-2.5 py-1 text-xs font-bold text-orange-700 ring-1 ring-orange-200">
-                    <ThermometerSun aria-hidden="true" size={15} /> ホット
+                  <span className={styles.temperature} data-temperature="hot">
+                    <ThermometerSun size={15} aria-hidden="true" />
+                    ホット
                   </span>
                 )}
               </div>
               {log.links.length > 0 && (
-                <div className="flex flex-wrap items-center gap-3 pt-1">
+                <div className={styles.externalLinks}>
                   {log.links.map((link) => {
                     const Icon = link.type === "google_maps" ? FaMapLocationDot : FaGlobe;
                     const label =
@@ -306,7 +300,7 @@ const LogDetailPage = () => {
                         rel="noopener noreferrer"
                         aria-label={label}
                         title={label}
-                        className={`inline-flex shrink-0 items-center justify-center rounded-full text-cafe-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cafe-primary focus-visible:ring-offset-2 ${link.type === "instagram" ? "size-16" : "size-11"}`}
+                        className={styles.externalLink}
                       >
                         {link.type === "instagram" ? (
                           <img
@@ -315,7 +309,6 @@ const LogDetailPage = () => {
                             aria-hidden="true"
                             width={32}
                             height={32}
-                            className="size-8"
                           />
                         ) : (
                           <Icon size={18} aria-hidden="true" />
@@ -327,48 +320,35 @@ const LogDetailPage = () => {
               )}
             </div>
           </div>
-
           <CoffeeAttributes coffee={log} />
-
-          <div className="space-y-2">
-            <span className="text-[10px] font-bold text-cafe-secondary uppercase tracking-wider flex items-center gap-1">
-              <MessageSquare size={10} />
+          <section className={styles.section}>
+            <h4 className={styles.label}>
+              <MessageSquare size={14} aria-hidden="true" />
               メモ / 味の感想
-            </span>
+            </h4>
             {log.note ? (
-              <p className="text-sm text-cafe-text leading-relaxed whitespace-pre-wrap bg-cafe-background/40 p-4 rounded-xl border border-cafe-secondary/10 font-medium">
-                {log.note}
-              </p>
+              <p className={styles.note}>{log.note}</p>
             ) : (
-              <p className="text-xs text-cafe-secondary italic">メモは登録されていません。</p>
+              <p className={styles.muted}>メモは登録されていません。</p>
             )}
-          </div>
-
-          <dl
-            aria-label="訪問情報"
-            className="grid grid-cols-2 gap-4 border-t border-cafe-secondary/10 pt-5"
-          >
-            <div className="min-w-0 space-y-1.5">
-              <dt className="text-xs font-semibold text-cafe-secondary">金額</dt>
-              <dd className="truncate text-sm font-bold text-cafe-text">
-                {log.price == null ? "未登録" : `¥${log.price.toLocaleString()}`}
-              </dd>
+          </section>
+          <dl aria-label="訪問情報" className={styles.visit}>
+            <div>
+              <dt className={styles.label}>金額</dt>
+              <dd>{log.price == null ? "未登録" : `¥${log.price.toLocaleString()}`}</dd>
             </div>
-            <div className="min-w-0 space-y-1.5">
-              <dt className="flex items-center gap-1.5 text-xs font-semibold text-cafe-secondary">
-                <Calendar aria-hidden="true" size={14} /> 訪問日
+            <div>
+              <dt className={styles.label}>
+                <Calendar size={14} aria-hidden="true" />
+                訪問日
               </dt>
-              <dd className="truncate text-sm font-bold text-cafe-text">
-                {formatDate(log.visitDate)}
-              </dd>
+              <dd>{formatDate(log.visitDate)}</dd>
             </div>
           </dl>
-        </div>
+        </article>
       )}
-
       {id && <LogImages logId={id} onCountChange={setImageCount} collapsible={!isEditMode} />}
     </div>
   );
 };
-
 export default LogDetailPage;

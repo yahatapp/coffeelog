@@ -1,0 +1,632 @@
+[
+  {
+    "file": "packages/ui/src/components/app-shell.module.css",
+    "task": "T04/T05/T06",
+    "status": "verified"
+  },
+  {
+    "file": "packages/ui/src/components/app-shell.tsx",
+    "task": "T04/T05/T06",
+    "status": "verified"
+  },
+  {
+    "file": "packages/ui/src/components/button.module.css",
+    "task": "T04/T05/T06",
+    "status": "verified"
+  },
+  {
+    "file": "packages/ui/src/components/button.tsx",
+    "task": "T04/T05/T06",
+    "status": "verified"
+  },
+  {
+    "file": "packages/ui/src/components/card.module.css",
+    "task": "T04/T05/T06",
+    "status": "verified"
+  },
+  {
+    "file": "packages/ui/src/components/card.tsx",
+    "task": "T04/T05/T06",
+    "status": "verified"
+  },
+  {
+    "file": "packages/ui/src/components/checkbox.module.css",
+    "task": "T04/T05/T06",
+    "status": "verified"
+  },
+  {
+    "file": "packages/ui/src/components/checkbox.tsx",
+    "task": "T04/T05/T06",
+    "status": "verified"
+  },
+  {
+    "file": "packages/ui/src/components/field.module.css",
+    "task": "T04/T05/T06",
+    "status": "verified"
+  },
+  {
+    "file": "packages/ui/src/components/field.tsx",
+    "task": "T04/T05/T06",
+    "status": "verified"
+  },
+  {
+    "file": "packages/ui/src/components/input.module.css",
+    "task": "T04/T05/T06",
+    "status": "verified"
+  },
+  {
+    "file": "packages/ui/src/components/input.tsx",
+    "task": "T04/T05/T06",
+    "status": "verified"
+  },
+  {
+    "file": "packages/ui/src/components/label.module.css",
+    "task": "T04/T05/T06",
+    "status": "verified"
+  },
+  {
+    "file": "packages/ui/src/components/label.tsx",
+    "task": "T04/T05/T06",
+    "status": "verified"
+  },
+  {
+    "file": "packages/ui/src/components/layout.module.css",
+    "task": "T04/T05/T06",
+    "status": "verified"
+  },
+  {
+    "file": "packages/ui/src/components/layout.tsx",
+    "task": "T04/T05/T06",
+    "status": "verified"
+  },
+  {
+    "file": "packages/ui/src/components/log-list-controls.module.css",
+    "task": "T04/T05/T06",
+    "status": "verified"
+  },
+  {
+    "file": "packages/ui/src/components/log-list-controls.tsx",
+    "task": "T04/T05/T06",
+    "status": "verified"
+  },
+  {
+    "file": "packages/ui/src/components/notices.module.css",
+    "task": "T04/T05/T06",
+    "status": "verified"
+  },
+  {
+    "file": "packages/ui/src/components/notices.tsx",
+    "task": "T04/T05/T06",
+    "status": "verified"
+  },
+  {
+    "file": "packages/ui/src/components/segment.module.css",
+    "task": "T04/T05/T06",
+    "status": "verified"
+  },
+  {
+    "file": "packages/ui/src/components/segment.tsx",
+    "task": "T04/T05/T06",
+    "status": "verified"
+  },
+  {
+    "file": "packages/ui/src/components/select.module.css",
+    "task": "T04/T05/T06",
+    "status": "verified"
+  },
+  {
+    "file": "packages/ui/src/components/select.tsx",
+    "task": "T04/T05/T06",
+    "status": "verified"
+  },
+  {
+    "file": "packages/ui/src/components/status.module.css",
+    "task": "T04/T05/T06",
+    "status": "verified"
+  },
+  {
+    "file": "packages/ui/src/components/status.tsx",
+    "task": "T04/T05/T06",
+    "status": "verified"
+  },
+  {
+    "file": "packages/ui/src/components/store-history.module.css",
+    "task": "T04/T05/T06",
+    "status": "verified"
+  },
+  {
+    "file": "packages/ui/src/components/store-history.tsx",
+    "task": "T04/T05/T06",
+    "status": "verified"
+  },
+  {
+    "file": "packages/ui/src/components/textarea.module.css",
+    "task": "T04/T05/T06",
+    "status": "verified"
+  },
+  {
+    "file": "packages/ui/src/components/textarea.tsx",
+    "task": "T04/T05/T06",
+    "status": "verified"
+  },
+  {
+    "file": "packages/ui/src/styles/base.css",
+    "task": "T02/T11",
+    "status": "verified"
+  },
+  {
+    "file": "packages/ui/src/styles/index.css",
+    "task": "T02/T11",
+    "status": "verified"
+  },
+  {
+    "file": "packages/ui/src/styles/reset.css",
+    "task": "T02/T11",
+    "status": "verified"
+  },
+  {
+    "file": "packages/ui/src/styles/themes/brewlog.css",
+    "task": "T02/T11",
+    "status": "verified"
+  },
+  {
+    "file": "packages/ui/src/styles/themes/cafelog.css",
+    "task": "T02/T11",
+    "status": "verified"
+  },
+  {
+    "file": "packages/ui/src/styles/tokens/primitives.css",
+    "task": "T02/T11",
+    "status": "verified"
+  },
+  {
+    "file": "packages/ui/src/styles/tokens/semantic.css",
+    "task": "T02/T11",
+    "status": "verified"
+  },
+  {
+    "file": "apps/brewlog/src/App.tsx",
+    "task": "T06",
+    "status": "verified"
+  },
+  {
+    "file": "apps/brewlog/src/components/BeanVersionHistory.tsx",
+    "task": "T07/T08",
+    "status": "verified"
+  },
+  {
+    "file": "apps/brewlog/src/components/bean-history.module.css",
+    "task": "T07/T08",
+    "status": "verified"
+  },
+  {
+    "file": "apps/brewlog/src/components/forms/BeanFields.tsx",
+    "task": "T07/T08",
+    "status": "verified"
+  },
+  {
+    "file": "apps/brewlog/src/components/forms/BeanStoreFields.tsx",
+    "task": "T07/T08",
+    "status": "verified"
+  },
+  {
+    "file": "apps/brewlog/src/components/forms/BrewLogFields.tsx",
+    "task": "T07/T08",
+    "status": "verified"
+  },
+  {
+    "file": "apps/brewlog/src/components/forms/forms.module.css",
+    "task": "T07/T08",
+    "status": "verified"
+  },
+  {
+    "file": "apps/brewlog/src/components/ui/CoffeeBeansIcon.tsx",
+    "task": "T07/T08",
+    "status": "verified"
+  },
+  {
+    "file": "apps/brewlog/src/components/ui/OriginFlag.tsx",
+    "task": "T07/T08",
+    "status": "verified"
+  },
+  {
+    "file": "apps/brewlog/src/components/ui/RoastLevelIndicator.tsx",
+    "task": "T07/T08",
+    "status": "verified"
+  },
+  {
+    "file": "apps/brewlog/src/components/ui/button.tsx",
+    "task": "T07/T08",
+    "status": "verified"
+  },
+  {
+    "file": "apps/brewlog/src/components/ui/card.tsx",
+    "task": "T07/T08",
+    "status": "verified"
+  },
+  {
+    "file": "apps/brewlog/src/components/ui/coffee-beans-icon.module.css",
+    "task": "T07/T08",
+    "status": "verified"
+  },
+  {
+    "file": "apps/brewlog/src/components/ui/input.tsx",
+    "task": "T07/T08",
+    "status": "verified"
+  },
+  {
+    "file": "apps/brewlog/src/components/ui/label.tsx",
+    "task": "T07/T08",
+    "status": "verified"
+  },
+  {
+    "file": "apps/brewlog/src/components/ui/origin-flag.module.css",
+    "task": "T07/T08",
+    "status": "verified"
+  },
+  {
+    "file": "apps/brewlog/src/components/ui/roast-level.module.css",
+    "task": "T07/T08",
+    "status": "verified"
+  },
+  {
+    "file": "apps/brewlog/src/components/ui/segment.tsx",
+    "task": "T07/T08",
+    "status": "verified"
+  },
+  {
+    "file": "apps/brewlog/src/components/ui/slider.module.css",
+    "task": "T07/T08",
+    "status": "verified"
+  },
+  {
+    "file": "apps/brewlog/src/components/ui/slider.tsx",
+    "task": "T07/T08",
+    "status": "verified"
+  },
+  {
+    "file": "apps/brewlog/src/index.css",
+    "task": "T11",
+    "status": "verified"
+  },
+  {
+    "file": "apps/brewlog/src/lib/mutationNotices.ts",
+    "task": "T07/T08",
+    "status": "verified"
+  },
+  {
+    "file": "apps/brewlog/src/lib/queries.test.ts",
+    "task": "T07/T08",
+    "status": "verified"
+  },
+  {
+    "file": "apps/brewlog/src/main.tsx",
+    "task": "T06",
+    "status": "verified"
+  },
+  {
+    "file": "apps/brewlog/src/pages/Beans/AddBean.tsx",
+    "task": "T07/T08",
+    "status": "verified"
+  },
+  {
+    "file": "apps/brewlog/src/pages/Beans/BeanDetail.tsx",
+    "task": "T07/T08",
+    "status": "verified"
+  },
+  {
+    "file": "apps/brewlog/src/pages/Beans/BeansList.tsx",
+    "task": "T07/T08",
+    "status": "verified"
+  },
+  {
+    "file": "apps/brewlog/src/pages/Beans/EditBean.tsx",
+    "task": "T07/T08",
+    "status": "verified"
+  },
+  {
+    "file": "apps/brewlog/src/pages/Home.tsx",
+    "task": "T07/T08",
+    "status": "verified"
+  },
+  {
+    "file": "apps/brewlog/src/pages/Logs/AddLog.tsx",
+    "task": "T07/T08",
+    "status": "verified"
+  },
+  {
+    "file": "apps/brewlog/src/pages/Logs/EditLog.tsx",
+    "task": "T07/T08",
+    "status": "verified"
+  },
+  {
+    "file": "apps/brewlog/src/pages/Logs/LogDetail.tsx",
+    "task": "T07/T08",
+    "status": "verified"
+  },
+  {
+    "file": "apps/brewlog/src/pages/Logs/LogsList.tsx",
+    "task": "T07/T08",
+    "status": "verified"
+  },
+  {
+    "file": "apps/brewlog/src/pages/NotFound.tsx",
+    "task": "T07/T08",
+    "status": "verified"
+  },
+  {
+    "file": "apps/brewlog/src/pages/Settings/Drippers.tsx",
+    "task": "T07/T08",
+    "status": "verified"
+  },
+  {
+    "file": "apps/brewlog/src/pages/Settings/Grinders.tsx",
+    "task": "T07/T08",
+    "status": "verified"
+  },
+  {
+    "file": "apps/brewlog/src/pages/Settings.tsx",
+    "task": "T07/T08",
+    "status": "verified"
+  },
+  {
+    "file": "apps/brewlog/src/pages/Stores.tsx",
+    "task": "T07/T08",
+    "status": "verified"
+  },
+  {
+    "file": "apps/brewlog/src/pages/content.module.css",
+    "task": "T07/T08",
+    "status": "verified"
+  },
+  {
+    "file": "apps/brewlog/src/pages/form-page.module.css",
+    "task": "T07/T08",
+    "status": "verified"
+  },
+  {
+    "file": "apps/cafelog/src/App.tsx",
+    "task": "T06",
+    "status": "verified"
+  },
+  {
+    "file": "apps/cafelog/src/components/CafeLogForm.tsx",
+    "task": "T09/T10",
+    "status": "verified"
+  },
+  {
+    "file": "apps/cafelog/src/components/CafeLogListCard.tsx",
+    "task": "T09/T10",
+    "status": "verified"
+  },
+  {
+    "file": "apps/cafelog/src/components/CoffeeAttributes.tsx",
+    "task": "T09/T10",
+    "status": "verified"
+  },
+  {
+    "file": "apps/cafelog/src/components/FloatingNotice.tsx",
+    "task": "T09/T10",
+    "status": "verified"
+  },
+  {
+    "file": "apps/cafelog/src/components/ImagePicker.tsx",
+    "task": "T09/T10",
+    "status": "verified"
+  },
+  {
+    "file": "apps/cafelog/src/components/ImagePreview.tsx",
+    "task": "T09/T10",
+    "status": "verified"
+  },
+  {
+    "file": "apps/cafelog/src/components/LogImages.tsx",
+    "task": "T09/T10",
+    "status": "verified"
+  },
+  {
+    "file": "apps/cafelog/src/components/OriginFlag.tsx",
+    "task": "T09/T10",
+    "status": "verified"
+  },
+  {
+    "file": "apps/cafelog/src/components/ProcessField.tsx",
+    "task": "T09/T10",
+    "status": "verified"
+  },
+  {
+    "file": "apps/cafelog/src/components/Segment.tsx",
+    "task": "T09/T10",
+    "status": "verified"
+  },
+  {
+    "file": "apps/cafelog/src/components/cafe-form.module.css",
+    "task": "T09/T10",
+    "status": "verified"
+  },
+  {
+    "file": "apps/cafelog/src/components/cafe-log-list-card.module.css",
+    "task": "T09/T10",
+    "status": "verified"
+  },
+  {
+    "file": "apps/cafelog/src/components/coffee-attributes.module.css",
+    "task": "T09/T10",
+    "status": "verified"
+  },
+  {
+    "file": "apps/cafelog/src/components/image-picker.module.css",
+    "task": "T09/T10",
+    "status": "verified"
+  },
+  {
+    "file": "apps/cafelog/src/components/image-preview.module.css",
+    "task": "T09/T10",
+    "status": "verified"
+  },
+  {
+    "file": "apps/cafelog/src/components/log-images.module.css",
+    "task": "T09/T10",
+    "status": "verified"
+  },
+  {
+    "file": "apps/cafelog/src/components/origin-flag.module.css",
+    "task": "T09/T10",
+    "status": "verified"
+  },
+  {
+    "file": "apps/cafelog/src/components/process-field.module.css",
+    "task": "T09/T10",
+    "status": "verified"
+  },
+  {
+    "file": "apps/cafelog/src/index.css",
+    "task": "T11",
+    "status": "verified"
+  },
+  {
+    "file": "apps/cafelog/src/lib/mutationNotices.ts",
+    "task": "T09/T10",
+    "status": "verified"
+  },
+  {
+    "file": "apps/cafelog/src/lib/queries.test.ts",
+    "task": "T09/T10",
+    "status": "verified"
+  },
+  {
+    "file": "apps/cafelog/src/lib/queryClient.ts",
+    "task": "T09/T10",
+    "status": "verified"
+  },
+  {
+    "file": "apps/cafelog/src/lib/saveLog.ts",
+    "task": "T09/T10",
+    "status": "verified"
+  },
+  {
+    "file": "apps/cafelog/src/main.tsx",
+    "task": "T06",
+    "status": "verified"
+  },
+  {
+    "file": "apps/cafelog/src/pages/CreateLog.tsx",
+    "task": "T09/T10",
+    "status": "verified"
+  },
+  {
+    "file": "apps/cafelog/src/pages/Home.tsx",
+    "task": "T09/T10",
+    "status": "verified"
+  },
+  {
+    "file": "apps/cafelog/src/pages/LogDetail.tsx",
+    "task": "T09/T10",
+    "status": "verified"
+  },
+  {
+    "file": "apps/cafelog/src/pages/Logs.tsx",
+    "task": "T09/T10",
+    "status": "verified"
+  },
+  {
+    "file": "apps/cafelog/src/pages/NotFound.tsx",
+    "task": "T09/T10",
+    "status": "verified"
+  },
+  {
+    "file": "apps/cafelog/src/pages/Settings.tsx",
+    "task": "T09/T10",
+    "status": "verified"
+  },
+  {
+    "file": "apps/cafelog/src/pages/Stores.tsx",
+    "task": "T09/T10",
+    "status": "verified"
+  },
+  {
+    "file": "apps/cafelog/src/pages/content.module.css",
+    "task": "T09/T10",
+    "status": "verified"
+  },
+  {
+    "file": "apps/cafelog/src/pages/create-log.module.css",
+    "task": "T09/T10",
+    "status": "verified"
+  },
+  {
+    "file": "apps/cafelog/src/pages/log-detail.module.css",
+    "task": "T09/T10",
+    "status": "verified"
+  },
+  {
+    "file": "packages/ui/src/styles/tokens.css",
+    "task": "T11",
+    "status": "removed"
+  },
+  {
+    "file": "packages/ui/src/lib/cn.ts",
+    "task": "T04",
+    "status": "verified"
+  },
+  {
+    "file": "packages/ui/package.json",
+    "task": "T11",
+    "status": "verified"
+  },
+  {
+    "file": "apps/brewlog/package.json",
+    "task": "T11",
+    "status": "verified"
+  },
+  {
+    "file": "apps/cafelog/package.json",
+    "task": "T11",
+    "status": "verified"
+  },
+  {
+    "file": "apps/brewlog/vite.config.ts",
+    "task": "T11",
+    "status": "verified"
+  },
+  {
+    "file": "apps/cafelog/vite.config.ts",
+    "task": "T11",
+    "status": "verified"
+  },
+  {
+    "file": "pnpm-workspace.yaml",
+    "task": "T11",
+    "status": "verified"
+  },
+  {
+    "file": "pnpm-lock.yaml",
+    "task": "T11",
+    "status": "verified"
+  },
+  {
+    "file": "AGENTS.md",
+    "task": "T12",
+    "status": "verified"
+  },
+  {
+    "file": "apps/brewlog/AGENTS.md",
+    "task": "T12",
+    "status": "verified"
+  },
+  {
+    "file": "apps/brewlog/src/components/AGENTS.md",
+    "task": "T12",
+    "status": "verified"
+  },
+  {
+    "file": "apps/brewlog/src/pages/AGENTS.md",
+    "task": "T12",
+    "status": "verified"
+  },
+  {
+    "file": ".github/workflows/ci.yml",
+    "task": "T12",
+    "status": "verified"
+  }
+]

@@ -1,0 +1,14 @@
+{
+  "command": "UI_INJECT_FAILURE=1 UI_OUTPUT=test-results/ui-failure pnpm test:ui",
+  "exitCode": 1,
+  "traceEntries": 15,
+  "traceBytes": 104964,
+  "files": [
+    "failure.json",
+    "failure.png",
+    "trace.zip",
+    "comparison.html",
+    "comparison.json"
+  ],
+  "reason": "Intentional injected failure; application error paths remain separately tested."
+}

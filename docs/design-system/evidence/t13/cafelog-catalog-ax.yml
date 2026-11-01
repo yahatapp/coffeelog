@@ -1,0 +1,82 @@
+- main:
+  - heading "UI部品の確認" [level=1]
+  - region "基本部品":
+    - button "primary"
+    - button "secondary"
+    - button "outline"
+    - button "ghost"
+    - button "danger"
+    - link "保存中のリンク" [disabled]:
+      - /url: "#blocked"
+    - button "サイズ sm"
+    - button "サイズ md"
+    - button "サイズ lg"
+    - button "サイズ icon": +
+    - button "利用不可" [disabled]
+    - button "保存中" [disabled]
+  - region "入力部品":
+    - heading "入力と選択" [level=3]
+    - text: 名前
+    - textbox "名前":
+      - /placeholder: 入力例
+    - text: エラーの入力
+    - textbox "エラーの入力" [invalid]
+    - paragraph: 名前を入力してください。
+    - text: 変更できない値
+    - textbox "変更できない値": 登録済み
+    - text: 利用不可の入力
+    - textbox "利用不可の入力" [disabled]: 利用不可
+    - text: 選択
+    - combobox "選択":
+      - option "ホット" [selected]
+      - option "アイス"
+    - text: メモ
+    - textbox "メモ"
+    - text: 利用不可のメモ
+    - textbox "利用不可のメモ" [disabled]: 利用不可
+    - text: 変更できないメモ
+    - textbox "変更できないメモ": 登録済み
+    - text: エラーのメモ
+    - textbox "エラーのメモ" [invalid]
+    - alert: メモを確認してください。
+    - text: 利用不可の選択
+    - combobox "利用不可の選択" [disabled]:
+      - option "ホット" [selected]
+    - text: エラーの選択
+    - combobox "エラーの選択" [invalid]:
+      - option "未選択" [selected]
+    - alert: 選択してください。
+    - checkbox "利用不可の確認" [disabled]
+    - text: 利用不可の確認
+    - checkbox "確認済み"
+    - text: 確認済み
+    - radiogroup "提供温度":
+      - radio "ホット" [checked]
+      - text: ホット
+      - radio "アイス"
+      - text: アイス
+    - radiogroup "利用不可の選択肢" [disabled]:
+      - radio "ホット" [checked] [disabled]
+      - text: ホット
+      - radio "アイス" [disabled]
+      - text: アイス
+    - text: 店名
+    - paragraph: 正式名称を入力
+    - textbox "店名" [invalid]
+    - alert: 店名が必要です
+  - region "一覧の操作":
+    - group "温度で絞り込む":
+      - button "すべて 3" [pressed]
+      - button "ホット 2"
+      - button "アイス 1"
+    - text: "ソート:"
+    - button "日付で昇順に並べ替え" [pressed]: 日付
+    - button "評価で降順に並べ替え": 評価
+  - region "画面の状態":
+    - status: 読み込み中...
+    - paragraph: データの取得に失敗しました。
+    - button "再試行"
+    - paragraph: 記録がありません
+    - paragraph: 最初の記録を追加してください。
+  - button "通知する"
+- region "操作結果の通知"

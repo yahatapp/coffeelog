@@ -1,16 +1,17 @@
+import { Loading } from "@yahatapp/ui";
+import styles from "../form-page.module.css";
 import { mutationNotices } from "@/lib/mutationNotices";
 import { useEffect, useMemo } from "react";
 import { useForm } from "@tanstack/react-form";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { ArrowLeft, Loader2, Save } from "lucide-react";
+import { ArrowLeft, Save } from "lucide-react";
 import { beanCreateSchema } from "@/contracts";
 import { beanQueries, mutations, queryKeys } from "@/lib/queries";
 import { getTodayJSTString, toBeanCreateInput, type BeanFormValues } from "@/lib/form-values";
 import { BeanFields } from "@/components/forms/BeanFields";
 import { Button } from "@/components/ui/button";
 import { analytics } from "@/lib/analytics";
-
 const AddBean = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -19,7 +20,6 @@ const AddBean = () => {
   const isVersionMode = Boolean(parentBeanId);
   const today = useMemo(() => getTodayJSTString(), []);
   const parentQuery = useQuery(beanQueries.detail(parentBeanId ?? ""));
-
   const createMutation = useMutation({
     meta: mutationNotices.createBean,
     mutationFn: (values: BeanFormValues) => {
@@ -28,16 +28,21 @@ const AddBean = () => {
       if (!parsed.success) {
         throw new Error("入力内容を確認してください。");
       }
-      return mutations.createBean({ json: parsed.data });
+      return mutations.createBean({
+        json: parsed.data,
+      });
     },
     onSuccess: async () => {
       analytics.trackEvent("bean_create_success");
-      await queryClient.invalidateQueries({ queryKey: queryKeys.beans });
-      await queryClient.invalidateQueries({ queryKey: queryKeys.stores });
+      await queryClient.invalidateQueries({
+        queryKey: queryKeys.beans,
+      });
+      await queryClient.invalidateQueries({
+        queryKey: queryKeys.stores,
+      });
       void navigate("/beans");
     },
   });
-
   const defaultValues: BeanFormValues = {
     name: "",
     coffeeType: "regular",
@@ -65,7 +70,6 @@ const AddBean = () => {
       await createMutation.mutateAsync(value);
     },
   });
-
   useEffect(() => {
     if (!isVersionMode || !parentQuery.data) return;
     form.setFieldValue("name", parentQuery.data.name);
@@ -80,33 +84,24 @@ const AddBean = () => {
     form.setFieldValue("roastLevel", parentQuery.data.roastLevel ?? 3);
     form.setFieldValue("processMethod", parentQuery.data.processMethod ?? "");
   }, [form, isVersionMode, parentQuery.data]);
-
   if (isVersionMode && parentQuery.isPending) {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <Loader2 className="animate-spin text-coffee-primary" size={32} />
-      </div>
-    );
+    return <Loading />;
   }
-
   if (isVersionMode && parentQuery.isError) {
     return (
-      <div className="text-center p-8 text-coffee-secondary">
+      <div className={styles.fallback}>
         <p>元の豆情報を取得できませんでした。</p>
-        <Button className="mt-4" onClick={() => void parentQuery.refetch()}>
-          再読み込み
-        </Button>
+        <Button onClick={() => void parentQuery.refetch()}>再読み込み</Button>
       </div>
     );
   }
-
   return (
-    <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 space-y-6">
-      <div className="flex items-center space-x-2">
-        <Button variant="ghost" size="icon" onClick={() => navigate(-1)} className="rounded-full">
-          <ArrowLeft size={20} />
+    <div className={styles.page}>
+      <div className={styles.row}>
+        <Button variant="ghost" size="icon" onClick={() => navigate(-1)} aria-label="戻る">
+          <ArrowLeft size={20} aria-hidden={true} />
         </Button>
-        <h2 className="text-xl font-bold text-coffee-primary">
+        <h2 className={styles.pageHeading}>
           {isVersionMode ? "豆のバージョンを追加" : "豆を登録する"}
         </h2>
       </div>
@@ -118,11 +113,11 @@ const AddBean = () => {
           // Mutation errors are shown by the shared notices and the form error state.
           void form.handleSubmit().catch(() => undefined);
         }}
-        className="space-y-4"
+        className={styles.stack}
       >
         <BeanFields form={form} isVersionMode={isVersionMode} />
         {createMutation.isError && (
-          <p className="rounded-2xl bg-red-50 px-4 py-3 text-sm text-red-600">
+          <p className={styles.error}>
             {createMutation.error instanceof Error
               ? createMutation.error.message
               : "保存に失敗しました。"}
@@ -130,14 +125,16 @@ const AddBean = () => {
         )}
         <Button
           type="submit"
-          className="w-full rounded-2xl h-12 text-base shadow-lg bg-coffee-primary hover:bg-coffee-primary/90"
           disabled={createMutation.isPending}
+          fullWidth
+          size="lg"
+          loading={createMutation.isPending}
         >
           {createMutation.isPending ? (
-            <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+            "保存中..."
           ) : (
             <>
-              <Save size={18} className="mr-2" />
+              <Save size={18} className={styles.icon} aria-hidden={true} />
               保存する
             </>
           )}
@@ -146,5 +143,4 @@ const AddBean = () => {
     </div>
   );
 };
-
 export default AddBean;

@@ -1,0 +1,69 @@
+@layer components {
+  .tonal {
+    background: var(--cl-color-surface-tonal);
+  }
+  .border {
+    border: var(--cl-border-width) solid var(--cl-color-border-decorative);
+  }
+  .rounded {
+    border-radius: var(--cl-radius-card);
+  }
+  .content {
+    padding: var(--cl-space-page-inline);
+  }
+  .row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: var(--cl-space-field-gap);
+  }
+  .fieldStack {
+    display: flex;
+    flex-direction: column;
+    gap: var(--cl-space-field-gap);
+  }
+  .spread {
+    justify-content: space-between;
+  }
+  .wrapping {
+    flex-wrap: wrap;
+  }
+  .grow {
+    flex: 1;
+    min-width: 0;
+  }
+  .fixed {
+    flex-shrink: 0;
+  }
+  .helper {
+    font-size: var(--cl-font-size-helper);
+  }
+  .body {
+    font-size: var(--cl-font-size-label);
+  }
+  .strong {
+    font-weight: var(--cl-font-weight-medium);
+  }
+  .muted {
+    color: var(--cl-color-text-muted);
+  }
+  .accent {
+    color: var(--cl-color-action-primary);
+  }
+  .wrap {
+    overflow-wrap: anywhere;
+  }
+  .spinner {
+    animation: spin var(--cl-motion-loading) linear infinite;
+  }
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .spinner {
+      animation: none;
+    }
+  }
+}

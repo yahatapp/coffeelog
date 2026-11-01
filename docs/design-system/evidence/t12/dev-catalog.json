@@ -1,0 +1,14 @@
+[
+  {
+    "app": "brewlog",
+    "theme": "brewlog",
+    "apiCalls": 0,
+    "axe": 0
+  },
+  {
+    "app": "cafelog",
+    "theme": "cafelog",
+    "apiCalls": 0,
+    "axe": 0
+  }
+]

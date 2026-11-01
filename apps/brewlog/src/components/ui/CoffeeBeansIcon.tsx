@@ -1,26 +1,30 @@
+import { clsx } from "clsx";
+import styles from "./coffee-beans-icon.module.css";
 import React from "react";
 
-interface CoffeeBeansIconProps extends React.SVGProps<SVGSVGElement> {
-  size?: number;
+interface CoffeeBeansIconProps extends Omit<React.SVGProps<SVGSVGElement>, "width" | "height"> {
+  size?: "sm" | "md" | "lg";
 }
 
 export const CoffeeBeansIcon: React.FC<CoffeeBeansIconProps> = ({
-  size = 24,
+  size = "md",
   className = "",
   ...props
 }) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width={size}
-      height={size}
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
-      className={`flex-shrink-0 ${className}`}
+      className={clsx(
+        styles.root,
+        { sm: styles.small, md: styles.medium, lg: styles.large }[size],
+        className,
+      )}
       {...props}
     >
       {/* A single, beautifully stylized coffee bean, tilted organically */}

@@ -1,0 +1,80 @@
+@layer components {
+  .root {
+    display: flex;
+    flex-direction: column;
+    gap: var(--cl-space-field-gap);
+    min-width: 0;
+  }
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--cl-space-field-gap);
+  }
+  .heading {
+    display: flex;
+    align-items: center;
+    gap: var(--cl-space-field-gap);
+    font-size: var(--cl-font-size-label);
+    font-weight: var(--cl-font-weight-medium);
+  }
+  .count,
+  .hint {
+    font-size: var(--cl-font-size-helper);
+    color: var(--cl-color-text-muted);
+    overflow-wrap: anywhere;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--cl-space-field-gap);
+  }
+  .tile {
+    position: relative;
+    aspect-ratio: 1;
+    overflow: hidden;
+    border-radius: var(--cl-radius-control);
+    background: var(--cl-color-surface-tonal);
+  }
+  .preview {
+    width: 100%;
+    height: 100%;
+    min-height: var(--cl-size-target-min);
+  }
+  .image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .remove {
+    position: absolute;
+    inset-inline-end: var(--cl-space-tight);
+    inset-block-start: var(--cl-space-tight);
+  }
+  .add {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--cl-space-tight);
+    aspect-ratio: 1;
+    min-height: var(--cl-size-target-min);
+    border: var(--cl-border-width) dashed var(--cl-color-border-input);
+    border-radius: var(--cl-radius-control);
+    background: var(--cl-color-surface-tonal);
+    color: var(--cl-color-text-muted);
+    font-size: var(--cl-font-size-helper);
+    font-weight: var(--cl-font-weight-medium);
+  }
+  .add:hover {
+    border-color: var(--cl-color-action-primary);
+  }
+  .file {
+    position: absolute;
+    width: var(--cl-border-width);
+    height: var(--cl-border-width);
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}

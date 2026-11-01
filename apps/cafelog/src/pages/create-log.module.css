@@ -1,0 +1,17 @@
+@layer pages {
+  .root {
+    display: flex;
+    flex-direction: column;
+    gap: var(--cl-space-section-gap);
+  }
+  .header {
+    display: flex;
+    align-items: center;
+    gap: var(--cl-space-field-gap);
+  }
+  .heading {
+    font-size: var(--cl-font-size-section-title);
+    font-weight: var(--cl-font-weight-medium);
+    color: var(--cl-color-text);
+  }
+}

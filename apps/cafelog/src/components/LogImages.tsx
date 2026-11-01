@@ -1,10 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
-import { ChevronDown, Download, Images, X } from "lucide-react";
+import { ChevronDown, Images } from "lucide-react";
 import { useEffect, useState } from "react";
+import { ErrorState, Loading } from "@yahatapp/ui";
 import { cafelogQueries } from "@/lib/queries";
-
+import { ImagePreview } from "./ImagePreview";
+import styles from "./log-images.module.css";
 type LoadedImage = { id: string; position: number; url: string };
-
+const emptyImages: never[] = [];
 export const LogImages = ({
   logId,
   onCountChange,
@@ -14,116 +16,66 @@ export const LogImages = ({
   onCountChange?: (count: number) => void;
   collapsible?: boolean;
 }) => {
-  const { data = [] } = useQuery(cafelogQueries.images(logId));
+  const query = useQuery(cafelogQueries.images(logId));
+  const data = query.data ?? emptyImages;
   const [images, setImages] = useState<LoadedImage[]>([]);
   const [previewIndex, setPreviewIndex] = useState<number | null>(null);
-
   useEffect(() => {
     onCountChange?.(data.length);
-    const objectUrls = data.map((image) => ({
+    const urls = data.map((image) => ({
       id: image.id,
       position: image.position,
       url: URL.createObjectURL(image.blob),
     }));
-    // Object URLs are browser resources owned by this effect and revoked in its cleanup.
+    // Object URLs belong to this effect and are revoked when its data changes.
     // eslint-disable-next-line react/set-state-in-effect
-    setImages(objectUrls);
-    return () => objectUrls.forEach((image) => URL.revokeObjectURL(image.url));
+    setImages(urls);
+    return () => urls.forEach((image) => URL.revokeObjectURL(image.url));
   }, [data, onCountChange]);
-
-  useEffect(() => {
-    if (previewIndex === null) return;
-    const close = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setPreviewIndex(null);
-    };
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    window.addEventListener("keydown", close);
-    return () => {
-      document.body.style.overflow = previousOverflow;
-      window.removeEventListener("keydown", close);
-    };
-  }, [previewIndex]);
-
+  if (query.isPending) return <Loading label="写真を読み込み中..." />;
+  if (query.isError)
+    return (
+      <ErrorState message="写真を取得できませんでした。" onRetry={() => void query.refetch()} />
+    );
   if (!images.length) return null;
   const preview = previewIndex === null ? null : images[previewIndex];
-  const previewNumber = previewIndex === null ? 0 : previewIndex + 1;
-
   const gallery = (
-    <section aria-label="記録の写真" className="grid grid-cols-2 gap-2">
+    <section aria-label="記録の写真" className={styles.gallery}>
       {images.map((image, index) => (
         <button
           key={image.id}
           type="button"
-          className={images.length === 1 ? "col-span-2" : ""}
+          className={styles.photo}
+          data-single={images.length === 1 || undefined}
           onClick={() => setPreviewIndex(index)}
           aria-label={`記録の写真 ${index + 1} を拡大表示`}
         >
-          <img
-            src={image.url}
-            alt={`記録の写真 ${index + 1}`}
-            className="aspect-square w-full rounded-2xl object-cover shadow-sm"
-          />
+          <img src={image.url} alt={`記録の写真 ${index + 1}`} className={styles.image} />
         </button>
       ))}
     </section>
   );
-
   return (
     <>
       {collapsible ? (
-        <details className="group overflow-hidden rounded-2xl border border-cafe-secondary/15 bg-white/80 shadow-sm">
-          <summary className="flex cursor-pointer list-none items-center gap-2 px-5 py-4 font-bold text-cafe-text [&::-webkit-details-marker]:hidden">
-            <Images aria-hidden="true" size={17} className="text-cafe-primary" />
-            写真 <span className="text-xs font-medium text-cafe-secondary">{images.length}枚</span>
-            <ChevronDown
-              aria-hidden="true"
-              size={17}
-              className="ml-auto text-cafe-secondary transition-transform group-open:rotate-180"
-            />
+        <details className={styles.details}>
+          <summary className={styles.summary}>
+            <Images size={17} aria-hidden="true" />
+            写真<span className={styles.count}>{images.length}枚</span>
+            <ChevronDown size={17} aria-hidden="true" className={styles.chevron} />
           </summary>
-          <div className="border-t border-cafe-secondary/10 p-4">{gallery}</div>
+          <div className={styles.content}>{gallery}</div>
         </details>
       ) : (
         gallery
       )}
-
       {preview && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-label={`記録の写真 ${previewNumber} のプレビュー`}
-          className="fixed inset-0 z-50 flex flex-col bg-black/95 p-4 pt-[max(1rem,env(safe-area-inset-top))] pb-[max(1rem,env(safe-area-inset-bottom))]"
-          onClick={() => setPreviewIndex(null)}
-        >
-          <div className="flex justify-end">
-            <button
-              type="button"
-              onClick={() => setPreviewIndex(null)}
-              aria-label="プレビューを閉じる"
-              className="rounded-full bg-white/15 p-2.5 text-white hover:bg-white/25"
-            >
-              <X size={24} />
-            </button>
-          </div>
-          <div className="flex min-h-0 flex-1 items-center justify-center py-4">
-            <img
-              src={preview.url}
-              alt={`記録の写真 ${previewNumber}`}
-              className="max-h-full max-w-full object-contain"
-              onClick={(event) => event.stopPropagation()}
-            />
-          </div>
-          <a
-            href={preview.url}
-            download={`cafelog-${logId}-${preview.position + 1}.jpg`}
-            onClick={(event) => event.stopPropagation()}
-            className="mx-auto flex w-full max-w-sm items-center justify-center gap-2 rounded-xl bg-white px-4 py-3 font-bold text-cafe-text"
-          >
-            <Download size={19} />
-            写真をダウンロード
-          </a>
-        </div>
+        <ImagePreview
+          url={preview.url}
+          label={`記録の写真 ${(previewIndex ?? 0) + 1} のプレビュー`}
+          download={`cafelog-${logId}-${preview.position + 1}.jpg`}
+          onClose={() => setPreviewIndex(null)}
+        />
       )}
     </>
   );

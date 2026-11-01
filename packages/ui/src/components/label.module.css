@@ -1,0 +1,7 @@
+@layer components {
+  .root {
+    font-size: var(--cl-font-size-label);
+    font-weight: var(--cl-font-weight-medium);
+    color: var(--cl-color-text);
+  }
+}

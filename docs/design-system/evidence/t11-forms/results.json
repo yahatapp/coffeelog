@@ -1,0 +1,34 @@
+[
+  {
+    "app": "brewlog",
+    "width": 320,
+    "path": "shell",
+    "consent": true,
+    "auth": true,
+    "navigation": true,
+    "errors": []
+  },
+  {
+    "app": "brewlog",
+    "width": 320,
+    "path": "brew-forms",
+    "verified": true,
+    "errors": []
+  },
+  {
+    "app": "brewlog",
+    "width": 390,
+    "path": "shell",
+    "consent": true,
+    "auth": true,
+    "navigation": true,
+    "errors": []
+  },
+  {
+    "app": "brewlog",
+    "width": 390,
+    "path": "brew-forms",
+    "verified": true,
+    "errors": []
+  }
+]

@@ -1,0 +1,26 @@
+@layer components {
+  .small {
+    --_flag-height: var(--cl-size-flag-small);
+  }
+  .medium {
+    --_flag-height: var(--cl-size-flag-medium);
+  }
+  .large {
+    --_flag-height: var(--cl-size-flag-large);
+  }
+  .flag {
+    width: calc(var(--_flag-height) * 4 / 3);
+    height: var(--_flag-height);
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border: var(--cl-border-width) solid var(--cl-color-border-decorative);
+    border-radius: var(--cl-space-tight);
+    flex-shrink: 0;
+  }
+  .fallback {
+    width: var(--_flag-height);
+    height: var(--_flag-height);
+    color: var(--cl-color-text-muted);
+    flex-shrink: 0;
+  }
+}

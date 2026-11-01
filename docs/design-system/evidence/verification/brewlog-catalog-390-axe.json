@@ -1,0 +1,131 @@
+[
+  {
+    "id": "color-contrast",
+    "impact": "serious",
+    "tags": [
+      "cat.color",
+      "wcag2aa",
+      "wcag143",
+      "TTv5",
+      "TT13.c",
+      "EN-301-549",
+      "EN-9.1.4.3",
+      "ACT",
+      "RGAAv4",
+      "RGAA-3.2.1"
+    ],
+    "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+    "help": "Elements must meet minimum color contrast ratio thresholds",
+    "helpUrl": "https://dequeuniversity.com/rules/axe/4.14/color-contrast?application=playwright",
+    "nodes": [
+      {
+        "any": [
+          {
+            "id": "color-contrast",
+            "data": {
+              "fgColor": "#a67b5b",
+              "bgColor": "#f6f2ef",
+              "contrastRatio": 3.36,
+              "fontSize": "9.0pt (12px)",
+              "fontWeight": "bold",
+              "messageKey": null,
+              "expectedContrastRatio": "4.5:1"
+            },
+            "relatedNodes": [
+              {
+                "html": "<div role=\"radiogroup\" aria-label=\"提供温度\" aria-disabled=\"false\" class=\"grid grid-flow-col auto-cols-fr gap-1 rounded-2xl bg-muted/10 p-1\">",
+                "target": [
+                  ".grid"
+                ]
+              },
+              {
+                "html": "<div class=\"rounded-2xl border border-border bg-surface text-foreground shadow-sm\">",
+                "target": [
+                  ".border-border.text-foreground.shadow-sm"
+                ]
+              }
+            ],
+            "impact": "serious",
+            "message": "Element has insufficient color contrast of 3.36 (foreground color: #a67b5b, background color: #f6f2ef, font size: 9.0pt (12px), font weight: bold). Expected contrast ratio of 4.5:1"
+          }
+        ],
+        "all": [],
+        "none": [],
+        "impact": "serious",
+        "html": "<label class=\"rounded-xl px-3 py-2.5 text-center text-xs font-bold transition-all has-focus-visible:ring-2 has-focus-visible:ring-ring cursor-pointer active:scale-[0.98] text-muted hover:bg-surface/60 hover:text-primary\"><input class=\"sr-only\" type=\"radio\" value=\"iced\" name=\"_r_0_\">アイス</label>",
+        "target": [
+          ".hover\\:bg-surface\\/60"
+        ],
+        "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 3.36 (foreground color: #a67b5b, background color: #f6f2ef, font size: 9.0pt (12px), font weight: bold). Expected contrast ratio of 4.5:1"
+      },
+      {
+        "any": [
+          {
+            "id": "color-contrast",
+            "data": {
+              "fgColor": "#a67b5b",
+              "bgColor": "#faf9f6",
+              "contrastRatio": 3.55,
+              "fontSize": "10.5pt (14px)",
+              "fontWeight": "normal",
+              "messageKey": null,
+              "expectedContrastRatio": "4.5:1"
+            },
+            "relatedNodes": [
+              {
+                "html": "<html lang=\"ja\" data-app-theme=\"brewlog\">",
+                "target": [
+                  "html"
+                ]
+              }
+            ],
+            "impact": "serious",
+            "message": "Element has insufficient color contrast of 3.55 (foreground color: #a67b5b, background color: #faf9f6, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1"
+          }
+        ],
+        "all": [],
+        "none": [],
+        "impact": "serious",
+        "html": "<span class=\"text-sm\">読み込み中...</span>",
+        "target": [
+          "span:nth-child(2)"
+        ],
+        "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 3.55 (foreground color: #a67b5b, background color: #faf9f6, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1"
+      },
+      {
+        "any": [
+          {
+            "id": "color-contrast",
+            "data": {
+              "fgColor": "#a67b5b",
+              "bgColor": "#ffffff",
+              "contrastRatio": 3.74,
+              "fontSize": "10.5pt (14px)",
+              "fontWeight": "normal",
+              "messageKey": null,
+              "expectedContrastRatio": "4.5:1"
+            },
+            "relatedNodes": [
+              {
+                "html": "<div class=\"rounded-2xl border border-dashed border-border bg-surface p-8 text-center\"><p class=\"font-semibold text-foreground\">記録がありません</p><p class=\"mt-2 text-sm text-muted\">最初の記録を追加してください。</p></div>",
+                "target": [
+                  ".border-dashed"
+                ]
+              }
+            ],
+            "impact": "serious",
+            "message": "Element has insufficient color contrast of 3.74 (foreground color: #a67b5b, background color: #ffffff, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1"
+          }
+        ],
+        "all": [],
+        "none": [],
+        "impact": "serious",
+        "html": "<p class=\"mt-2 text-sm text-muted\">最初の記録を追加してください。</p>",
+        "target": [
+          ".mt-2"
+        ],
+        "failureSummary": "Fix any of the following:\n  Element has insufficient color contrast of 3.74 (foreground color: #a67b5b, background color: #ffffff, font size: 10.5pt (14px), font weight: normal). Expected contrast ratio of 4.5:1"
+      }
+    ]
+  }
+]

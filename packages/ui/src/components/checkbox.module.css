@@ -1,0 +1,16 @@
+@layer components {
+  .root {
+    width: var(--cl-size-target-min);
+    height: var(--cl-size-target-min);
+    accent-color: var(--cl-color-action-primary);
+    cursor: pointer;
+  }
+  .root:focus-visible {
+    outline: var(--cl-focus-width) solid var(--cl-color-focus);
+    outline-offset: var(--cl-focus-offset);
+  }
+  .root:disabled {
+    cursor: not-allowed;
+    opacity: var(--cl-opacity-disabled);
+  }
+}

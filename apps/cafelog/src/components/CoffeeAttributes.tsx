@@ -1,3 +1,4 @@
+import styles from "./coffee-attributes.module.css";
 import { Flame, Layers3, MapPin, Snowflake, Sprout, ThermometerSun } from "lucide-react";
 import type { ComponentType } from "react";
 
@@ -61,16 +62,14 @@ export const CoffeeAttributes = ({
 
   if (compact) {
     return (
-      <dl className="mt-2 space-y-1.5" aria-label="コーヒーの属性">
+      <dl className={styles.compact} aria-label="コーヒーの属性">
         {groups.map(({ label, icon: Icon, values }) => (
-          <div key={label} className="flex min-w-0 items-start gap-2 text-xs">
-            <dt className="flex w-5 shrink-0 justify-center pt-0.5 text-cafe-primary/70">
+          <div key={label} className={styles.compactRow}>
+            <dt className={styles.compactLabel}>
               <Icon aria-hidden="true" size={13} />
-              <span className="sr-only">{label}</span>
+              <span className={styles.visuallyHidden}>{label}</span>
             </dt>
-            <dd className="min-w-0 break-words font-medium leading-relaxed text-cafe-secondary">
-              {values.join(" ・ ")}
-            </dd>
+            <dd className={styles.compactValue}>{values.join(" ・ ")}</dd>
           </div>
         ))}
       </dl>
@@ -102,31 +101,23 @@ export const CoffeeAttributes = ({
   ];
 
   return (
-    <section aria-labelledby="coffee-attributes-heading" className="space-y-4">
-      <div className="flex items-center gap-2">
-        <Layers3 aria-hidden="true" className="text-cafe-primary" size={16} />
-        <h4
-          id="coffee-attributes-heading"
-          className="text-xs font-bold tracking-wide text-cafe-text"
-        >
+    <section aria-labelledby="coffee-attributes-heading" className={styles.stack}>
+      <div className={styles.header}>
+        <Layers3 aria-hidden="true" className={styles.accent} size={16} />
+        <h4 id="coffee-attributes-heading" className={styles.heading}>
           コーヒーの情報
         </h4>
       </div>
-      <div className="space-y-4">
+      <div className={styles.stack}>
         {sections.map(({ title, rows }) => (
           <div key={title}>
-            <h5 className="mb-2 px-1 text-[11px] font-bold tracking-wide text-cafe-secondary">
-              {title}
-            </h5>
-            <dl className="overflow-hidden rounded-xl border border-cafe-secondary/10 bg-cafe-background/35 px-4">
+            <h5 className={styles.sectionTitle}>{title}</h5>
+            <dl className={styles.details}>
               {rows.map(({ label, value }) => (
-                <div
-                  key={label}
-                  className="flex min-w-0 items-start justify-between gap-4 border-b border-cafe-secondary/10 py-3 last:border-b-0"
-                >
-                  <dt className="shrink-0 text-xs font-medium text-cafe-secondary">{label}</dt>
-                  <dd className="min-w-0 whitespace-pre-line break-words text-right text-sm font-semibold text-cafe-text">
-                    {value || <span className="font-normal text-cafe-secondary/60">未登録</span>}
+                <div key={label} className={styles.row}>
+                  <dt className={styles.label}>{label}</dt>
+                  <dd className={styles.value}>
+                    {value || <span className={styles.muted}>未登録</span>}
                   </dd>
                 </div>
               ))}

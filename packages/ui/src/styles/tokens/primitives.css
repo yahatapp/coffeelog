@@ -1,0 +1,13 @@
+:root {
+  --cl-ref-space-1: 0.25rem;
+  --cl-ref-space-2: 0.5rem;
+  --cl-ref-space-3: 0.75rem;
+  --cl-ref-space-4: 1rem;
+  --cl-ref-space-6: 1.5rem;
+  --cl-ref-space-8: 2rem;
+  --cl-ref-radius-sm: 0.5rem;
+  --cl-ref-radius-md: 1rem;
+  --cl-ref-radius-pill: 9999px;
+  --cl-ref-duration-fast: 120ms;
+  --cl-ref-duration-normal: 200ms;
+}

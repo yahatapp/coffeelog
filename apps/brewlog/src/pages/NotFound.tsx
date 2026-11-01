@@ -1,25 +1,26 @@
+import styles from "./content.module.css";
 import { Link } from "react-router-dom";
 import { Home, AlertCircle } from "lucide-react";
 import { Button } from "../components/ui/button";
-
 const NotFound = () => {
   return (
-    <div className="flex flex-col items-center justify-center min-h-[60vh] px-6 text-center">
-      <div className="bg-coffee-secondary/10 p-6 rounded-full mb-6">
-        <AlertCircle size={64} className="text-coffee-primary" />
+    <div className={[styles.stack, styles.center, styles.state].join(" ")}>
+      <div className={[styles.tonal, styles.pill, styles.roomy, styles.separated].join(" ")}>
+        <AlertCircle size={64} className={styles.accent} />
       </div>
-      <h2 className="text-2xl font-bold text-coffee-primary mb-2">ページが見つかりません</h2>
-      <p className="text-coffee-secondary mb-8">
+      <h2 className={[styles.hero, styles.strong, styles.accent, styles.separated].join(" ")}>
+        ページが見つかりません
+      </h2>
+      <p className={[styles.muted, styles.separated].join(" ")}>
         お探しのページは削除されたか、URLが間違っている可能性があります。
       </p>
-      <Link to="/">
-        <Button className="flex items-center gap-2">
+      <Button asChild type="button">
+        <Link to="/">
           <Home size={18} />
           ホームへ戻る
-        </Button>
-      </Link>
+        </Link>
+      </Button>
     </div>
   );
 };
-
 export default NotFound;

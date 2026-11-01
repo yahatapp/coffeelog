@@ -1,0 +1,552 @@
+[
+  {
+    "file": "packages/ui/src/components/button.tsx",
+    "task": "T04",
+    "reexportOnly": false,
+    "classNameUses": 3,
+    "inlineStyles": 0
+  },
+  {
+    "file": "packages/ui/src/components/card.tsx",
+    "task": "T04",
+    "reexportOnly": false,
+    "classNameUses": 15,
+    "inlineStyles": 0
+  },
+  {
+    "file": "packages/ui/src/components/checkbox.tsx",
+    "task": "T04",
+    "reexportOnly": false,
+    "classNameUses": 3,
+    "inlineStyles": 0
+  },
+  {
+    "file": "packages/ui/src/components/input.tsx",
+    "task": "T04",
+    "reexportOnly": false,
+    "classNameUses": 3,
+    "inlineStyles": 0
+  },
+  {
+    "file": "packages/ui/src/components/label.tsx",
+    "task": "T04",
+    "reexportOnly": false,
+    "classNameUses": 3,
+    "inlineStyles": 0
+  },
+  {
+    "file": "packages/ui/src/components/layout.tsx",
+    "task": "T05",
+    "reexportOnly": false,
+    "classNameUses": 3,
+    "inlineStyles": 0
+  },
+  {
+    "file": "packages/ui/src/components/log-list-controls.tsx",
+    "task": "T05",
+    "reexportOnly": false,
+    "classNameUses": 15,
+    "inlineStyles": 1
+  },
+  {
+    "file": "packages/ui/src/components/notices.tsx",
+    "task": "T05",
+    "reexportOnly": false,
+    "classNameUses": 7,
+    "inlineStyles": 0
+  },
+  {
+    "file": "packages/ui/src/components/segment.tsx",
+    "task": "T04",
+    "reexportOnly": false,
+    "classNameUses": 6,
+    "inlineStyles": 0
+  },
+  {
+    "file": "packages/ui/src/components/select.tsx",
+    "task": "T04",
+    "reexportOnly": false,
+    "classNameUses": 3,
+    "inlineStyles": 0
+  },
+  {
+    "file": "packages/ui/src/components/status.tsx",
+    "task": "T05",
+    "reexportOnly": false,
+    "classNameUses": 19,
+    "inlineStyles": 0
+  },
+  {
+    "file": "packages/ui/src/components/store-history.tsx",
+    "task": "T05",
+    "reexportOnly": false,
+    "classNameUses": 48,
+    "inlineStyles": 0
+  },
+  {
+    "file": "packages/ui/src/components/textarea.tsx",
+    "task": "T04",
+    "reexportOnly": false,
+    "classNameUses": 3,
+    "inlineStyles": 0
+  },
+  {
+    "file": "packages/ui/src/lib/cn.ts",
+    "task": "T04",
+    "reexportOnly": false,
+    "classNameUses": 0,
+    "inlineStyles": 0
+  },
+  {
+    "file": "packages/ui/src/styles/tokens.css",
+    "task": "T02/T11",
+    "reexportOnly": false,
+    "classNameUses": 0,
+    "inlineStyles": 0
+  },
+  {
+    "file": "apps/brewlog/src/App.tsx",
+    "task": "T06",
+    "reexportOnly": false,
+    "classNameUses": 21,
+    "inlineStyles": 0
+  },
+  {
+    "file": "apps/brewlog/src/components/BeanVersionHistory.tsx",
+    "task": "T07",
+    "reexportOnly": false,
+    "classNameUses": 13,
+    "inlineStyles": 0
+  },
+  {
+    "file": "apps/brewlog/src/components/forms/BeanFields.tsx",
+    "task": "T07",
+    "reexportOnly": false,
+    "classNameUses": 38,
+    "inlineStyles": 0
+  },
+  {
+    "file": "apps/brewlog/src/components/forms/BeanStoreFields.tsx",
+    "task": "T07",
+    "reexportOnly": false,
+    "classNameUses": 13,
+    "inlineStyles": 0
+  },
+  {
+    "file": "apps/brewlog/src/components/forms/BrewLogFields.tsx",
+    "task": "T07",
+    "reexportOnly": false,
+    "classNameUses": 87,
+    "inlineStyles": 0
+  },
+  {
+    "file": "apps/brewlog/src/components/ui/CoffeeBeansIcon.tsx",
+    "task": "T07",
+    "reexportOnly": false,
+    "classNameUses": 3,
+    "inlineStyles": 0
+  },
+  {
+    "file": "apps/brewlog/src/components/ui/OriginFlag.tsx",
+    "task": "T07",
+    "reexportOnly": false,
+    "classNameUses": 6,
+    "inlineStyles": 1
+  },
+  {
+    "file": "apps/brewlog/src/components/ui/RoastLevelIndicator.tsx",
+    "task": "T07",
+    "reexportOnly": false,
+    "classNameUses": 6,
+    "inlineStyles": 1
+  },
+  {
+    "file": "apps/brewlog/src/components/ui/button.tsx",
+    "task": "T07",
+    "reexportOnly": true,
+    "classNameUses": 0,
+    "inlineStyles": 0
+  },
+  {
+    "file": "apps/brewlog/src/components/ui/card.tsx",
+    "task": "T07",
+    "reexportOnly": true,
+    "classNameUses": 0,
+    "inlineStyles": 0
+  },
+  {
+    "file": "apps/brewlog/src/components/ui/input.tsx",
+    "task": "T07",
+    "reexportOnly": true,
+    "classNameUses": 0,
+    "inlineStyles": 0
+  },
+  {
+    "file": "apps/brewlog/src/components/ui/label.tsx",
+    "task": "T07",
+    "reexportOnly": true,
+    "classNameUses": 0,
+    "inlineStyles": 0
+  },
+  {
+    "file": "apps/brewlog/src/components/ui/segment.tsx",
+    "task": "T07",
+    "reexportOnly": false,
+    "classNameUses": 0,
+    "inlineStyles": 0
+  },
+  {
+    "file": "apps/brewlog/src/components/ui/slider.tsx",
+    "task": "T07",
+    "reexportOnly": false,
+    "classNameUses": 11,
+    "inlineStyles": 2
+  },
+  {
+    "file": "apps/brewlog/src/index.css",
+    "task": "T02/T11",
+    "reexportOnly": false,
+    "classNameUses": 0,
+    "inlineStyles": 0
+  },
+  {
+    "file": "apps/brewlog/src/lib/mutationNotices.ts",
+    "task": "T07",
+    "reexportOnly": false,
+    "classNameUses": 0,
+    "inlineStyles": 0
+  },
+  {
+    "file": "apps/brewlog/src/lib/queries.test.ts",
+    "task": "T07",
+    "reexportOnly": false,
+    "classNameUses": 0,
+    "inlineStyles": 0
+  },
+  {
+    "file": "apps/brewlog/src/main.tsx",
+    "task": "T06",
+    "reexportOnly": false,
+    "classNameUses": 0,
+    "inlineStyles": 0
+  },
+  {
+    "file": "apps/brewlog/src/pages/Beans/AddBean.tsx",
+    "task": "T07",
+    "reexportOnly": false,
+    "classNameUses": 13,
+    "inlineStyles": 0
+  },
+  {
+    "file": "apps/brewlog/src/pages/Beans/BeanDetail.tsx",
+    "task": "T08",
+    "reexportOnly": false,
+    "classNameUses": 45,
+    "inlineStyles": 0
+  },
+  {
+    "file": "apps/brewlog/src/pages/Beans/BeansList.tsx",
+    "task": "T08",
+    "reexportOnly": false,
+    "classNameUses": 43,
+    "inlineStyles": 0
+  },
+  {
+    "file": "apps/brewlog/src/pages/Beans/EditBean.tsx",
+    "task": "T07",
+    "reexportOnly": false,
+    "classNameUses": 13,
+    "inlineStyles": 0
+  },
+  {
+    "file": "apps/brewlog/src/pages/Home.tsx",
+    "task": "T08",
+    "reexportOnly": false,
+    "classNameUses": 39,
+    "inlineStyles": 0
+  },
+  {
+    "file": "apps/brewlog/src/pages/Logs/AddLog.tsx",
+    "task": "T07",
+    "reexportOnly": false,
+    "classNameUses": 11,
+    "inlineStyles": 0
+  },
+  {
+    "file": "apps/brewlog/src/pages/Logs/EditLog.tsx",
+    "task": "T07",
+    "reexportOnly": false,
+    "classNameUses": 15,
+    "inlineStyles": 0
+  },
+  {
+    "file": "apps/brewlog/src/pages/Logs/LogDetail.tsx",
+    "task": "T08",
+    "reexportOnly": false,
+    "classNameUses": 129,
+    "inlineStyles": 0
+  },
+  {
+    "file": "apps/brewlog/src/pages/Logs/LogsList.tsx",
+    "task": "T08",
+    "reexportOnly": false,
+    "classNameUses": 57,
+    "inlineStyles": 0
+  },
+  {
+    "file": "apps/brewlog/src/pages/NotFound.tsx",
+    "task": "T08",
+    "reexportOnly": false,
+    "classNameUses": 6,
+    "inlineStyles": 0
+  },
+  {
+    "file": "apps/brewlog/src/pages/Settings/Drippers.tsx",
+    "task": "T08",
+    "reexportOnly": false,
+    "classNameUses": 32,
+    "inlineStyles": 0
+  },
+  {
+    "file": "apps/brewlog/src/pages/Settings/Grinders.tsx",
+    "task": "T08",
+    "reexportOnly": false,
+    "classNameUses": 52,
+    "inlineStyles": 0
+  },
+  {
+    "file": "apps/brewlog/src/pages/Settings.tsx",
+    "task": "T08",
+    "reexportOnly": false,
+    "classNameUses": 45,
+    "inlineStyles": 0
+  },
+  {
+    "file": "apps/brewlog/src/pages/Stores.tsx",
+    "task": "T08",
+    "reexportOnly": false,
+    "classNameUses": 6,
+    "inlineStyles": 0
+  },
+  {
+    "file": "apps/cafelog/src/App.tsx",
+    "task": "T06",
+    "reexportOnly": false,
+    "classNameUses": 21,
+    "inlineStyles": 0
+  },
+  {
+    "file": "apps/cafelog/src/components/CafeLogForm.tsx",
+    "task": "T09",
+    "reexportOnly": false,
+    "classNameUses": 77,
+    "inlineStyles": 0
+  },
+  {
+    "file": "apps/cafelog/src/components/CafeLogListCard.tsx",
+    "task": "T09",
+    "reexportOnly": false,
+    "classNameUses": 22,
+    "inlineStyles": 0
+  },
+  {
+    "file": "apps/cafelog/src/components/CoffeeAttributes.tsx",
+    "task": "T09",
+    "reexportOnly": false,
+    "classNameUses": 17,
+    "inlineStyles": 0
+  },
+  {
+    "file": "apps/cafelog/src/components/FloatingNotice.tsx",
+    "task": "T09",
+    "reexportOnly": false,
+    "classNameUses": 0,
+    "inlineStyles": 0
+  },
+  {
+    "file": "apps/cafelog/src/components/ImagePicker.tsx",
+    "task": "T09",
+    "reexportOnly": false,
+    "classNameUses": 12,
+    "inlineStyles": 0
+  },
+  {
+    "file": "apps/cafelog/src/components/LogImages.tsx",
+    "task": "T09",
+    "reexportOnly": false,
+    "classNameUses": 15,
+    "inlineStyles": 0
+  },
+  {
+    "file": "apps/cafelog/src/components/OriginFlag.tsx",
+    "task": "T09",
+    "reexportOnly": false,
+    "classNameUses": 1,
+    "inlineStyles": 1
+  },
+  {
+    "file": "apps/cafelog/src/components/ProcessField.tsx",
+    "task": "T09",
+    "reexportOnly": false,
+    "classNameUses": 4,
+    "inlineStyles": 0
+  },
+  {
+    "file": "apps/cafelog/src/components/Segment.tsx",
+    "task": "T09",
+    "reexportOnly": false,
+    "classNameUses": 0,
+    "inlineStyles": 0
+  },
+  {
+    "file": "apps/cafelog/src/index.css",
+    "task": "T02/T11",
+    "reexportOnly": false,
+    "classNameUses": 0,
+    "inlineStyles": 0
+  },
+  {
+    "file": "apps/cafelog/src/lib/mutationNotices.ts",
+    "task": "T09",
+    "reexportOnly": false,
+    "classNameUses": 0,
+    "inlineStyles": 0
+  },
+  {
+    "file": "apps/cafelog/src/lib/queries.test.ts",
+    "task": "T09",
+    "reexportOnly": false,
+    "classNameUses": 0,
+    "inlineStyles": 0
+  },
+  {
+    "file": "apps/cafelog/src/lib/queryClient.ts",
+    "task": "T09",
+    "reexportOnly": false,
+    "classNameUses": 0,
+    "inlineStyles": 0
+  },
+  {
+    "file": "apps/cafelog/src/lib/saveLog.ts",
+    "task": "T09",
+    "reexportOnly": false,
+    "classNameUses": 0,
+    "inlineStyles": 0
+  },
+  {
+    "file": "apps/cafelog/src/main.tsx",
+    "task": "T06",
+    "reexportOnly": false,
+    "classNameUses": 0,
+    "inlineStyles": 0
+  },
+  {
+    "file": "apps/cafelog/src/pages/CreateLog.tsx",
+    "task": "T09",
+    "reexportOnly": false,
+    "classNameUses": 4,
+    "inlineStyles": 0
+  },
+  {
+    "file": "apps/cafelog/src/pages/Home.tsx",
+    "task": "T10",
+    "reexportOnly": false,
+    "classNameUses": 28,
+    "inlineStyles": 0
+  },
+  {
+    "file": "apps/cafelog/src/pages/LogDetail.tsx",
+    "task": "T10",
+    "reexportOnly": false,
+    "classNameUses": 57,
+    "inlineStyles": 0
+  },
+  {
+    "file": "apps/cafelog/src/pages/Logs.tsx",
+    "task": "T10",
+    "reexportOnly": false,
+    "classNameUses": 28,
+    "inlineStyles": 0
+  },
+  {
+    "file": "apps/cafelog/src/pages/NotFound.tsx",
+    "task": "T10",
+    "reexportOnly": false,
+    "classNameUses": 5,
+    "inlineStyles": 0
+  },
+  {
+    "file": "apps/cafelog/src/pages/Settings.tsx",
+    "task": "T10",
+    "reexportOnly": false,
+    "classNameUses": 39,
+    "inlineStyles": 0
+  },
+  {
+    "file": "apps/cafelog/src/pages/Stores.tsx",
+    "task": "T10",
+    "reexportOnly": false,
+    "classNameUses": 6,
+    "inlineStyles": 0
+  },
+  {
+    "file": "packages/ui/package.json",
+    "task": "T11",
+    "configuration": true
+  },
+  {
+    "file": "apps/brewlog/package.json",
+    "task": "T11",
+    "configuration": true
+  },
+  {
+    "file": "apps/cafelog/package.json",
+    "task": "T11",
+    "configuration": true
+  },
+  {
+    "file": "apps/brewlog/vite.config.ts",
+    "task": "T11",
+    "configuration": true
+  },
+  {
+    "file": "apps/cafelog/vite.config.ts",
+    "task": "T11",
+    "configuration": true
+  },
+  {
+    "file": "pnpm-workspace.yaml",
+    "task": "T11",
+    "configuration": true
+  },
+  {
+    "file": "pnpm-lock.yaml",
+    "task": "T11",
+    "configuration": true
+  },
+  {
+    "file": "AGENTS.md",
+    "task": "T12",
+    "configuration": true
+  },
+  {
+    "file": "apps/brewlog/AGENTS.md",
+    "task": "T12",
+    "configuration": true
+  },
+  {
+    "file": "apps/brewlog/src/components/AGENTS.md",
+    "task": "T12",
+    "configuration": true
+  },
+  {
+    "file": "apps/brewlog/src/pages/AGENTS.md",
+    "task": "T12",
+    "configuration": true
+  },
+  {
+    "file": ".github/workflows/ci.yml",
+    "task": "T12",
+    "configuration": true
+  }
+]

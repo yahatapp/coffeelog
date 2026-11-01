@@ -1,0 +1,79 @@
+@layer components {
+  .viewport {
+    pointer-events: none;
+    position: fixed;
+    inset-inline: 0;
+    top: max(var(--cl-space-page-inline), env(safe-area-inset-top));
+    z-index: var(--cl-layer-notice);
+    margin-inline: auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--cl-space-field-gap);
+    max-height: var(--cl-size-notice-max);
+    max-width: var(--cl-size-content-max);
+    overflow-y: auto;
+    padding-inline: var(--cl-space-page-inline);
+    padding-bottom: var(--cl-space-page-inline);
+  }
+  .toast {
+    pointer-events: auto;
+    width: 100%;
+    flex-shrink: 0;
+    border: var(--cl-border-width) solid currentColor;
+    border-radius: var(--cl-radius-card);
+    background: var(--cl-color-surface);
+    padding: var(--cl-space-page-inline);
+    box-shadow: var(--cl-shadow-card);
+  }
+  .toast[data-ending-style] {
+    display: none;
+  }
+  .toast:focus-visible,
+  .close:focus-visible {
+    outline: var(--cl-focus-width) solid var(--cl-color-focus);
+    outline-offset: var(--cl-focus-offset);
+  }
+  .success {
+    color: var(--cl-color-success);
+  }
+  .warning {
+    color: var(--cl-color-warning);
+  }
+  .error {
+    color: var(--cl-color-error);
+  }
+  .content {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--cl-space-field-gap);
+  }
+  .icon {
+    width: var(--cl-font-size-heading);
+    height: var(--cl-font-size-heading);
+    flex-shrink: 0;
+  }
+  .title {
+    min-width: 0;
+    flex: 1;
+    overflow-wrap: anywhere;
+    font-size: var(--cl-font-size-label);
+    font-weight: var(--cl-font-weight-medium);
+  }
+  .close {
+    display: flex;
+    width: var(--cl-size-target-min);
+    height: var(--cl-size-target-min);
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--cl-radius-action);
+    cursor: pointer;
+  }
+  .close:hover {
+    background: var(--cl-color-surface-tonal);
+  }
+  .closeIcon {
+    width: var(--cl-font-size-body);
+    height: var(--cl-font-size-body);
+  }
+}

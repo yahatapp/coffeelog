@@ -1,0 +1,11 @@
+{
+  "vitePackage": "@voidzero-dev/vite-plus-core@1.3.0",
+  "buildTarget": "baseline-widely-available",
+  "resolvedTargets": ["chrome111", "edge111", "firefox114", "safari16.4", "ios16.4"],
+  "targetSource": "vite/dist/vite/node/chunks/node.js:ESBUILD_BASELINE_WIDELY_AVAILABLE_TARGET",
+  "cssMinifier": "Vite bundled Lightning CSS",
+  "postcss": "Kept as a root development dependency for scripts/check-css-modules.mjs; removed unused direct app dependencies",
+  "autoprefixer": "Removed: no PostCSS config, direct import or explicit plugin usage exists in either app",
+  "nativeControlSupport": "Shared reset/base explicitly define control padding, fieldset/description margins, date appearance and number spin controls",
+  "historicalSource": "5054e9e is extracted into its own temporary directory; no live node_modules symlinks or old dependencies remain in the current graph"
+}

@@ -1,0 +1,538 @@
+[
+  {
+    "app": "brewlog",
+    "colors": {
+      "pairs": [
+        {
+          "foreground": "color-text",
+          "background": "color-background",
+          "ratio": 15.32481605678833,
+          "minimum": 4.5
+        },
+        {
+          "foreground": "color-text-muted",
+          "background": "color-surface-tonal",
+          "ratio": 5.595538431021115,
+          "minimum": 4.5
+        },
+        {
+          "foreground": "color-text",
+          "background": "color-surface-tonal",
+          "ratio": 13.012042527052342,
+          "minimum": 4.5
+        },
+        {
+          "foreground": "color-on-error",
+          "background": "color-error",
+          "ratio": 8.310050481211189,
+          "minimum": 4.5
+        },
+        {
+          "foreground": "color-on-error",
+          "background": "color-error-hover",
+          "ratio": 10.019596426078444,
+          "minimum": 4.5
+        },
+        {
+          "foreground": "color-success",
+          "background": "color-success-surface",
+          "ratio": 6.811651629293788,
+          "minimum": 4.5
+        },
+        {
+          "foreground": "color-warning",
+          "background": "color-warning-surface",
+          "ratio": 6.623893600344804,
+          "minimum": 4.5
+        },
+        {
+          "foreground": "color-error",
+          "background": "color-error-surface",
+          "ratio": 7.596644272500255,
+          "minimum": 4.5
+        },
+        {
+          "foreground": "color-temperature-hot",
+          "background": "color-temperature-hot-surface",
+          "ratio": 6.882265440998564,
+          "minimum": 4.5
+        },
+        {
+          "foreground": "color-temperature-iced",
+          "background": "color-temperature-iced-surface",
+          "ratio": 8.014836919642205,
+          "minimum": 4.5
+        },
+        {
+          "foreground": "color-rating",
+          "background": "color-surface",
+          "ratio": 6.8511000196797465,
+          "minimum": 4.5
+        },
+        {
+          "foreground": "color-on-media",
+          "background": "color-media-surface",
+          "ratio": 17.73971700407407,
+          "minimum": 4.5
+        },
+        {
+          "foreground": "color-focus",
+          "background": "color-background",
+          "ratio": 7.070924531362838,
+          "minimum": 3
+        },
+        {
+          "foreground": "color-focus",
+          "background": "color-surface",
+          "ratio": 7.444632460485848,
+          "minimum": 3
+        },
+        {
+          "foreground": "color-focus",
+          "background": "color-surface-tonal",
+          "ratio": 6.003802614447375,
+          "minimum": 3
+        },
+        {
+          "label": "primary",
+          "state": "default",
+          "ratio": 7.444632460485848,
+          "minimum": 4.5,
+          "opacity": 1
+        },
+        {
+          "label": "secondary",
+          "state": "default",
+          "ratio": 13.012042527052342,
+          "minimum": 4.5,
+          "opacity": 1
+        },
+        {
+          "label": "outline",
+          "state": "default",
+          "ratio": 7.070924531362838,
+          "minimum": 4.5,
+          "opacity": 1
+        },
+        {
+          "label": "ghost",
+          "state": "default",
+          "ratio": 6.5900950612335505,
+          "minimum": 4.5,
+          "opacity": 1
+        },
+        {
+          "label": "danger",
+          "state": "default",
+          "ratio": 8.310050481211189,
+          "minimum": 4.5,
+          "opacity": 1
+        },
+        {
+          "label": "サイズ sm",
+          "state": "default",
+          "ratio": 7.444632460485848,
+          "minimum": 4.5,
+          "opacity": 1
+        },
+        {
+          "label": "サイズ md",
+          "state": "default",
+          "ratio": 7.444632460485848,
+          "minimum": 4.5,
+          "opacity": 1
+        },
+        {
+          "label": "サイズ lg",
+          "state": "default",
+          "ratio": 7.444632460485848,
+          "minimum": 4.5,
+          "opacity": 1
+        },
+        {
+          "label": "+",
+          "state": "default",
+          "ratio": 7.444632460485848,
+          "minimum": 4.5,
+          "opacity": 1
+        },
+        {
+          "label": "利用不可",
+          "state": "disabled",
+          "ratio": 2.897546559533733,
+          "minimum": null,
+          "opacity": 0.6
+        },
+        {
+          "label": "保存中",
+          "state": "disabled",
+          "ratio": 2.897546559533733,
+          "minimum": null,
+          "opacity": 0.6
+        },
+        {
+          "label": "すべて3",
+          "state": "default",
+          "ratio": 7.444632460485848,
+          "minimum": 4.5,
+          "opacity": 1
+        },
+        {
+          "label": "ホット2",
+          "state": "default",
+          "ratio": 5.595538431021115,
+          "minimum": 4.5,
+          "opacity": 1
+        },
+        {
+          "label": "アイス1",
+          "state": "default",
+          "ratio": 5.595538431021115,
+          "minimum": 4.5,
+          "opacity": 1
+        },
+        {
+          "label": "日付↓",
+          "state": "default",
+          "ratio": 7.444632460485848,
+          "minimum": 4.5,
+          "opacity": 1
+        },
+        {
+          "label": "評価",
+          "state": "default",
+          "ratio": 5.595538431021115,
+          "minimum": 4.5,
+          "opacity": 1
+        },
+        {
+          "label": "再試行",
+          "state": "default",
+          "ratio": 7.444632460485848,
+          "minimum": 4.5,
+          "opacity": 1
+        },
+        {
+          "label": "通知する",
+          "state": "default",
+          "ratio": 7.444632460485848,
+          "minimum": 4.5,
+          "opacity": 1
+        }
+      ],
+      "overlay": [
+        0,
+        0,
+        0,
+        0.45
+      ],
+      "overlayOnBackground": [
+        137.5,
+        136.95000000000002,
+        135.3
+      ],
+      "overlayOnSurface": [
+        140.25,
+        140.25,
+        140.25
+      ]
+    },
+    "hover": {
+      "color": "rgb(255, 255, 255)",
+      "background": "rgb(93, 65, 46)"
+    },
+    "focus": {
+      "style": "solid",
+      "width": "2px",
+      "color": "rgb(111, 78, 55)"
+    },
+    "textZoom": {
+      "font": "32px",
+      "width": 390,
+      "scroll": 390,
+      "clipped": []
+    },
+    "reducedMotion": [
+      {
+        "animation": "1e-05s",
+        "transition": "1e-05s"
+      },
+      {
+        "animation": "1e-05s",
+        "transition": "1e-05s"
+      },
+      {
+        "animation": "1e-05s",
+        "transition": "1e-05s"
+      }
+    ]
+  },
+  {
+    "app": "cafelog",
+    "colors": {
+      "pairs": [
+        {
+          "foreground": "color-text",
+          "background": "color-background",
+          "ratio": 13.851392646266083,
+          "minimum": 4.5
+        },
+        {
+          "foreground": "color-text-muted",
+          "background": "color-surface-tonal",
+          "ratio": 5.615938644234941,
+          "minimum": 4.5
+        },
+        {
+          "foreground": "color-text",
+          "background": "color-surface-tonal",
+          "ratio": 12.190796385821152,
+          "minimum": 4.5
+        },
+        {
+          "foreground": "color-on-error",
+          "background": "color-error",
+          "ratio": 8.310050481211189,
+          "minimum": 4.5
+        },
+        {
+          "foreground": "color-on-error",
+          "background": "color-error-hover",
+          "ratio": 10.019596426078444,
+          "minimum": 4.5
+        },
+        {
+          "foreground": "color-success",
+          "background": "color-success-surface",
+          "ratio": 6.811651629293788,
+          "minimum": 4.5
+        },
+        {
+          "foreground": "color-warning",
+          "background": "color-warning-surface",
+          "ratio": 6.623893600344804,
+          "minimum": 4.5
+        },
+        {
+          "foreground": "color-error",
+          "background": "color-error-surface",
+          "ratio": 7.596644272500255,
+          "minimum": 4.5
+        },
+        {
+          "foreground": "color-temperature-hot",
+          "background": "color-temperature-hot-surface",
+          "ratio": 6.882265440998564,
+          "minimum": 4.5
+        },
+        {
+          "foreground": "color-temperature-iced",
+          "background": "color-temperature-iced-surface",
+          "ratio": 8.014836919642205,
+          "minimum": 4.5
+        },
+        {
+          "foreground": "color-rating",
+          "background": "color-surface",
+          "ratio": 6.8511000196797465,
+          "minimum": 4.5
+        },
+        {
+          "foreground": "color-on-media",
+          "background": "color-media-surface",
+          "ratio": 17.73971700407407,
+          "minimum": 4.5
+        },
+        {
+          "foreground": "color-focus",
+          "background": "color-background",
+          "ratio": 8.778888683328796,
+          "minimum": 3
+        },
+        {
+          "foreground": "color-focus",
+          "background": "color-surface",
+          "ratio": 9.248544828451578,
+          "minimum": 3
+        },
+        {
+          "foreground": "color-focus",
+          "background": "color-surface-tonal",
+          "ratio": 7.726417636503915,
+          "minimum": 3
+        },
+        {
+          "label": "primary",
+          "state": "default",
+          "ratio": 9.248544828451578,
+          "minimum": 4.5,
+          "opacity": 1
+        },
+        {
+          "label": "secondary",
+          "state": "default",
+          "ratio": 12.190796385821152,
+          "minimum": 4.5,
+          "opacity": 1
+        },
+        {
+          "label": "outline",
+          "state": "default",
+          "ratio": 8.778888683328796,
+          "minimum": 4.5,
+          "opacity": 1
+        },
+        {
+          "label": "ghost",
+          "state": "default",
+          "ratio": 6.380926132858028,
+          "minimum": 4.5,
+          "opacity": 1
+        },
+        {
+          "label": "danger",
+          "state": "default",
+          "ratio": 8.310050481211189,
+          "minimum": 4.5,
+          "opacity": 1
+        },
+        {
+          "label": "サイズ sm",
+          "state": "default",
+          "ratio": 9.248544828451578,
+          "minimum": 4.5,
+          "opacity": 1
+        },
+        {
+          "label": "サイズ md",
+          "state": "default",
+          "ratio": 9.248544828451578,
+          "minimum": 4.5,
+          "opacity": 1
+        },
+        {
+          "label": "サイズ lg",
+          "state": "default",
+          "ratio": 9.248544828451578,
+          "minimum": 4.5,
+          "opacity": 1
+        },
+        {
+          "label": "+",
+          "state": "default",
+          "ratio": 9.248544828451578,
+          "minimum": 4.5,
+          "opacity": 1
+        },
+        {
+          "label": "利用不可",
+          "state": "disabled",
+          "ratio": 3.242441882270337,
+          "minimum": null,
+          "opacity": 0.6
+        },
+        {
+          "label": "保存中",
+          "state": "disabled",
+          "ratio": 3.242441882270337,
+          "minimum": null,
+          "opacity": 0.6
+        },
+        {
+          "label": "すべて3",
+          "state": "default",
+          "ratio": 9.248544828451578,
+          "minimum": 4.5,
+          "opacity": 1
+        },
+        {
+          "label": "ホット2",
+          "state": "default",
+          "ratio": 5.615938644234941,
+          "minimum": 4.5,
+          "opacity": 1
+        },
+        {
+          "label": "アイス1",
+          "state": "default",
+          "ratio": 5.615938644234941,
+          "minimum": 4.5,
+          "opacity": 1
+        },
+        {
+          "label": "日付↓",
+          "state": "default",
+          "ratio": 9.248544828451578,
+          "minimum": 4.5,
+          "opacity": 1
+        },
+        {
+          "label": "評価",
+          "state": "default",
+          "ratio": 5.615938644234941,
+          "minimum": 4.5,
+          "opacity": 1
+        },
+        {
+          "label": "再試行",
+          "state": "default",
+          "ratio": 9.248544828451578,
+          "minimum": 4.5,
+          "opacity": 1
+        },
+        {
+          "label": "通知する",
+          "state": "default",
+          "ratio": 9.248544828451578,
+          "minimum": 4.5,
+          "opacity": 1
+        }
+      ],
+      "overlay": [
+        0,
+        0,
+        0,
+        0.45
+      ],
+      "overlayOnBackground": [
+        137.5,
+        136.95000000000002,
+        134.75
+      ],
+      "overlayOnSurface": [
+        140.25,
+        140.25,
+        140.25
+      ]
+    },
+    "hover": {
+      "color": "rgb(255, 255, 255)",
+      "background": "rgb(36, 65, 18)"
+    },
+    "focus": {
+      "style": "solid",
+      "width": "2px",
+      "color": "rgb(45, 80, 22)"
+    },
+    "textZoom": {
+      "font": "32px",
+      "width": 390,
+      "scroll": 390,
+      "clipped": []
+    },
+    "reducedMotion": [
+      {
+        "animation": "1e-05s",
+        "transition": "1e-05s"
+      },
+      {
+        "animation": "1e-05s",
+        "transition": "1e-05s"
+      },
+      {
+        "animation": "1e-05s",
+        "transition": "1e-05s"
+      }
+    ]
+  }
+]

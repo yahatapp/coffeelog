@@ -1,104 +1,146 @@
+import styles from "./forms.module.css";
+import { getFirstValidationError } from "./formValidation";
+import { Field, Select } from "@yahatapp/ui";
 import { useQuery } from "@tanstack/react-query";
 import { PREFECTURES } from "@yahatapp/database/store-contracts";
 import { storeQueries } from "@/lib/queries";
 import { Input } from "../ui/input";
-import { Label } from "../ui/label";
+import "../ui/label";
 import { Button } from "../ui/button";
 import type { BeanFormApi } from "./types";
-
 export function BeanStoreFields({ form, disabled }: { form: BeanFormApi; disabled: boolean }) {
   const storesQuery = useQuery(storeQueries.all());
   return (
-    <div className="space-y-4 rounded-2xl bg-coffee-primary/5 p-4">
+    <div className={styles.panel}>
       <form.Field name="storeId">
         {(field) => (
-          <div className="space-y-2">
-            <Label htmlFor="bean-store">購入店 (任意)</Label>
-            <select
+          <div className={styles.field}>
+            <Field
               id="bean-store"
-              value={field.state.value}
-              disabled={disabled}
-              aria-busy={storesQuery.isPending}
-              onChange={(event) => field.handleChange(event.target.value)}
-              onBlur={field.handleBlur}
-              className="min-h-11 w-full rounded-xl border border-coffee-secondary/20 bg-white px-3 text-sm text-coffee-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coffee-primary"
+              label={<>購入店 (任意)</>}
+              error={getFirstValidationError(field.state.meta.errors)}
+              description={<>Cafelogに登録したお店も選択できます。</>}
             >
-              <option value="">登録しない</option>
-              {(storesQuery.data ?? []).map((store) => (
-                <option key={store.id} value={store.id}>
-                  {store.name}
-                  {store.prefecture ? ` (${store.prefecture})` : ""}
-                </option>
-              ))}
-              <option value="new">新しいお店を登録</option>
-            </select>
-            <p className="text-xs text-coffee-secondary">Cafelogに登録したお店も選択できます。</p>
-            {storesQuery.isPending && (
-              <p role="status" className="text-xs text-coffee-secondary">
-                店舗を読み込み中...
-              </p>
-            )}
-            {storesQuery.isError && (
-              <div role="alert" className="text-xs text-red-600">
-                店舗一覧を取得できませんでした。
-                <Button type="button" variant="ghost" onClick={() => void storesQuery.refetch()}>
-                  再読み込み
-                </Button>
-              </div>
-            )}
+              {(control) => (
+                <>
+                  <Select
+                    {...control}
+                    id="bean-store"
+                    value={field.state.value}
+                    disabled={disabled}
+                    aria-busy={storesQuery.isPending}
+                    onChange={(event) => field.handleChange(event.target.value)}
+                    onBlur={field.handleBlur}
+                  >
+                    <option value="">登録しない</option>
+                    {(storesQuery.data ?? []).map((store) => (
+                      <option key={store.id} value={store.id}>
+                        {store.name}
+                        {store.prefecture ? ` (${store.prefecture})` : ""}
+                      </option>
+                    ))}
+                    <option value="new">新しいお店を登録</option>
+                  </Select>
+
+                  {storesQuery.isPending && (
+                    <p role="status" className={styles.helper}>
+                      店舗を読み込み中...
+                    </p>
+                  )}
+                  {storesQuery.isError && (
+                    <div role="alert" className={styles.error}>
+                      店舗一覧を取得できませんでした。
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        onClick={() => void storesQuery.refetch()}
+                      >
+                        再読み込み
+                      </Button>
+                    </div>
+                  )}
+                </>
+              )}
+            </Field>
           </div>
         )}
       </form.Field>
       <form.Subscribe selector={(state) => state.values.storeId}>
         {(storeId) =>
           storeId === "new" ? (
-            <div className="space-y-4">
+            <div className={styles.stack}>
               <form.Field name="storeName">
                 {(field) => (
-                  <div className="space-y-2">
-                    <Label htmlFor="bean-store-name">店舗名</Label>
-                    <Input
+                  <div className={styles.field}>
+                    <Field
                       id="bean-store-name"
+                      label={<>店舗名</>}
                       required
-                      value={field.state.value}
-                      disabled={disabled}
-                      onChange={(event) => field.handleChange(event.target.value)}
-                      onBlur={field.handleBlur}
-                      placeholder="例: ロースタリー ○○店"
-                    />
+                      error={getFirstValidationError(field.state.meta.errors)}
+                    >
+                      {(control) => (
+                        <>
+                          <Input
+                            {...control}
+                            id="bean-store-name"
+                            required
+                            value={field.state.value}
+                            disabled={disabled}
+                            onChange={(event) => field.handleChange(event.target.value)}
+                            onBlur={field.handleBlur}
+                            placeholder="例: ロースタリー ○○店"
+                          />
+                        </>
+                      )}
+                    </Field>
                   </div>
                 )}
               </form.Field>
               <form.Field name="storePrefecture">
                 {(field) => (
-                  <div className="space-y-2">
-                    <Label htmlFor="bean-store-prefecture">都道府県</Label>
-                    <select
+                  <div className={styles.field}>
+                    <Field
                       id="bean-store-prefecture"
-                      value={field.state.value}
-                      disabled={disabled}
-                      onChange={(event) => field.handleChange(event.target.value)}
-                      onBlur={field.handleBlur}
-                      className="min-h-11 w-full rounded-xl border border-coffee-secondary/20 bg-white px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coffee-primary"
+                      label={<>都道府県</>}
+                      error={getFirstValidationError(field.state.meta.errors)}
                     >
-                      <option value="">選択してください (任意)</option>
-                      {PREFECTURES.map((prefecture) => (
-                        <option key={prefecture} value={prefecture}>
-                          {prefecture}
-                        </option>
-                      ))}
-                    </select>
+                      {(control) => (
+                        <>
+                          <Select
+                            {...control}
+                            id="bean-store-prefecture"
+                            value={field.state.value}
+                            disabled={disabled}
+                            onChange={(event) => field.handleChange(event.target.value)}
+                            onBlur={field.handleBlur}
+                          >
+                            <option value="">選択してください (任意)</option>
+                            {PREFECTURES.map((prefecture) => (
+                              <option key={prefecture} value={prefecture}>
+                                {prefecture}
+                              </option>
+                            ))}
+                          </Select>
+                        </>
+                      )}
+                    </Field>
                   </div>
                 )}
               </form.Field>
               <form.Field name="storeLinks" mode="array">
                 {(field) => (
-                  <div className="space-y-2">
-                    <Label>お店のリンク (任意)</Label>
+                  <div
+                    className={styles.field}
+                    role="group"
+                    aria-labelledby="beanstorefields-group-1"
+                  >
+                    <span id="beanstorefields-group-1" className={styles.groupLabel}>
+                      お店のリンク (任意)
+                    </span>
                     {field.state.value.map((_, index) => (
                       <form.Field key={index} name={`storeLinks[${index}]`}>
                         {(link) => (
-                          <div className="flex items-center gap-2">
+                          <div className={styles.row}>
                             <Input
                               type="url"
                               aria-label={`お店のリンク ${index + 1}`}
@@ -111,7 +153,6 @@ export function BeanStoreFields({ form, disabled }: { form: BeanFormApi; disable
                             <Button
                               type="button"
                               variant="ghost"
-                              className="min-h-11 shrink-0 whitespace-nowrap"
                               disabled={disabled}
                               aria-label={`お店のリンク ${index + 1}を削除`}
                               onClick={() =>

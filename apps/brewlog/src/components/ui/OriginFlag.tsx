@@ -1,34 +1,30 @@
-import React from "react";
+import { clsx } from "clsx";
 import { getCountryCode } from "@/utils/flag";
 import { Globe } from "lucide-react";
-
+import styles from "./origin-flag.module.css";
 interface OriginFlagProps {
   origin: string | null | undefined;
   className?: string;
-  size?: number;
+  size?: "sm" | "md" | "lg";
 }
-
-export const OriginFlag: React.FC<OriginFlagProps> = ({ origin, className = "", size = 16 }) => {
+const sizes = { sm: styles.small, md: styles.medium, lg: styles.large };
+export function OriginFlag({ origin, className, size = "md" }: OriginFlagProps) {
   const code = getCountryCode(origin);
-
-  if (!code) {
-    return <Globe className={`text-coffee-secondary/40 flex-shrink-0 ${className}`} size={size} />;
-  }
-
-  // アスペクト比約 4:3 で描画
-  const width = Math.round((size * 4) / 3);
-
+  if (!code)
+    return (
+      <Globe
+        className={clsx(styles.fallback, sizes[size], className)}
+        role="img"
+        aria-label={origin || "産地未登録"}
+      />
+    );
   return (
     <img
       src={`https://flagcdn.com/${code}.svg`}
-      alt={origin || "origin"}
-      className={`object-cover rounded-[2px] border border-coffee-secondary/15 shadow-sm flex-shrink-0 ${className}`}
-      style={{
-        width: `${width}px`,
-        height: `${size}px`,
-      }}
+      alt={origin || "産地"}
+      className={clsx(styles.flag, sizes[size], className)}
       loading="lazy"
     />
   );
-};
+}
 export default OriginFlag;

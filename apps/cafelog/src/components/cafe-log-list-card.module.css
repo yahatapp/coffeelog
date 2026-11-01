@@ -1,0 +1,91 @@
+@layer components {
+  .root {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+  .summary {
+    display: grid;
+    grid-template-columns: var(--cl-size-nav) minmax(0, 1fr);
+    gap: var(--cl-space-page-inline);
+  }
+  .origin {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--cl-space-field-gap);
+    min-width: 0;
+    text-align: center;
+  }
+  .muted {
+    color: var(--cl-color-text-muted);
+    font-size: var(--cl-font-size-helper);
+  }
+  .badge,
+  .temperature {
+    width: 100%;
+    padding: var(--cl-space-tight);
+    border-radius: var(--cl-radius-action);
+    font-size: var(--cl-font-size-helper);
+    font-weight: var(--cl-font-weight-medium);
+    text-align: center;
+    background: var(--cl-color-surface-tonal);
+    color: var(--cl-color-action-primary);
+  }
+  .temperature[data-temperature="hot"] {
+    background: var(--cl-color-temperature-hot-surface);
+    color: var(--cl-color-temperature-hot);
+  }
+  .temperature[data-temperature="iced"] {
+    background: var(--cl-color-temperature-iced-surface);
+    color: var(--cl-color-temperature-iced);
+  }
+  .main {
+    display: flex;
+    flex-direction: column;
+    gap: var(--cl-space-field-gap);
+    min-width: 0;
+  }
+  .title {
+    font-size: var(--cl-font-size-body);
+    font-weight: var(--cl-font-weight-medium);
+    color: var(--cl-color-text);
+  }
+  .visit {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--cl-space-field-gap);
+    flex-wrap: wrap;
+    font-size: var(--cl-font-size-helper);
+    color: var(--cl-color-text-muted);
+  }
+  .rating {
+    display: flex;
+    align-items: center;
+    gap: var(--cl-space-field-gap);
+    font-weight: var(--cl-font-weight-medium);
+    color: var(--cl-color-action-primary);
+  }
+  .star {
+    color: var(--cl-color-rating);
+    fill: currentColor;
+    flex-shrink: 0;
+  }
+  .details {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--cl-space-field-gap);
+    padding-top: var(--cl-space-page-inline);
+    margin-top: var(--cl-space-page-inline);
+    border-top: var(--cl-border-width) solid var(--cl-color-border-decorative);
+  }
+  .detail {
+    min-width: 0;
+    text-align: center;
+  }
+  .value {
+    margin: 0;
+    font-size: var(--cl-font-size-helper);
+    font-weight: var(--cl-font-weight-medium);
+    color: var(--cl-color-text);
+  }
+}

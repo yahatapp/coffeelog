@@ -1,0 +1,20 @@
+declare const styles: {
+  readonly accent: string;
+  readonly body: string;
+  readonly border: string;
+  readonly content: string;
+  readonly fieldStack: string;
+  readonly fixed: string;
+  readonly grow: string;
+  readonly helper: string;
+  readonly muted: string;
+  readonly rounded: string;
+  readonly row: string;
+  readonly spinner: string;
+  readonly spread: string;
+  readonly strong: string;
+  readonly tonal: string;
+  readonly wrap: string;
+  readonly wrapping: string;
+};
+export default styles;

@@ -1,0 +1,239 @@
+import { createRequire } from "node:module";
+import { resolve } from "node:path";
+import { writeFile } from "node:fs/promises";
+const require = createRequire(resolve("apps/brewlog/package.json"));
+const { expect } = require("@playwright/test");
+export async function verifyBrewPages(page, { baseURL, output, width, ids, reset, readMode }) {
+  const { default: AxeBuilder } = await import("@axe-core/playwright");
+  const records = [];
+  const visit = async (path) => {
+    await page.goto(baseURL + path);
+    await page.getByRole("navigation").waitFor();
+    await page.waitForLoadState("networkidle");
+  };
+  const audit = async (name) => {
+    const result = await new AxeBuilder({ page })
+      .withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"])
+      .analyze();
+    await writeFile(
+      resolve(output, `brewlog-${name}-${width}-axe.json`),
+      JSON.stringify(result.violations, null, 2),
+    );
+    if (result.violations.length)
+      throw new Error(
+        `${name}: ${JSON.stringify(result.violations.map((v) => ({ id: v.id, nodes: v.nodes.map((n) => ({ target: n.target, summary: n.failureSummary })) })))}`,
+      );
+    if (await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth))
+      throw new Error(`${name}: horizontal overflow`);
+    await page.screenshot({
+      path: resolve(output, `brewlog-${name}-${width}.png`),
+      fullPage: true,
+    });
+    records.push(name);
+  };
+
+  if (process.env.UI_SMOKE_ONLY === "1") {
+    const data = reset();
+    const version = {
+      ...data.bean,
+      id: "00000000-0000-4000-8000-000000000099",
+      parentBeanId: ids.bean,
+      version: "2026.11.01",
+      purchaseDate: "2026-11-01",
+      createdAt: "2026-11-01T03:00:00Z",
+    };
+    data.beans.push(version);
+    await visit(`/beans/${ids.bean}`);
+    await page.getByRole("link", { name: /2026.11.01.*登録日/ }).click();
+    await expect(page).toHaveURL(baseURL + "/beans/" + version.id);
+    await audit("bean-version-navigation");
+    for (const [name, path] of [
+      ["home", "/"],
+      ["drippers", "/settings/drippers"],
+      ["grinders", "/settings/grinders"],
+    ]) {
+      await visit(path);
+      await audit(name);
+    }
+    await visit("/settings/drippers");
+    await expect(page.getByRole("textbox", { name: "ドリッパー名", exact: true })).toBeVisible();
+    readMode("loading");
+    await page.goto(baseURL + "/settings");
+    await expect(page.getByRole("status")).toBeVisible();
+    readMode("all-error");
+    await visit("/settings");
+    await audit("settings-error");
+    readMode("success");
+    await page.getByRole("button", { name: "再試行", exact: true }).click();
+    await expect(page.getByText("器具一覧を取得できませんでした。")).toHaveCount(0);
+    await audit("settings-recovered");
+    return records;
+  }
+  reset();
+  for (const [name, path] of [
+    ["home", "/"],
+    ["beans", "/beans"],
+    ["bean-detail", `/beans/${ids.bean}`],
+    ["logs", "/logs"],
+    ["log-detail", `/logs/${ids.log}`],
+    ["stores", "/stores"],
+    ["store-detail", `/stores/${ids.store}`],
+    ["settings", "/settings"],
+    ["drippers", "/settings/drippers"],
+    ["grinders", "/settings/grinders"],
+    ["not-found", "/missing"],
+  ]) {
+    await visit(path);
+    await audit(name);
+  }
+  await visit("/beans");
+  await page.getByRole("button", { name: "豆名", exact: true }).click();
+  await page.getByRole("checkbox", { name: "アーカイブも表示", exact: true }).check();
+  await page.getByRole("link", { name: /検証用コーヒー豆/ }).click();
+  await expect(page).toHaveURL(new RegExp(`/beans/${ids.bean}$`));
+  await page.getByRole("button", { name: "アーカイブする", exact: true }).click();
+  await expect(page.getByRole("button", { name: "アーカイブから戻す", exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "アーカイブから戻す", exact: true }).click();
+  await visit("/logs");
+  await page.getByRole("button", { name: /アイス/ }).click();
+  await expect(
+    page
+      .getByText(/記録はまだありません|表示できる|記録がありません|見つかりません|ログがありません/)
+      .first(),
+  ).toBeVisible();
+  await visit("/stores");
+  await page.getByRole("button", { name: /検証用の店舗/ }).click();
+  await expect(page).toHaveURL(new RegExp(`/stores/${ids.store}$`));
+  await page.getByRole("button", { name: /2026.10.31/ }).click();
+  await expect(page).toHaveURL(new RegExp(`/logs/${ids.log}$`));
+  for (const [kind, label] of [
+    ["drippers", "ドリッパー"],
+    ["grinders", "グラインダー"],
+  ]) {
+    await visit(`/settings/${kind}`);
+    const field = page.getByRole("textbox", {
+      name: kind === "drippers" ? "ドリッパー名" : "グラインダー名",
+      exact: true,
+    });
+    await field.fill(`追加した${label}`);
+    await page
+      .getByRole("button", {
+        name: kind === "drippers" ? "追加" : "グラインダーを登録",
+        exact: true,
+      })
+      .click();
+    const card = page.getByRole("group", { name: `追加した${label}`, exact: true });
+    await card.getByRole("button", { name: "デフォルトに設定", exact: true }).click();
+    await expect(card.getByRole("button", { name: "デフォルト", exact: true })).toBeVisible();
+    await card.getByRole("button", { name: "編集", exact: true }).click();
+    await expect(field).toHaveValue(`追加した${label}`);
+    await field.fill(`編集した${label}`);
+    await page
+      .getByRole("button", { name: kind === "drippers" ? "保存" : "変更を保存", exact: true })
+      .click();
+    await expect(page.getByRole("group", { name: `編集した${label}`, exact: true })).toBeVisible();
+    const edited = page.getByRole("group", { name: `編集した${label}`, exact: true });
+    page.once("dialog", (dialog) => dialog.accept());
+    await edited.getByRole("button", { name: "削除", exact: true }).click();
+    await expect(page.getByText(`編集した${label}`, { exact: true })).toHaveCount(0);
+  }
+  await visit("/settings");
+  await Promise.all([
+    page.waitForEvent("domcontentloaded"),
+    page.getByRole("button", { name: /ログアウト/ }).click(),
+  ]);
+  await expect
+    .poll(() => page.evaluate(() => sessionStorage.getItem("fixture.logout")))
+    .toBe("called");
+  readMode("all-error");
+  await page.goto(baseURL + "/beans");
+  await expect(page.getByText("豆一覧の取得に失敗しました。")).toBeVisible();
+  readMode("success");
+  await page.getByRole("button", { name: "再試行", exact: true }).click();
+  await expect(page.getByRole("link", { name: /検証用コーヒー豆/ })).toBeVisible();
+
+  for (const [name, path] of [
+    ["home", "/"],
+    ["beans", "/beans"],
+    ["bean-detail", `/beans/${ids.bean}`],
+    ["logs", "/logs"],
+    ["log-detail", `/logs/${ids.log}`],
+    ["stores", "/stores"],
+    ["store-detail", `/stores/${ids.store}`],
+    ["drippers", "/settings/drippers"],
+    ["grinders", "/settings/grinders"],
+  ]) {
+    console.log("brewlog states", name, width);
+    readMode("loading");
+    await page.goto(baseURL + path);
+    await expect(page.getByRole("status").first()).toBeVisible();
+    await page.screenshot({
+      path: resolve(output, `brewlog-${name}-loading-${width}.png`),
+      fullPage: true,
+    });
+    readMode("all-error");
+    await visit(path);
+    await expect(page.getByText(/取得.*(?:失敗|できません)/).first()).toBeVisible();
+    await audit(name + "-error");
+    readMode("success");
+    for (
+      let retry = 0;
+      retry < 3 && (await page.getByText(/取得.*(?:失敗|できません)/).count());
+      retry++
+    ) {
+      const messages = await page.getByText(/取得.*(?:失敗|できません)/).allTextContents();
+      const retryButton = page.getByRole("button", { name: /再試行|再読み込み/ }).first();
+      await retryButton.evaluate((el) => el.scrollIntoView({ block: "center" }));
+      await retryButton.click();
+      await expect
+        .poll(() => page.getByText(/取得.*(?:失敗|できません)/).allTextContents())
+        .not.toEqual(messages);
+    }
+    await expect(page.getByText(/取得.*(?:失敗|できません)/)).toHaveCount(0);
+    await audit(name + "-recovered");
+  }
+  for (const path of [
+    "/",
+    "/beans",
+    "/logs",
+    "/stores",
+    "/settings/drippers",
+    "/settings/grinders",
+  ]) {
+    readMode("empty");
+    await visit(path);
+    await audit(path.replaceAll("/", "-") + "-empty");
+  }
+  readMode("success");
+  const data = reset();
+  data.bean.name = "日本語のとても長いコーヒー豆の名前".repeat(6);
+  data.bean.note =
+    "香りと味についての長い日本語メモ。".repeat(20) + "https://example.com/" + "long".repeat(30);
+  data.store.name = "長い日本語の店舗名".repeat(8);
+  data.store.links = ["https://example.com/" + "long".repeat(40)];
+  data.bean.purchaseStore = data.store.name;
+  data.log.brewComment = data.bean.note;
+  data.log.note = data.bean.note;
+  data.log.pours = [
+    { id: "pour-1", pourNumber: 1, waterAmount: 30, duration: 30, pourType: "center_only" },
+    { id: "pour-2", pourNumber: 2, waterAmount: 120, duration: 60, pourType: "all" },
+  ];
+  for (const [name, path] of [
+    ["beans", "/beans"],
+    ["bean-detail", `/beans/${ids.bean}`],
+    ["logs", "/logs"],
+    ["log-detail", `/logs/${ids.log}`],
+    ["stores", "/stores"],
+    ["store-detail", `/stores/${ids.store}`],
+  ]) {
+    await visit(path);
+    await audit(name + "-long");
+  }
+  reset();
+  await visit(`/beans/${ids.bean}`);
+  page.once("dialog", (dialog) => dialog.accept());
+  await page.getByRole("button", { name: "削除する", exact: true }).click();
+  await expect(page).toHaveURL(baseURL + "/beans");
+
+  return records;
+}

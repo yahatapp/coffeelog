@@ -1,0 +1,17 @@
+@layer components {
+  .root {
+    flex-shrink: 0;
+  }
+  .small {
+    width: var(--cl-size-icon);
+    height: var(--cl-size-icon);
+  }
+  .medium {
+    width: var(--cl-size-brand-icon);
+    height: var(--cl-size-brand-icon);
+  }
+  .large {
+    width: var(--cl-size-target-min);
+    height: var(--cl-size-target-min);
+  }
+}

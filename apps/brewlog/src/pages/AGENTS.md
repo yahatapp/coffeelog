@@ -8,3 +8,5 @@ These instructions supplement the repository-root `AGENTS.md` for files under `s
 - Preserve Brewlog's mobile-first LIFF layout, bottom-navigation behavior, and concise Japanese interface copy.
 - Reuse established form controls and interaction patterns across create and edit flows.
 - Keep page components concise and split large forms or sections when they have an independent responsibility.
+
+- Follow the [shared UI guide](../../../../docs/design-system/README.md) for tokens, CSS Modules, form states and verification.

@@ -1,0 +1,56 @@
+@layer pages {
+  .page,
+  .stack {
+    display: flex;
+    flex-direction: column;
+    gap: var(--cl-space-section-gap);
+  }
+  .stack {
+    gap: var(--cl-space-page-inline);
+  }
+  .row {
+    display: flex;
+    align-items: center;
+    gap: var(--cl-space-field-gap);
+  }
+  .pageHeading {
+    font-size: var(--cl-font-size-heading);
+    font-weight: var(--cl-font-weight-strong);
+    color: var(--cl-color-text);
+  }
+  .loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: var(--cl-size-state-min);
+  }
+  .spinner {
+    width: var(--cl-size-icon);
+    height: var(--cl-size-icon);
+    color: var(--cl-color-action-primary);
+  }
+  .icon {
+    width: var(--cl-size-icon);
+    height: var(--cl-size-icon);
+  }
+  .fallback {
+    text-align: center;
+    padding: var(--cl-space-section-gap);
+    color: var(--cl-color-text-muted);
+  }
+  .spaced {
+    margin-top: var(--cl-space-page-inline);
+  }
+  .error,
+  .warning {
+    padding: var(--cl-space-page-inline);
+    border-radius: var(--cl-radius-card);
+    color: var(--cl-color-error);
+    background: var(--cl-color-error-surface);
+    font-size: var(--cl-font-size-label);
+  }
+  .warning {
+    color: var(--cl-color-warning);
+    background: var(--cl-color-warning-surface);
+  }
+}
