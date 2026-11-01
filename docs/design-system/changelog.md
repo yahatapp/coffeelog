@@ -7,6 +7,7 @@
 - 共通UI、両アプリの全画面、Field、固定ナビ、Dialogと画像操作をCSS Modulesへ移した。
 - Tailwindと関連依存、旧変数、仮のCSS公開口を削除した。
 - 両テーマの部品一覧、トークン・CSS・クラス参照・ガイドの検査、画面・操作・アクセシビリティ検証を整備した。
+- 両アプリの公開と公開後の確認を完了した。[公開結果と復旧手順](release-verification.md)を参照。
 - 変更理由と確認結果は[実施記録](migration-status.md)、最終確認と公開は[実装計画](../design-system-implementation-plan.md)に記録する。
 
 ## 今後の記録
