@@ -8,9 +8,18 @@
   ],
   "exports": {
     ".": "./src/index.ts",
-    "./styles.css": "./src/styles/index.css",
-    "./themes/brewlog.css": "./src/styles/themes/brewlog.css",
-    "./themes/cafelog.css": "./src/styles/themes/cafelog.css"
+    "./styles.css": {
+      "types": "./src/styles/index.css.d.ts",
+      "default": "./src/styles/index.css"
+    },
+    "./themes/brewlog.css": {
+      "types": "./src/styles/themes/brewlog.css.d.ts",
+      "default": "./src/styles/themes/brewlog.css"
+    },
+    "./themes/cafelog.css": {
+      "types": "./src/styles/themes/cafelog.css.d.ts",
+      "default": "./src/styles/themes/cafelog.css"
+    }
   },
   "scripts": {
     "check": "tsc --noEmit",

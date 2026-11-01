@@ -1,3 +1,4 @@
+import styles from "./catalog.module.css";
 import "@yahatapp/ui/styles.css";
 import "@yahatapp/ui/themes/brewlog.css";
 import "@yahatapp/ui/themes/cafelog.css";
@@ -31,10 +32,10 @@ function Catalog() {
   const [sort, setSort] = useState<"date" | "rating">("date");
   const [order, setOrder] = useState<LogSortOrder>("desc");
   return (
-    <main>
-      <h1>UI部品の確認</h1>
-      <section aria-label="基本部品">
-        {(["primary", "secondary", "outline", "ghost"] as const).map((variant) => (
+    <main className={styles.root}>
+      <h1 className={styles.heading}>UI部品の確認</h1>
+      <section className={styles.section} aria-label="基本部品">
+        {(["primary", "secondary", "outline", "ghost", "danger"] as const).map((variant) => (
           <Button key={variant} variant={variant}>
             {variant}
           </Button>
@@ -43,12 +44,14 @@ function Catalog() {
           <a href="#blocked">保存中のリンク</a>
         </Button>
         {(["sm", "md", "lg", "icon"] as const).map((size) => (
-          <Button key={size} size={size}>{`サイズ ${size}`}</Button>
+          <Button key={size} size={size} aria-label={`サイズ ${size}`}>
+            {size === "icon" ? "+" : `サイズ ${size}`}
+          </Button>
         ))}
         <Button disabled>利用不可</Button>
         <Button loading>保存中</Button>
       </section>
-      <section aria-label="入力部品">
+      <section className={styles.section} aria-label="入力部品">
         <Card>
           <CardHeader>
             <CardTitle>入力と選択</CardTitle>
@@ -61,6 +64,8 @@ function Catalog() {
             <p id="catalog-error">名前を入力してください。</p>
             <Label htmlFor="catalog-readonly">変更できない値</Label>
             <Input id="catalog-readonly" readOnly value="登録済み" />
+            <Label htmlFor="catalog-disabled">利用不可の入力</Label>
+            <Input id="catalog-disabled" disabled value="利用不可" />
             <Label htmlFor="catalog-select">選択</Label>
             <Select id="catalog-select">
               <option>ホット</option>
@@ -68,6 +73,33 @@ function Catalog() {
             </Select>
             <Label htmlFor="catalog-note">メモ</Label>
             <Textarea id="catalog-note" />
+            <Field label="利用不可のメモ">
+              {(control) => <Textarea {...control} disabled value="利用不可" />}
+            </Field>
+            <Field label="変更できないメモ">
+              {(control) => <Textarea {...control} readOnly value="登録済み" />}
+            </Field>
+            <Field label="エラーのメモ" error="メモを確認してください。">
+              {(control) => <Textarea {...control} />}
+            </Field>
+            <Field label="利用不可の選択">
+              {(control) => (
+                <Select {...control} disabled>
+                  <option>ホット</option>
+                </Select>
+              )}
+            </Field>
+            <Field label="エラーの選択" error="選択してください。">
+              {(control) => (
+                <Select {...control}>
+                  <option>未選択</option>
+                </Select>
+              )}
+            </Field>
+            <Label htmlFor="catalog-disabled-check">
+              <Checkbox id="catalog-disabled-check" disabled />
+              利用不可の確認
+            </Label>
             <Label htmlFor="catalog-check">
               <Checkbox id="catalog-check" />
               確認済み
@@ -81,13 +113,23 @@ function Catalog() {
                 { label: "アイス", value: "iced" },
               ]}
             />
+            <Segment
+              ariaLabel="利用不可の選択肢"
+              value="hot"
+              onValueChange={() => {}}
+              disabled
+              options={[
+                { label: "ホット", value: "hot" },
+                { label: "アイス", value: "iced" },
+              ]}
+            />
             <Field label="店名" description="正式名称を入力" error="店名が必要です" required>
               {(control) => <Input {...control} />}
             </Field>
           </CardContent>
         </Card>
       </section>
-      <section aria-label="一覧の操作">
+      <section className={styles.section} aria-label="一覧の操作">
         <LogListControls
           filter={filter}
           counts={{ all: 3, hot: 2, iced: 1 }}
@@ -104,7 +146,7 @@ function Catalog() {
           }}
         />
       </section>
-      <section aria-label="画面の状態">
+      <section className={styles.section} aria-label="画面の状態">
         <Loading />
         <ErrorState onRetry={() => {}} />
         <EmptyState title="記録がありません" description="最初の記録を追加してください。" />

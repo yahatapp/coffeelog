@@ -2,44 +2,44 @@
 
 **BrewlogとCafelogのUIを標準CSS変数とCSS Modulesに統一し、Tailwindを削除する。** 両アプリの全画面と共通UIを一括で移行する。トークンの値はCSS、使い方と判断基準はMarkdownで管理し、CIと画面確認で検証する。
 
-この文書は、UIを実装する人とAIが参照する改善計画である。実装方式と一括移行の方針は採用済みで、コードの移行は未実施である。
+この文書は採用方針と、2026年10月31日時点の調査記録を残す改善計画である。コードの移行は実施済み。現在の使い方は[共通UIガイド](design-system/README.md)、確認結果は[実施記録](design-system/migration-status.md)を参照する。
 
 実装タスクの依存関係、対象ファイル、完了チェック項目は[実装計画](design-system-implementation-plan.md)にまとめる。
 
-更新日：2026年10月31日。現状調査の実装コード：`f2632755554f5a8f640c740f00bbbfbba943fcb6`。
+更新日：2026年11月1日。現状調査の実装コード：`f2632755554f5a8f640c740f00bbbfbba943fcb6`。
 
-## 1. 現状と改善する箇所
+## 1. 移行前の状況と改善する箇所
 
 共通UIパッケージ `@yahatapp/ui` には、用途に基づく10色のトークンがある。両アプリが `--app-color-*` に値を渡し、共通UIがTailwindのクラスで参照している。一方、ページやアプリ固有の部品には `coffee-*`・`cafe-*` の色クラスが多く残っている。
 
-| 領域 | 現状 | 改善する内容 |
-| --- | --- | --- |
-| 色とテーマ | [共通トークン](../packages/ui/src/styles/tokens.css)と、[Brewlog](../apps/brewlog/src/index.css)・[Cafelog](../apps/cafelog/src/index.css)のCSSに色を定義。同じ色値を `@theme` と `:root` に重複して記述 | 共通パッケージに両テーマを集約し、補助文字・背景・入力境界・通知・操作状態の役割を分ける |
-| 共通部品 | Button・Input等は共通化済み。[BrewlogのButton](../apps/brewlog/src/components/ui/button.tsx)等はその再公開。ページ側には独自のボタンや装飾が残る | 再公開だけのファイルは重複実装と区別し、独自の表示を共通部品とCSS Modulesへ移す |
-| 文字・寸法 | 文字サイズ、余白、角丸、高さをクラスで個別に指定 | 本文・ラベル・補助文字の尺度と、部品・画面の寸法を定義する |
-| 状態 | [Button](../packages/ui/src/components/button.tsx)はvariant・size・focus・disabledに対応。[Input](../packages/ui/src/components/input.tsx)のinvalid・read-onlyや、Buttonのloadingは共通の表現が未整備 | 各部品に必要な状態と、その見た目・操作を定義する |
-| 入力と非同期処理 | [CafeLogForm](../apps/cafelog/src/components/CafeLogForm.tsx)のエラー関連付けは欄ごとの差がある。店舗画面は共通のLoading・ErrorState・EmptyStateを使用 | Label・説明・入力・エラーを結ぶFieldを整備し、保存・取得・空の一覧の表示を共通化する |
-| ナビゲーション | 両アプリのApp.tsxで固定ナビと本文の下余白を指定 | ナビの高さ、セーフエリア、本文の下余白を揃え、フォーカスや操作が隠れないようにする |
-| ガイド | [BrewlogのAGENTS.md](../apps/brewlog/AGENTS.md)はMaterial 3とTailwind・Base UIの利用を指示 | 共通ガイドへの参照を整え、Tailwindを使う指示をCSS Modulesへ変更する |
-| 検証 | [CI](../.github/workflows/ci.yml)はcheck・test・build等を実行。[共通UIのcheck/build](../packages/ui/package.json)は型検査のみ。Playwrightの依存はあるが画面テストやStorybookは未整備 | CSS、トークン、部品の状態、画面の操作を検証対象に加える |
+| 領域             | 現状                                                                                                                                                                                                                                                                                                                                                                                                                                                        | 改善する内容                                                                             |
+| ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| 色とテーマ       | [共通トークン](https://github.com/yahatapp/coffeelog/blob/f2632755554f5a8f640c740f00bbbfbba943fcb6/packages/ui/src/styles/tokens.css)と、[Brewlog](https://github.com/yahatapp/coffeelog/blob/f2632755554f5a8f640c740f00bbbfbba943fcb6/apps/brewlog/src/index.css)・[Cafelog](https://github.com/yahatapp/coffeelog/blob/f2632755554f5a8f640c740f00bbbfbba943fcb6/apps/cafelog/src/index.css)のCSSに色を定義。同じ色値を `@theme` と `:root` に重複して記述 | 共通パッケージに両テーマを集約し、補助文字・背景・入力境界・通知・操作状態の役割を分ける |
+| 共通部品         | Button・Input等は共通化済み。[BrewlogのButton](https://github.com/yahatapp/coffeelog/blob/f2632755554f5a8f640c740f00bbbfbba943fcb6/apps/brewlog/src/components/ui/button.tsx)等はその再公開。ページ側には独自のボタンや装飾が残る                                                                                                                                                                                                                           | 再公開だけのファイルは重複実装と区別し、独自の表示を共通部品とCSS Modulesへ移す          |
+| 文字・寸法       | 文字サイズ、余白、角丸、高さをクラスで個別に指定                                                                                                                                                                                                                                                                                                                                                                                                            | 本文・ラベル・補助文字の尺度と、部品・画面の寸法を定義する                               |
+| 状態             | [Button](https://github.com/yahatapp/coffeelog/blob/f2632755554f5a8f640c740f00bbbfbba943fcb6/packages/ui/src/components/button.tsx)はvariant・size・focus・disabledに対応。[Input](https://github.com/yahatapp/coffeelog/blob/f2632755554f5a8f640c740f00bbbfbba943fcb6/packages/ui/src/components/input.tsx)のinvalid・read-onlyや、Buttonのloadingは共通の表現が未整備                                                                                     | 各部品に必要な状態と、その見た目・操作を定義する                                         |
+| 入力と非同期処理 | [CafeLogForm](https://github.com/yahatapp/coffeelog/blob/f2632755554f5a8f640c740f00bbbfbba943fcb6/apps/cafelog/src/components/CafeLogForm.tsx)のエラー関連付けは欄ごとの差がある。店舗画面は共通のLoading・ErrorState・EmptyStateを使用                                                                                                                                                                                                                     | Label・説明・入力・エラーを結ぶFieldを整備し、保存・取得・空の一覧の表示を共通化する     |
+| ナビゲーション   | 両アプリのApp.tsxで固定ナビと本文の下余白を指定                                                                                                                                                                                                                                                                                                                                                                                                             | ナビの高さ、セーフエリア、本文の下余白を揃え、フォーカスや操作が隠れないようにする       |
+| ガイド           | [BrewlogのAGENTS.md](https://github.com/yahatapp/coffeelog/blob/f2632755554f5a8f640c740f00bbbfbba943fcb6/apps/brewlog/AGENTS.md)はMaterial 3とTailwind・Base UIの利用を指示                                                                                                                                                                                                                                                                                 | 共通ガイドへの参照を整え、Tailwindを使う指示をCSS Modulesへ変更する                      |
+| 検証             | [CI](https://github.com/yahatapp/coffeelog/blob/f2632755554f5a8f640c740f00bbbfbba943fcb6/.github/workflows/ci.yml)はcheck・test・build等を実行。[共通UIのcheck/build](https://github.com/yahatapp/coffeelog/blob/f2632755554f5a8f640c740f00bbbfbba943fcb6/packages/ui/package.json)は型検査のみ。Playwrightの依存はあるが画面テストやStorybookは未整備                                                                                                      | CSS、トークン、部品の状態、画面の操作を検証対象に加える                                  |
 
 `src` 以下のTSXを静的に数えると、ブランド名を含む色クラスは次のとおりである。記述数は実行時の使用数や不具合数を表さない。色の置換では、ブランド装飾・文字・状態表示を用途ごとに判断する。
 
-| 対象 | TSXファイル数 | 色クラスの記述数 | 該当ファイル数 |
-| --- | ---: | ---: | ---: |
-| 共通UI | 13 | 0 | 0 |
-| Brewlog | 31 | 478 | 21 |
-| Cafelog | 19 | 309 | 14 |
+| 対象    | TSXファイル数 | 色クラスの記述数 | 該当ファイル数 |
+| ------- | ------------: | ---------------: | -------------: |
+| 共通UI  |            13 |                0 |              0 |
+| Brewlog |            31 |              478 |             21 |
+| Cafelog |            19 |              309 |             14 |
 
 ### 補助文字とsecondaryボタンの配色を直す
 
-現在の `--app-color-muted` はsecondaryと同じ色で、補助文字やplaceholderにも使われている。CSS値から計算したコントラスト比は次のとおりである。
+移行前の `--app-color-muted` はsecondaryと同じ色で、補助文字やplaceholderにも使われている。CSS値から計算したコントラスト比は次のとおりである。
 
-| 前景／背景 | Brewlog | Cafelog |
-| --- | ---: | ---: |
-| primary／白 | 7.44:1 | 9.25:1 |
-| secondary／白 | 3.75:1 | 3.16:1 |
-| muted／アプリ背景 | 3.56:1 | 3.00:1 |
+| 前景／背景        | Brewlog | Cafelog |
+| ----------------- | ------: | ------: |
+| primary／白       |  7.44:1 |  9.25:1 |
+| secondary／白     |  3.75:1 |  3.16:1 |
+| muted／アプリ背景 |  3.56:1 |  3.00:1 |
 
 secondary／白とmuted／背景は、通常文字に必要な4.5:1を下回る。補助文字と薄い背景のトークンを分け、secondaryボタンは文字色と背景色を一組で見直す。[WCAG 2.2・1.4.3](https://www.w3.org/TR/WCAG22/#contrast-minimum)
 
@@ -47,7 +47,7 @@ secondary／白とmuted／背景は、通常文字に必要な4.5:1を下回る�
 
 ## 2. ファイルの配置と責務
 
-トークンと両テーマは `packages/ui` に置く。部品のCSSはTSXの隣、ページ固有の配置はページ側に置く。以下は移行後の配置案であり、未作成のファイルを含む。
+トークンと両テーマは `packages/ui` に置く。部品のCSSはTSXの隣、ページ固有の配置はページ側に置く。現在の配置と使い方は共通UIガイドを参照する。以下は各配置の役割を示す。
 
 ```text
 packages/ui/src/
@@ -78,20 +78,20 @@ docs/design-system/
   changelog.md               トークンとAPIの変更記録
 ```
 
-`@yahatapp/ui/styles.css` は共通CSSの入口へ変更し、テーマもpackage.jsonのexportsから公開する。sideEffectsは現在のtokens.cssだけでなく、新しいCSS全体に合わせる。両アプリのproduction buildで必要なCSSが出力されることを確認する。
+`@yahatapp/ui/styles.css` は共通CSSの入口とし、テーマもpackage.jsonのexportsから公開する。sideEffectsはCSS全体を対象にする。両アプリのproduction buildで必要なCSSが出力されることを確認する。
 
 ## 3. トークンの定義とテーマの選択
 
 依存関係は「基本値 → 用途を表す公開トークン → 部品のスタイル」とする。部品とページは公開トークンを参照し、ブランドの基本値を直接使わない。
 
-| 種類 | 定義・命名例 | 利用範囲 |
-| --- | --- | --- |
-| 基本値 | ブランド色、neutralの色、余白尺度、角丸、時間。`--cl-ref-brand-*`、`--cl-ref-space-*` | トークン定義とテーマの内部 |
-| 公開トークン | 本文、補助文字、面、操作、入力境界、通知、フォーカス。`--cl-color-text-muted`、`--cl-space-page-inline` | 共通部品、ページ、アプリ全体のCSS |
-| 部品専用 | Buttonの高さやCardの余白等。公開が必要なら `--cl-button-size-default` 等 | CSS Module内を基本とし、拡張APIとして必要なものだけ公開 |
-| 部品内の一時変数 | `--_button-background` 等 | そのCSS Module内で使う。命名だけで言語上の非公開が保証されるわけではない |
+| 種類             | 定義・命名例                                                                                            | 利用範囲                                                                 |
+| ---------------- | ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| 基本値           | ブランド色、neutralの色、余白尺度、角丸、時間。`--cl-ref-brand-*`、`--cl-ref-space-*`                   | トークン定義とテーマの内部                                               |
+| 公開トークン     | 本文、補助文字、面、操作、入力境界、通知、フォーカス。`--cl-color-text-muted`、`--cl-space-page-inline` | 共通部品、ページ、アプリ全体のCSS                                        |
+| 部品専用         | Buttonの高さやCardの余白等。公開が必要なら `--cl-button-size-default` 等                                | CSS Module内を基本とし、拡張APIとして必要なものだけ公開                  |
+| 部品内の一時変数 | `--_button-background` 等                                                                               | そのCSS Module内で使う。命名だけで言語上の非公開が保証されるわけではない |
 
-共通の寸法・文字・モーションはsemantic.css、用途別の色は各テーマに定義する。両テーマは同じ公開名を使い、値を変える。現在のmutedは補助文字と薄い背景に分け、borderも装飾境界と入力境界に分ける。旧名と全参照を一括で置き換える。
+共通の寸法・文字・モーション・用途別の色はsemantic.css、ブランドに依存する配色は各テーマに定義する。両テーマは同じ公開名を使い、値を変える。移行前のmutedは補助文字と薄い背景に分け、borderも装飾境界と入力境界に分ける。旧名と全参照を一括で置き換える。
 
 トークンの値はCSSだけに置く。contract.jsonには公開名・型・必須条件を定め、検証に使う。TypeScriptはvariant等のAPI定義、Markdownは使い方と判断理由を担当する。同じ色値や寸法を複数の形式で手書きしない。
 
@@ -119,13 +119,13 @@ CSS変数は定義した要素で参照先を解決してから、DOMの子孫�
 
 文字・余白はrem、細い境界はpx、画面への追従は割合・dvh等、用途に応じて単位を選ぶ。本文サイズ、入力の高さ、カード余白、画面幅、ナビの高さ、重なり順、動きの時間を共通で管理する。
 
-| 値・条件 | 扱い |
-| --- | --- |
-| `0`、`100%`、`auto`、`currentColor`、`transparent` | 構造や継承を表す指定として許可する |
-| メディア・コンテナクエリーの条件 | 固定条件を揃え、変更時は全参照を更新する。必要なら共通定義からビルド時に生成する |
-| `env(safe-area-inset-bottom)` | ナビの高さや余白トークンと `calc()` 等で組み合わせる |
-| Sliderの位置、画像の比率 | データから計算し、型を付けたstyleや局所CSS変数で渡す |
-| Base UIが公開する幅・位置のCSS変数 | 各部品のAPIに従って使い、自社トークンと区別する |
+| 値・条件                                           | 扱い                                                                             |
+| -------------------------------------------------- | -------------------------------------------------------------------------------- |
+| `0`、`100%`、`auto`、`currentColor`、`transparent` | 構造や継承を表す指定として許可する                                               |
+| メディア・コンテナクエリーの条件                   | 固定条件を揃え、変更時は全参照を更新する。必要なら共通定義からビルド時に生成する |
+| `env(safe-area-inset-bottom)`                      | ナビの高さや余白トークンと `calc()` 等で組み合わせる                             |
+| Sliderの位置、画像の比率                           | データから計算し、型を付けたstyleや局所CSS変数で渡す                             |
+| Base UIが公開する幅・位置のCSS変数                 | 各部品のAPIに従って使い、自社トークンと区別する                                  |
 
 `var()` はメディアクエリーの条件には使えない。`@media (min-width: var(--cl-breakpoint-wide))` は採用しない。[CSS変数の使用範囲](https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Cascading_variables/Using_custom_properties)
 
@@ -162,18 +162,18 @@ CSS変数は定義した要素で参照先を解決してから、DOMの子孫�
 
 ## 5. Tailwindの機能と依存を置き換える
 
-| 現在の記述・依存 | 置換先・変更内容 |
-| --- | --- |
-| レイアウト・余白・幅・レスポンシブのクラス | 部品とページのCSS Modules。繰り返す配置は共通レイアウト部品へまとめる |
-| 色・文字・角丸等のクラスと `@theme` | 公開トークンを参照する標準CSS |
-| Preflight | reset.cssでbox-sizing・既定の余白・境界・画像・フォーム等を調整し、base.cssで文字と背景を設定 |
-| `animate-*`、`tailwindcss-animate` | 必要なkeyframesとtransition。`prefers-reduced-motion` では状態の表示を残し、移動・拡大縮小・点滅を抑える |
-| `focus-visible:*`、`data-*:*`、`has-*:*` | 疑似クラス、属性セレクター、必要な箇所の `:has()` |
-| `twMerge(clsx(...))` | twMergeを外し、結合だけなら既存のclsxを使う |
-| `@source`・`@plugin`・Tailwindのimport | 共通CSSとテーマの通常のimportへ変更 |
-| 両アプリの `tailwindcss()` Viteプラグイン | importとプラグイン登録を削除 |
-| package.json、pnpmのcatalog・peer設定 | Tailwind本体・Viteプラグイン・animate・mergeの参照を削除し、ロックファイルを再生成 |
-| AGENTS.md | CSS Modulesとトークンを使う指示へ更新 |
+| 現在の記述・依存                           | 置換先・変更内容                                                                                         |
+| ------------------------------------------ | -------------------------------------------------------------------------------------------------------- |
+| レイアウト・余白・幅・レスポンシブのクラス | 部品とページのCSS Modules。繰り返す配置は共通レイアウト部品へまとめる                                    |
+| 色・文字・角丸等のクラスと `@theme`        | 公開トークンを参照する標準CSS                                                                            |
+| Preflight                                  | reset.cssでbox-sizing・既定の余白・境界・画像・フォーム等を調整し、base.cssで文字と背景を設定            |
+| `animate-*`、`tailwindcss-animate`         | 必要なkeyframesとtransition。`prefers-reduced-motion` では状態の表示を残し、移動・拡大縮小・点滅を抑える |
+| `focus-visible:*`、`data-*:*`、`has-*:*`   | 疑似クラス、属性セレクター、必要な箇所の `:has()`                                                        |
+| `twMerge(clsx(...))`                       | twMergeを外し、結合だけなら既存のclsxを使う                                                              |
+| `@source`・`@plugin`・Tailwindのimport     | 共通CSSとテーマの通常のimportへ変更                                                                      |
+| 両アプリの `tailwindcss()` Viteプラグイン  | importとプラグイン登録を削除                                                                             |
+| package.json、pnpmのcatalog・peer設定      | Tailwind本体・Viteプラグイン・animate・mergeの参照を削除し、ロックファイルを再生成                       |
+| AGENTS.md                                  | CSS Modulesとトークンを使う指示へ更新                                                                    |
 
 Preflightは見出しや境界の既定値も変えるため、削除後に必要な設定をリセットと基本スタイルへ移す。[Tailwind Preflight](https://tailwindcss.com/docs/preflight)
 
@@ -191,14 +191,14 @@ AGENTS.mdには共通ガイドへの参照と必須の行動を記す。UIを変
 4. 共通部品を組み合わせ、足りない役割はトークンや部品に追加する。
 5. 自動検証と画面確認を行い、変更した仕様や例外をガイドへ反映する。
 
-| ガイド | 記載する内容 |
-| --- | --- |
-| トークン | 名前の意味、前景と背景の組み合わせ、使用条件、定義へのリンク |
-| 部品 | 使う場面、variantとsizeの選び方、必要な状態、キーボード・読み上げ、実行できる例へのリンク |
+| ガイド     | 記載する内容                                                                                                          |
+| ---------- | --------------------------------------------------------------------------------------------------------------------- |
+| トークン   | 名前の意味、前景と背景の組み合わせ、使用条件、定義へのリンク                                                          |
+| 部品       | 使う場面、variantとsizeの選び方、必要な状態、キーボード・読み上げ、実行できる例へのリンク                             |
 | 入力・保存 | Label・説明・入力・エラーの関連付け。未保存・保存中・失敗・完了の表示。Button・Input・Field・Noticeを組み合わせた実例 |
-| 非同期画面 | 読み込み中・空・取得失敗・成功の表示条件、再試行や次の操作。保存の連打とレイアウトの変動を防ぐ方法 |
-| 文言 | 「保存」「再試行」の使い分け、失敗から回復する方法、空の一覧で次にできる操作 |
-| 変更と例外 | 対象、理由、許可条件、トークンやAPIの変更記録 |
+| 非同期画面 | 読み込み中・空・取得失敗・成功の表示条件、再試行や次の操作。保存の連打とレイアウトの変動を防ぐ方法                    |
+| 文言       | 「保存」「再試行」の使い分け、失敗から回復する方法、空の一覧で次にできる操作                                          |
+| 変更と例外 | 対象、理由、許可条件、トークンやAPIの変更記録                                                                         |
 
 props一覧は型定義へのリンクで参照できるようにする。日本語の文言はCSSトークンに含めず、必要なら型付きの文言定義で管理する。
 
@@ -206,23 +206,23 @@ props一覧は型定義へのリンクで参照できるようにする。日本
 
 アクセシビリティの品質目標はWCAG 2.2 AAとする。通常文字は4.5:1を基準に、状態ごとの前景と背景を確認する。主要操作の反応領域は44px以上を目安とし、AAの最小ターゲットサイズ24×24 CSS pxと例外条件を区別する。フォーカスの外観を定める2.4.13はAAAとして扱う。[WCAG 2.2](https://www.w3.org/TR/WCAG22/)、[Target Size](https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum.html)
 
-Checkboxの `h-4 w-4` やButtonのiconサイズ40px角は、ラベルを含む反応領域と周囲の間隔も確認する。フォーカスは見えることに加え、固定ナビ等で完全に隠れないことを確かめる。[Focus Not Obscured](https://www.w3.org/WAI/WCAG22/Understanding/focus-not-obscured-minimum.html)
+移行前のCheckboxの `h-4 w-4` やButtonのiconサイズ40px角は、ラベルを含む反応領域と周囲の間隔も確認する。フォーカスは見えることに加え、固定ナビ等で完全に隠れないことを確かめる。[Focus Not Obscured](https://www.w3.org/WAI/WCAG22/Understanding/focus-not-obscured-minimum.html)
 
-| 検証対象 | 完了条件・方法 |
-| --- | --- |
-| CSS | 全CSSにStylelintを実行し、構文・命名・layer・未許可の値・深いセレクターを検証する |
-| トークン | 公開名・型・必須定義に適合する。両テーマで参照切れや循環がなく、部品から基本値を直接参照していない |
-| 色とテーマ | 透明度の合成と操作状態を含めてコントラストを確認する。Portalを含む両テーマの表示が正しい |
-| 型とクラス | 共通UIの型検査と、CSS Modulesのクラス名の参照検査が通る |
-| 部品の状態 | Storybook等で両テーマと必要な状態を確認でき、アクセシビリティ検査が通る |
-| 画面と操作 | 全ルートの描画を比較し、作成・編集・空・取得失敗・保存中・保存失敗・通知を検証する。LIFFとAPIはテスト用の応答を用意する |
-| 手動確認 | 幅320pxを含む狭い画面、日本語の折り返し、拡大、キーボード、読み上げ、LINE内ブラウザーとセーフエリアを確認する |
-| 置換漏れ | 全対象のCSS・TSX・設定に、Tailwindのクラス・ディレクティブ・不要な依存・旧トークンが残っていない |
-| ビルド成果物 | 両アプリのcheck・test・buildが通り、必要なCSSが出力される。リセット削除による差を確認できている |
+| 検証対象     | 完了条件・方法                                                                                                          |
+| ------------ | ----------------------------------------------------------------------------------------------------------------------- |
+| CSS          | 全CSSにStylelintを実行し、構文・命名・layer・未許可の値・深いセレクターを検証する                                       |
+| トークン     | 公開名・型・必須定義に適合する。両テーマで参照切れや循環がなく、部品から基本値を直接参照していない                      |
+| 色とテーマ   | 透明度の合成と操作状態を含めてコントラストを確認する。Portalを含む両テーマの表示が正しい                                |
+| 型とクラス   | 共通UIの型検査と、CSS Modulesのクラス名の参照検査が通る                                                                 |
+| 部品の状態   | 部品一覧で両テーマと必要な状態を確認でき、アクセシビリティ検査が通る                                                    |
+| 画面と操作   | 全ルートの描画を比較し、作成・編集・空・取得失敗・保存中・保存失敗・通知を検証する。LIFFとAPIはテスト用の応答を用意する |
+| 手動確認     | 幅320pxを含む狭い画面、日本語の折り返し、拡大、キーボード、アクセシビリティツリーとセーフエリアを確認する               |
+| 置換漏れ     | 全対象のCSS・TSX・設定に、Tailwindのクラス・ディレクティブ・不要な依存・旧トークンが残っていない                        |
+| ビルド成果物 | 両アプリのcheck・test・buildが通り、必要なCSSが出力される。リセット削除による差を確認できている                         |
 
 TSXは既存のOxcで検査し、CSSにはStylelintを追加する。複数ファイルやテーマをまたぐトークンの完全性は専用の検証を用意する。[Stylelint Rules](https://stylelint.io/user-guide/rules/)
 
-画面の自動検証はPlaywrightと `@axe-core/playwright` を候補とする。部品一覧の検査と手動確認も組み合わせる。[Playwright](https://playwright.dev/docs/accessibility-testing)、[Storybook](https://storybook.js.org/docs/writing-tests/accessibility-testing)
+画面の自動検証にはPlaywrightと `@axe-core/playwright` を使う。部品一覧は既存のVite+で起動し、検査と手動確認を組み合わせる。[Playwright](https://playwright.dev/docs/accessibility-testing)
 
 ガイドだけを変えた場合もリンクや実例を検証する。Turborepoの設定・コマンドを変更する際は、リポジトリの指示に従ってインストール済みパッケージの同梱ドキュメントを先に読む。
 
@@ -230,13 +230,13 @@ TSXは既存のOxcで検査し、CSSにはStylelintを追加する。複数フ�
 
 次の作業を一度の移行で完了させる。旧名の別名や旧propsへの互換処理、警告だけで通す移行対象は残さない。
 
-| 順序 | 作業 | 確認する結果 |
-| --- | --- | --- |
-| 1 | 全画面を棚卸しし、規約・トークン・両テーマ・ガイドを定義する | 全画面の比較対象と、値の管理先が揃う |
-| 2 | 基本部品・通知・画面状態・レイアウトをCSS Modulesへ書き換える | 文字色と操作状態を改善し、両テーマの部品一覧で確認できる |
-| 3 | 両アプリの全ページと固有部品を置き換える | 全対象が共通部品と新トークンを使用し、ナビとセーフエリアも確認できる |
-| 4 | Tailwind関連の依存・設定・指示を削除し、CIを更新する | 置換漏れの検査と型検査が通り、両アプリをビルドできる |
-| 5 | 全ルートと主要フローを検証し、両アプリを公開する | 品質基準を満たし、両方の公開結果を確認できる |
+| 順序 | 作業                                                          | 確認する結果                                                         |
+| ---- | ------------------------------------------------------------- | -------------------------------------------------------------------- |
+| 1    | 全画面を棚卸しし、規約・トークン・両テーマ・ガイドを定義する  | 全画面の比較対象と、値の管理先が揃う                                 |
+| 2    | 基本部品・通知・画面状態・レイアウトをCSS Modulesへ書き換える | 文字色と操作状態を改善し、両テーマの部品一覧で確認できる             |
+| 3    | 両アプリの全ページと固有部品を置き換える                      | 全対象が共通部品と新トークンを使用し、ナビとセーフエリアも確認できる |
+| 4    | Tailwind関連の依存・設定・指示を削除し、CIを更新する          | 置換漏れの検査と型検査が通り、両アプリをビルドできる                 |
+| 5    | 全ルートと主要フローを検証し、両アプリを公開する              | 品質基準を満たし、両方の公開結果を確認できる                         |
 
 テーマ・部品・ガイド・検証は同じ変更で更新し、メンテナーが両アプリへの影響を確認する。変更はGitとchangelogで追跡する。
 
@@ -252,4 +252,4 @@ DTCGを導入する場合は、JSONからCSSを生成する方式へ切り替え
 
 [参照レポート](https://docs.google.com/document/d/1tx8cfut1qxeVLSifI1PaY7x7HGT-UHl3WklgUcZtvto/edit)と、本文にリンクした公式資料を基に計画を整理した。現状の評価はコードの静的確認による。ブランドクラスの集計には、各src以下のTSXに対して正規表現 `\b(?:bg|text|border|ring|shadow)-(?:coffee|cafe)-[\w/-]+` を使った。
 
-実画面、読み上げ、LINE内ブラウザーでの監査は未実施である。Vite+でCSS Modulesへ移行したビルドや出力サイズも未検証のため、実装時に確認する。Figma資産と編集フローは未確認である。
+調査時点では実画面とビルドの監査は未実施だった。移行後の画面・操作・出力サイズは実施記録に残す。2026年11月1日の依頼により、LINE内ブラウザーとスクリーンリーダーの実機確認は今回の完了条件から外した。Figma資産と編集フローは未確認である。

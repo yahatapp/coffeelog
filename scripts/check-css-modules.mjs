@@ -1,7 +1,7 @@
 import { readFileSync, readdirSync, existsSync } from "node:fs";
 import { resolve, dirname } from "node:path";
 import postcss from "postcss";
-const roots = ["packages/ui/src", "apps/brewlog/src", "apps/cafelog/src"];
+const roots = ["packages/ui/src", "apps/brewlog/src", "apps/cafelog/src", "scripts/ui"];
 const files = (dir) =>
   readdirSync(dir, { withFileTypes: true }).flatMap((e) =>
     e.isDirectory() ? files(`${dir}/${e.name}`) : [`${dir}/${e.name}`],
@@ -15,7 +15,7 @@ export function moduleIssues(css, layer) {
     if (d.prop.startsWith("--")) local.add(d.prop);
   });
   tree.walkRules((rule) => {
-    if(rule.parent.type==="atrule"&&rule.parent.name.endsWith("keyframes"))return;
+    if (rule.parent.type === "atrule" && rule.parent.name.endsWith("keyframes")) return;
     for (const match of rule.selector.matchAll(/\.([a-zA-Z_][\w-]*)/g)) classes.add(match[1]);
     if (!rule.selector.startsWith(".")) errors.push(`Selector needs local class: ${rule.selector}`);
     if (rule.selector.includes(":global")) errors.push("Global selector");
@@ -59,7 +59,7 @@ export function classReferenceIssues(source, directory, modules) {
     /import\s+(\w+)\s+from\s+["']([^"']+\.module\.css)["']/g,
   )) {
     const classes = modules.get(resolve(directory, path));
-    const access = new RegExp(String.raw`\b${name}\.(\w+)`, "g");
+    const access = new RegExp(String.raw`(?<![\w/.-])${name}\.(\w+)`, "g");
     for (const [, className] of source.matchAll(access))
       if (!classes?.has(className)) issues.push(`Missing class ${name}.${className}`);
   }
@@ -73,7 +73,7 @@ export function checkModules() {
       readFileSync(file, "utf8"),
       file.includes("packages/ui")
         ? "components"
-        : file.includes("/pages/")
+        : file.startsWith("scripts/ui/") || file.includes("/pages/")
           ? "pages"
           : "components",
     );

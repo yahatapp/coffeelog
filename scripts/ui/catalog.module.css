@@ -1,0 +1,26 @@
+@layer pages {
+  .root {
+    max-width: var(--cl-size-content-max);
+    width: 100%;
+    margin-inline: auto;
+    padding: var(--cl-space-page-inline);
+    display: flex;
+    flex-direction: column;
+    gap: var(--cl-space-section-gap);
+  }
+  .heading {
+    font-size: var(--cl-font-size-page-title);
+    font-weight: var(--cl-font-weight-medium);
+    color: var(--cl-color-action-primary);
+  }
+  .section {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: var(--cl-space-field-gap);
+    min-width: 0;
+  }
+  .section > * {
+    max-width: 100%;
+  }
+}

@@ -1,29 +1,35 @@
-# 基本部品の使い方
+# 共通部品の選び方
 
-実装中のガイド。移行全体の進捗は[実施記録](migration-status.md)で確認する。
+## 入力と操作
 
-## ボタン
+| 場面             | 部品と定義元                                                                                                                                                              | 実装時の確認                                                        |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| 保存・追加・削除 | [Button](../../packages/ui/src/components/button.tsx)                                                                                                                     | loadingで連打を防ぐ。遷移はasChildとLinkを組み合わせる              |
+| 入力             | [Field](../../packages/ui/src/components/field.tsx)と[Input](../../packages/ui/src/components/input.tsx)・[Textarea](../../packages/ui/src/components/textarea.tsx)       | Fieldのrender propsを入力へ渡し、id・説明・エラーを結ぶ             |
+| 選択             | [Select](../../packages/ui/src/components/select.tsx)・[Segment](../../packages/ui/src/components/segment.tsx)・[Checkbox](../../packages/ui/src/components/checkbox.tsx) | 選択肢の名前、選択中、disabledを確認する                            |
+| 情報のまとまり   | [Card](../../packages/ui/src/components/card.tsx)                                                                                                                         | 標準のHeader・Contentを使う。独自の中身は自分のラッパーに配置を書く |
 
-[Button](../../packages/ui/src/components/button.tsx)のvariantはprimary・secondary・outline・ghost、sizeはsm・md・lg・iconを使う。loadingは処理中を表し、native buttonをdisabledにする。ラベルは処理内容が分かる文言を渡す。asChildを使うリンクでも処理中の遷移を抑止する。iconサイズには操作名を付ける。
+- variant・size・状態の正確な型は定義元を参照する。
+- iconボタンには操作名を付ける。装飾アイコンは読み上げ対象から外す。
+- ButtonにclassNameを渡して見た目を変える前に、既存の型付きAPIで表せるか確認する。
+- 必須、invalid、read-only、disabled、loading、hover、focusは、利用する部品の状態として確認する。
 
-色と内部余白を呼び出し側で上書きせず、部品のvariant・sizeを選ぶ。外側の配置はラッパーで扱う。
+## 複合部品と画面状態
 
-## 入力とField
+| 場面                       | 定義元                                                                                                                 |
+| -------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| 読み込み・失敗・空         | [Loading・ErrorState・EmptyState](../../packages/ui/src/components/status.tsx)                                         |
+| 操作結果の通知             | [NoticeProvider](../../packages/ui/src/components/notices.tsx)と[notify](../../packages/ui/src/lib/notices.ts)         |
+| 一覧の絞り込み・並び替え   | [LogListControls](../../packages/ui/src/components/log-list-controls.tsx)                                              |
+| 店舗検索・履歴             | [StoreList・StoreHistory](../../packages/ui/src/components/store-history.tsx)                                          |
+| 外枠・固定ナビ・認証・同意 | [app-shell](../../packages/ui/src/components/app-shell.tsx)と[PageLayout](../../packages/ui/src/components/layout.tsx) |
 
-[Field](../../packages/ui/src/components/field.tsx)はラベル・説明・エラーと入力欄を関連付ける。render propsから渡される属性を入力へ適用する。データ管理や保存処理はフォーム側で行う。
+- 単純な操作は意味の正しいHTMLを使う。Dialog等の複雑な対話はBase UIを使う。
+- 成功・警告・失敗を見た目だけで区別せず、文言と操作を示す。
+- 色や寸法の新しい意味が必要なら、部品の型とトークンを同じ変更で整備する。
 
-```tsx
-<Field label="店舗名" description="正式名称を入力" error={error} required>
-  {(control) => <Input {...control} value={name} onChange={onChange} />}
-</Field>
-```
+## 実行できる例
 
-[Input](../../packages/ui/src/components/input.tsx)・[Textarea](../../packages/ui/src/components/textarea.tsx)はinvalid・read-only・disabledとfocusの見た目を共通管理する。[Select](../../packages/ui/src/components/select.tsx)はnative selectを使う。Checkboxのラベルは関連付け、反応領域を含めて確認する。
-
-## 選択と情報のまとまり
-
-[Segment](../../packages/ui/src/components/segment.tsx)はnative radioのグループを使う。ariaLabelにグループの用途を渡し、表示ラベルはoptionsで定義する。ラベルのクリックと、ラジオボタンへのキーボード操作で選択できる。
-
-[Card](../../packages/ui/src/components/card.tsx)で情報をまとめる。CardHeader・CardTitle・CardContent・CardFooterを組み合わせる。ページから内部DOMを指定して装飾を上書きしない。
-
-APIの詳細は各ファイルの型定義を参照する。両テーマの状態は開発用部品一覧で確認し、変更時には型・CSS・操作・アクセシビリティの検査を実行する。
+- `pnpm ui:dev`で部品一覧を開く。実装は[部品一覧のコード](../../scripts/ui/catalog.tsx)を参照する。両テーマのvariant・size・入力状態を確認できる。
+- 実フォームは[BrewlogのBeanFields](../../apps/brewlog/src/components/forms/BeanFields.tsx)と[CafelogのCafeLogForm](../../apps/cafelog/src/components/CafeLogForm.tsx)を参照する。
+- 画像のDialogは[ImagePreview](../../apps/cafelog/src/components/ImagePreview.tsx)、店舗のDialogは[StoreHistory](../../packages/ui/src/components/store-history.tsx)を参照する。

@@ -71,9 +71,9 @@ Persistent context and project guidelines for coding agents working on Brewlog.
 - Follow Material 3 guidance for semantic color roles, typography, shape, elevation, component states, navigation, touch targets, and accessibility.
 - Prefer rounded cards, pill-shaped actions, tonal containers, and icon-plus-label bottom navigation where they suit the interaction.
 - Treat Material 3 Expressive features as optional. Do not introduce exaggerated motion, typography, or shapes that conflict with Brewlog's calm character.
-- Build UI with Tailwind CSS and modern Base UI primitives. Use shadcn/ui patterns where useful, but prefer Base UI alternatives over Radix primitives when both are available.
+- Follow the [shared UI guide](../../docs/design-system/README.md). Use standard CSS custom properties, CSS Modules and shared UI components. Use Base UI for complex interactions.
 - Do not add Material UI or another component library solely to imitate Material 3; apply the design principles through the existing stack.
-- Use smooth, purposeful transitions and restrained glassmorphic touches. Avoid effects that weaken hierarchy or usability.
+- Use the shared motion and color roles. Follow the guide for contrast, reduced motion and component states.
 - Preserve visible focus states, sufficient color contrast, readable type sizes, and touch-friendly interactive areas.
 - Also comply with LINE LIFF and LINE MINI App UX requirements where applicable.
 

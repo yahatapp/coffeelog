@@ -23,6 +23,8 @@ pnpm dev
 pnpm check
 pnpm test
 pnpm build
+pnpm ui:dev
+pnpm test:ui
 pnpm turbo run check test build --affected
 ```
 
@@ -35,7 +37,9 @@ pnpm --filter cafelog test
 
 ## CI/CD
 
-CI uses Turborepo's affected-package detection. Production deployments remain independent and are selected by changed paths:
+UI conventions and verification commands are documented in [the design system guide](docs/design-system/README.md).
+
+CI uses Turborepo's affected-package detection. Design-system and UI checks run independently for every eligible CI run, including guide-only changes. Production deployments remain independent and are selected by changed paths:
 
 - `.github/workflows/deploy-brewlog.yml`
 - `.github/workflows/deploy-cafelog.yml`

@@ -26,6 +26,14 @@ test("missing CSS class references fail independently of handwritten types", () 
     classReferenceIssues('import styles from "./sample.module.css"; styles.root;', "/tmp", modules),
     [],
   );
+  assert.deepEqual(
+    classReferenceIssues(
+      'import "@yahatapp/ui/styles.css"; import styles from "./sample.module.css"; styles.root;',
+      "/tmp",
+      modules,
+    ),
+    [],
+  );
   assert.match(
     classReferenceIssues(
       'import styles from "./sample.module.css"; styles.missing;',
