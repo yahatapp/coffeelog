@@ -2,7 +2,7 @@
 
 ## 公開前の確認
 
-2026年11月1日に、T01〜T12の完了後、以下を確認した。公開後の結果は末尾に追記する。
+2026年11月1日に、T01〜T12の完了後、以下を確認した。公開後の結果は末尾に記録した。
 
 - [ガイドだけを更新したCI](https://github.com/yahatapp/coffeelog/actions/runs/41265576965)でも、型・テスト・build、デザイン検査、UI操作、依存監査が成功した。ローカルでも固定ロックファイルのインストールとbuildが成功した。
 - 元の82対象ファイルすべてに、[移行後の結果](evidence/inventory-final.json)がある。全ルートと作成・編集・削除、取得・保存失敗、画像操作はT07〜T12の検証記録に対応する。
@@ -28,7 +28,7 @@ LINE内ブラウザーとスクリーンリーダーの実機確認は、依頼�
 
 ## 公開方法と戻し先
 
-[PR #139](https://github.com/yahatapp/coffeelog/pull/139)を、必須のVerify成功と未解決レビューなしを確認してmainへマージする。既存のDeploy Brewlog・Deploy Cafelogワークフローが、それぞれ検証・build・既存マイグレーションの適用・Worker公開を行う。今回は両アプリの全移行をまとめて公開する。
+[PR #139](https://github.com/yahatapp/coffeelog/pull/139)を、必須のVerify成功と未解決レビューなしを確認してmainへマージした。公開コミットは`ee2a536c02ca76051a263debf7021aafe550fd38`。既存のDeploy Brewlog・Deploy Cafelogワークフローで、それぞれ検証・build・既存マイグレーションの適用・Worker公開が成功した。両アプリの全移行をまとめて公開済みである。
 
 公開前にCloudflare APIで以下を取得し、両バージョンが現在も再公開可能であることを確認した。
 
@@ -48,4 +48,14 @@ Wranglerのロールバックは指定バージョンの新しいdeploymentを�
 
 ## 公開後の確認
 
-未実施。両アプリのワークフロー、公開バージョン、初期表示・主要操作・テーマ・通知の結果をここに記録する。
+2026年11月1日に以下を確認し、実装計画の全86項目を完了した。
+
+| アプリ | 公開ジョブ | 新バージョン（100%） |
+| --- | --- | --- |
+| [Brewlog](https://brewlog.ky12228121.workers.dev) | [成功](https://github.com/yahatapp/coffeelog/actions/runs/41267759515) | `6edd06b6-ef65-4a16-9c2a-86ff093420bf` |
+| [Cafelog](https://cafelog.ky12228121.workers.dev) | [成功](https://github.com/yahatapp/coffeelog/actions/runs/41267759473) | `1e93d7ca-d799-480b-b7a7-a0cd96cbd70c` |
+
+- Cloudflare APIと公開ログで、両バージョンの公開とトラフィック100%を確認した。公開失敗とロールバックは発生していない。
+- 本番URLのHTML・CSS・JSが200で取得でき、初期HTMLのテーマが正しい。公開CSSのSHA-256は、両アプリともローカルで検証した成果物と一致した。
+- 公開済みファイルで初期画面、320px幅・200%拡大のフォーム保存、通常文字サイズの保存完了通知、設定への移動を確認した。テーマ色と横はみ出しなし、axe指摘0件・ブラウザー例外0件も確認した。[公開後の結果とファイルのハッシュ](evidence/t13/published.json)、同ディレクトリのpublished画像を参照。
+- この操作検証は、配信されたJSのSDK初期化部分だけをブラウザー内でテスト実装に置き換え、全API要求へテスト応答を返して行った。本番のLINEログインやサーバーへのレコード作成を実施した結果ではない。公開済みUIの処理と見た目の確認範囲を示す。

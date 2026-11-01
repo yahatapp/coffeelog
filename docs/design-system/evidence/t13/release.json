@@ -1,0 +1,31 @@
+{
+  "pullRequest": "https://github.com/yahatapp/coffeelog/pull/139",
+  "commit": "ee2a536c02ca76051a263debf7021aafe550fd38",
+  "preReleaseCI": {
+    "run": "https://github.com/yahatapp/coffeelog/actions/runs/41267175988",
+    "conclusion": "success"
+  },
+  "deployments": [
+    {
+      "app": "brewlog",
+      "run": "https://github.com/yahatapp/coffeelog/actions/runs/41267759515",
+      "conclusion": "success",
+      "deployment": "50f5146d-df1f-4330-bd8c-3131f90f376a",
+      "version": "6edd06b6-ef65-4a16-9c2a-86ff093420bf",
+      "percentage": 100
+    },
+    {
+      "app": "cafelog",
+      "run": "https://github.com/yahatapp/coffeelog/actions/runs/41267759473",
+      "conclusion": "success",
+      "deployment": "4945c822-55a1-4756-92ba-6f6573cd3bbc",
+      "version": "1e93d7ca-d799-480b-b7a7-a0cd96cbd70c",
+      "percentage": 100
+    }
+  ],
+  "rollbackPerformed": false,
+  "releaseCommitCI": {
+    "run": "https://github.com/yahatapp/coffeelog/actions/runs/41267759446",
+    "conclusion": "success"
+  }
+}

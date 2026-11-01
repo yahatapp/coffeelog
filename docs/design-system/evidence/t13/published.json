@@ -1,0 +1,130 @@
+[
+  {
+    "app": "brewlog",
+    "base": "https://brewlog.ky12228121.workers.dev",
+    "stage": "published",
+    "html": 200,
+    "css": {
+      "path": "/assets/index-DLg2JmZK.css",
+      "status": 200,
+      "bytes": 40703,
+      "sha256": "aed18456e2b5913c446b0e935f8c918b2d6c1fedafd3558fa5170c7283618aa5"
+    },
+    "javascript": {
+      "path": "/assets/index-C7Ae8vGE.js",
+      "status": 200,
+      "sha256": "fce88e1edd6ed6c9b12070a6bf2c0e1355aa0f88e6077bb93fd1e22d04e967a4",
+      "sdkInitBoundary": 1
+    },
+    "theme": {
+      "theme": "brewlog",
+      "primary": "#6f4e37",
+      "overflow": false
+    },
+    "api": [
+      {
+        "path": "/api/auth/init",
+        "method": "POST"
+      },
+      {
+        "path": "/api/logs",
+        "method": "GET"
+      },
+      {
+        "path": "/api/auth/init",
+        "method": "POST"
+      },
+      {
+        "path": "/api/beans",
+        "method": "POST"
+      },
+      {
+        "path": "/api/beans",
+        "method": "GET"
+      },
+      {
+        "path": "/api/logs",
+        "method": "GET"
+      },
+      {
+        "path": "/api/auth/init",
+        "method": "POST"
+      },
+      {
+        "path": "/api/drippers",
+        "method": "GET"
+      },
+      {
+        "path": "/api/grinders",
+        "method": "GET"
+      }
+    ],
+    "errors": [],
+    "axe": 0,
+    "note": "Served production HTML/CSS/JS; only the SDK initialization boundary and API responses are replaced inside the test browser. No production record writes."
+  },
+  {
+    "app": "cafelog",
+    "base": "https://cafelog.ky12228121.workers.dev",
+    "stage": "published",
+    "html": 200,
+    "css": {
+      "path": "/assets/index-VIs1UHzr.css",
+      "status": 200,
+      "bytes": 46202,
+      "sha256": "eb450e16726baee293f5fc1c0a29a084a692a7eadadae889c32f972609c455d7"
+    },
+    "javascript": {
+      "path": "/assets/index-C59PF2Yu.js",
+      "status": 200,
+      "sha256": "0c6d22fdbb83e21028f2ac2189c300645a031ed4fe72797d0164b28f9ea84719",
+      "sdkInitBoundary": 1
+    },
+    "theme": {
+      "theme": "cafelog",
+      "primary": "#2d5016",
+      "overflow": false
+    },
+    "api": [
+      {
+        "path": "/api/auth/init",
+        "method": "POST"
+      },
+      {
+        "path": "/api/logs",
+        "method": "GET"
+      },
+      {
+        "path": "/api/auth/init",
+        "method": "POST"
+      },
+      {
+        "path": "/api/stores",
+        "method": "GET"
+      },
+      {
+        "path": "/api/logs",
+        "method": "POST"
+      },
+      {
+        "path": "/api/stores",
+        "method": "GET"
+      },
+      {
+        "path": "/api/logs/10000000-0000-4000-8000-000000000003",
+        "method": "GET"
+      },
+      {
+        "path": "/api/logs/10000000-0000-4000-8000-000000000003/images",
+        "method": "GET"
+      },
+      {
+        "path": "/api/auth/init",
+        "method": "POST"
+      }
+    ],
+    "errors": [],
+    "axe": 0,
+    "note": "Served production HTML/CSS/JS; only the SDK initialization boundary and API responses are replaced inside the test browser. No production record writes."
+  }
+]
