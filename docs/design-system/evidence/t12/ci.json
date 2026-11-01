@@ -1,0 +1,14 @@
+{
+  "head": "89339710ba58b2534d614426d3b8d2de4c3a9eb9",
+  "run": "https://github.com/yahatapp/coffeelog/actions/runs/41264933904",
+  "conclusion": "success",
+  "jobs": [
+    "Verify portable development setup",
+    "Verify"
+  ],
+  "artifact": {
+    "id": 13066908705,
+    "name": "design-system-ui",
+    "bytes": 17161587
+  }
+}
