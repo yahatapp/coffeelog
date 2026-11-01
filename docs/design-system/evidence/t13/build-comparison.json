@@ -1,0 +1,40 @@
+[
+  {
+    "app": "brewlog",
+    "beforeCommit": "5054e9e",
+    "before": [
+      {
+        "file": "index-CmksttyH.css",
+        "bytes": 59966,
+        "gzip": 10285
+      }
+    ],
+    "afterCommit": "3edf094",
+    "after": [
+      {
+        "file": "index-DLg2JmZK.css",
+        "bytes": 40703,
+        "gzip": 7098
+      }
+    ]
+  },
+  {
+    "app": "cafelog",
+    "beforeCommit": "5054e9e",
+    "before": [
+      {
+        "file": "index-rL5vYYkB.css",
+        "bytes": 49281,
+        "gzip": 8859
+      }
+    ],
+    "afterCommit": "3edf094",
+    "after": [
+      {
+        "file": "index-VIs1UHzr.css",
+        "bytes": 46202,
+        "gzip": 7319
+      }
+    ]
+  }
+]
