@@ -1,11 +1,17 @@
-import { Loading, ErrorState } from "@yahatapp/ui";
+import {
+  Loading,
+  ErrorState,
+  EmptyState,
+  LogListControls,
+  type LogSortOrder,
+  type LogTemperatureFilter,
+} from "@yahatapp/ui";
 import styles from "../content.module.css";
 import { Link } from "react-router-dom";
-import { EmptyState } from "@yahatapp/ui";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { Plus, Star, Calendar, ArrowUp, ArrowDown, Snowflake, Sun } from "lucide-react";
+import { Plus, Star, Calendar, Snowflake, Sun } from "lucide-react";
 import { logQueries, type BrewLog } from "@/lib/queries";
 import { analytics } from "@/lib/analytics";
 import { OriginFlag } from "@/components/ui/OriginFlag";
@@ -15,9 +21,9 @@ const LogsList = () => {
   const navigate = useNavigate();
   const logsQuery = useQuery(logQueries.all());
   const logs: BrewLog[] = logsQuery.data ?? [];
-  const [activeTab, setActiveTab] = useState<"all" | "hot" | "ice">("all");
+  const [activeTab, setActiveTab] = useState<LogTemperatureFilter>("all");
   const [sortBy, setSortBy] = useState<"date" | "bean" | "rating">("date");
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+  const [sortOrder, setSortOrder] = useState<LogSortOrder>("desc");
   const changeSort = (nextSort: "date" | "bean" | "rating") => {
     analytics.trackEvent("sort_change");
     if (sortBy === nextSort) {
@@ -43,7 +49,7 @@ const LogsList = () => {
   const filteredLogs = logs.filter((log) => {
     if (activeTab === "all") return true;
     if (activeTab === "hot") return log.tempType !== "ice";
-    if (activeTab === "ice") return log.tempType === "ice";
+    if (activeTab === "iced") return log.tempType === "ice";
     return true;
   });
   const getLogTimestamp = (log: BrewLog): number => {
@@ -113,230 +119,23 @@ const LogsList = () => {
         </Button>
       </div>
 
-      {/* タブナビゲーション */}
       {logs.length > 0 && (
-        <div className={[styles.rounded, styles.compact, styles.row].join(" ")}>
-          <button
-            onClick={() => {
-              analytics.trackEvent("filter_change");
-              setActiveTab("all");
-            }}
-            className={[
-              [
-                styles.rounded,
-                styles.row,
-                styles.center,
-                styles.grow,
-                styles.target,
-                styles.helper,
-                styles.strong,
-              ].join(" "),
-              activeTab === "all"
-                ? [styles.surface, styles.elevated, styles.accent, styles.selected].join(" ")
-                : [styles.surface, styles.accent].join(" "),
-            ].join(" ")}
-            type="button"
-            aria-pressed={activeTab === "all"}
-          >
-            <span>すべて</span>
-            <span
-              className={[
-                [styles.pill, styles.helper].join(" "),
-                activeTab === "all" ? [styles.tonal, styles.accent].join(" ") : styles.muted,
-              ].join(" ")}
-            >
-              {logs.length}
-            </span>
-          </button>
-
-          <button
-            onClick={() => {
-              analytics.trackEvent("filter_change");
-              setActiveTab("hot");
-            }}
-            className={[
-              [
-                styles.rounded,
-                styles.row,
-                styles.center,
-                styles.grow,
-                styles.target,
-                styles.helper,
-                styles.strong,
-              ].join(" "),
-              activeTab === "hot"
-                ? [styles.hotPanel, styles.border, styles.elevated, styles.hotText].join(" ")
-                : [styles.hotPanel, styles.hotText].join(" "),
-            ].join(" ")}
-            type="button"
-            aria-pressed={activeTab === "hot"}
-          >
-            <span className={[styles.hotPanel, styles.pill].join(" ")} />
-            <span>ホット</span>
-            <span
-              className={[
-                [styles.pill, styles.helper].join(" "),
-                activeTab === "hot" ? [styles.hotPanel, styles.hotText].join(" ") : styles.muted,
-              ].join(" ")}
-            >
-              {hotLogsCount}
-            </span>
-          </button>
-
-          <button
-            onClick={() => {
-              analytics.trackEvent("filter_change");
-              setActiveTab("ice");
-            }}
-            className={[
-              [
-                styles.rounded,
-                styles.row,
-                styles.center,
-                styles.grow,
-                styles.target,
-                styles.helper,
-                styles.strong,
-              ].join(" "),
-              activeTab === "ice"
-                ? [styles.icedPanel, styles.border, styles.elevated, styles.icedText].join(" ")
-                : [styles.icedPanel, styles.icedText].join(" "),
-            ].join(" ")}
-            type="button"
-            aria-pressed={activeTab === "ice"}
-          >
-            <span className={[styles.icedPanel, styles.pill].join(" ")} />
-            <span>アイス</span>
-            <span
-              className={[
-                [styles.pill, styles.helper].join(" "),
-                activeTab === "ice" ? [styles.icedPanel, styles.icedText].join(" ") : styles.muted,
-              ].join(" ")}
-            >
-              {iceLogsCount}
-            </span>
-          </button>
-        </div>
-      )}
-
-      {/* ソートUI */}
-      {logs.length > 0 && (
-        <div
-          className={[
-            styles.tonal,
-            styles.border,
-            styles.rounded,
-            styles.compact,
-            styles.helper,
-            styles.muted,
-          ].join(" ")}
-        >
-          <div className={styles.row}>
-            <span className={[styles.fixed, styles.strong, styles.accent].join(" ")}>ソート:</span>
-            <div
-              className={[styles.rounded, styles.compact, styles.metrics, styles.grow].join(" ")}
-            >
-              <button
-                onClick={() => changeSort("date")}
-                aria-label={`日付で${sortBy === "date" && sortOrder === "desc" ? "昇順" : "降順"}に並べ替え`}
-                className={[
-                  [
-                    styles.rounded,
-                    styles.row,
-                    styles.center,
-                    styles.target,
-                    styles.interactive,
-                  ].join(" "),
-                  sortBy === "date"
-                    ? [
-                        styles.surface,
-                        styles.elevated,
-                        styles.strong,
-                        styles.accent,
-                        styles.selected,
-                      ].join(" ")
-                    : [styles.surface, styles.accent].join(" "),
-                ].join(" ")}
-                type="button"
-                aria-pressed={sortBy === "date"}
-              >
-                <span>日付</span>
-                {sortBy === "date" &&
-                  (sortOrder === "desc" ? (
-                    <ArrowDown size={10} className={styles.accent} />
-                  ) : (
-                    <ArrowUp size={10} className={styles.accent} />
-                  ))}
-              </button>
-
-              <button
-                onClick={() => changeSort("bean")}
-                aria-label={`豆で${sortBy === "bean" && sortOrder === "asc" ? "降順" : "昇順"}に並べ替え`}
-                className={[
-                  [
-                    styles.rounded,
-                    styles.row,
-                    styles.center,
-                    styles.target,
-                    styles.interactive,
-                  ].join(" "),
-                  sortBy === "bean"
-                    ? [
-                        styles.surface,
-                        styles.elevated,
-                        styles.strong,
-                        styles.accent,
-                        styles.selected,
-                      ].join(" ")
-                    : [styles.surface, styles.accent].join(" "),
-                ].join(" ")}
-                type="button"
-                aria-pressed={sortBy === "bean"}
-              >
-                <span>豆</span>
-                {sortBy === "bean" &&
-                  (sortOrder === "desc" ? (
-                    <ArrowDown size={10} className={styles.accent} />
-                  ) : (
-                    <ArrowUp size={10} className={styles.accent} />
-                  ))}
-              </button>
-
-              <button
-                onClick={() => changeSort("rating")}
-                aria-label={`評価で${sortBy === "rating" && sortOrder === "desc" ? "昇順" : "降順"}に並べ替え`}
-                className={[
-                  [
-                    styles.rounded,
-                    styles.row,
-                    styles.center,
-                    styles.target,
-                    styles.interactive,
-                  ].join(" "),
-                  sortBy === "rating"
-                    ? [
-                        styles.surface,
-                        styles.elevated,
-                        styles.strong,
-                        styles.accent,
-                        styles.selected,
-                      ].join(" ")
-                    : [styles.surface, styles.accent].join(" "),
-                ].join(" ")}
-                type="button"
-                aria-pressed={sortBy === "rating"}
-              >
-                <span>評価</span>
-                {sortBy === "rating" &&
-                  (sortOrder === "desc" ? (
-                    <ArrowDown size={10} className={styles.accent} />
-                  ) : (
-                    <ArrowUp size={10} className={styles.accent} />
-                  ))}
-              </button>
-            </div>
-          </div>
-        </div>
+        <LogListControls
+          filter={activeTab}
+          counts={{ all: logs.length, hot: hotLogsCount, iced: iceLogsCount }}
+          onFilterChange={(next) => {
+            analytics.trackEvent("filter_change");
+            setActiveTab(next);
+          }}
+          sortBy={sortBy}
+          sortOrder={sortOrder}
+          sortOptions={[
+            { value: "date", label: "日付", initialOrder: "desc" },
+            { value: "bean", label: "豆", initialOrder: "asc" },
+            { value: "rating", label: "評価", initialOrder: "desc" },
+          ]}
+          onSortChange={changeSort}
+        />
       )}
 
       {filteredLogs.length === 0 ? (
