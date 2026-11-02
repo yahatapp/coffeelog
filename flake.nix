@@ -24,15 +24,15 @@
         };
         nodeVersion = pkgs.lib.trim (builtins.readFile ./.node-version);
         # Official binaries include the security fixes before nixpkgs catches up.
-        # Hashes are from https://nodejs.org/dist/v24.22.1/SHASUMS256.txt.
+        # Hashes are from https://nodejs.org/dist/v26.13.0/SHASUMS256.txt.
         nodeSources = {
           aarch64-darwin = {
             platform = "darwin-arm64";
-            hash = "sha256-ZUunneYVVkfiIyGTK0Xyocy3BZdswzfJuOJ4vrCFpig=";
+            hash = "sha256-b1sxh9nfn8AH6IEWeQW8fWmtJkUN3Dd8g9YyVqJJW24=";
           };
           x86_64-linux = {
             platform = "linux-x64";
-            hash = "sha256-bBcqmrZxj3uAH7WnvUhq8u5eMnWAhqBLhPzOKqdwleY=";
+            hash = "sha256-0oqWr2w4WW9tnZfA7lMcE9I411d0I4fRko3oItlZ6Zc=";
           };
         };
         nodeSource = nodeSources.${system};

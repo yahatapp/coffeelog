@@ -33,7 +33,7 @@ if (!databaseUrl) {
 const repositoryRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const appRoot = path.join(repositoryRoot, "apps", "brewlog");
 const requireFromApp = createRequire(path.join(appRoot, "package.json"));
-const postgres = requireFromApp("postgres");
+const { default: postgres } = await import(requireFromApp.resolve("postgres"));
 const { readMigrationFiles } = requireFromApp("drizzle-orm/migrator");
 
 const client = postgres(databaseUrl, {

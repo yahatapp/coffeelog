@@ -14,16 +14,16 @@ readonly BETTERLEAKS_VERSION="1.4.1" # Matches the nixpkgs revision in flake.loc
 
 cd "${REPO_ROOT}"
 [[ "$(uname -s)" == "Linux" ]] || { echo "Portable setup requires Linux." >&2; exit 1; }
-# Node hashes are from https://nodejs.org/dist/v24.22.1/SHASUMS256.txt.
+# Node hashes are from https://nodejs.org/dist/v26.13.0/SHASUMS256.txt.
 case "$(uname -m)" in
   x86_64)
     ARCH=x64
-    NODE_SHA256=6c172a9ab6718f7b801fb5a7bd486af2ee5e32758086a04b84fcce2aa77095e6
+    NODE_SHA256=d28a96af6c38596f6d9d97c0ee531c13d238d757742387d1928de822d959e997
     BETTERLEAKS_SHA256=2635ff988d9194cd3070155138589081a54a3438d79ca9b83268addd2fd844cc
     ;;
   aarch64)
     ARCH=arm64
-    NODE_SHA256=dbabf7a1cbf947e6059ffad2c27b80041db97dea1e553b62afdee7f13fca336e
+    NODE_SHA256=406fe3fbde1c054adff8b297c16fdb5af6659db327c1ac8acd46b56ef1af9a92
     BETTERLEAKS_SHA256=23ed05ce217c21d39e723c6d970a9fd0b9e9b686eae1aebf9d778fb7a77acc92
     ;;
   *) echo "Unsupported Linux architecture: $(uname -m)" >&2; exit 1 ;;
