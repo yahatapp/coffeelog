@@ -12,6 +12,45 @@ export async function verifyBrewPages(page, { baseURL, output, width, ids, reset
     await page.waitForLoadState("networkidle");
   };
   const audit = async (name) => {
+    if (name === "log-detail" || name === "log-detail-long" || name === "log-detail-timeline") {
+      const metrics = page.getByRole("group", { name: "抽出条件", exact: true }).locator("> div");
+      await expect(metrics).toHaveCount(3);
+      const boxes = await metrics.evaluateAll((nodes) =>
+        nodes.map((node) => {
+          const box = node.getBoundingClientRect();
+          return { top: box.top, height: box.height };
+        }),
+      );
+      if (
+        new Set(boxes.map((box) => box.top)).size !== 1 ||
+        new Set(boxes.map((box) => box.height)).size !== 1
+      )
+        throw new Error("Brew summary metrics must share a top edge and height");
+      const timeline = page.getByRole("list", { name: "注水の手順", exact: true });
+      if (await timeline.count()) {
+        const steps = timeline.getByRole("listitem");
+        for (const step of await steps.all()) {
+          const marker = step.locator(':scope > [aria-hidden="true"]');
+          const markerBox = await marker.boundingBox();
+          if (!markerBox || markerBox.width < 20 || markerBox.height < 20)
+            throw new Error("Pour timeline marker is missing or too small");
+        }
+        const connector = await steps.first().evaluate((node) => {
+          const style = getComputedStyle(node, "::before");
+          return {
+            content: style.content,
+            width: parseFloat(style.width),
+            color: style.backgroundColor,
+          };
+        });
+        if (
+          connector.content === "none" ||
+          connector.width < 1 ||
+          connector.color === "rgba(0, 0, 0, 0)"
+        )
+          throw new Error("Pour timeline connector is missing");
+      }
+    }
     const result = await new AxeBuilder({ page })
       .withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"])
       .analyze();
@@ -86,6 +125,23 @@ export async function verifyBrewPages(page, { baseURL, output, width, ids, reset
     await visit(path);
     await audit(name);
   }
+  const timelineData = reset();
+  timelineData.log.pours = [
+    { id: "pour-1", pourNumber: 1, waterAmount: 30, duration: 30, pourType: "center_only" },
+    { id: "pour-2", pourNumber: 2, waterAmount: 60, duration: 40, pourType: "center_around" },
+    { id: "pour-3", pourNumber: 3, waterAmount: 60, duration: 0, pourType: "all" },
+  ];
+  await visit(`/logs/${ids.log}`);
+  await audit("log-detail-timeline");
+  await expect(page.getByRole("list", { name: "注水の手順" }).getByRole("listitem")).toHaveCount(4);
+  const beanLink = page.getByRole("link", { name: /検証用コーヒー豆の詳細を見る/ });
+  await beanLink.focus();
+  await page.keyboard.press("Enter");
+  await expect(page).toHaveURL(baseURL + "/beans/" + ids.bean);
+  await visit(`/logs/${ids.log}`);
+  await page.getByRole("link", { name: "編集", exact: true }).click();
+  await expect(page).toHaveURL(baseURL + "/logs/" + ids.log + "/edit");
+  reset();
   await visit("/beans");
   await page.getByRole("button", { name: "豆名", exact: true }).click();
   await page.getByRole("checkbox", { name: "アーカイブも表示", exact: true }).check();
