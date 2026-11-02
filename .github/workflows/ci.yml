@@ -73,6 +73,9 @@ jobs:
       - name: Test design validation failures
         run: nix develop --command pnpm test:design
 
+      - name: Test deployment access checks
+        run: nix develop --command pnpm test:deploy
+
       - name: Install UI test browser
         run: nix develop --command pnpm --filter brewlog browser:install:with-deps
 
