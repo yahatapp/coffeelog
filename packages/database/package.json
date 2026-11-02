@@ -22,8 +22,8 @@
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@electric-sql/pglite": "0.5.11",
-    "@types/node": "24.13.3",
+    "@electric-sql/pglite": "0.5.13",
+    "@types/node": "26.6.6",
     "drizzle-kit": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
