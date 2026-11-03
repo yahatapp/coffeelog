@@ -1,34 +1,28 @@
-import { Loading, ErrorState } from "@yahatapp/ui";
-import styles from "../content.module.css";
+import {
+  Loading,
+  ErrorState,
+  Button,
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+} from "@yahatapp/ui";
+import styles from "./bean-detail.module.css";
 import type { MutationNoticeResult } from "@yahatapp/ui";
 import { mutationNotices } from "@/lib/mutationNotices";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import {
-  ArrowLeft,
-  Coffee,
-  CopyPlus,
-  Edit2,
-  Archive,
-  MapPin,
-  NotebookText,
-  Store,
-  Trash2,
-} from "lucide-react";
+import { ArrowLeft, Coffee, CopyPlus, Edit2, Archive, ChevronRight, Trash2 } from "lucide-react";
 import { beanQueries, mutations, queryKeys } from "@/lib/queries";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { OriginFlag } from "@/components/ui/OriginFlag";
 import { RoastLevelIndicator } from "@/components/ui/RoastLevelIndicator";
 import { BeanVersionHistory } from "@/components/BeanVersionHistory";
 import { getBeanVersionLabel } from "@/lib/bean-versions";
 const formatDate = (date: string | null) => date?.replaceAll("-", ".") || "未設定";
 const DetailRow = ({ label, value }: { label: string; value: React.ReactNode }) => (
-  <div className={[styles.border, styles.row, styles.spread, styles.start].join(" ")}>
-    <dt className={[styles.fixed, styles.body, styles.muted].join(" ")}>{label}</dt>
-    <dd className={[styles.end, styles.body, styles.strong, styles.foreground].join(" ")}>
-      {value || "未設定"}
-    </dd>
+  <div className={styles.detailRow}>
+    <dt>{label}</dt>
+    <dd>{value || "未設定"}</dd>
   </div>
 );
 const BeanDetail = () => {
@@ -83,207 +77,158 @@ const BeanDetail = () => {
   }
   const bean = beanQuery.data;
   return (
-    <div className={styles.stack}>
-      <div className={styles.row}>
+    <div className={styles.page}>
+      <div className={styles.toolbar}>
+        <div className={styles.titleRow}>
+          <Button asChild variant="ghost" size="icon" aria-label="豆一覧へ戻る">
+            <Link to="/beans">
+              <ArrowLeft size={20} aria-hidden="true" />
+            </Link>
+          </Button>
+          <h2 className={styles.pageTitle}>豆の詳細</h2>
+        </div>
         <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => navigate("/beans")}
-          type="button"
-          aria-label="戻る"
-        >
-          <ArrowLeft size={20} />
-          <span className={styles.visuallyHidden}>豆一覧へ戻る</span>
-        </Button>
-        <h2 className={[styles.heading, styles.strong, styles.accent].join(" ")}>豆の詳細</h2>
-      </div>
-
-      <div className={styles.tiles}>
-        <Button
-          variant="outline"
-          onClick={() => navigate(`/beans/new?parentBeanId=${bean.parentBeanId ?? bean.id}`)}
-          type="button"
-        >
-          <CopyPlus size={16} /> バージョン追加
-        </Button>
-        <Button
+          size="sm"
           variant="outline"
           disabled={bean.isArchived}
           onClick={() => navigate(`/beans/${bean.id}/edit`)}
           type="button"
         >
-          <Edit2 size={16} /> 編集
+          <Edit2 size={14} aria-hidden="true" /> 編集
         </Button>
       </div>
 
       {bean.isArchived && (
-        <p
-          className={[styles.tonal, styles.rounded, styles.content, styles.body, styles.muted].join(
-            " ",
-          )}
-        >
+        <p className={styles.archiveNotice}>
           この豆はアーカイブ済みのため、編集・抽出記録はできません。再購入したらバージョンを追加できます。
         </p>
       )}
 
       <Card>
-        <div className={[styles.tonal, styles.content].join(" ")}>
-          <div className={[styles.row, styles.spread, styles.start].join(" ")}>
-            <div className={styles.grow}>
-              <p className={[styles.helper, styles.strong, styles.muted].join(" ")}>
+        <CardContent>
+          <div className={styles.overview}>
+            <div className={styles.metadata}>
+              <span className={styles.coffeeType}>
                 {bean.coffeeType === "specialty" ? "スペシャルティコーヒー" : "レギュラーコーヒー"}
-              </p>
-              <h3
-                className={[
-                  styles.hero,
-                  styles.strong,
-                  styles.accent,
-                  styles.wrap,
-                  styles.separated,
-                ].join(" ")}
-              >
-                {bean.name}
-              </h3>
-              <p className={[styles.body, styles.muted, styles.separated].join(" ")}>
-                バージョン: {getBeanVersionLabel(bean)}
-              </p>
+              </span>
+              {bean.roastLevel != null && <RoastLevelIndicator level={bean.roastLevel} />}
             </div>
-            {bean.roastLevel && <RoastLevelIndicator level={bean.roastLevel} />}
-          </div>
-          {bean.origin && (
-            <div className={[styles.row, styles.body, styles.muted, styles.separated].join(" ")}>
-              <OriginFlag origin={bean.origin} size="md" />
-              <MapPin size={14} aria-hidden="true" />
-              <span>{bean.origin}</span>
-            </div>
-          )}
-        </div>
-
-        <div className={[styles.content, styles.stack].join(" ")}>
-          <section aria-labelledby="bean-purchase-heading">
-            <h4
-              id="bean-purchase-heading"
-              className={[styles.row, styles.body, styles.strong, styles.accent].join(" ")}
-            >
-              <Store size={16} aria-hidden="true" /> 購入・焙煎情報
-            </h4>
-            <dl className={styles.separated}>
-              <DetailRow
-                label="購入店"
-                value={
-                  bean.storeId ? (
-                    <Link
-                      to={`/stores/${bean.storeId}`}
-                      className={[styles.row, styles.target, styles.accent, styles.textLink].join(
-                        " ",
-                      )}
-                    >
-                      {bean.purchaseStore || "店舗の記録を見る"}
-                    </Link>
-                  ) : (
-                    bean.purchaseStore
-                  )
-                }
-              />
-              <DetailRow label="購入日" value={formatDate(bean.purchaseDate)} />
-              <DetailRow label="焙煎日" value={formatDate(bean.roastDate)} />
-              <DetailRow label="精製方法" value={bean.processMethod} />
-            </dl>
-          </section>
-
-          {bean.coffeeType === "specialty" &&
-            (bean.region || bean.variety || bean.farm || bean.producer) && (
-              <section
-                className={[styles.border, styles.separated].join(" ")}
-                aria-labelledby="bean-production-heading"
-              >
-                <h4
-                  id="bean-production-heading"
-                  className={[styles.body, styles.strong, styles.accent].join(" ")}
-                >
-                  生産情報
-                </h4>
-                <dl className={styles.separated}>
-                  <DetailRow label="地域" value={bean.region} />
-                  <DetailRow label="品種" value={bean.variety} />
-                  <DetailRow label="農園" value={bean.farm} />
-                  <DetailRow label="生産者" value={bean.producer} />
-                </dl>
-              </section>
+            <h3 className={styles.beanName}>{bean.name}</h3>
+            {bean.origin && (
+              <div className={styles.origin}>
+                <OriginFlag origin={bean.origin} size="sm" />
+                <span>{bean.origin}</span>
+              </div>
             )}
+            <p className={styles.version}>バージョン: {getBeanVersionLabel(bean)}</p>
+            <div className={styles.primaryActions}>
+              <Button
+                disabled={bean.isArchived}
+                onClick={() => navigate(`/logs/new?beanId=${bean.id}`)}
+                fullWidth
+                type="button"
+              >
+                <Coffee size={18} aria-hidden="true" /> 淹れる
+              </Button>
+              <Button asChild variant="outline" fullWidth>
+                <Link to={`/beans/new?parentBeanId=${bean.parentBeanId ?? bean.id}`}>
+                  <CopyPlus size={16} aria-hidden="true" /> バージョン追加
+                </Link>
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
-          <section
-            className={[styles.border, styles.separated].join(" ")}
-            aria-labelledby="bean-note-heading"
-          >
-            <h4
-              id="bean-note-heading"
-              className={[styles.row, styles.body, styles.strong, styles.accent].join(" ")}
-            >
-              <NotebookText size={16} aria-hidden="true" /> メモ
-            </h4>
-            <p
-              className={[
-                styles.tonal,
-                styles.rounded,
-                styles.content,
-                styles.body,
-                styles.foreground,
-                styles.multiline,
-                styles.separated,
-              ].join(" ")}
-            >
-              {bean.note || "メモはありません。"}
-            </p>
-          </section>
-        </div>
+      <Card>
+        <CardHeader>
+          <CardTitle>購入・焙煎情報</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <dl className={styles.details}>
+            <DetailRow
+              label="購入店"
+              value={
+                bean.storeId ? (
+                  <Link to={`/stores/${bean.storeId}`} className={styles.storeLink}>
+                    <span>{bean.purchaseStore || "店舗の記録を見る"}</span>
+                    <ChevronRight size={16} aria-hidden="true" />
+                  </Link>
+                ) : (
+                  bean.purchaseStore
+                )
+              }
+            />
+            <DetailRow label="購入日" value={formatDate(bean.purchaseDate)} />
+            <DetailRow label="焙煎日" value={formatDate(bean.roastDate)} />
+            <DetailRow label="精製方法" value={bean.processMethod} />
+          </dl>
+        </CardContent>
+      </Card>
+
+      {bean.coffeeType === "specialty" &&
+        (bean.region || bean.variety || bean.farm || bean.producer) && (
+          <Card>
+            <CardHeader>
+              <CardTitle>生産情報</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <dl className={styles.details}>
+                <DetailRow label="地域" value={bean.region} />
+                <DetailRow label="品種" value={bean.variety} />
+                <DetailRow label="農園" value={bean.farm} />
+                <DetailRow label="生産者" value={bean.producer} />
+              </dl>
+            </CardContent>
+          </Card>
+        )}
+
+      <Card>
+        <CardHeader>
+          <CardTitle>メモ</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className={styles.note}>{bean.note || "メモはありません。"}</p>
+        </CardContent>
       </Card>
 
       <BeanVersionHistory bean={bean} />
 
-      <div className={styles.fieldStack}>
+      <div className={styles.secondaryActions}>
         <Button
-          disabled={bean.isArchived}
-          onClick={() => navigate(`/logs/new?beanId=${bean.id}`)}
-          fullWidth
+          variant="ghost"
+          loading={archiveMutation.isPending}
+          disabled={deleteMutation.isPending}
+          onClick={() =>
+            archiveMutation.mutate({
+              beanId: bean.id,
+              isArchived: !bean.isArchived,
+            })
+          }
           type="button"
         >
-          <Coffee size={18} /> 淹れる
+          <Archive size={16} aria-hidden="true" />
+          {bean.isArchived ? "アーカイブから戻す" : "アーカイブする"}
         </Button>
-        <div className={styles.stack}>
-          <Button
-            variant="ghost"
-            disabled={archiveMutation.isPending || deleteMutation.isPending}
-            onClick={() =>
-              archiveMutation.mutate({
-                beanId: bean.id,
-                isArchived: !bean.isArchived,
-              })
+        <Button
+          loading={deleteMutation.isPending}
+          disabled={archiveMutation.isPending}
+          onClick={() => {
+            if (window.confirm("この豆を削除しますか？抽出記録は削除されません。")) {
+              deleteMutation.mutate(bean.id);
             }
-            type="button"
-          >
-            <Archive size={16} />
-            {bean.isArchived ? "アーカイブから戻す" : "アーカイブする"}
-          </Button>
-          <Button
-            disabled={archiveMutation.isPending || deleteMutation.isPending}
-            onClick={() => {
-              if (window.confirm("この豆を削除しますか？抽出記録は削除されません。")) {
-                deleteMutation.mutate(bean.id);
-              }
-            }}
-            variant="danger"
-            type="button"
-          >
-            <Trash2 size={16} /> 削除する
-          </Button>
-        </div>
-        {(archiveMutation.isError || deleteMutation.isError) && (
-          <p className={[styles.center, styles.body, styles.dangerText].join(" ")}>
-            操作に失敗しました。もう一度お試しください。
-          </p>
-        )}
+          }}
+          variant="danger"
+          type="button"
+        >
+          <Trash2 size={16} aria-hidden="true" /> 削除する
+        </Button>
       </div>
+      {(archiveMutation.isError || deleteMutation.isError) && (
+        <p className={styles.operationError} role="alert">
+          操作に失敗しました。もう一度お試しください。
+        </p>
+      )}
     </div>
   );
 };

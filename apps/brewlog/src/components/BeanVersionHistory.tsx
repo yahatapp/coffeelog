@@ -1,11 +1,10 @@
 import styles from "./bean-history.module.css";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import { ChevronRight, History, Loader2 } from "lucide-react";
+import { ChevronRight, Loader2 } from "lucide-react";
+import { Button, Card, CardHeader, CardTitle, CardContent } from "@yahatapp/ui";
 import { beanQueries, type Bean } from "@/lib/queries";
 import { getBeanGroupId, getBeanVersionLabel, sortBeanVersions } from "@/lib/bean-versions";
-import { Button } from "./ui/button";
-import { Card } from "./ui/card";
 const formatCreatedAt = (date: string) =>
   new Date(date).toLocaleDateString("ja-JP", {
     timeZone: "Asia/Tokyo",
@@ -17,10 +16,10 @@ export const BeanVersionHistory = ({ bean }: { bean: Bean }) => {
   );
   return (
     <Card>
-      <div className={[styles.content, styles.fieldStack].join(" ")}>
-        <h3 className={[styles.row, styles.body, styles.strong, styles.accent].join(" ")}>
-          <History size={16} aria-hidden="true" /> バージョン履歴
-        </h3>
+      <CardHeader>
+        <CardTitle>バージョン履歴</CardTitle>
+      </CardHeader>
+      <CardContent>
         {beansQuery.isPending ? (
           <p className={[styles.row, styles.body, styles.muted].join(" ")} role="status">
             <Loader2 size={16} className={styles.spinner} /> 履歴を読み込み中
@@ -79,7 +78,7 @@ export const BeanVersionHistory = ({ bean }: { bean: Bean }) => {
             ))}
           </ul>
         )}
-      </div>
+      </CardContent>
     </Card>
   );
 };
