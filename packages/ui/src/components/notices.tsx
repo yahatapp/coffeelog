@@ -55,21 +55,24 @@ const NoticeViewport = () => {
               className={`${css.toast} ${styles[variant]}`}
             >
               <Toast.Content className={css.content}>
-                <NoticeIcon variant={variant} />
-                <Toast.Title className={css.title} />
-                <Toast.Close aria-label="通知を閉じる" className={css.close}>
-                  <svg
-                    aria-hidden="true"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    className={css.closeIcon}
-                  >
-                    <path d="m6 6 12 12M6 18 18 6" />
-                  </svg>
-                </Toast.Close>
+                <div className={css.header}>
+                  <NoticeIcon variant={variant} />
+                  <Toast.Title className={css.title} />
+                  <Toast.Close aria-label="通知を閉じる" className={css.close}>
+                    <svg
+                      aria-hidden="true"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      className={css.closeIcon}
+                    >
+                      <path d="m6 6 12 12M6 18 18 6" />
+                    </svg>
+                  </Toast.Close>
+                </div>
+                <Toast.Description className={css.description} />
               </Toast.Content>
             </Toast.Root>
           );

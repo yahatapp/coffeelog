@@ -96,7 +96,8 @@ describe("MutationCacheによる更新結果の通知", () => {
     await execute(() => mutations.updateBean({ param, json: payload }), mutationNotices.updateBean);
     expect(fetchMock.mock.calls[0][1]?.body).toBe(JSON.stringify(payload));
     expect(addNotice).toHaveBeenCalledExactlyOnceWith({
-      title: "豆を更新しました。",
+      description: "豆を更新しました。",
+      title: "完了しました",
       type: "success",
       timeout: 5000,
       priority: "low",
@@ -107,7 +108,8 @@ describe("MutationCacheによる更新結果の通知", () => {
     fetchMock.mockResolvedValue(Response.json({ id: param.id }));
     await execute(mutationFn, mutationNotices[key]);
     expect(addNotice).toHaveBeenCalledExactlyOnceWith({
-      title: message,
+      description: message,
+      title: "完了しました",
       type: "success",
       timeout: 5000,
       priority: "low",
@@ -149,7 +151,8 @@ describe("MutationCacheによる更新結果の通知", () => {
     await observer.mutate(param.id);
     expect(fetchMock).toHaveBeenCalledTimes(2);
     expect(addNotice).toHaveBeenCalledExactlyOnceWith({
-      title: "豆を削除しました。",
+      description: "豆を削除しました。",
+      title: "完了しました",
       type: "success",
       timeout: 5000,
       priority: "low",
@@ -168,7 +171,8 @@ describe("MutationCacheによる更新結果の通知", () => {
     await expect(observer.mutate(param.id)).rejects.toBe(error);
     expect(fetchMock).toHaveBeenCalledTimes(2);
     expect(addNotice).toHaveBeenCalledExactlyOnceWith({
-      title: "豆の削除に失敗しました。",
+      description: "豆の削除に失敗しました。",
+      title: "エラーが発生しました",
       type: "error",
       timeout: 0,
       priority: "high",

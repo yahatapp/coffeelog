@@ -172,7 +172,7 @@ export async function verifyCafeForms(
   await expect(
     page
       .getByRole("region", { name: "操作結果の通知" })
-      .locator("h2")
+      .locator("p")
       .filter({ hasText: "写真は1つの記録につき5枚までです。" })
       .filter({ visible: true })
       .first(),
@@ -202,6 +202,11 @@ export async function verifyCafeForms(
   await releaseUpload(200);
   await expect(page).toHaveURL(new RegExp("/logs/[^/]+$"));
   await expect.poll(() => data.uploads).toBe(1);
+  await expect(
+    page
+      .getByRole("region", { name: "操作結果の通知" })
+      .getByText("記録を保存しました。", { exact: true }),
+  ).toBeVisible();
   await page.locator("summary").click();
   await preview("記録の写真 1 を拡大表示");
   await closeNotices();
@@ -220,6 +225,12 @@ export async function verifyCafeForms(
   await audit("edit-save-error");
   await submit("保存する");
   await expect(page.getByRole("heading", { name: "編集した店舗名", exact: true })).toBeVisible();
+  await expect(
+    page
+      .getByRole("region", { name: "操作結果の通知" })
+      .getByText("記録を更新しました。", { exact: true }),
+  ).toBeVisible();
+  await page.screenshot({ path: resolve(output, `cafelog-edit-success-notice-${width}.png`) });
   await closeNotices();
   await page.getByRole("button", { name: "編集", exact: true }).click();
   await page
@@ -230,7 +241,7 @@ export async function verifyCafeForms(
   await expect(
     page
       .getByRole("region", { name: "操作結果の通知" })
-      .locator("h2")
+      .locator("p")
       .filter({ hasText: "記録は保存済みです" })
       .filter({ visible: true })
       .first(),
