@@ -1,0 +1,21 @@
+declare const styles: {
+  readonly archiveNotice: string;
+  readonly beanName: string;
+  readonly coffeeType: string;
+  readonly detailRow: string;
+  readonly details: string;
+  readonly metadata: string;
+  readonly note: string;
+  readonly operationError: string;
+  readonly origin: string;
+  readonly overview: string;
+  readonly page: string;
+  readonly pageTitle: string;
+  readonly primaryActions: string;
+  readonly secondaryActions: string;
+  readonly storeLink: string;
+  readonly titleRow: string;
+  readonly toolbar: string;
+  readonly version: string;
+};
+export default styles;

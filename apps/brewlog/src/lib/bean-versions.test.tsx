@@ -112,9 +112,11 @@ describe("豆の詳細と履歴の表示", () => {
   it("アーカイブ済みの豆でもバージョン追加が有効で、編集と抽出は無効のまま", () => {
     const html = renderDetail(original);
     const buttons = html.match(/<button\b[^>]*>[\s\S]*?<\/button>/g) ?? [];
-    expect(buttons.find((button) => button.includes("バージョン追加"))).not.toContain(
-      'disabled=""',
+    const versionLink = (html.match(/<a\b[^>]*>[\s\S]*?<\/a>/g) ?? []).find((link) =>
+      link.includes("バージョン追加"),
     );
+    expect(versionLink).toContain('href="/beans/new?parentBeanId=original"');
+    expect(versionLink).not.toContain('aria-disabled="true"');
     expect(buttons.find((button) => button.includes("編集"))).toContain('disabled=""');
     expect(buttons.find((button) => button.includes("淹れる"))).toContain('disabled=""');
     expect(html).toContain("バージョン: 初回登録");

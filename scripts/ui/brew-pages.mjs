@@ -125,6 +125,36 @@ export async function verifyBrewPages(page, { baseURL, output, width, ids, reset
     await visit(path);
     await audit(name);
   }
+  await visit(`/beans/${ids.bean}`);
+  await page.getByRole("button", { name: "編集", exact: true }).click();
+  await expect(page).toHaveURL(baseURL + `/beans/${ids.bean}/edit`);
+  await visit(`/beans/${ids.bean}`);
+  await page.getByRole("button", { name: "淹れる", exact: true }).click();
+  await expect(page).toHaveURL(baseURL + `/logs/new?beanId=${ids.bean}`);
+  await visit(`/beans/${ids.bean}`);
+  const storeLink = page.getByRole("link", { name: "検証用の店舗", exact: true });
+  await storeLink.focus();
+  await page.keyboard.press("Enter");
+  await expect(page).toHaveURL(baseURL + `/stores/${ids.store}`);
+
+  const minimalBean = reset().bean;
+  Object.assign(minimalBean, {
+    coffeeType: "regular",
+    origin: null,
+    roastLevel: null,
+    purchaseStore: null,
+    storeId: null,
+    purchaseDate: null,
+    roastDate: null,
+    processMethod: null,
+    note: null,
+    version: null,
+  });
+  await visit(`/beans/${ids.bean}`);
+  await expect(page.getByRole("heading", { name: "生産情報", exact: true })).toHaveCount(0);
+  await expect(page.getByText("未設定", { exact: true })).toHaveCount(4);
+  await expect(page.getByText("メモはありません。", { exact: true })).toBeVisible();
+  await audit("bean-detail-without-optional");
   const timelineData = reset();
   timelineData.log.pours = [
     { id: "pour-1", pourNumber: 1, waterAmount: 30, duration: 30, pourType: "center_only" },
@@ -149,6 +179,12 @@ export async function verifyBrewPages(page, { baseURL, output, width, ids, reset
   await expect(page).toHaveURL(new RegExp(`/beans/${ids.bean}$`));
   await page.getByRole("button", { name: "アーカイブする", exact: true }).click();
   await expect(page.getByRole("button", { name: "アーカイブから戻す", exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "編集", exact: true })).toBeDisabled();
+  await expect(page.getByRole("button", { name: "淹れる", exact: true })).toBeDisabled();
+  await audit("bean-detail-archived");
+  await page.getByRole("link", { name: "バージョン追加", exact: true }).click();
+  await expect(page).toHaveURL(baseURL + `/beans/new?parentBeanId=${ids.bean}`);
+  await visit(`/beans/${ids.bean}`);
   await page.getByRole("button", { name: "アーカイブから戻す", exact: true }).click();
   await visit("/logs");
   await page.getByRole("button", { name: /アイス/ }).click();
