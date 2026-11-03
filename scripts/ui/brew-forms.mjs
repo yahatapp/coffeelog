@@ -167,6 +167,12 @@ export async function verifyBrewForms(
   });
   await save({ success: true, path: `/logs/${ids.log}` });
   await expect(page.getByText("編集したノート")).toBeVisible();
+  await expect(
+    page
+      .getByRole("region", { name: "操作結果の通知" })
+      .getByText("抽出記録を更新しました。", { exact: true }),
+  ).toBeVisible();
+  await page.screenshot({ path: resolve(output, `brewlog-edit-success-notice-${width}.png`) });
   readMode("error");
   await page.goto(baseURL + `/logs/${ids.log}/edit`);
   await expect(page.getByText("編集データの取得に失敗しました。")).toBeVisible();

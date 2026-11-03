@@ -1,4 +1,5 @@
 import { startUIServer } from "./server.mjs";
+import { verifyNotices } from "./notices.mjs";
 import { verifyCafePages } from "./cafe-pages.mjs";
 import { createCafeFixtures, cafeIds, cafePhoto } from "./cafe-fixtures.mjs";
 import { verifyCafeForms, verifyCafeControlHeights } from "./cafe-forms.mjs";
@@ -402,50 +403,7 @@ try {
             await page.goto(`http://127.0.0.1:${portBase + index}/`);
             await page.getByRole("navigation").waitFor();
             console.log(app, width, page.url());
-            await page.evaluate(() =>
-              globalThis.__uiNotify({ message: "確認用の保存完了通知", variant: "warning" }),
-            );
-            await page
-              .getByRole("region", { name: "操作結果の通知" })
-              .getByText("確認用の保存完了通知")
-              .waitFor({ timeout: 10000 });
-            await page.waitForTimeout(700);
-            await page.screenshot({
-              path: resolve(output, `${app}-notice-${width}.png`),
-              fullPage: true,
-              animations: "allow",
-              timeout: 10000,
-            });
-            console.log(
-              "notice captured",
-              await page.locator('[aria-label="通知を閉じる"]').evaluate((el) => el.outerHTML),
-            );
-            await page.locator('[aria-label="通知を閉じる"]').focus();
-            if (process.env.UI_COMPOSITES === "1") {
-              await expect(
-                page.getByRole("button", { name: "通知を閉じる", exact: true }),
-              ).toBeVisible();
-              const { default: AxeBuilder } = await import("@axe-core/playwright");
-              const audit = await new AxeBuilder({ page })
-                .include('[aria-label="操作結果の通知"]')
-                .withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"])
-                .analyze();
-              if (audit.violations.length)
-                throw new Error(
-                  JSON.stringify(
-                    audit.violations.map((v) => ({
-                      id: v.id,
-                      nodes: v.nodes.map((n) => n.target),
-                    })),
-                  ),
-                );
-            }
-
-            await page.keyboard.press("Enter");
-            await page
-              .getByRole("region", { name: "操作結果の通知" })
-              .getByText("確認用の保存完了通知")
-              .waitFor({ state: "hidden", timeout: 10000 });
+            await verifyNotices(page, { app, width, output });
             results.push({
               app,
               width,

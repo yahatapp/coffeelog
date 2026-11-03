@@ -35,16 +35,24 @@
   }
   .success {
     color: var(--cl-color-success);
+    background: var(--cl-color-success-surface);
   }
   .warning {
     color: var(--cl-color-warning);
+    background: var(--cl-color-warning-surface);
   }
   .error {
     color: var(--cl-color-error);
+    background: var(--cl-color-error-surface);
   }
   .content {
     display: flex;
-    align-items: flex-start;
+    flex-direction: column;
+    gap: var(--cl-space-field-gap);
+  }
+  .header {
+    display: flex;
+    align-items: center;
     gap: var(--cl-space-field-gap);
   }
   .icon {
@@ -58,6 +66,11 @@
     overflow-wrap: anywhere;
     font-size: var(--cl-font-size-label);
     font-weight: var(--cl-font-weight-medium);
+  }
+  .description {
+    overflow-wrap: anywhere;
+    color: var(--cl-color-text);
+    font-size: var(--cl-font-size-body);
   }
   .close {
     display: flex;

@@ -6,8 +6,15 @@ export type Notice = { message: string; variant: NoticeVariant };
 
 export const noticeManager = Toast.createToastManager<Record<string, never>>();
 
+const titles = {
+  success: "完了しました",
+  warning: "確認してください",
+  error: "エラーが発生しました",
+} satisfies Record<NoticeVariant, string>;
+
 const options = ({ message, variant }: Notice) => ({
-  title: message,
+  title: titles[variant],
+  description: message,
   type: variant,
   timeout: variant === "success" ? 5000 : 0,
   priority: variant === "success" ? ("low" as const) : ("high" as const),

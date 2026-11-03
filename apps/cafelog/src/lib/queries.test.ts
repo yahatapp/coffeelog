@@ -64,7 +64,8 @@ describe("記録と写真の保存結果の通知", () => {
       upload.resolve(new Response(null, { status: 201 }));
       await expect(pending).resolves.toEqual({ data: { id: "log" } });
       expect(addNotice).toHaveBeenCalledExactlyOnceWith({
-        title: id ? "記録を更新しました。" : "記録を保存しました。",
+        description: id ? "記録を更新しました。" : "記録を保存しました。",
+        title: "完了しました",
         type: "success",
         timeout: 5000,
         priority: "low",
@@ -72,11 +73,17 @@ describe("記録と写真の保存結果の通知", () => {
     },
   );
 
-  it("写真なしの保存でも成功を通知する", async () => {
+  it.each([undefined, "log"])("写真なしの作成・編集でも成功を通知する（id: %s）", async (id) => {
     fetchMock.mockResolvedValue(Response.json({ id: "log" }));
-    await save({ values: createCafeLogDefaults() });
+    await save({ id, values: createCafeLogDefaults() });
     expect(fetchMock).toHaveBeenCalledTimes(1);
-    expect(addNotice).toHaveBeenCalledTimes(1);
+    expect(addNotice).toHaveBeenCalledExactlyOnceWith({
+      title: "完了しました",
+      description: id ? "記録を更新しました。" : "記録を保存しました。",
+      type: "success",
+      timeout: 5000,
+      priority: "low",
+    });
   });
 
   it.each([undefined, "log"])(
@@ -90,9 +97,14 @@ describe("記録と写真の保存結果の通知", () => {
       ).resolves.toMatchObject({ data: { id: "log" }, notice: { variant: "warning" } });
       expect(addNotice).toHaveBeenCalledTimes(1);
       expect(addNotice).toHaveBeenCalledWith(
-        expect.objectContaining({ type: "warning", timeout: 0, priority: "high" }),
+        expect.objectContaining({
+          title: "確認してください",
+          type: "warning",
+          timeout: 0,
+          priority: "high",
+        }),
       );
-      const message = addNotice.mock.calls[0][0].title;
+      const message = addNotice.mock.calls[0][0].description;
       expect(message).toContain("記録は保存済みです。");
       expect(message).toContain("編集画面からもう一度追加してください。");
     },
@@ -107,7 +119,8 @@ describe("記録と写真の保存結果の通知", () => {
       ).rejects.toThrow();
       expect(fetchMock).toHaveBeenCalledTimes(1);
       expect(addNotice).toHaveBeenCalledExactlyOnceWith({
-        title: "保存できませんでした。",
+        description: "保存できませんでした。",
+        title: "エラーが発生しました",
         type: "error",
         timeout: 0,
         priority: "high",
@@ -119,7 +132,8 @@ describe("記録と写真の保存結果の通知", () => {
     fetchMock.mockResolvedValue(Response.json({ id: "log" }));
     await remove();
     expect(addNotice).toHaveBeenCalledExactlyOnceWith({
-      title: "記録を削除しました。",
+      description: "記録を削除しました。",
+      title: "完了しました",
       type: "success",
       timeout: 5000,
       priority: "low",
