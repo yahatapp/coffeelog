@@ -155,6 +155,12 @@ export async function verifyBrewPages(page, { baseURL, output, width, ids, reset
   await expect(page.getByText("未設定", { exact: true })).toHaveCount(4);
   await expect(page.getByText("メモはありません。", { exact: true })).toBeVisible();
   await audit("bean-detail-without-optional");
+  const icedData = reset();
+  icedData.log.tempType = "ice";
+  await visit("/");
+  await expect(page.getByRole("img", { name: "アイス", exact: true })).toBeVisible();
+  await expect(page.getByText("アイス", { exact: true })).toHaveCount(0);
+  await audit("home-iced");
   const timelineData = reset();
   timelineData.log.pours = [
     { id: "pour-1", pourNumber: 1, waterAmount: 30, duration: 30, pourType: "center_only" },
@@ -163,6 +169,12 @@ export async function verifyBrewPages(page, { baseURL, output, width, ids, reset
   ];
   await visit(`/logs/${ids.log}`);
   await audit("log-detail-timeline");
+  await expect(
+    page
+      .locator("dl > div")
+      .filter({ has: page.locator("dt", { hasText: "蒸らし時間" }) })
+      .locator("dd"),
+  ).toHaveText("30 秒");
   await expect(page.getByRole("list", { name: "注水の手順" }).getByRole("listitem")).toHaveCount(4);
   const beanLink = page.getByRole("link", { name: /検証用コーヒー豆の詳細を見る/ });
   await beanLink.focus();
@@ -173,7 +185,7 @@ export async function verifyBrewPages(page, { baseURL, output, width, ids, reset
   await expect(page).toHaveURL(baseURL + "/logs/" + ids.log + "/edit");
   reset();
   await visit("/beans");
-  await page.getByRole("button", { name: "豆名", exact: true }).click();
+  await page.getByRole("button", { name: /豆名で.*に並べ替え/ }).click();
   await page.getByRole("checkbox", { name: "アーカイブも表示", exact: true }).check();
   await page.getByRole("link", { name: /検証用コーヒー豆/ }).click();
   await expect(page).toHaveURL(new RegExp(`/beans/${ids.bean}$`));

@@ -71,6 +71,7 @@ const LogDetail = () => {
       />
     );
 
+  const firstPour = log.pours?.find((pour) => pour.pourNumber === 1);
   return (
     <div className={styles.page}>
       <div className={styles.toolbar}>
@@ -190,10 +191,10 @@ const LogDetail = () => {
                 <dd>{log.yieldAmount != null ? `${log.yieldAmount} ml` : "未設定"}</dd>
               </div>
             )}
-            {log.bloomingTime != null && (
+            {firstPour?.duration != null && (
               <div className={styles.detailRow}>
                 <dt>蒸らし時間</dt>
-                <dd>{log.bloomingTime} 秒</dd>
+                <dd>{firstPour?.duration} 秒</dd>
               </div>
             )}
             {log.drawdownTime != null && (
@@ -218,7 +219,6 @@ const LogDetail = () => {
           <CardContent>
             <PourTimeline
               pours={log.pours}
-              bloomingTime={log.bloomingTime}
               drawdownTime={log.drawdownTime}
               waterAmount={log.waterAmount}
             />

@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { Plus, Coffee, ClipboardList, Star } from "lucide-react";
 import { useLiff } from "../hooks/useLiff";
 import { logQueries, type BrewLog } from "@/lib/queries";
+import { CoffeeBeansIcon } from "../components/ui/CoffeeBeansIcon";
 import { Button } from "../components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 const Home = () => {
@@ -86,7 +87,11 @@ const Home = () => {
                           : [styles.hotPanel, styles.hotText].join(" "),
                       ].join(" ")}
                     >
-                      <Coffee size={16} />
+                      <Coffee
+                        size={16}
+                        role="img"
+                        aria-label={log.tempType === "ice" ? "アイス" : "ホット"}
+                      />
                     </div>
                     <div>
                       <p
@@ -106,12 +111,6 @@ const Home = () => {
                       >
                         <span>{formatDate(log.createdAt)}</span>
                         {log.method && <span>• {log.method}</span>}
-                        <span>•</span>
-                        {log.tempType === "ice" ? (
-                          <span className={[styles.strong, styles.icedText].join(" ")}>アイス</span>
-                        ) : (
-                          <span className={[styles.strong, styles.hotText].join(" ")}>ホット</span>
-                        )}
                       </p>
                     </div>
                   </div>
@@ -140,7 +139,7 @@ const Home = () => {
           <Card>
             <div className={[styles.content, styles.stack, styles.center].join(" ")}>
               <div className={[styles.tonal, styles.rounded, styles.compact].join(" ")}>
-                <Coffee size={24} className={styles.accent} />
+                <CoffeeBeansIcon size="md" className={styles.accent} aria-hidden="true" />
               </div>
               <span className={[styles.body, styles.strong].join(" ")}>豆を管理</span>
             </div>

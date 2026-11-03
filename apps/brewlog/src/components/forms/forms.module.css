@@ -86,7 +86,7 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: var(--cl-space-tight);
     padding: var(--cl-space-tight);
-    border-radius: var(--cl-radius-card);
+    border-radius: var(--cl-radius-control);
     background: var(--cl-color-surface-tonal);
   }
   .choice {
@@ -121,16 +121,6 @@
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: var(--cl-space-field-gap);
-  }
-  .twoColumns {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: var(--cl-space-page-inline);
-  }
-  @container (min-width: 21rem) {
-    .twoColumns {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
   }
   .rating {
     display: grid;

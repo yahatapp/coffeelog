@@ -1,0 +1,1 @@
+ALTER TABLE "brewlog"."brew_logs" DROP COLUMN "blooming_time";

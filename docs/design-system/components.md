@@ -22,7 +22,7 @@
 | -------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
 | 読み込み・失敗・空         | [Loading・ErrorState・EmptyState](../../packages/ui/src/components/status.tsx)                                         |
 | 操作結果の通知             | [NoticeProvider](../../packages/ui/src/components/notices.tsx)と[notify](../../packages/ui/src/lib/notices.ts)         |
-| 一覧の絞り込み・並び替え   | [LogListControls](../../packages/ui/src/components/log-list-controls.tsx)                                              |
+| 一覧の絞り込み・並び替え   | [LogListControls・SortControls](../../packages/ui/src/components/log-list-controls.tsx)                                |
 | 店舗検索・履歴             | [StoreList・StoreHistory](../../packages/ui/src/components/store-history.tsx)                                          |
 | 外枠・固定ナビ・認証・同意 | [app-shell](../../packages/ui/src/components/app-shell.tsx)と[PageLayout](../../packages/ui/src/components/layout.tsx) |
 

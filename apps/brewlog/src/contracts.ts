@@ -81,7 +81,6 @@ export const logCreateSchema = z.object({
   iceAmount: z.number().optional().nullable(),
   yieldAmount: z.number().optional().nullable(),
   drawdownTime: z.number().int().nonnegative().optional().nullable(),
-  bloomingTime: z.number().int().nonnegative().optional().nullable(),
   hasBypass: z.boolean().optional(),
   pours: z.array(pourSchema).optional(),
 });

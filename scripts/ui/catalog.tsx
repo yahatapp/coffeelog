@@ -71,6 +71,9 @@ function Catalog() {
             <Input id="catalog-readonly" readOnly value="登録済み" />
             <Label htmlFor="catalog-disabled">利用不可の入力</Label>
             <Input id="catalog-disabled" disabled value="利用不可" />
+            <Field label="日付">
+              {(control) => <Input {...control} type="date" defaultValue="2026-10-31" />}
+            </Field>
             <Label htmlFor="catalog-select">選択</Label>
             <Select id="catalog-select">
               <option>ホット</option>

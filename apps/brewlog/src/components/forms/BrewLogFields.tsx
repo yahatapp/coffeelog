@@ -103,7 +103,7 @@ export const BrewLogFields = ({
         const target = Math.max(0, Math.min(10, count));
         const next = values.pours.slice(0, target);
         for (let index = next.length; index < target; index += 1) {
-          next.push(makePour(index, values.bloomingTime));
+          next.push(makePour(index));
         }
         form.setFieldValue("pours", next);
       };
@@ -500,77 +500,40 @@ export const BrewLogFields = ({
             </div>
 
             <div className={styles.divider}>
-              <div className={styles.twoColumns}>
-                <div className={styles.panel} role="group" aria-labelledby="brewlogfields-group-3">
-                  <span id="brewlogfields-group-3" className={styles.groupLabel}>
-                    注ぎ回数 (投)
-                  </span>
-                  <div className={styles.row}>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="icon"
-                      onClick={() => setPourCount(values.pours.length - 1)}
-                      disabled={values.pours.length <= 0}
-                      aria-label="注ぎ回数を減らす"
-                    >
-                      -
-                    </Button>
-                    <Input
-                      type="number"
-                      min="0"
-                      max="10"
-                      value={values.pours.length}
-                      onChange={(event) =>
-                        setPourCount(Number.parseInt(event.target.value, 10) || 0)
-                      }
-                      aria-label="注ぎ回数 (投)"
-                    />
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="icon"
-                      onClick={() => setPourCount(values.pours.length + 1)}
-                      disabled={values.pours.length >= 10}
-                      aria-label="注ぎ回数を増やす"
-                    >
-                      +
-                    </Button>
-                  </div>
+              <div className={styles.panel} role="group" aria-labelledby="brewlogfields-group-3">
+                <span id="brewlogfields-group-3" className={styles.groupLabel}>
+                  注ぎ回数 (投)
+                </span>
+                <div className={styles.row}>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    onClick={() => setPourCount(values.pours.length - 1)}
+                    disabled={values.pours.length <= 0}
+                    aria-label="注ぎ回数を減らす"
+                  >
+                    -
+                  </Button>
+                  <Input
+                    type="number"
+                    min="0"
+                    max="10"
+                    value={values.pours.length}
+                    onChange={(event) => setPourCount(Number.parseInt(event.target.value, 10) || 0)}
+                    aria-label="注ぎ回数 (投)"
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    onClick={() => setPourCount(values.pours.length + 1)}
+                    disabled={values.pours.length >= 10}
+                    aria-label="注ぎ回数を増やす"
+                  >
+                    +
+                  </Button>
                 </div>
-                <form.Field name="bloomingTime">
-                  {(field) => (
-                    <div className={styles.panel}>
-                      <Field
-                        id="bloomingTime"
-                        label={<>蒸らし時間 (秒)</>}
-                        error={getFirstValidationError(field.state.meta.errors)}
-                      >
-                        {(control) => (
-                          <>
-                            <Input
-                              {...control}
-                              id="bloomingTime"
-                              type="number"
-                              value={field.state.value}
-                              onChange={(event) => {
-                                const value = parseNumber(event.target.value, true);
-                                field.handleChange(value);
-                                if (values.pours.length > 0)
-                                  form.setFieldValue(
-                                    "pours",
-                                    updatePour(values, 0, {
-                                      duration: value === "" ? 0 : value,
-                                    }),
-                                  );
-                              }}
-                            />
-                          </>
-                        )}
-                      </Field>
-                    </div>
-                  )}
-                </form.Field>
               </div>
               <form.Field name="pours" mode="array">
                 {(field) =>
@@ -634,7 +597,6 @@ export const BrewLogFields = ({
                                         duration,
                                       }),
                                     );
-                                    if (index === 0) form.setFieldValue("bloomingTime", duration);
                                   }}
                                   required
                                 >

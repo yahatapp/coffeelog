@@ -89,15 +89,7 @@ const Settings = () => {
             >
               <span className={styles.foreground}>ドリッパー管理</span>
               <div className={styles.row}>
-                <span
-                  className={[
-                    styles.tonal,
-                    styles.border,
-                    styles.pill,
-                    styles.helper,
-                    styles.muted,
-                  ].join(" ")}
-                >
+                <span className={[styles.helper, styles.muted].join(" ")}>
                   {isLoading ? "-" : drippers.length}個
                 </span>
                 <ChevronRight size={16} className={styles.muted} />
@@ -110,15 +102,7 @@ const Settings = () => {
             >
               <span className={styles.foreground}>グラインダー管理</span>
               <div className={styles.row}>
-                <span
-                  className={[
-                    styles.tonal,
-                    styles.border,
-                    styles.pill,
-                    styles.helper,
-                    styles.muted,
-                  ].join(" ")}
-                >
+                <span className={[styles.helper, styles.muted].join(" ")}>
                   {isLoading ? "-" : grinders.length}個
                 </span>
                 <ChevronRight size={16} className={styles.muted} />

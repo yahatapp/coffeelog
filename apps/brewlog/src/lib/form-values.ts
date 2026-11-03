@@ -116,7 +116,6 @@ export type LogFormValues = {
   iceAmount: number | "";
   yieldAmount: number | "";
   drawdownTime: number | "";
-  bloomingTime: number | "";
   hasBypass: boolean;
   pours: PourFormValue[];
 };
@@ -141,7 +140,6 @@ export const toLogCreateInput = (values: LogFormValues): LogCreateInput => ({
   iceAmount: values.tempType === "ice" ? numberOrNull(values.iceAmount) : null,
   yieldAmount: numberOrNull(values.yieldAmount),
   drawdownTime: numberOrNull(values.drawdownTime),
-  bloomingTime: numberOrNull(values.bloomingTime),
   pours: values.pours.map((pour, index) => ({
     pourNumber: pour.pourNumber,
     waterAmount: pour.waterAmount,
@@ -189,9 +187,9 @@ export const getTodayJSTString = () => {
   return `${jst.getFullYear()}-${String(jst.getMonth() + 1).padStart(2, "0")}-${String(jst.getDate()).padStart(2, "0")}`;
 };
 
-export const makePour = (index: number, bloomingTime: number | ""): PourFormValue => ({
+export const makePour = (index: number): PourFormValue => ({
   pourNumber: index + 1,
   waterAmount: 30,
-  duration: index === 0 && bloomingTime !== "" ? bloomingTime : 30,
+  duration: 30,
   pourType: "center_around",
 });

@@ -49,7 +49,6 @@ const toFormValues = (log: BrewLogResponse): LogFormValues => ({
   iceAmount: log.iceAmount ?? "",
   yieldAmount: log.yieldAmount ?? "",
   drawdownTime: log.drawdownTime ?? "",
-  bloomingTime: log.bloomingTime ?? "",
   hasBypass: log.hasBypass ?? false,
   pours:
     log.pours?.map((pour) => ({
@@ -75,7 +74,6 @@ const dirtyFieldLabels: Record<keyof LogFormValues, string> = {
   iceAmount: "氷の量",
   yieldAmount: "仕上がり量",
   drawdownTime: "落ち切り時間",
-  bloomingTime: "蒸らし時間",
   hasBypass: "加水",
   pours: "注ぎ方",
 };
