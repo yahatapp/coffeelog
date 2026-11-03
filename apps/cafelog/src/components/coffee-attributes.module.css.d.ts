@@ -8,6 +8,7 @@ declare const styles: {
   readonly header: string;
   readonly heading: string;
   readonly label: string;
+  readonly multilineRow: string;
   readonly muted: string;
   readonly row: string;
   readonly sectionTitle: string;

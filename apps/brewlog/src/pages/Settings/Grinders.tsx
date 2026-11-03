@@ -1,6 +1,6 @@
 import { Loading, ErrorState } from "@yahatapp/ui";
 import { Field } from "@yahatapp/ui";
-import styles from "../content.module.css";
+import styles from "./equipment.module.css";
 import { Checkbox } from "@yahatapp/ui";
 import { mutationNotices } from "@/lib/mutationNotices";
 import { useForm } from "@tanstack/react-form";
@@ -10,9 +10,8 @@ import { useNavigate } from "react-router-dom";
 import { ArrowLeft, CheckCircle, Loader2, Pencil, Plus, Sliders, Trash2 } from "lucide-react";
 import { grinderQueries, mutations, queryKeys, type Grinder } from "@/lib/queries";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardContent, EmptyState } from "@yahatapp/ui";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import type { FormApiLike } from "@/components/forms/types";
 import { getFirstValidationError } from "@/components/forms/formValidation";
 import { grinderFormSchema, type GrinderFormValues } from "@/components/forms/grinderForm";
@@ -72,11 +71,11 @@ const GrinderFields = ({
           )}
         </form.Field>
       </div>
-      <div className={[styles.border, styles.fieldStack, styles.separated].join(" ")}>
-        <Label>
-          <Sliders size={12} />
+      <fieldset className={styles.rangeFields}>
+        <legend className={styles.rangeLegend}>
+          <Sliders size={16} aria-hidden="true" />
           挽き目段階の境界値（クリック数上限）
-        </Label>
+        </legend>
         <p className={[styles.helper, styles.muted].join(" ")}>
           それぞれの挽き目の最大クリック数を設定します。
         </p>
@@ -152,18 +151,10 @@ const GrinderFields = ({
             </div>
           )}
         </form.Subscribe>
-      </div>
+      </fieldset>
       <form.Field name="isDefault">
         {(field) => (
-          <label
-            className={[
-              styles.row,
-              styles.helper,
-              styles.foreground,
-              styles.interactive,
-              styles.separated,
-            ].join(" ")}
-          >
+          <label className={styles.checkboxLabel}>
             <Checkbox
               type="checkbox"
               checked={field.state.value}
@@ -281,7 +272,7 @@ const Grinders = () => {
   };
   const formError = createMutation.error ?? updateMutation.error;
   return (
-    <div className={[styles.stack, styles.separated].join(" ")}>
+    <div className={styles.stack}>
       <div className={styles.row}>
         <Button
           variant="ghost"
@@ -296,75 +287,63 @@ const Grinders = () => {
           グラインダー管理
         </h2>
       </div>
-      <form
-        onSubmit={(event) => {
-          event.preventDefault();
-          event.stopPropagation();
-          // Mutation errors are shown by the shared notices and the form error state.
-          void form.handleSubmit().catch(() => undefined);
-        }}
-        className={[
-          styles.surface,
-          styles.border,
-          styles.rounded,
-          styles.elevated,
-          styles.content,
-          styles.fieldStack,
-        ].join(" ")}
-      >
-        <div className={[styles.border, styles.row, styles.spread, styles.separated].join(" ")}>
-          <span className={[styles.helper, styles.strong, styles.accent].join(" ")}>
-            {editingId ? "グラインダーの設定を編集" : "新規グラインダー登録"}
-          </span>
-          {editingId && (
-            <button
-              type="button"
-              onClick={handleCancelEdit}
-              className={[styles.helper, styles.muted, styles.textLink].join(" ")}
-            >
-              キャンセル
-            </button>
-          )}
-        </div>
-        <GrinderFields form={form} isSubmitting={isSubmitting} />
-        <form.Subscribe selector={(state) => state.errors}>
-          {(errors) => {
-            const validationError = getFirstValidationError(errors);
-            return validationError ? (
-              <p className={[styles.helper, styles.dangerText].join(" ")} role="alert">
-                {validationError}
-              </p>
-            ) : null;
+      <Card>
+        <form
+          onSubmit={(event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            // Mutation errors are shown by the shared notices and the form error state.
+            void form.handleSubmit().catch(() => undefined);
           }}
-        </form.Subscribe>
-        <div className={styles.row}>
-          {editingId && (
-            <Button
-              type="button"
-              variant="ghost"
-              onClick={handleCancelEdit}
-              disabled={isSubmitting}
-            >
-              キャンセル
-            </Button>
-          )}
-          <Button type="submit" disabled={isSubmitting} fullWidth loading={isSubmitting}>
-            {isSubmitting ? (
-              <Loader2 className={styles.spinner} size={14} />
-            ) : editingId ? (
-              <Pencil size={14} />
-            ) : (
-              <Plus size={14} />
-            )}
-            {editingId ? "変更を保存" : "グラインダーを登録"}
-          </Button>
-        </div>
-        {formError && (
-          <p className={[styles.helper, styles.dangerText].join(" ")}>
-            {formError instanceof Error ? formError.message : "保存に失敗しました。"}
-          </p>
-        )}
-      </form>
+          className={styles.form}
+        >
+          <CardHeader>
+            <CardTitle>{editingId ? "グラインダーの設定を編集" : "新規グラインダー登録"}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className={styles.formFields}>
+              <GrinderFields form={form} isSubmitting={isSubmitting} />
+              <form.Subscribe selector={(state) => state.errors}>
+                {(errors) => {
+                  const validationError = getFirstValidationError(errors);
+                  return validationError ? (
+                    <p className={[styles.helper, styles.dangerText].join(" ")} role="alert">
+                      {validationError}
+                    </p>
+                  ) : null;
+                }}
+              </form.Subscribe>
+              <div className={styles.row}>
+                {editingId && (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    onClick={handleCancelEdit}
+                    disabled={isSubmitting}
+                  >
+                    キャンセル
+                  </Button>
+                )}
+                <Button type="submit" disabled={isSubmitting} fullWidth loading={isSubmitting}>
+                  {isSubmitting ? (
+                    <Loader2 className={styles.spinner} size={14} />
+                  ) : editingId ? (
+                    <Pencil size={14} />
+                  ) : (
+                    <Plus size={14} />
+                  )}
+                  {editingId ? "変更を保存" : "グラインダーを登録"}
+                </Button>
+              </div>
+              {formError && (
+                <p className={[styles.helper, styles.dangerText].join(" ")}>
+                  {formError instanceof Error ? formError.message : "保存に失敗しました。"}
+                </p>
+              )}
+            </div>
+          </CardContent>
+        </form>
+      </Card>
       {grindersQuery.isPending ? (
         <Loading className={styles.state} />
       ) : grindersQuery.isError ? (
@@ -375,21 +354,13 @@ const Grinders = () => {
           />
         </div>
       ) : grinders.length === 0 ? (
-        <div
-          className={[
-            styles.tonal,
-            styles.border,
-            styles.rounded,
-            styles.center,
-            styles.helper,
-            styles.muted,
-          ].join(" ")}
-        >
-          登録されているグラインダーはありません。
-        </div>
+        <EmptyState title="登録されているグラインダーはありません。" />
       ) : (
         <Card>
-          <div className={styles.cardContent}>
+          <CardHeader>
+            <CardTitle>登録済みのグラインダー</CardTitle>
+          </CardHeader>
+          <CardContent>
             <div className={styles.divided}>
               {grinders.map((grinder) => (
                 <div
@@ -435,10 +406,10 @@ const Grinders = () => {
                         onClick={() => handleStartEdit(grinder)}
                         title="編集"
                         aria-label="編集"
-                        variant="ghost"
-                        size="icon"
+                        variant="outline"
+                        size="sm"
                       >
-                        <Pencil size={16} />
+                        <Pencil size={16} aria-hidden="true" /> 編集
                       </Button>
                       <Button
                         type="button"
@@ -449,10 +420,10 @@ const Grinders = () => {
                         title="削除"
                         disabled={editingId !== null || deleteMutation.isPending}
                         aria-label="削除"
-                        variant="ghost"
-                        size="icon"
+                        variant="outline"
+                        size="sm"
                       >
-                        <Trash2 size={16} />
+                        <Trash2 size={16} aria-hidden="true" /> 削除
                       </Button>
                     </div>
                   </div>
@@ -478,7 +449,7 @@ const Grinders = () => {
                 </div>
               ))}
             </div>
-          </div>
+          </CardContent>
         </Card>
       )}
     </div>

@@ -1,8 +1,8 @@
 import { useLiff } from "@/hooks/useLiff";
-import { User, Copy, Check, Info, LogOut } from "lucide-react";
+import { User, Copy, Check, LogOut } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Button, Card, CardContent, useNotice } from "@yahatapp/ui";
+import { Button, Card, CardHeader, CardTitle, CardContent, useNotice } from "@yahatapp/ui";
 import { analytics } from "@/lib/analytics";
 import styles from "./content.module.css";
 const SettingsPage = () => {
@@ -86,34 +86,44 @@ const SettingsPage = () => {
         <span aria-hidden="true"> ›</span>
       </Link>
       {analytics.configured && (
-        <section className={styles.panel}>
-          <h3 className={styles.recordTitle}>利用状況の計測</h3>
-          <p className={styles.muted}>
-            {analytics.servicesLabel}による利用状況の計測を、改善のために利用します。入力内容やLINE
-            IDをイベントとして送信しません。
-          </p>
-          <p className={styles.muted}>
-            現在:{" "}
-            {isAnalyticsEnabled ? "許可中" : analyticsConsent === "disabled" ? "停止中" : "未選択"}
-          </p>
-          <Button
-            type="button"
-            variant={isAnalyticsEnabled ? "outline" : "primary"}
-            fullWidth
-            aria-pressed={isAnalyticsEnabled}
-            onClick={() => analytics.setConsent(isAnalyticsEnabled ? "disabled" : "enabled")}
-          >
-            {isAnalyticsEnabled ? "計測を停止する" : "計測を許可する"}
-          </Button>
-        </section>
+        <Card>
+          <CardHeader>
+            <CardTitle>利用状況の計測</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className={styles.section}>
+              <p className={styles.muted}>
+                {analytics.servicesLabel}
+                による利用状況の計測を、改善のために利用します。入力内容やLINE
+                IDをイベントとして送信しません。
+              </p>
+              <p className={styles.muted}>
+                現在:{" "}
+                {isAnalyticsEnabled
+                  ? "許可中"
+                  : analyticsConsent === "disabled"
+                    ? "停止中"
+                    : "未選択"}
+              </p>
+              <Button
+                type="button"
+                variant={isAnalyticsEnabled ? "outline" : "primary"}
+                fullWidth
+                aria-pressed={isAnalyticsEnabled}
+                onClick={() => analytics.setConsent(isAnalyticsEnabled ? "disabled" : "enabled")}
+              >
+                {isAnalyticsEnabled ? "計測を停止する" : "計測を許可する"}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       )}
       <Card>
+        <CardHeader>
+          <CardTitle>アプリ情報</CardTitle>
+        </CardHeader>
         <CardContent>
           <section className={styles.section}>
-            <h3 className={styles.titleRow}>
-              <Info size={18} aria-hidden="true" />
-              アプリ情報
-            </h3>
             <dl className={styles.info}>
               <dt>アプリ名</dt>
               <dd>Cafelog</dd>

@@ -114,7 +114,10 @@ export const CoffeeAttributes = ({
             <h5 className={styles.sectionTitle}>{title}</h5>
             <dl className={styles.details}>
               {rows.map(({ label, value }) => (
-                <div key={label} className={styles.row}>
+                <div
+                  key={label}
+                  className={label === "フレーバーノート" ? styles.multilineRow : styles.row}
+                >
                   <dt className={styles.label}>{label}</dt>
                   <dd className={styles.value}>
                     {value || <span className={styles.muted}>未登録</span>}

@@ -1,6 +1,7 @@
 import styles from "./forms.module.css";
 import { getFirstValidationError } from "./formValidation";
 import { Field, Select } from "@yahatapp/ui";
+import { Trash2 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { PREFECTURES } from "@yahatapp/database/store-contracts";
 import { storeQueries } from "@/lib/queries";
@@ -153,6 +154,7 @@ export function BeanStoreFields({ form, disabled }: { form: BeanFormApi; disable
                             <Button
                               type="button"
                               variant="ghost"
+                              size="icon"
                               disabled={disabled}
                               aria-label={`お店のリンク ${index + 1}を削除`}
                               onClick={() =>
@@ -161,7 +163,7 @@ export function BeanStoreFields({ form, disabled }: { form: BeanFormApi; disable
                                 )
                               }
                             >
-                              削除
+                              <Trash2 size={18} aria-hidden="true" />
                             </Button>
                           </div>
                         )}

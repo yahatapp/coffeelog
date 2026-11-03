@@ -1,4 +1,4 @@
-import { ErrorState, Loading } from "@yahatapp/ui";
+import { Button, CardContent, CardHeader, CardTitle, ErrorState, Loading } from "@yahatapp/ui";
 import styles from "./content.module.css";
 import menuStyles from "./settings.module.css";
 import { useQuery } from "@tanstack/react-query";
@@ -30,36 +30,38 @@ const Settings = () => {
 
       {/* User profile */}
       <Card>
-        <div className={[styles.roomy, styles.row].join(" ")}>
-          <div
-            className={[
-              styles.avatar,
-              styles.tonal,
-              styles.border,
-              styles.pill,
-              styles.elevated,
-              styles.clipped,
-            ].join(" ")}
-          >
-            {profile?.pictureUrl ? (
-              <img
-                src={profile.pictureUrl}
-                alt={profile.displayName}
-                className={styles.avatarImage}
-              />
-            ) : (
-              <div className={[styles.row, styles.center, styles.fullWidth].join(" ")}>
-                <User size={32} className={styles.muted} />
-              </div>
-            )}
+        <CardContent>
+          <div className={styles.row}>
+            <div
+              className={[
+                styles.avatar,
+                styles.tonal,
+                styles.border,
+                styles.pill,
+                styles.elevated,
+                styles.clipped,
+              ].join(" ")}
+            >
+              {profile?.pictureUrl ? (
+                <img
+                  src={profile.pictureUrl}
+                  alt={profile.displayName}
+                  className={styles.avatarImage}
+                />
+              ) : (
+                <div className={menuStyles.avatarFallback}>
+                  <User size={32} className={styles.muted} />
+                </div>
+              )}
+            </div>
+            <div className={styles.grow}>
+              <p className={[styles.heading, styles.strong, styles.accent].join(" ")}>
+                {profile?.displayName || "ゲストユーザー"}
+              </p>
+              <p className={[styles.helper, styles.muted].join(" ")}>LINE連携済み</p>
+            </div>
           </div>
-          <div>
-            <p className={[styles.heading, styles.strong, styles.accent].join(" ")}>
-              {profile?.displayName || "ゲストユーザー"}
-            </p>
-            <p className={[styles.helper, styles.muted].join(" ")}>LINE連携済み</p>
-          </div>
-        </div>
+        </CardContent>
       </Card>
 
       {isLoading && <Loading label="器具を読み込み中" />}
@@ -147,40 +149,37 @@ const Settings = () => {
       </Link>
 
       {analytics.configured && (
-        <section
-          className={[styles.surface, styles.border, styles.rounded, styles.content].join(" ")}
-        >
-          <h3 className={[styles.body, styles.strong, styles.accent].join(" ")}>利用状況の計測</h3>
-          <p className={[styles.helper, styles.muted, styles.separated].join(" ")}>
-            {analytics.servicesLabel}
-            による利用状況の計測を、改善のために利用します。入力内容やLINE
-            IDをイベントとして送信しません。
-          </p>
-          <p className={[styles.helper, styles.muted, styles.separated].join(" ")}>
-            現在:{" "}
-            {isAnalyticsEnabled ? "許可中" : analyticsConsent === "disabled" ? "停止中" : "未選択"}
-          </p>
-          <button
-            type="button"
-            className={[
-              [
-                styles.rounded,
-                styles.fullWidth,
-                styles.target,
-                styles.body,
-                styles.strong,
-                styles.separated,
-              ].join(" "),
-              isAnalyticsEnabled
-                ? [styles.border, styles.foreground].join(" ")
-                : [styles.primaryBadge, styles.onPrimary].join(" "),
-            ].join(" ")}
-            onClick={() => analytics.setConsent(isAnalyticsEnabled ? "disabled" : "enabled")}
-            aria-pressed={isAnalyticsEnabled}
-          >
-            {isAnalyticsEnabled ? "計測を停止する" : "計測を許可する"}
-          </button>
-        </section>
+        <Card>
+          <CardHeader>
+            <CardTitle>利用状況の計測</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className={styles.fieldStack}>
+              <p className={[styles.helper, styles.muted, styles.separated].join(" ")}>
+                {analytics.servicesLabel}
+                による利用状況の計測を、改善のために利用します。入力内容やLINE
+                IDをイベントとして送信しません。
+              </p>
+              <p className={[styles.helper, styles.muted, styles.separated].join(" ")}>
+                現在:{" "}
+                {isAnalyticsEnabled
+                  ? "許可中"
+                  : analyticsConsent === "disabled"
+                    ? "停止中"
+                    : "未選択"}
+              </p>
+              <Button
+                type="button"
+                variant={isAnalyticsEnabled ? "outline" : "primary"}
+                fullWidth
+                onClick={() => analytics.setConsent(isAnalyticsEnabled ? "disabled" : "enabled")}
+                aria-pressed={isAnalyticsEnabled}
+              >
+                {isAnalyticsEnabled ? "計測を停止する" : "計測を許可する"}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       )}
 
       {/* About and logout */}

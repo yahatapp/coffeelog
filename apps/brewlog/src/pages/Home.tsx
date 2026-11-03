@@ -91,7 +91,7 @@ const Home = () => {
                     <div>
                       <p
                         className={[
-                          styles.helper,
+                          styles.body,
                           styles.strong,
                           styles.foreground,
                           styles.wrap,
@@ -118,8 +118,8 @@ const Home = () => {
                   {log.rating && (
                     <div className={[styles.row, styles.warningText].join(" ")}>
                       <Star
-                        size={10}
-                        className={[styles.warningText, styles.ratingFilled, styles.icon].join(" ")}
+                        size={14}
+                        className={[styles.warningText, styles.ratingFilled].join(" ")}
                       />
                       <span className={[styles.helper, styles.strong].join(" ")}>{log.rating}</span>
                     </div>

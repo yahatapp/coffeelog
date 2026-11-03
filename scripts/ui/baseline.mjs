@@ -635,6 +635,19 @@ try {
             const inputHeight = await page
               .locator("#catalog-input")
               .evaluate((el) => el.getBoundingClientRect().height);
+            const checkbox = page.locator("#catalog-check");
+            const targetBox = await checkbox.boundingBox();
+            expect(targetBox.width).toBeGreaterThanOrEqual(44);
+            expect(targetBox.height).toBeGreaterThanOrEqual(44);
+            const indicatorBox = await checkbox.locator("+ span").boundingBox();
+            expect(indicatorBox.width).toBeLessThan(targetBox.width);
+            await checkbox.click({ position: { x: 2, y: 2 } });
+            await expect(checkbox).toBeChecked();
+            await checkbox.focus();
+            await page.keyboard.press("Space");
+            await expect(checkbox).not.toBeChecked();
+            await expect(checkbox.locator("..")).toHaveCSS("outline-style", "solid");
+            await expect(page.locator("#catalog-disabled-check")).toBeDisabled();
             for (const select of await page.locator("select").all()) {
               expect(await select.evaluate((el) => el.getBoundingClientRect().height)).toBe(
                 inputHeight,
