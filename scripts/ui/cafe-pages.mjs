@@ -100,7 +100,7 @@ export async function verifyCafePages(
     page.getByRole("heading", { name: "確認用ユーザー", exact: true }).locator("../../.."),
   ).toHaveCSS("padding-top", "24px");
   await expect(
-    page.getByRole("heading", { name: "アプリ情報", exact: true }).locator("../.."),
+    page.getByRole("heading", { name: "アプリ情報", exact: true }).locator(".."),
   ).toHaveCSS("padding-top", "24px");
   await page.context().grantPermissions(["clipboard-read", "clipboard-write"], { origin: baseURL });
   await page.getByRole("button", { name: "ユーザーIDをコピー", exact: true }).click();

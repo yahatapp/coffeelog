@@ -304,6 +304,8 @@ export async function verifyBrewPages(page, { baseURL, output, width, ids, reset
   data.store.name = "長い日本語の店舗名".repeat(8);
   data.store.links = ["https://example.com/" + "long".repeat(40)];
   data.bean.purchaseStore = data.store.name;
+  data.dripper.name = "長い日本語のドリッパー名".repeat(8);
+  data.grinder.name = "長い日本語のグラインダー名".repeat(8);
   data.log.brewComment = data.bean.note;
   data.log.note = data.bean.note;
   data.log.pours = [
@@ -317,6 +319,8 @@ export async function verifyBrewPages(page, { baseURL, output, width, ids, reset
     ["log-detail", `/logs/${ids.log}`],
     ["stores", "/stores"],
     ["store-detail", `/stores/${ids.store}`],
+    ["drippers", "/settings/drippers"],
+    ["grinders", "/settings/grinders"],
   ]) {
     await visit(path);
     await audit(name + "-long");

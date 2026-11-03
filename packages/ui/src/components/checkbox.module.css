@@ -1,16 +1,53 @@
 @layer components {
-  .root {
+  .target {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
     width: var(--cl-size-target-min);
     height: var(--cl-size-target-min);
-    accent-color: var(--cl-color-action-primary);
+    vertical-align: middle;
+  }
+  .root {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    opacity: 0;
     cursor: pointer;
   }
-  .root:focus-visible {
+  .indicator {
+    display: flex;
+    width: var(--cl-size-icon);
+    height: var(--cl-size-icon);
+    border: var(--cl-border-width) solid var(--cl-color-border-input);
+    border-radius: var(--cl-space-tight);
+    background: var(--cl-color-surface);
+    pointer-events: none;
+  }
+  .check {
+    visibility: hidden;
+    width: 100%;
+    height: 100%;
+  }
+  .root:checked + .indicator {
+    border-color: var(--cl-color-action-primary);
+    background: var(--cl-color-action-primary);
+    color: var(--cl-color-on-action-primary);
+  }
+  .root:checked + .indicator > .check {
+    visibility: visible;
+  }
+  .target:has(.root:focus-visible) {
     outline: var(--cl-focus-width) solid var(--cl-color-focus);
     outline-offset: var(--cl-focus-offset);
   }
   .root:disabled {
     cursor: not-allowed;
+  }
+  .root:disabled + .indicator {
     opacity: var(--cl-opacity-disabled);
   }
 }

@@ -2,17 +2,15 @@ import styles from "./content.module.css";
 import { useQuery } from "@tanstack/react-query";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
-import { EmptyState, ErrorState, Loading, StoreHistory, StoreList } from "@yahatapp/ui";
+import { Button, EmptyState, ErrorState, Loading, StoreHistory, StoreList } from "@yahatapp/ui";
 import { storeQueries } from "@/lib/queries";
 const StoreHeader = () => (
   <div className={styles.row}>
-    <Link
-      to="/settings"
-      aria-label="設定へ戻る"
-      className={[styles.pill, styles.row, styles.center, styles.accent].join(" ")}
-    >
-      <ArrowLeft size={20} />
-    </Link>
+    <Button asChild variant="ghost" size="icon">
+      <Link to="/settings" aria-label="設定へ戻る">
+        <ArrowLeft size={20} aria-hidden="true" />
+      </Link>
+    </Button>
     <h2 className={[styles.heading, styles.strong, styles.accent].join(" ")}>お店</h2>
   </div>
 );

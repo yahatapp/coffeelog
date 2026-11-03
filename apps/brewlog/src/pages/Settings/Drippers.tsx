@@ -1,7 +1,7 @@
 import { Loading, ErrorState } from "@yahatapp/ui";
 import { getFirstValidationError } from "@/components/forms/formValidation";
 import { Field } from "@yahatapp/ui";
-import styles from "../content.module.css";
+import styles from "./equipment.module.css";
 import { Checkbox } from "@yahatapp/ui";
 import { mutationNotices } from "@/lib/mutationNotices";
 import { useForm } from "@tanstack/react-form";
@@ -12,7 +12,7 @@ import { ArrowLeft, CheckCircle, Loader2, Pencil, Plus, Trash2 } from "lucide-re
 import { dripperCreateSchema, dripperUpdateSchema } from "@/contracts";
 import { dripperQueries, mutations, queryKeys, type Dripper } from "@/lib/queries";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardContent, EmptyState } from "@yahatapp/ui";
 import { Input } from "@/components/ui/input";
 type DripperFormValues = {
   name: string;
@@ -139,103 +139,85 @@ const Drippers = () => {
         <h2 className={[styles.heading, styles.strong, styles.accent].join(" ")}>ドリッパー管理</h2>
       </div>
 
-      <form
-        onSubmit={(event) => {
-          event.preventDefault();
-          event.stopPropagation();
-          // Mutation errors are shown by the shared notices and the form error state.
-          void form.handleSubmit().catch(() => undefined);
-        }}
-        className={[
-          styles.surface,
-          styles.border,
-          styles.rounded,
-          styles.elevated,
-          styles.content,
-          styles.fieldStack,
-        ].join(" ")}
-      >
-        <div className={[styles.border, styles.row, styles.spread, styles.separated].join(" ")}>
-          <span className={[styles.helper, styles.strong, styles.accent].join(" ")}>
-            {editingId ? "ドリッパーの設定を編集" : "新規ドリッパー登録"}
-          </span>
-          {editingId && (
-            <button
-              type="button"
-              onClick={handleCancelEdit}
-              className={[styles.helper, styles.muted, styles.textLink].join(" ")}
-            >
-              キャンセル
-            </button>
-          )}
-        </div>
-        <div className={styles.fieldStack}>
-          <form.Field name="name">
-            {(field) => (
-              <Field
-                label="ドリッパー名"
-                required
-                error={getFirstValidationError(field.state.meta.errors)}
-              >
-                {(control) => (
-                  <Input
-                    {...control}
-                    placeholder="新しいドリッパー名..."
-                    value={field.state.value}
-                    onChange={(event) => field.handleChange(event.target.value)}
-                    onBlur={field.handleBlur}
-                    required
-                    disabled={isSubmitting}
-                  />
+      <Card>
+        <form
+          onSubmit={(event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            // Mutation errors are shown by the shared notices and the form error state.
+            void form.handleSubmit().catch(() => undefined);
+          }}
+          className={styles.form}
+        >
+          <CardHeader>
+            <CardTitle>{editingId ? "ドリッパーの設定を編集" : "新規ドリッパー登録"}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className={styles.formFields}>
+              <div className={styles.fieldStack}>
+                <form.Field name="name">
+                  {(field) => (
+                    <Field
+                      label="ドリッパー名"
+                      required
+                      error={getFirstValidationError(field.state.meta.errors)}
+                    >
+                      {(control) => (
+                        <Input
+                          {...control}
+                          placeholder="新しいドリッパー名..."
+                          value={field.state.value}
+                          onChange={(event) => field.handleChange(event.target.value)}
+                          onBlur={field.handleBlur}
+                          required
+                          disabled={isSubmitting}
+                        />
+                      )}
+                    </Field>
+                  )}
+                </form.Field>
+              </div>
+              <form.Field name="isDefault">
+                {(field) => (
+                  <label className={styles.checkboxLabel}>
+                    <Checkbox
+                      type="checkbox"
+                      checked={field.state.value}
+                      onChange={(event) => field.handleChange(event.target.checked)}
+                    />
+                    <span>このドリッパーをデフォルトに設定する</span>
+                  </label>
                 )}
-              </Field>
-            )}
-          </form.Field>
-          {editingId && (
-            <Button
-              type="button"
-              variant="ghost"
-              onClick={handleCancelEdit}
-              disabled={isSubmitting}
-            >
-              キャンセル
-            </Button>
-          )}
-          <Button type="submit" disabled={isSubmitting} loading={isSubmitting}>
-            {isSubmitting ? (
-              <Loader2 className={styles.spinner} size={16} />
-            ) : editingId ? (
-              <Pencil size={16} />
-            ) : (
-              <Plus size={16} />
-            )}
-            {editingId ? "保存" : "追加"}
-          </Button>
-        </div>
-        <form.Field name="isDefault">
-          {(field) => (
-            <label
-              className={[
-                styles.row,
-                styles.helper,
-                styles.foreground,
-                styles.interactive,
-                styles.separated,
-              ].join(" ")}
-            >
-              <Checkbox
-                type="checkbox"
-                checked={field.state.value}
-                onChange={(event) => field.handleChange(event.target.checked)}
-              />
-              <span>このドリッパーをデフォルトに設定する</span>
-            </label>
-          )}
-        </form.Field>
-        {formError && (
-          <p className={[styles.helper, styles.dangerText].join(" ")}>保存に失敗しました。</p>
-        )}
-      </form>
+              </form.Field>
+              <div className={styles.formActions}>
+                {editingId && (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    onClick={handleCancelEdit}
+                    disabled={isSubmitting}
+                  >
+                    キャンセル
+                  </Button>
+                )}
+                <Button type="submit" disabled={isSubmitting} loading={isSubmitting}>
+                  {isSubmitting ? (
+                    <Loader2 className={styles.spinner} size={16} />
+                  ) : editingId ? (
+                    <Pencil size={16} />
+                  ) : (
+                    <Plus size={16} />
+                  )}
+                  {editingId ? "保存" : "追加"}
+                </Button>
+              </div>
+              {formError && (
+                <p className={[styles.helper, styles.dangerText].join(" ")}>保存に失敗しました。</p>
+              )}
+            </div>
+          </CardContent>
+        </form>
+      </Card>
 
       {drippersQuery.isPending ? (
         <Loading className={styles.state} />
@@ -247,21 +229,13 @@ const Drippers = () => {
           />
         </div>
       ) : drippers.length === 0 ? (
-        <div
-          className={[
-            styles.tonal,
-            styles.border,
-            styles.rounded,
-            styles.center,
-            styles.helper,
-            styles.muted,
-          ].join(" ")}
-        >
-          登録されているドリッパーはありません。
-        </div>
+        <EmptyState title="登録されているドリッパーはありません。" />
       ) : (
         <Card>
-          <div className={styles.cardContent}>
+          <CardHeader>
+            <CardTitle>登録済みのドリッパー</CardTitle>
+          </CardHeader>
+          <CardContent>
             <div className={styles.divided}>
               {drippers.map((dripper) => (
                 <div
@@ -306,10 +280,10 @@ const Drippers = () => {
                       onClick={() => handleStartEdit(dripper)}
                       title="編集"
                       aria-label="編集"
-                      variant="ghost"
-                      size="icon"
+                      variant="outline"
+                      size="sm"
                     >
-                      <Pencil size={16} />
+                      <Pencil size={16} aria-hidden="true" /> 編集
                     </Button>
                     <Button
                       type="button"
@@ -320,16 +294,16 @@ const Drippers = () => {
                       title="削除"
                       disabled={editingId !== null || deleteMutation.isPending}
                       aria-label="削除"
-                      variant="ghost"
-                      size="icon"
+                      variant="outline"
+                      size="sm"
                     >
-                      <Trash2 size={16} />
+                      <Trash2 size={16} aria-hidden="true" /> 削除
                     </Button>
                   </div>
                 </div>
               ))}
             </div>
-          </div>
+          </CardContent>
         </Card>
       )}
     </div>

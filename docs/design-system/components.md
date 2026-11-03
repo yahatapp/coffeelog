@@ -12,6 +12,7 @@
 - variant・size・状態の正確な型は定義元を参照する。
 - CardContentはカードの先頭に置くと全方向に余白が入り、CardHeaderの後では上の余白を省く。
 - iconボタンには操作名を付ける。装飾アイコンは読み上げ対象から外す。
+- Checkboxは見た目と操作領域を分ける。小さな枠の周囲も44px以上の範囲で操作でき、ラベルのクリックとSpaceキーで切り替えられる。
 - ButtonにclassNameを渡して見た目を変える前に、既存の型付きAPIで表せるか確認する。
 - 必須、invalid、read-only、disabled、loading、hover、focusは、利用する部品の状態として確認する。
 

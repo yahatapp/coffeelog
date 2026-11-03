@@ -5,16 +5,7 @@ import { Checkbox, EmptyState } from "@yahatapp/ui";
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import {
-  Archive,
-  ArrowDown,
-  ArrowUp,
-  Plus,
-  Coffee,
-  ChevronRight,
-  Pencil,
-  Sparkles,
-} from "lucide-react";
+import { Archive, ArrowDown, ArrowUp, Plus, Coffee, Pencil, Sparkles } from "lucide-react";
 import { beanQueries, logQueries } from "@/lib/queries";
 import { groupBeanVersions } from "@/lib/bean-versions";
 import { analytics } from "@/lib/analytics";
@@ -339,33 +330,17 @@ const BeansList = () => {
                       </div>
                     </div>
                   </Link>
-                  <div
-                    className={[
-                      styles.surface,
-                      styles.pill,
-                      styles.elevated,
-                      styles.compact,
-                      styles.row,
-                      styles.fixed,
-                    ].join(" ")}
+                  <Button
+                    disabled={group.isArchived}
+                    onClick={() => navigate(`/beans/${latestBean.id}/edit`)}
+                    title="最新の豆を編集"
+                    type="button"
+                    aria-label="最新の豆を編集"
+                    variant="ghost"
+                    size="icon"
                   >
-                    <button
-                      disabled={group.isArchived}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        void navigate(`/beans/${latestBean.id}/edit`);
-                      }}
-                      className={[styles.tonal, styles.pill, styles.compact, styles.accent].join(
-                        " ",
-                      )}
-                      title="最新の豆を編集"
-                      type="button"
-                      aria-label="最新の豆を編集"
-                    >
-                      <Pencil size={16} />
-                    </button>
-                    <ChevronRight size={18} className={styles.accent} />
-                  </div>
+                    <Pencil size={18} aria-hidden="true" />
+                  </Button>
                 </div>
               </Card>
             );
