@@ -23,6 +23,20 @@ input[type="date"] {
   -webkit-appearance: none;
   appearance: none;
   overflow: hidden;
+  position: relative;
+  text-align: center;
+}
+input[type="date"]::-webkit-date-and-time-value {
+  text-align: center;
+}
+input[type="date"]::-webkit-datetime-edit {
+  display: block;
+  padding: 0;
+  text-align: center;
+}
+input[type="date"]::-webkit-calendar-picker-indicator {
+  position: absolute;
+  inset-inline-end: var(--cl-space-field-gap);
 }
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {

@@ -47,15 +47,22 @@ describe("抽出記録フォームの変換", () => {
       iceAmount: "",
       yieldAmount: 150,
       drawdownTime: "",
-      bloomingTime: "",
       hasBypass: false,
-      pours: [],
+      pours: [
+        { pourNumber: 1, waterAmount: 30, duration: 35, pourType: "center_only" },
+        { pourNumber: 2, waterAmount: 120, duration: 45, pourType: "all" },
+      ],
     };
 
     expect(toLogCreateInput(values)).toMatchObject({
       brewComment: "30秒でステア",
       note: "フローラル",
+      pours: [
+        { pourNumber: 1, waterAmount: 30, duration: 35, pourType: "center_only" },
+        { pourNumber: 2, waterAmount: 120, duration: 0, pourType: "all" },
+      ],
     });
+    expect(toLogCreateInput(values)).not.toHaveProperty("bloomingTime");
   });
 });
 

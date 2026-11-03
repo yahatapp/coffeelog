@@ -1,8 +1,9 @@
 import { AppShell, BottomNavigation, ConsentNotice, SessionState } from "@yahatapp/ui";
 import { useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from "react-router-dom";
-import { Home as HomeIcon, Coffee, ClipboardList, User } from "lucide-react";
+import { Home as HomeIcon, ClipboardList, User } from "lucide-react";
 import { LiffProvider, useLiff } from "./hooks/useLiff";
+import { CoffeeBeansIcon } from "./components/ui/CoffeeBeansIcon";
 import { analytics } from "./lib/analytics";
 
 // Pages
@@ -36,10 +37,10 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   };
 
   const navItems = [
-    { to: "/", paths: ["/"], label: "ホーム", icon: HomeIcon },
-    { to: "/beans", paths: ["/beans"], label: "豆", icon: Coffee },
-    { to: "/logs", paths: ["/logs"], label: "記録", icon: ClipboardList },
-    { to: "/settings", paths: ["/settings", "/stores"], label: "設定", icon: User },
+    { to: "/", paths: ["/"], label: "ホーム", icon: <HomeIcon size={20} /> },
+    { to: "/beans", paths: ["/beans"], label: "豆", icon: <CoffeeBeansIcon size="sm" /> },
+    { to: "/logs", paths: ["/logs"], label: "記録", icon: <ClipboardList size={20} /> },
+    { to: "/settings", paths: ["/settings", "/stores"], label: "設定", icon: <User size={20} /> },
   ];
 
   return (
@@ -56,12 +57,11 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       navigation={
         <BottomNavigation
           items={navItems.map((item) => {
-            const Icon = item.icon;
             return {
               href: item.to,
               label: item.label,
               active: isTabActive(item.paths),
-              icon: <Icon size={20} />,
+              icon: item.icon,
             };
           })}
           renderLink={(item, props) => <Link to={item.href} {...props} />}

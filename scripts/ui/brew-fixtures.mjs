@@ -60,7 +60,6 @@ export function createBrewFixtures() {
     tempType: "hot",
     iceAmount: null,
     drawdownTime: 120,
-    bloomingTime: 30,
     hasBypass: false,
     pours: [],
     method: null,

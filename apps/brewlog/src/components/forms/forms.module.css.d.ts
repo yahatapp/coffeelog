@@ -39,6 +39,5 @@ declare const styles: {
   readonly strong: string;
   readonly text: string;
   readonly textAction: string;
-  readonly twoColumns: string;
 };
 export default styles;

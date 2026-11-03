@@ -128,7 +128,6 @@ export const brewLogs = brewlogSchema.table("brew_logs", {
   iceAmount: real("ice_amount"),
   yieldAmount: real("yield_amount"),
   drawdownTime: integer("drawdown_time"),
-  bloomingTime: integer("blooming_time"),
   hasBypass: boolean("has_bypass").default(false).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });

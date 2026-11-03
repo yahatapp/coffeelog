@@ -64,6 +64,10 @@
     font-size: var(--cl-font-size-helper);
     color: var(--cl-color-text);
   }
+  .sortOptions > .option[aria-pressed="true"] {
+    color: var(--cl-color-on-action-primary);
+    background: var(--cl-color-action-primary);
+  }
   .sortOptions {
     display: grid;
     min-width: 0;

@@ -8,15 +8,17 @@ export type LogSortOption<T extends string> = {
   initialOrder: LogSortOrder;
   ascendingLabel?: string;
 };
-export type LogListControlsProps<T extends string> = {
-  filter: LogTemperatureFilter;
-  counts: Record<LogTemperatureFilter, number>;
-  onFilterChange: (filter: LogTemperatureFilter) => void;
+export type SortControlsProps<T extends string> = {
   sortBy: T;
   sortOrder: LogSortOrder;
   sortOptions: readonly LogSortOption<T>[];
   onSortChange: (sortBy: T) => void;
   className?: string;
+};
+export type LogListControlsProps<T extends string> = SortControlsProps<T> & {
+  filter: LogTemperatureFilter;
+  counts: Record<LogTemperatureFilter, number>;
+  onFilterChange: (filter: LogTemperatureFilter) => void;
 };
 const options = [
   { value: "all", label: "すべて" },
@@ -52,30 +54,44 @@ export const LogListControls = <T extends string>({
         </button>
       ))}
     </div>
-    <div className={styles.sort}>
-      <span>ソート:</span>
-      <div
-        className={styles.sortOptions}
-        style={{ gridTemplateColumns: `repeat(${sortOptions.length}, minmax(0, 1fr))` }}
-      >
-        {sortOptions.map((option) => {
-          const active = sortBy === option.value;
-          const next = active ? (sortOrder === "desc" ? "asc" : "desc") : option.initialOrder;
-          return (
-            <button
-              key={option.value}
-              type="button"
-              className={styles.option}
-              aria-pressed={active}
-              aria-label={`${option.label}で${next === "asc" ? (option.ascendingLabel ?? "昇順") : "降順"}に並べ替え`}
-              onClick={() => onSortChange(option.value)}
-            >
-              {option.label}
-              {active && <span aria-hidden="true">{sortOrder === "desc" ? "↓" : "↑"}</span>}
-            </button>
-          );
-        })}
-      </div>
+    <SortControls
+      sortBy={sortBy}
+      sortOrder={sortOrder}
+      sortOptions={sortOptions}
+      onSortChange={onSortChange}
+    />
+  </div>
+);
+
+export const SortControls = <T extends string>({
+  sortBy,
+  sortOrder,
+  sortOptions,
+  onSortChange,
+  className,
+}: SortControlsProps<T>) => (
+  <div className={cn(styles.sort, className)} role="group" aria-label="並び替え">
+    <div
+      className={styles.sortOptions}
+      style={{ gridTemplateColumns: `repeat(${sortOptions.length}, minmax(0, 1fr))` }}
+    >
+      {sortOptions.map((option) => {
+        const active = sortBy === option.value;
+        const next = active ? (sortOrder === "desc" ? "asc" : "desc") : option.initialOrder;
+        return (
+          <button
+            key={option.value}
+            type="button"
+            className={styles.option}
+            aria-pressed={active}
+            aria-label={`${option.label}で${next === "asc" ? (option.ascendingLabel ?? "昇順") : "降順"}に並べ替え`}
+            onClick={() => onSortChange(option.value)}
+          >
+            {option.label}
+            {active && <span aria-hidden="true">{sortOrder === "desc" ? "↓" : "↑"}</span>}
+          </button>
+        );
+      })}
     </div>
   </div>
 );

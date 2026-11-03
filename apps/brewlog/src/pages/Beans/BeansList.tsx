@@ -1,11 +1,11 @@
 import { Loading, ErrorState } from "@yahatapp/ui";
 import styles from "../content.module.css";
 import { Link } from "react-router-dom";
-import { Checkbox, EmptyState } from "@yahatapp/ui";
+import { Checkbox, EmptyState, SortControls } from "@yahatapp/ui";
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { Archive, ArrowDown, ArrowUp, Plus, Coffee, Pencil, Sparkles } from "lucide-react";
+import { Archive, Plus, Coffee, Pencil, Sparkles } from "lucide-react";
 import { beanQueries, logQueries } from "@/lib/queries";
 import { groupBeanVersions } from "@/lib/bean-versions";
 import { analytics } from "@/lib/analytics";
@@ -112,35 +112,16 @@ const BeansList = () => {
               }}
             />
           </label>
-          <div
-            className={[styles.surface, styles.rounded, styles.compact, styles.metrics].join(" ")}
-          >
-            {(["date", "name", "brews"] as const).map((option) => (
-              <button
-                key={option}
-                type="button"
-                onClick={() => changeSort(option)}
-                className={[
-                  [
-                    styles.rounded,
-                    styles.row,
-                    styles.center,
-                    styles.target,
-                    styles.helper,
-                    styles.strong,
-                  ].join(" "),
-                  sortBy === option
-                    ? [styles.surface, styles.elevated, styles.accent, styles.selected].join(" ")
-                    : styles.muted,
-                ].join(" ")}
-                aria-pressed={sortBy === option}
-              >
-                {option === "date" ? "登録日" : option === "name" ? "豆名" : "抽出回数"}
-                {sortBy === option &&
-                  (sortOrder === "desc" ? <ArrowDown size={12} /> : <ArrowUp size={12} />)}
-              </button>
-            ))}
-          </div>
+          <SortControls
+            sortBy={sortBy}
+            sortOrder={sortOrder}
+            sortOptions={[
+              { value: "date", label: "登録日", initialOrder: "desc" },
+              { value: "name", label: "豆名", initialOrder: "asc", ascendingLabel: "五十音順" },
+              { value: "brews", label: "抽出回数", initialOrder: "desc" },
+            ]}
+            onSortChange={changeSort}
+          />
         </div>
       )}
 
@@ -188,7 +169,7 @@ const BeansList = () => {
             const displayDate = latestBean.purchaseDate ?? latestBean.roastDate;
             return (
               <Card key={group.groupId}>
-                <div className={[styles.content, styles.row].join(" ")}>
+                <div className={[styles.content, styles.row, styles.start].join(" ")}>
                   <Link to={`/beans/${latestBean.id}`} className={styles.entryLink}>
                     <div className={[styles.row, styles.grow].join(" ")}>
                       <div
@@ -198,7 +179,6 @@ const BeansList = () => {
                           styles.row,
                           styles.center,
                           styles.fixed,
-                          styles.clipped,
                         ].join(" ")}
                       >
                         {(() => {

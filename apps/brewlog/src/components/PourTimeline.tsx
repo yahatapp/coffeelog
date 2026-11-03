@@ -2,17 +2,9 @@ import { Check, Clock } from "lucide-react";
 import type { BrewLogResponse } from "@/lib/queries";
 import styles from "./pour-timeline.module.css";
 
-type PourTimelineProps = Pick<
-  BrewLogResponse,
-  "pours" | "bloomingTime" | "drawdownTime" | "waterAmount"
->;
+type PourTimelineProps = Pick<BrewLogResponse, "pours" | "drawdownTime" | "waterAmount">;
 
-export function PourTimeline({
-  pours,
-  bloomingTime,
-  drawdownTime,
-  waterAmount,
-}: PourTimelineProps) {
+export function PourTimeline({ pours, drawdownTime, waterAmount }: PourTimelineProps) {
   return (
     <ol className={styles.timeline} aria-label="注水の手順">
       {pours?.map((pour, index) => (
@@ -24,7 +16,7 @@ export function PourTimeline({
             <div className={styles.heading}>
               <span className={styles.stepTitle}>
                 {pour.pourNumber}投目
-                {pour.pourNumber === 1 && bloomingTime != null && bloomingTime > 0 && (
+                {pour.pourNumber === 1 && pour.duration > 0 && (
                   <span className={styles.bloom}>蒸らし</span>
                 )}
               </span>

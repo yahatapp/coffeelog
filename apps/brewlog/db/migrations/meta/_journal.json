@@ -134,6 +134,13 @@
       "when": 1791385199933,
       "tag": "0018_romantic_black_cat",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1793716311886,
+      "tag": "0019_many_sunfire",
+      "breakpoints": true
     }
   ]
 }

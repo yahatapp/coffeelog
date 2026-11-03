@@ -81,7 +81,6 @@ const AddLog = () => {
     iceAmount: "",
     yieldAmount: 150,
     drawdownTime: "",
-    bloomingTime: "",
     hasBypass: false,
     pours: [],
   };
