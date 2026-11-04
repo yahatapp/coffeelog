@@ -74,6 +74,9 @@ function Catalog() {
             <Field label="日付">
               {(control) => <Input {...control} type="date" defaultValue="2026-10-31" />}
             </Field>
+            <Field label="補助的な入力" labelVariant="secondary">
+              {(control) => <Input {...control} placeholder="まとまりの中の入力" />}
+            </Field>
             <Label htmlFor="catalog-select">選択</Label>
             <Select id="catalog-select">
               <option>ホット</option>

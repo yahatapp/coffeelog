@@ -315,6 +315,7 @@ export const CafeLogForm = ({
                       <div className={styles.dynamicRow}>
                         <Field
                           label={`フレーバーノート ${index + 1}`}
+                          labelVariant="secondary"
                           error={errorMessage(noteField.state.meta.errors)}
                         >
                           {(control) => (
