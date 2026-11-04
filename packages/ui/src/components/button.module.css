@@ -56,6 +56,11 @@
     cursor: not-allowed;
     opacity: var(--cl-opacity-disabled);
   }
+  .extraSmall {
+    gap: var(--cl-space-tight);
+    padding: var(--cl-space-tight) var(--cl-space-field-gap);
+    font-size: var(--cl-font-size-caption);
+  }
   .small {
     font-size: var(--cl-font-size-helper);
   }
@@ -69,6 +74,12 @@
   .icon {
     min-width: var(--cl-size-target-min);
     width: var(--cl-size-target-min);
+    padding: 0;
+  }
+  .largeIcon {
+    min-width: var(--cl-size-icon-action-large);
+    width: var(--cl-size-icon-action-large);
+    height: var(--cl-size-icon-action-large);
     padding: 0;
   }
   .fullWidth {

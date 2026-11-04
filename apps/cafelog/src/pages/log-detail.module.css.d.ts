@@ -1,17 +1,14 @@
 declare const styles: {
   readonly actions: string;
-  readonly coffeeHeader: string;
-  readonly coffeeTitle: string;
+  readonly coffeeSummary: string;
   readonly confirmation: string;
   readonly confirmationTitle: string;
-  readonly externalLinks: string;
   readonly header: string;
   readonly heading: string;
   readonly label: string;
   readonly metadata: string;
   readonly muted: string;
   readonly note: string;
-  readonly origin: string;
   readonly panel: string;
   readonly rating: string;
   readonly root: string;
@@ -20,7 +17,15 @@ declare const styles: {
   readonly starEmpty: string;
   readonly starFill: string;
   readonly stars: string;
-  readonly storeLink: string;
+  readonly storeAction: string;
+  readonly storeActions: string;
+  readonly storeHeading: string;
+  readonly storeSection: string;
+  readonly storeTitle: string;
+  readonly summaryGrid: string;
+  readonly summaryHeading: string;
+  readonly summaryItem: string;
+  readonly summaryValue: string;
   readonly temperature: string;
   readonly titleRow: string;
   readonly visit: string;

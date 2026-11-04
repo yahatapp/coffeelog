@@ -345,7 +345,7 @@ export function StoreHistory({
           <ul className={styles.links}>
             {store.links.map((url) => (
               <li key={url}>
-                <StoreLink href={url} />
+                <StoreLink href={url} showExternalIndicator />
               </li>
             ))}
           </ul>

@@ -124,7 +124,11 @@ export async function verifyBrewPages(page, { baseURL, output, width, ids, reset
     ["not-found", "/missing"],
   ]) {
     await visit(path);
-    if (["stores", "store-detail"].includes(name)) await verifyStoreLinks(page);
+    if (["stores", "store-detail"].includes(name))
+      await verifyStoreLinks(page, {
+        externalIndicator: name !== "stores",
+        screenshotPath: resolve(output, `brewlog-${name}-links-${width}.png`),
+      });
     await audit(name);
   }
   await visit(`/beans/${ids.bean}`);

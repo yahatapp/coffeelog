@@ -3,6 +3,7 @@
   --cl-font-size-body: 1rem;
   --cl-font-size-label: 0.875rem;
   --cl-font-size-helper: 0.75rem;
+  --cl-font-size-caption: 0.6875rem;
   --cl-line-height-body: 1.5;
   --cl-space-page-inline: var(--cl-ref-space-4);
   --cl-space-field-gap: var(--cl-ref-space-2);
@@ -40,6 +41,9 @@
   --cl-size-nav-icon: 2rem;
   --cl-size-state-min: 16rem;
   --cl-size-icon: 1.25rem;
+  --cl-size-icon-small: 1rem;
+  --cl-size-icon-large: 1.5rem;
+  --cl-size-icon-action-large: 3.5rem;
   --cl-space-slider-inline: var(--cl-ref-space-3);
   --cl-size-slider-thumb: 1.25rem;
   --cl-size-slider-track: 0.5rem;

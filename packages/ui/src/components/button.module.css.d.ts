@@ -1,9 +1,11 @@
 declare const styles: {
   readonly danger: string;
+  readonly extraSmall: string;
   readonly fullWidth: string;
   readonly ghost: string;
   readonly icon: string;
   readonly large: string;
+  readonly largeIcon: string;
   readonly medium: string;
   readonly outline: string;
   readonly primary: string;

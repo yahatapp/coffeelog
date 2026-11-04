@@ -346,5 +346,21 @@
   "--cl-layer-floating": {
     "type": "number",
     "required": true
+  },
+  "--cl-font-size-caption": {
+    "type": "length",
+    "required": true
+  },
+  "--cl-size-icon-small": {
+    "type": "length",
+    "required": true
+  },
+  "--cl-size-icon-large": {
+    "type": "length",
+    "required": true
+  },
+  "--cl-size-icon-action-large": {
+    "type": "length",
+    "required": true
   }
 }

@@ -24,7 +24,55 @@ export async function verifyCafePages(
       await expect.poll(() => closes.count()).toBeLessThan(n);
     }
   };
+  const verifyDetailLayout = async () => {
+    const store = page.getByRole("region", { name: "お店の情報", exact: true });
+    const coffee = page.getByRole("region", { name: "飲んだコーヒーの概要", exact: true });
+    await expect(
+      page.getByRole("heading", { name: "記録の詳細", level: 2, exact: true }),
+    ).toBeVisible();
+    const storeTitle = store.getByRole("heading", { level: 3 });
+    await expect(storeTitle).toHaveText(data.log.cafeName);
+    await expect(storeTitle).toHaveCSS("font-size", "24px");
+    const storeBox = await store.boundingBox();
+    const coffeeBox = await coffee.boundingBox();
+    expect(coffeeBox.y).toBeGreaterThan(storeBox.y + storeBox.height);
+    await expect(coffee).toHaveCSS("border-top-style", "solid");
+    await expect(store.getByRole("img")).toHaveCount(0);
+    for (const label of ["国", "提供方法", "豆の種類", "評価"])
+      await expect(coffee.getByRole("term").filter({ hasText: label })).toBeVisible();
+    const links = store.getByRole("list", { name: "お店のリンク", exact: true }).getByRole("link");
+    const count = await links.count();
+    const columns = count >= 4 ? 4 : 3;
+    const boxes = [];
+    for (const link of await links.all()) {
+      await expect(link).toHaveText("");
+      const box = await link.boundingBox();
+      expect(box.width).toBe(56);
+      expect(box.height).toBe(56);
+      boxes.push(box);
+    }
+    const firstRow = boxes.slice(0, columns);
+    expect(new Set(firstRow.map((box) => box.y)).size).toBe(1);
+    const gaps = firstRow.slice(1).map((box, i) => box.x - firstRow[i].x - firstRow[i].width);
+    if (gaps.length > 1) expect(Math.abs(Math.max(...gaps) - Math.min(...gaps))).toBeLessThan(1);
+    const history = store.getByRole("link", { name: "このお店のコーヒー記録", exact: true });
+    await expect(history).toHaveAttribute("href", `/stores/${ids.store}`);
+    await history.focus();
+    await expect(history).toBeFocused();
+    await expect(history).toHaveCSS("outline-style", "solid");
+    await history.blur();
+  };
   const audit = async (name) => {
+    if (
+      [
+        "log-detail",
+        "log-detail-long",
+        "detail-without-optional",
+        "log-detail-three-links",
+        "log-detail-many-links",
+      ].includes(name)
+    )
+      await verifyDetailLayout();
     const r = await new AxeBuilder({ page })
       .withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"])
       .analyze();
@@ -64,9 +112,26 @@ export async function verifyCafePages(
     ["not-found", "/missing"],
   ]) {
     await visit(path);
-    if (["log-detail", "stores", "store-detail"].includes(name)) await verifyStoreLinks(page);
+    if (["log-detail", "stores", "store-detail"].includes(name))
+      await verifyStoreLinks(page, {
+        externalIndicator: name === "store-detail",
+        iconOnly: name === "log-detail",
+        screenshotPath: resolve(output, `cafelog-${name}-links-${width}.png`),
+      });
     await audit(name);
   }
+  const originalLinks = data.log.links;
+  data.log.links = originalLinks.slice(0, 2);
+  await visit(`/logs/${ids.log}`);
+  await audit("log-detail-three-links");
+  data.log.links = Array.from({ length: 10 }, (_, index) => ({
+    id: `many-link-${index}`,
+    url: `https://example.com/cafe/${index}`,
+    type: "website",
+  }));
+  await visit(`/logs/${ids.log}`);
+  await audit("log-detail-many-links");
+  data.log.links = originalLinks;
   data.logs.push({
     ...data.log,
     id: "10000000-0000-4000-8000-000000000099",

@@ -1,55 +1,89 @@
 import type { MouseEventHandler } from "react";
+import { Button, cn } from "./button";
 import { classifyStoreLink } from "../lib/store-links";
 import styles from "./store-link.module.css";
 
 export type StoreLinkProps = {
   href: string;
+  appearance?: "chip" | "icon";
+  showExternalIndicator?: boolean;
   onClick?: MouseEventHandler<HTMLAnchorElement>;
 };
 
 const instagramGlyph = new URL("../assets/instagram-glyph-gradient.png", import.meta.url).href;
 
-export function StoreLink({ href, onClick }: StoreLinkProps) {
+export function StoreLink({
+  href,
+  onClick,
+  showExternalIndicator = false,
+  appearance = "chip",
+}: StoreLinkProps) {
   const type = classifyStoreLink(href);
+  const iconOnly = appearance === "icon";
   const label =
     type === "instagram" ? "Instagram" : type === "google_maps" ? "Google Map" : "ホームページ";
 
   return (
-    <a
-      href={href}
-      target="_blank"
-      rel="noopener noreferrer"
-      onClick={onClick}
-      className={styles.link}
-    >
-      {type === "instagram" ? (
-        <img src={instagramGlyph} alt="" aria-hidden="true" width={32} height={32} />
-      ) : (
-        <svg
-          viewBox="0 0 24 24"
-          width="18"
-          height="18"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          aria-hidden="true"
-          className={styles.icon}
-        >
-          {type === "google_maps" ? (
-            <>
-              <path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 1 1 16 0Z" />
-              <circle cx="12" cy="10" r="3" />
-            </>
-          ) : (
-            <>
-              <circle cx="12" cy="12" r="10" />
-              <ellipse cx="12" cy="12" rx="4" ry="10" />
-              <path d="M2 12h20" />
-            </>
-          )}
-        </svg>
-      )}
-      <span>{label}</span>
-    </a>
+    <Button asChild variant="secondary" size={iconOnly ? "icon-lg" : "xs"}>
+      <a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        onClick={onClick}
+        aria-label={iconOnly ? label : undefined}
+        title={iconOnly ? label : undefined}
+      >
+        {type === "instagram" ? (
+          <img
+            src={instagramGlyph}
+            alt=""
+            aria-hidden="true"
+            width={16}
+            height={16}
+            className={cn(styles.brandIcon, iconOnly && styles.largeIcon)}
+          />
+        ) : (
+          <svg
+            viewBox="0 0 24 24"
+            width="16"
+            height="16"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            aria-hidden="true"
+            className={cn(styles.icon, iconOnly && styles.largeIcon)}
+          >
+            {type === "google_maps" ? (
+              <>
+                <path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 1 1 16 0Z" />
+                <circle cx="12" cy="10" r="3" />
+              </>
+            ) : (
+              <>
+                <circle cx="12" cy="12" r="10" />
+                <ellipse cx="12" cy="12" rx="4" ry="10" />
+                <path d="M2 12h20" />
+              </>
+            )}
+          </svg>
+        )}
+        {!iconOnly && <span>{label}</span>}
+        {showExternalIndicator && !iconOnly && (
+          <svg
+            viewBox="0 0 24 24"
+            width="16"
+            height="16"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            aria-hidden="true"
+            data-external-indicator="true"
+            className={cn(styles.icon, iconOnly && styles.largeIcon)}
+          >
+            <path d="M14 3h7v7M21 3l-9 9M10 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-5" />
+          </svg>
+        )}
+      </a>
+    </Button>
   );
 }
