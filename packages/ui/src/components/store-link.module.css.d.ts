@@ -1,5 +1,5 @@
 declare const styles: {
+  readonly brandIcon: string;
   readonly icon: string;
-  readonly link: string;
 };
 export default styles;

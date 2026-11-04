@@ -2,7 +2,7 @@
 
 `instagram-glyph-gradient.png` is a 96 × 96 transparent PNG export of
 `Instagram_Glyph_Gradient.svg`, supplied by the user from Meta's official
-Instagram brand asset pack. It is displayed at 32 × 32 CSS pixels (3× density).
+Instagram brand asset pack. It is displayed at 24 × 24 CSS pixels (4× density).
 The export preserves the original artwork, colors, and transparency.
 
 The original SVG embeds a large raster image and is approximately 10.9 MB.

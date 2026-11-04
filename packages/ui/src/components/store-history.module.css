@@ -1,8 +1,7 @@
 @layer components {
   .stack,
   .sectionStack,
-  .list,
-  .links {
+  .list {
     display: flex;
     flex-direction: column;
     gap: var(--cl-space-page-inline);
@@ -11,7 +10,10 @@
     gap: var(--cl-space-section-gap);
   }
   .links {
+    display: flex;
+    flex-wrap: wrap;
     gap: var(--cl-space-field-gap);
+    margin-top: var(--cl-space-page-inline);
   }
   .toolbar,
   .modalHeader {
@@ -98,7 +100,7 @@
     display: flex;
     flex-wrap: wrap;
     gap: var(--cl-space-field-gap);
-    padding: 0 var(--cl-space-page-inline) var(--cl-space-field-gap);
+    padding: 0 var(--cl-space-page-inline) var(--cl-space-page-inline);
   }
   .storeButton,
   .recordButton {
