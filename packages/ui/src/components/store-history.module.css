@@ -71,7 +71,7 @@
     overflow: hidden;
     white-space: nowrap;
   }
-  .storeButton,
+  .storePanel,
   .recordButton,
   .record,
   .panel {
@@ -83,6 +83,22 @@
     text-align: start;
     background: var(--cl-color-surface);
     color: var(--cl-color-text);
+  }
+  .storeButton {
+    display: block;
+    width: 100%;
+    padding: var(--cl-space-page-inline);
+    text-align: start;
+    color: var(--cl-color-text);
+  }
+  .storePanel {
+    padding: 0;
+  }
+  .storeLinks {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--cl-space-field-gap);
+    padding: 0 var(--cl-space-page-inline) var(--cl-space-field-gap);
   }
   .storeButton,
   .recordButton {
@@ -98,8 +114,7 @@
   .recordButton:focus-visible,
   .sortOption:focus-visible,
   .iconButton:focus-visible,
-  .brewAction:focus-visible,
-  .link:focus-visible {
+  .brewAction:focus-visible {
     outline: var(--cl-focus-width) solid var(--cl-color-focus);
     outline-offset: var(--cl-focus-offset);
   }
@@ -188,15 +203,7 @@
   .description {
     margin-top: var(--cl-space-field-gap);
   }
-  .link {
-    display: inline-block;
-    min-height: var(--cl-size-target-min);
-    overflow-wrap: anywhere;
-    padding-block: var(--cl-space-field-gap);
-    font-size: var(--cl-font-size-label);
-    color: var(--cl-color-action-primary);
-    text-decoration: underline;
-  }
+
   .recordButton,
   .record {
     display: flex;

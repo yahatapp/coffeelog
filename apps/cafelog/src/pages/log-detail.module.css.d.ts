@@ -4,7 +4,6 @@ declare const styles: {
   readonly coffeeTitle: string;
   readonly confirmation: string;
   readonly confirmationTitle: string;
-  readonly externalLink: string;
   readonly externalLinks: string;
   readonly header: string;
   readonly heading: string;

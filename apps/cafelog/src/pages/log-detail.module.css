@@ -128,16 +128,6 @@
     gap: var(--cl-space-field-gap);
     flex-wrap: wrap;
   }
-  .externalLink {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-width: var(--cl-size-target-min);
-    min-height: var(--cl-size-target-min);
-    border-radius: var(--cl-radius-action);
-    color: var(--cl-color-action-primary);
-  }
-  .externalLink:focus-visible,
   .storeLink:focus-visible {
     outline: var(--cl-focus-width) solid var(--cl-color-focus);
     outline-offset: var(--cl-focus-offset);

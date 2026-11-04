@@ -2,6 +2,7 @@ import styles from "./store-history.module.css";
 import { Dialog } from "@base-ui/react/dialog";
 import { Button } from "./button";
 import { Input } from "./input";
+import { StoreLink } from "./store-link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { EmptyState } from "./status";
 
@@ -195,7 +196,7 @@ export function StoreList({
       ) : (
         <ul className={styles.list}>
           {filtered.map((store) => (
-            <li key={store.id}>
+            <li key={store.id} className={styles.storePanel}>
               <button
                 type="button"
                 onClick={() => onSelect(store.id)}
@@ -204,6 +205,15 @@ export function StoreList({
                 <span className={styles.storeName}>{store.name}</span>
                 <span className={styles.storeMeta}>{store.prefecture || "都道府県未登録"}</span>
               </button>
+              {store.links.length > 0 && (
+                <ul className={styles.storeLinks}>
+                  {store.links.map((url) => (
+                    <li key={url}>
+                      <StoreLink href={url} />
+                    </li>
+                  ))}
+                </ul>
+              )}
             </li>
           ))}
         </ul>
@@ -333,11 +343,9 @@ export function StoreHistory({
         <p className={styles.description}>{store.prefecture || "都道府県未登録"}</p>
         {store.links.length > 0 && (
           <ul className={styles.links}>
-            {store.links.map((url, index) => (
+            {store.links.map((url) => (
               <li key={url}>
-                <a href={url} target="_blank" rel="noopener noreferrer" className={styles.link}>
-                  お店のリンク {index + 1}
-                </a>
+                <StoreLink href={url} />
               </li>
             ))}
           </ul>
