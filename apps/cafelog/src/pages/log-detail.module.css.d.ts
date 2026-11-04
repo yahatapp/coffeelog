@@ -19,7 +19,9 @@ declare const styles: {
   readonly stars: string;
   readonly storeAction: string;
   readonly storeActions: string;
+  readonly storeHeading: string;
   readonly storeSection: string;
+  readonly storeTitle: string;
   readonly summaryGrid: string;
   readonly summaryHeading: string;
   readonly summaryItem: string;

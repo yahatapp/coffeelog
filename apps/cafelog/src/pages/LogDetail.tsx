@@ -165,7 +165,7 @@ const LogDetailPage = () => {
               <ArrowLeft size={20} aria-hidden="true" />
             </Link>
           </Button>
-          <h2 className={styles.heading}>{isEditMode ? "記録の編集" : log.cafeName}</h2>
+          <h2 className={styles.heading}>{isEditMode ? "記録の編集" : "記録の詳細"}</h2>
         </div>
         {!isEditMode && !showDeleteConfirm && (
           <div className={styles.actions}>
@@ -242,10 +242,13 @@ const LogDetailPage = () => {
       ) : (
         <article className={styles.panel}>
           <section aria-label="お店の情報" className={styles.storeSection}>
-            <p className={styles.metadata}>
-              <MapPin size={14} aria-hidden="true" />
-              {log.prefecture || "都道府県未登録"}
-            </p>
+            <header className={styles.storeHeading}>
+              <h3 className={styles.storeTitle}>{log.cafeName}</h3>
+              <p className={styles.metadata}>
+                <MapPin size={14} aria-hidden="true" />
+                {log.prefecture || "都道府県未登録"}
+              </p>
+            </header>
             <ul
               aria-label="お店のリンク"
               className={styles.storeActions}

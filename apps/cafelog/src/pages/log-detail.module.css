@@ -42,6 +42,18 @@
     flex-direction: column;
     gap: var(--cl-space-page-inline);
   }
+  .storeHeading {
+    display: flex;
+    flex-direction: column;
+    gap: var(--cl-space-field-gap);
+    min-width: 0;
+  }
+  .storeTitle {
+    font-size: var(--cl-font-size-page-title);
+    font-weight: var(--cl-font-weight-strong);
+    color: var(--cl-color-action-primary);
+    overflow-wrap: anywhere;
+  }
   .storeActions {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));

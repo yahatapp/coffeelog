@@ -27,6 +27,12 @@ export async function verifyCafePages(
   const verifyDetailLayout = async () => {
     const store = page.getByRole("region", { name: "お店の情報", exact: true });
     const coffee = page.getByRole("region", { name: "飲んだコーヒーの概要", exact: true });
+    await expect(
+      page.getByRole("heading", { name: "記録の詳細", level: 2, exact: true }),
+    ).toBeVisible();
+    const storeTitle = store.getByRole("heading", { level: 3 });
+    await expect(storeTitle).toHaveText(data.log.cafeName);
+    await expect(storeTitle).toHaveCSS("font-size", "24px");
     const storeBox = await store.boundingBox();
     const coffeeBox = await coffee.boundingBox();
     expect(coffeeBox.y).toBeGreaterThan(storeBox.y + storeBox.height);
