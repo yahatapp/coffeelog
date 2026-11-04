@@ -15,6 +15,7 @@
 - Checkboxは見た目と操作領域を分ける。小さな枠の周囲も44px以上の範囲で操作でき、ラベルのクリックとSpaceキーで切り替えられる。
 - ButtonにclassNameを渡して見た目を変える前に、既存の型付きAPIで表せるか確認する。
 - 必須、invalid、read-only、disabled、loading、hover、focusは、利用する部品の状態として確認する。
+- FieldのlabelVariant="secondary"は、fieldset内の繰り返し入力など、親見出しの下にあるラベルに使う。小さめの通常ウェイトと補助文字色で階層を示し、入力との関連付けは保つ。
 
 ## 複合部品と画面状態
 

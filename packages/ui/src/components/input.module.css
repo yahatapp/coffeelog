@@ -16,6 +16,12 @@
     color: var(--cl-color-text-muted);
     opacity: 1;
   }
+  .root[type="date"] {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: var(--cl-size-input);
+  }
   .root:focus-visible {
     outline: var(--cl-focus-width) solid var(--cl-color-focus);
     outline-offset: var(--cl-focus-offset);

@@ -10,6 +10,7 @@ export type FieldControl = {
 export type FieldProps = {
   id?: string;
   label: ReactNode;
+  labelVariant?: "default" | "secondary";
   description?: ReactNode;
   error?: ReactNode;
   required?: boolean;
@@ -18,6 +19,7 @@ export type FieldProps = {
 export function Field({
   id: provided,
   label,
+  labelVariant = "default",
   description,
   error,
   required = false,
@@ -30,7 +32,10 @@ export function Field({
   const describedBy = [descriptionId, errorId].filter(Boolean).join(" ") || undefined;
   return (
     <div className={styles.root}>
-      <Label htmlFor={id}>
+      <Label
+        htmlFor={id}
+        className={labelVariant === "secondary" ? styles.secondaryLabel : undefined}
+      >
         {label}
         {required && <span aria-hidden="true"> *</span>}
       </Label>

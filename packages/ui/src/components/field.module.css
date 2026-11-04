@@ -8,6 +8,11 @@
     font-size: var(--cl-font-size-helper);
     color: var(--cl-color-text-muted);
   }
+  .secondaryLabel {
+    font-size: var(--cl-font-size-helper);
+    font-weight: normal;
+    color: var(--cl-color-text-muted);
+  }
   .error {
     font-size: var(--cl-font-size-helper);
     color: var(--cl-color-error);

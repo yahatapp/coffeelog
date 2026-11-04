@@ -9,7 +9,7 @@
 | media・containerの境界       | 幅の境界値をCSS変数で指定できないため、条件に直接記す                                                                                           | [フォーム](../../apps/brewlog/src/components/forms/forms.module.css)、[モーダル](../../packages/ui/src/components/store-history.module.css) |
 | SVGの図形と描画寸法          | 図形データとアイコン描画の属性を保持する。部品の反応領域はCSSで決める                                                                           | 各アイコンと[Button](../../packages/ui/src/components/button.module.css)                                                                    |
 | reduced-motionの共通ルール   | 通常の部品指定より優先するため、共通base内だけimportantを使う                                                                                   | [base.css](../../packages/ui/src/styles/base.css)                                                                                           |
-| ネイティブ入力のブラウザー差 | 日付・数値欄のappearance等を入口で揃える。日付欄のWebKit内部表示とカレンダーボタンの配置を調整し、両テーマ・Chromium/WebKitで中央寄せを確認する | [base.css](../../packages/ui/src/styles/base.css)、[Cafelog入口](../../apps/cafelog/src/index.css)                                          |
+| ネイティブ入力のブラウザー差 | 日付・数値欄のappearance等を入口で揃える。通常のpropsでは指定できないWebKit内部表示をflexで縦横中央に揃え、カレンダーボタンを配置する。共通Inputの日付欄は高さも固定し、両テーマ・Chromium/WebKitで空欄・入力済みの中央寄せと操作を確認する | [base.css](../../packages/ui/src/styles/base.css)、[Input](../../packages/ui/src/components/input.module.css)、[Cafelog入口](../../apps/cafelog/src/index.css) |
 
 ## 新しい例外の記録
 
