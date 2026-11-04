@@ -64,7 +64,11 @@ export async function verifyCafePages(
     ["not-found", "/missing"],
   ]) {
     await visit(path);
-    if (["log-detail", "stores", "store-detail"].includes(name)) await verifyStoreLinks(page);
+    if (["log-detail", "stores", "store-detail"].includes(name))
+      await verifyStoreLinks(page, {
+        externalIndicator: name !== "stores",
+        screenshotPath: resolve(output, `cafelog-${name}-links-${width}.png`),
+      });
     await audit(name);
   }
   data.logs.push({

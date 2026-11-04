@@ -56,6 +56,11 @@
     cursor: not-allowed;
     opacity: var(--cl-opacity-disabled);
   }
+  .extraSmall {
+    gap: var(--cl-space-tight);
+    padding: var(--cl-space-tight) var(--cl-space-field-gap);
+    font-size: var(--cl-font-size-caption);
+  }
   .small {
     font-size: var(--cl-font-size-helper);
   }

@@ -9,14 +9,25 @@ export const storeLinkFixtures = [
   { url: "https://example.com/cafe", label: "ホームページ" },
 ];
 
-export async function verifyStoreLinks(page) {
+export async function verifyStoreLinks(page, { externalIndicator = false, screenshotPath } = {}) {
   for (const { url, label } of storeLinkFixtures) {
     const link = page.getByRole("link", { name: label, exact: true });
     await expect(link).toHaveText(label);
     await expect(link).toHaveAttribute("href", url);
     await expect(link).toHaveAttribute("target", "_blank");
     await expect(link).toHaveAttribute("rel", "noopener noreferrer");
-    await expect(link.locator('img[aria-hidden="true"], svg[aria-hidden="true"]')).toHaveCount(1);
+    await expect(link.locator('img[aria-hidden="true"], svg[aria-hidden="true"]')).toHaveCount(
+      externalIndicator ? 2 : 1,
+    );
+    await expect(link.locator('[data-external-indicator="true"]')).toHaveCount(
+      externalIndicator ? 1 : 0,
+    );
+    await expect(link).toHaveCSS("font-size", "11px");
+    for (const icon of await link.locator("img, svg").all()) {
+      const iconBox = await icon.boundingBox();
+      expect(iconBox.width).toBe(16);
+      expect(iconBox.height).toBe(16);
+    }
     if (label === "Instagram") {
       await expect.poll(() => link.locator("img").evaluate((img) => img.naturalWidth)).toBe(96);
     }
@@ -40,4 +51,20 @@ export async function verifyStoreLinks(page) {
     await link.blur();
   }
   await page.mouse.move(0, 0);
+  if (screenshotPath) {
+    await page.evaluate(() => window.scrollTo(0, 0));
+    const lastLink = await page
+      .getByRole("link", { name: "ホームページ", exact: true })
+      .boundingBox();
+    const { width, height } = page.viewportSize();
+    await page.screenshot({
+      path: screenshotPath,
+      clip: {
+        x: 0,
+        y: 0,
+        width,
+        height: Math.min(height, Math.ceil(lastLink.y + lastLink.height + 24)),
+      },
+    });
+  }
 }

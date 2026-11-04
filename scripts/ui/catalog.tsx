@@ -43,7 +43,7 @@ function Catalog() {
         <Button asChild loading>
           <a href="#blocked">保存中のリンク</a>
         </Button>
-        {(["sm", "md", "lg", "icon"] as const).map((size) => (
+        {(["xs", "sm", "md", "lg", "icon"] as const).map((size) => (
           <Button key={size} size={size} aria-label={`サイズ ${size}`}>
             {size === "icon" ? "+" : `サイズ ${size}`}
           </Button>

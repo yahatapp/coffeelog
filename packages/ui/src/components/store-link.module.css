@@ -2,9 +2,7 @@
   .icon,
   .brandIcon {
     flex-shrink: 0;
-  }
-  .brandIcon {
-    width: var(--cl-size-brand-icon);
-    height: var(--cl-size-brand-icon);
+    width: var(--cl-size-icon-small);
+    height: var(--cl-size-icon-small);
   }
 }

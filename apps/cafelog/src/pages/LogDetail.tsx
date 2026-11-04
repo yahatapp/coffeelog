@@ -286,6 +286,7 @@ const LogDetailPage = () => {
                     <StoreLink
                       key={link.id}
                       href={link.url}
+                      showExternalIndicator
                       onClick={() => analytics.trackEvent("external_link_click")}
                     />
                   ))}

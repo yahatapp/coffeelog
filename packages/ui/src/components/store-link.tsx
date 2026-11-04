@@ -5,33 +5,34 @@ import styles from "./store-link.module.css";
 
 export type StoreLinkProps = {
   href: string;
+  showExternalIndicator?: boolean;
   onClick?: MouseEventHandler<HTMLAnchorElement>;
 };
 
 const instagramGlyph = new URL("../assets/instagram-glyph-gradient.png", import.meta.url).href;
 
-export function StoreLink({ href, onClick }: StoreLinkProps) {
+export function StoreLink({ href, onClick, showExternalIndicator = false }: StoreLinkProps) {
   const type = classifyStoreLink(href);
   const label =
     type === "instagram" ? "Instagram" : type === "google_maps" ? "Google Map" : "ホームページ";
 
   return (
-    <Button asChild variant="secondary" size="sm">
+    <Button asChild variant="secondary" size="xs">
       <a href={href} target="_blank" rel="noopener noreferrer" onClick={onClick}>
         {type === "instagram" ? (
           <img
             src={instagramGlyph}
             alt=""
             aria-hidden="true"
-            width={24}
-            height={24}
+            width={16}
+            height={16}
             className={styles.brandIcon}
           />
         ) : (
           <svg
             viewBox="0 0 24 24"
-            width="18"
-            height="18"
+            width="16"
+            height="16"
             fill="none"
             stroke="currentColor"
             strokeWidth="2"
@@ -53,6 +54,21 @@ export function StoreLink({ href, onClick }: StoreLinkProps) {
           </svg>
         )}
         <span>{label}</span>
+        {showExternalIndicator && (
+          <svg
+            viewBox="0 0 24 24"
+            width="16"
+            height="16"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            aria-hidden="true"
+            data-external-indicator="true"
+            className={styles.icon}
+          >
+            <path d="M14 3h7v7M21 3l-9 9M10 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-5" />
+          </svg>
+        )}
       </a>
     </Button>
   );

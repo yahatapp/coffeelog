@@ -32,7 +32,7 @@
 - Cafelogの記録の作成・編集・削除、Brewlogの記録・豆・器具の更新結果は共通のMutationCacheで通知する。ページ遷移後も通知を表示し、写真だけ保存できなかった場合は成功の代わりに警告を表示する。
 - 色や寸法の新しい意味が必要なら、部品の型とトークンを同じ変更で整備する。
 
-- 店舗の外部リンクは[StoreLink](../../packages/ui/src/components/store-link.tsx)を使う。URLからサービスを判別し、共通Buttonのsecondary・smを使い、アイコンとサービス名を丸いチップとして表示する。店舗一覧では店舗を開くボタンと外部リンクを別の操作として配置する。
+- 店舗の外部リンクは[StoreLink](../../packages/ui/src/components/store-link.tsx)を使う。URLからサービスを判別し、共通Buttonのsecondary・xsを使い、アイコンとサービス名を丸いチップとして表示する。詳細画面はshowExternalIndicatorで外部リンクの矢印を添える。xsサイズでも44px以上の操作領域を保つ。店舗一覧では店舗を開くボタンと外部リンクを別の操作として配置する。
 
 ## 実行できる例
 

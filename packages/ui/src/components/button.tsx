@@ -8,7 +8,7 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
   loading?: boolean;
   fullWidth?: boolean;
   variant?: "primary" | "secondary" | "outline" | "ghost" | "danger";
-  size?: "sm" | "md" | "lg" | "icon";
+  size?: "xs" | "sm" | "md" | "lg" | "icon";
 }
 
 const variants = {
@@ -18,7 +18,13 @@ const variants = {
   outline: styles.outline,
   ghost: styles.ghost,
 } as const;
-const sizes = { sm: styles.small, md: styles.medium, lg: styles.large, icon: styles.icon } as const;
+const sizes = {
+  xs: styles.extraSmall,
+  sm: styles.small,
+  md: styles.medium,
+  lg: styles.large,
+  icon: styles.icon,
+} as const;
 
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   (
