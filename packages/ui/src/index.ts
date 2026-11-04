@@ -45,3 +45,6 @@ export {
   type BottomNavigationProps,
   type SessionStateProps,
 } from "./components/app-shell";
+
+export { StoreLink, type StoreLinkProps } from "./components/store-link";
+export { STORE_LINK_TYPES, classifyStoreLink, type StoreLinkType } from "./lib/store-links";

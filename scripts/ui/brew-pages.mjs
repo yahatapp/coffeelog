@@ -1,3 +1,4 @@
+import { storeLinkFixtures, verifyStoreLinks } from "./store-links.mjs";
 import { createRequire } from "node:module";
 import { resolve } from "node:path";
 import { writeFile } from "node:fs/promises";
@@ -108,7 +109,7 @@ export async function verifyBrewPages(page, { baseURL, output, width, ids, reset
     await audit("settings-recovered");
     return records;
   }
-  reset();
+  reset().store.links = storeLinkFixtures.map(({ url }) => url);
   for (const [name, path] of [
     ["home", "/"],
     ["beans", "/beans"],
@@ -123,6 +124,7 @@ export async function verifyBrewPages(page, { baseURL, output, width, ids, reset
     ["not-found", "/missing"],
   ]) {
     await visit(path);
+    if (["stores", "store-detail"].includes(name)) await verifyStoreLinks(page);
     await audit(name);
   }
   await visit(`/beans/${ids.bean}`);

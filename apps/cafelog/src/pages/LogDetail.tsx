@@ -1,9 +1,8 @@
-import { Button, Loading, ErrorState, EmptyState } from "@yahatapp/ui";
+import { Button, Loading, ErrorState, EmptyState, StoreLink } from "@yahatapp/ui";
 import styles from "./log-detail.module.css";
 import { mutationNotices } from "@/lib/mutationNotices";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { FaGlobe, FaMapLocationDot } from "react-icons/fa6";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import {
   ArrowLeft,
@@ -283,39 +282,13 @@ const LogDetailPage = () => {
               </div>
               {log.links.length > 0 && (
                 <div className={styles.externalLinks}>
-                  {log.links.map((link) => {
-                    const Icon = link.type === "google_maps" ? FaMapLocationDot : FaGlobe;
-                    const label =
-                      link.type === "instagram"
-                        ? "Instagram"
-                        : link.type === "google_maps"
-                          ? "Google Map"
-                          : "ホームページ";
-                    return (
-                      <a
-                        key={link.id}
-                        href={link.url}
-                        onClick={() => analytics.trackEvent("external_link_click")}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        aria-label={label}
-                        title={label}
-                        className={styles.externalLink}
-                      >
-                        {link.type === "instagram" ? (
-                          <img
-                            src="/brand/instagram-glyph-gradient.png"
-                            alt=""
-                            aria-hidden="true"
-                            width={32}
-                            height={32}
-                          />
-                        ) : (
-                          <Icon size={18} aria-hidden="true" />
-                        )}
-                      </a>
-                    );
-                  })}
+                  {log.links.map((link) => (
+                    <StoreLink
+                      key={link.id}
+                      href={link.url}
+                      onClick={() => analytics.trackEvent("external_link_click")}
+                    />
+                  ))}
                 </div>
               )}
             </div>

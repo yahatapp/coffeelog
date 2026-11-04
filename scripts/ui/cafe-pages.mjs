@@ -1,3 +1,4 @@
+import { storeLinkFixtures, verifyStoreLinks } from "./store-links.mjs";
 import { createRequire } from "node:module";
 import { resolve } from "node:path";
 import { writeFile } from "node:fs/promises";
@@ -51,6 +52,8 @@ export async function verifyCafePages(
     records.push(name);
   };
   let data = reset();
+  data.store.links = storeLinkFixtures.map(({ url }) => url);
+  data.log.links = storeLinkFixtures.map(({ url }, index) => ({ id: `link-${index}`, url }));
   for (const [name, path] of [
     ["home", "/"],
     ["logs", "/logs"],
@@ -61,6 +64,7 @@ export async function verifyCafePages(
     ["not-found", "/missing"],
   ]) {
     await visit(path);
+    if (["log-detail", "stores", "store-detail"].includes(name)) await verifyStoreLinks(page);
     await audit(name);
   }
   data.logs.push({

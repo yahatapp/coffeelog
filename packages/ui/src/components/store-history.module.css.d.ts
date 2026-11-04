@@ -14,7 +14,6 @@ declare const styles: {
   readonly iconButton: string;
   readonly label: string;
   readonly largeIcon: string;
-  readonly link: string;
   readonly links: string;
   readonly list: string;
   readonly modal: string;
@@ -33,8 +32,10 @@ declare const styles: {
   readonly sortOption: string;
   readonly stack: string;
   readonly storeButton: string;
+  readonly storeLinks: string;
   readonly storeMeta: string;
   readonly storeName: string;
+  readonly storePanel: string;
   readonly summary: string;
   readonly title: string;
   readonly toolbar: string;

@@ -1,0 +1,23 @@
+@layer components {
+  .link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--cl-space-field-gap);
+    min-height: var(--cl-size-target-min);
+    border-radius: var(--cl-radius-action);
+    font-size: var(--cl-font-size-helper);
+    color: var(--cl-color-action-primary);
+    text-decoration: underline;
+    overflow-wrap: anywhere;
+  }
+  .icon {
+    flex-shrink: 0;
+  }
+  .link:hover {
+    background: var(--cl-color-surface-tonal);
+  }
+  .link:focus-visible {
+    outline: var(--cl-focus-width) solid var(--cl-color-focus);
+    outline-offset: var(--cl-focus-offset);
+  }
+}
