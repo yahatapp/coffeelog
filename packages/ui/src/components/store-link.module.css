@@ -5,4 +5,8 @@
     width: var(--cl-size-icon-small);
     height: var(--cl-size-icon-small);
   }
+  .largeIcon {
+    width: var(--cl-size-icon-large);
+    height: var(--cl-size-icon-large);
+  }
 }

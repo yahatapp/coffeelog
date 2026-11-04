@@ -37,35 +37,54 @@
     box-shadow: var(--cl-shadow-card);
     min-width: 0;
   }
-  .coffeeHeader {
-    display: flex;
-    align-items: flex-start;
-    gap: var(--cl-space-field-gap);
-    min-width: 0;
-  }
-  .origin {
+  .storeSection {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: var(--cl-space-field-gap);
-    width: var(--cl-size-nav);
-    flex-shrink: 0;
-    text-align: center;
+    gap: var(--cl-space-page-inline);
   }
-  .coffeeTitle {
+  .storeActions {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--cl-space-field-gap);
+  }
+  .storeActions[data-columns="4"] {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .storeAction {
     display: flex;
-    flex-direction: column;
-    gap: var(--cl-space-field-gap);
-    min-width: 0;
-    flex: 1;
+    justify-content: center;
   }
-  .storeLink {
-    display: inline-flex;
-    align-items: center;
-    min-height: var(--cl-size-target-min);
-    font-size: var(--cl-font-size-helper);
+  .coffeeSummary {
+    border-top: var(--cl-border-width) solid var(--cl-color-border-decorative);
+    padding-top: var(--cl-space-section-gap);
+  }
+  .summaryHeading {
+    margin-bottom: var(--cl-space-page-inline);
+    font-size: var(--cl-font-size-label);
+    font-weight: var(--cl-font-weight-strong);
     color: var(--cl-color-action-primary);
-    text-decoration: underline;
+  }
+  .summaryGrid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--cl-space-page-inline);
+  }
+  .summaryItem {
+    display: flex;
+    flex-direction: column;
+    gap: var(--cl-space-field-gap);
+    min-width: 0;
+  }
+  .summaryValue {
+    display: flex;
+    align-items: center;
+    gap: var(--cl-space-field-gap);
+    min-height: var(--cl-size-brand-icon);
+    margin: 0;
+    font-size: var(--cl-font-size-label);
+    font-weight: var(--cl-font-weight-medium);
+    color: var(--cl-color-text);
+    overflow-wrap: anywhere;
   }
   .metadata {
     display: flex;
@@ -78,7 +97,7 @@
   .rating {
     display: flex;
     align-items: center;
-    gap: var(--cl-space-field-gap);
+    gap: var(--cl-space-tight);
     flex-wrap: wrap;
     color: var(--cl-color-action-primary);
     font-weight: var(--cl-font-weight-medium);
@@ -121,16 +140,6 @@
   .temperature[data-temperature="iced"] {
     color: var(--cl-color-temperature-iced);
     background: var(--cl-color-temperature-iced-surface);
-  }
-  .externalLinks {
-    display: flex;
-    align-items: center;
-    gap: var(--cl-space-field-gap);
-    flex-wrap: wrap;
-  }
-  .storeLink:focus-visible {
-    outline: var(--cl-focus-width) solid var(--cl-color-focus);
-    outline-offset: var(--cl-focus-offset);
   }
   .muted {
     font-size: var(--cl-font-size-helper);

@@ -7,6 +7,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import {
   ArrowLeft,
   Calendar,
+  Coffee,
   Edit2,
   MessageSquare,
   MapPin,
@@ -164,7 +165,7 @@ const LogDetailPage = () => {
               <ArrowLeft size={20} aria-hidden="true" />
             </Link>
           </Button>
-          <h2 className={styles.heading}>{isEditMode ? "記録の編集" : "記録の詳細"}</h2>
+          <h2 className={styles.heading}>{isEditMode ? "記録の編集" : log.cafeName}</h2>
         </div>
         {!isEditMode && !showDeleteConfirm && (
           <div className={styles.actions}>
@@ -240,60 +241,90 @@ const LogDetailPage = () => {
         />
       ) : (
         <article className={styles.panel}>
-          <div className={styles.coffeeHeader}>
-            <div className={styles.origin}>
-              <OriginFlag origin={log.origin} />
-              <span className={styles.muted}>
-                {log.isBlend == null ? "未登録" : log.isBlend ? "ブレンド" : "シングル"}
-              </span>
-            </div>
-            <div className={styles.coffeeTitle}>
-              <h3 className={styles.heading}>{log.cafeName}</h3>
-              <Link to={`/stores/${log.storeId}`} className={styles.storeLink}>
-                このお店のコーヒー記録
-              </Link>
-              {log.prefecture && (
-                <p className={styles.metadata}>
-                  <MapPin size={12} aria-hidden="true" />
-                  {log.prefecture}
-                </p>
-              )}
-              <div className={styles.metadata}>
-                {log.rating == null ? (
-                  <span className={styles.muted}>評価なし</span>
-                ) : (
-                  <span className={styles.rating} role="img" aria-label={`評価 ${log.rating} / 5`}>
-                    {renderStars(log.rating)}
-                    <span>{log.rating}</span>
-                  </span>
-                )}
-                {log.servingStyle === "iced" && (
-                  <span className={styles.temperature} data-temperature="iced">
-                    <Snowflake size={15} aria-hidden="true" />
-                    アイス
-                  </span>
-                )}
-                {log.servingStyle === "hot" && (
-                  <span className={styles.temperature} data-temperature="hot">
-                    <ThermometerSun size={15} aria-hidden="true" />
-                    ホット
-                  </span>
-                )}
+          <section aria-label="お店の情報" className={styles.storeSection}>
+            <p className={styles.metadata}>
+              <MapPin size={14} aria-hidden="true" />
+              {log.prefecture || "都道府県未登録"}
+            </p>
+            <ul
+              aria-label="お店のリンク"
+              className={styles.storeActions}
+              data-columns={log.links.length + 1 >= 4 ? "4" : "3"}
+            >
+              {log.links.map((link) => (
+                <li key={link.id} className={styles.storeAction}>
+                  <StoreLink
+                    href={link.url}
+                    appearance="icon"
+                    onClick={() => analytics.trackEvent("external_link_click")}
+                  />
+                </li>
+              ))}
+              <li className={styles.storeAction}>
+                <Button asChild variant="secondary" size="icon-lg">
+                  <Link
+                    to={`/stores/${log.storeId}`}
+                    aria-label="このお店のコーヒー記録"
+                    title="このお店のコーヒー記録"
+                  >
+                    <Coffee size={24} aria-hidden="true" />
+                  </Link>
+                </Button>
+              </li>
+            </ul>
+          </section>
+          <section aria-label="飲んだコーヒーの概要" className={styles.coffeeSummary}>
+            <h3 className={styles.summaryHeading}>飲んだコーヒー</h3>
+            <dl className={styles.summaryGrid}>
+              <div className={styles.summaryItem}>
+                <dt className={styles.label}>国</dt>
+                <dd className={styles.summaryValue}>
+                  <OriginFlag origin={log.origin} />
+                  {log.origin || "産地未登録"}
+                </dd>
               </div>
-              {log.links.length > 0 && (
-                <div className={styles.externalLinks}>
-                  {log.links.map((link) => (
-                    <StoreLink
-                      key={link.id}
-                      href={link.url}
-                      showExternalIndicator
-                      onClick={() => analytics.trackEvent("external_link_click")}
-                    />
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
+              <div className={styles.summaryItem}>
+                <dt className={styles.label}>提供方法</dt>
+                <dd className={styles.summaryValue}>
+                  {log.servingStyle === "hot" || log.servingStyle === "iced" ? (
+                    <span className={styles.temperature} data-temperature={log.servingStyle}>
+                      {log.servingStyle === "iced" ? (
+                        <Snowflake size={15} aria-hidden="true" />
+                      ) : (
+                        <ThermometerSun size={15} aria-hidden="true" />
+                      )}
+                      {log.servingStyle === "iced" ? "アイス" : "ホット"}
+                    </span>
+                  ) : (
+                    <span className={styles.muted}>未登録</span>
+                  )}
+                </dd>
+              </div>
+              <div className={styles.summaryItem}>
+                <dt className={styles.label}>豆の種類</dt>
+                <dd className={styles.summaryValue}>
+                  {log.isBlend == null ? "未登録" : log.isBlend ? "ブレンド" : "シングル"}
+                </dd>
+              </div>
+              <div className={styles.summaryItem}>
+                <dt className={styles.label}>評価</dt>
+                <dd className={styles.summaryValue}>
+                  {log.rating == null ? (
+                    <span className={styles.muted}>評価なし</span>
+                  ) : (
+                    <span
+                      className={styles.rating}
+                      role="img"
+                      aria-label={`評価 ${log.rating} / 5`}
+                    >
+                      {renderStars(log.rating)}
+                      <span>{log.rating}</span>
+                    </span>
+                  )}
+                </dd>
+              </div>
+            </dl>
+          </section>
           <CoffeeAttributes coffee={log} />
           <section className={styles.section}>
             <h4 className={styles.label}>

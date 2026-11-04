@@ -1,24 +1,38 @@
 import type { MouseEventHandler } from "react";
-import { Button } from "./button";
+import { Button, cn } from "./button";
 import { classifyStoreLink } from "../lib/store-links";
 import styles from "./store-link.module.css";
 
 export type StoreLinkProps = {
   href: string;
+  appearance?: "chip" | "icon";
   showExternalIndicator?: boolean;
   onClick?: MouseEventHandler<HTMLAnchorElement>;
 };
 
 const instagramGlyph = new URL("../assets/instagram-glyph-gradient.png", import.meta.url).href;
 
-export function StoreLink({ href, onClick, showExternalIndicator = false }: StoreLinkProps) {
+export function StoreLink({
+  href,
+  onClick,
+  showExternalIndicator = false,
+  appearance = "chip",
+}: StoreLinkProps) {
   const type = classifyStoreLink(href);
+  const iconOnly = appearance === "icon";
   const label =
     type === "instagram" ? "Instagram" : type === "google_maps" ? "Google Map" : "ホームページ";
 
   return (
-    <Button asChild variant="secondary" size="xs">
-      <a href={href} target="_blank" rel="noopener noreferrer" onClick={onClick}>
+    <Button asChild variant="secondary" size={iconOnly ? "icon-lg" : "xs"}>
+      <a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        onClick={onClick}
+        aria-label={iconOnly ? label : undefined}
+        title={iconOnly ? label : undefined}
+      >
         {type === "instagram" ? (
           <img
             src={instagramGlyph}
@@ -26,7 +40,7 @@ export function StoreLink({ href, onClick, showExternalIndicator = false }: Stor
             aria-hidden="true"
             width={16}
             height={16}
-            className={styles.brandIcon}
+            className={cn(styles.brandIcon, iconOnly && styles.largeIcon)}
           />
         ) : (
           <svg
@@ -37,7 +51,7 @@ export function StoreLink({ href, onClick, showExternalIndicator = false }: Stor
             stroke="currentColor"
             strokeWidth="2"
             aria-hidden="true"
-            className={styles.icon}
+            className={cn(styles.icon, iconOnly && styles.largeIcon)}
           >
             {type === "google_maps" ? (
               <>
@@ -53,8 +67,8 @@ export function StoreLink({ href, onClick, showExternalIndicator = false }: Stor
             )}
           </svg>
         )}
-        <span>{label}</span>
-        {showExternalIndicator && (
+        {!iconOnly && <span>{label}</span>}
+        {showExternalIndicator && !iconOnly && (
           <svg
             viewBox="0 0 24 24"
             width="16"
@@ -64,7 +78,7 @@ export function StoreLink({ href, onClick, showExternalIndicator = false }: Stor
             strokeWidth="2"
             aria-hidden="true"
             data-external-indicator="true"
-            className={styles.icon}
+            className={cn(styles.icon, iconOnly && styles.largeIcon)}
           >
             <path d="M14 3h7v7M21 3l-9 9M10 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-5" />
           </svg>

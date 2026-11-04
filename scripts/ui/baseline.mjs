@@ -696,7 +696,7 @@ try {
                 .isChecked())
             )
               throw new Error("Segment keyboard selection failed");
-            for (const size of ["xs", "sm", "md", "lg", "icon"]) {
+            for (const size of ["xs", "sm", "md", "lg", "icon", "icon-lg"]) {
               const box = await page
                 .getByRole("button", { name: `サイズ ${size}`, exact: true })
                 .boundingBox();

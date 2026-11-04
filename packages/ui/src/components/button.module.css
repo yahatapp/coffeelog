@@ -76,6 +76,12 @@
     width: var(--cl-size-target-min);
     padding: 0;
   }
+  .largeIcon {
+    min-width: var(--cl-size-icon-action-large);
+    width: var(--cl-size-icon-action-large);
+    height: var(--cl-size-icon-action-large);
+    padding: 0;
+  }
   .fullWidth {
     width: 100%;
   }

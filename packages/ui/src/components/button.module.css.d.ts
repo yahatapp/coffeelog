@@ -5,6 +5,7 @@ declare const styles: {
   readonly ghost: string;
   readonly icon: string;
   readonly large: string;
+  readonly largeIcon: string;
   readonly medium: string;
   readonly outline: string;
   readonly primary: string;
