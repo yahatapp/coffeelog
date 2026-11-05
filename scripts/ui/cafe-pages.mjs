@@ -38,11 +38,28 @@ export async function verifyCafePages(
     expect(coffeeBox.y).toBeGreaterThan(storeBox.y + storeBox.height);
     await expect(coffee).toHaveCSS("border-top-style", "solid");
     await expect(store.getByRole("img")).toHaveCount(0);
-    for (const label of ["国", "提供方法", "豆の種類", "評価"])
+    const coffeeTitle = [data.log.origin, data.log.variety, data.log.process]
+      .map((value) => value?.trim())
+      .filter(Boolean)
+      .join(" ");
+    const heading = coffee.getByRole("heading", { level: 3 });
+    await expect(heading).toHaveAccessibleName(coffeeTitle || "飲んだコーヒー");
+    await expect(heading).toHaveCSS("font-size", "18px");
+    const flag = heading.locator('[aria-label$="の国旗"]');
+    await expect(flag).toHaveCount(data.log.origin === "エチオピア" ? 1 : 0);
+    if (data.log.origin === "エチオピア") {
+      await expect(flag).toHaveText("🇪🇹");
+      expect((await flag.boundingBox()).x).toBeLessThan(
+        (await heading.getByText(coffeeTitle, { exact: true }).boundingBox()).x,
+      );
+    }
+    for (const label of ["提供方法", "豆の種類", "評価"])
       await expect(coffee.getByRole("term").filter({ hasText: label })).toBeVisible();
-    const links = store.getByRole("list", { name: "お店のリンク", exact: true }).getByRole("link");
-    const count = await links.count();
-    const columns = count >= 4 ? 4 : 3;
+    const linkList = store.getByRole("list", { name: "お店のリンク", exact: true });
+    await expect(linkList).toHaveCount(data.log.links.length > 0 ? 1 : 0);
+    const links = linkList.getByRole("link");
+    await expect(links).toHaveCount(data.log.links.length);
+    const columns = data.log.links.length >= 4 ? 4 : 3;
     const boxes = [];
     for (const link of await links.all()) {
       await expect(link).toHaveText("");
@@ -52,11 +69,20 @@ export async function verifyCafePages(
       boxes.push(box);
     }
     const firstRow = boxes.slice(0, columns);
-    expect(new Set(firstRow.map((box) => box.y)).size).toBe(1);
+    if (firstRow.length) expect(new Set(firstRow.map((box) => box.y)).size).toBe(1);
+    if (boxes.length > columns) expect(boxes[columns].y).toBeGreaterThan(boxes[0].y);
     const gaps = firstRow.slice(1).map((box, i) => box.x - firstRow[i].x - firstRow[i].width);
     if (gaps.length > 1) expect(Math.abs(Math.max(...gaps) - Math.min(...gaps))).toBeLessThan(1);
-    const history = store.getByRole("link", { name: "このお店のコーヒー記録", exact: true });
+    const history = store.getByRole("link", { name: "お店の記録", exact: true });
     await expect(history).toHaveAttribute("href", `/stores/${ids.store}`);
+    const prefecture = store.getByText(data.log.prefecture || "都道府県未登録", { exact: true });
+    const prefectureBox = await prefecture.boundingBox();
+    const historyBox = await history.boundingBox();
+    expect(historyBox.x).toBeGreaterThan(prefectureBox.x + prefectureBox.width);
+    expect(
+      Math.abs(historyBox.y + historyBox.height / 2 - prefectureBox.y - prefectureBox.height / 2),
+    ).toBeLessThan(1);
+    await expect(history.getByText("お店の記録")).toHaveCSS("text-decoration-line", "underline");
     await history.focus();
     await expect(history).toBeFocused();
     await expect(history).toHaveCSS("outline-style", "solid");
@@ -68,7 +94,7 @@ export async function verifyCafePages(
         "log-detail",
         "log-detail-long",
         "detail-without-optional",
-        "log-detail-three-links",
+        "log-detail-four-links",
         "log-detail-many-links",
       ].includes(name)
     )
@@ -118,12 +144,19 @@ export async function verifyCafePages(
         iconOnly: name === "log-detail",
         screenshotPath: resolve(output, `cafelog-${name}-links-${width}.png`),
       });
+    if (name === "stores") {
+      const store = page.getByRole("button", { name: /検証用カフェ/ });
+      const links = page.getByRole("link", { name: "Instagram", exact: true }).locator("../..");
+      await expect(store).toHaveCSS("padding-bottom", "4px");
+      await expect(links).toHaveCSS("padding-bottom", "8px");
+      await expect(links).toHaveCSS("row-gap", "4px");
+    }
     await audit(name);
   }
   const originalLinks = data.log.links;
-  data.log.links = originalLinks.slice(0, 2);
+  data.log.links = [...originalLinks, { id: "fourth-link", url: "https://example.com/cafe/other" }];
   await visit(`/logs/${ids.log}`);
-  await audit("log-detail-three-links");
+  await audit("log-detail-four-links");
   data.log.links = Array.from({ length: 10 }, (_, index) => ({
     id: `many-link-${index}`,
     url: `https://example.com/cafe/${index}`,
@@ -152,7 +185,7 @@ export async function verifyCafePages(
   ).toHaveAttribute("aria-pressed", "true");
   await page.getByRole("link", { name: /検証用カフェ/ }).click();
   await expect(page).toHaveURL(baseURL + "/logs/" + ids.log);
-  await page.getByRole("link", { name: "このお店のコーヒー記録", exact: true }).click();
+  await page.getByRole("link", { name: "お店の記録", exact: true }).click();
   await expect(page).toHaveURL(baseURL + "/stores/" + ids.store);
   await page.getByRole("button", { name: /2026.10.31/ }).click();
   await expect(
@@ -238,12 +271,16 @@ export async function verifyCafePages(
   data.log.servingStyle = null;
   data.log.note = null;
   data.log.origin = null;
+  data.log.variety = " ";
   data.log.price = null;
   data.log.links = [];
   await visit(`/logs/${ids.log}`);
   await expect(page.getByText("評価なし", { exact: true })).toBeVisible();
   await expect(page.getByText("メモは登録されていません。", { exact: true })).toBeVisible();
   await audit("detail-without-optional");
+  data.log.process = null;
+  await visit(`/logs/${ids.log}`);
+  await expect(page.getByRole("heading", { name: "飲んだコーヒー", exact: true })).toBeVisible();
   reset();
   await visit(`/logs/${ids.log}`);
   const deletion = page.getByRole("button", { name: "削除", exact: true });

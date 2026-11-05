@@ -10,6 +10,7 @@ declare const styles: {
   readonly muted: string;
   readonly note: string;
   readonly panel: string;
+  readonly prefecture: string;
   readonly rating: string;
   readonly root: string;
   readonly section: string;
@@ -20,6 +21,7 @@ declare const styles: {
   readonly storeAction: string;
   readonly storeActions: string;
   readonly storeHeading: string;
+  readonly storeHistoryLink: string;
   readonly storeSection: string;
   readonly storeTitle: string;
   readonly summaryGrid: string;

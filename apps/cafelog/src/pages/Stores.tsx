@@ -30,7 +30,11 @@ export default function StoresPage() {
           onRetry={() => void query.refetch()}
         />
       ) : (
-        <StoreList stores={query.data} onSelect={(id) => void navigate(`/stores/${id}`)} />
+        <StoreList
+          stores={query.data}
+          onSelect={(id) => void navigate(`/stores/${id}`)}
+          linkSpacing="compact"
+        />
       )}
     </div>
   );
