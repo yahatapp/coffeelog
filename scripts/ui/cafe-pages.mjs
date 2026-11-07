@@ -84,7 +84,7 @@ export async function verifyCafePages(
         await expect(item).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
         await expect(item).toHaveCSS(
           "font-size",
-          (await item.textContent()) === value ? "16px" : "12px",
+          (await item.textContent()) === value ? "16px" : "11px",
         );
       }
       const first = await items.first().boundingBox();

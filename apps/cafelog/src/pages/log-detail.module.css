@@ -167,7 +167,7 @@
   }
   .summaryOption {
     color: var(--cl-color-text-muted);
-    font-size: var(--cl-font-size-helper);
+    font-size: var(--cl-font-size-caption);
   }
   .summaryOption[aria-current="true"] {
     color: var(--cl-color-text);
