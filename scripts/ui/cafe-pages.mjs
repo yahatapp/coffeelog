@@ -53,8 +53,36 @@ export async function verifyCafePages(
         (await heading.getByText(coffeeTitle, { exact: true }).boundingBox()).x,
       );
     }
-    for (const label of ["提供方法", "豆の種類", "評価"])
-      await expect(coffee.getByRole("term").filter({ hasText: label })).toBeVisible();
+    for (const [label, options, value] of [
+      ["提供方法", ["ホット", "アイス"], { hot: "ホット", iced: "アイス" }[data.log.servingStyle]],
+      [
+        "豆の種類",
+        ["シングル", "ブレンド"],
+        data.log.isBlend == null ? undefined : data.log.isBlend ? "ブレンド" : "シングル",
+      ],
+    ]) {
+      const group = coffee.getByRole("list", { name: label, exact: true });
+      await expect(group.getByRole("listitem")).toHaveText(options);
+      const current = group.locator('[aria-current="true"]');
+      if (value) {
+        await expect(current).toHaveText(value);
+        await expect(current).toHaveCSS("font-weight", "700");
+      } else {
+        await expect(current).toHaveCount(0);
+      }
+      await expect(group.getByRole("button")).toHaveCount(0);
+      await expect(coffee.getByText(label, { exact: true })).toHaveCount(0);
+    }
+    await expect(coffee.getByText("評価", { exact: true })).toHaveCount(0);
+    if (data.log.rating != null) {
+      const rating = coffee.getByRole("img", { name: `評価 ${data.log.rating} / 5`, exact: true });
+      const ratingBox = await rating.boundingBox();
+      const options = coffee.getByRole("list", { name: "豆の種類", exact: true });
+      const optionsBox = await options.boundingBox();
+      expect(ratingBox.y).toBeGreaterThan(optionsBox.y + optionsBox.height);
+      expect(ratingBox.width).toBe(coffeeBox.width);
+      await expect(rating.locator('[aria-hidden="true"] > span')).toHaveCount(5);
+    }
     const linkList = store.getByRole("list", { name: "お店のリンク", exact: true });
     await expect(linkList).toHaveCount(data.log.links.length > 0 ? 1 : 0);
     const links = linkList.getByRole("link");
@@ -155,8 +183,12 @@ export async function verifyCafePages(
   }
   const originalLinks = data.log.links;
   data.log.links = [...originalLinks, { id: "fourth-link", url: "https://example.com/cafe/other" }];
+  data.log.servingStyle = "iced";
+  data.log.isBlend = true;
   await visit(`/logs/${ids.log}`);
   await audit("log-detail-four-links");
+  data.log.servingStyle = "hot";
+  data.log.isBlend = false;
   data.log.links = Array.from({ length: 10 }, (_, index) => ({
     id: `many-link-${index}`,
     url: `https://example.com/cafe/${index}`,
@@ -269,6 +301,7 @@ export async function verifyCafePages(
   data = reset();
   data.log.rating = null;
   data.log.servingStyle = null;
+  data.log.isBlend = null;
   data.log.note = null;
   data.log.origin = null;
   data.log.variety = " ";

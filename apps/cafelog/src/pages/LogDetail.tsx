@@ -12,9 +12,7 @@ import {
   Edit2,
   MessageSquare,
   MapPin,
-  Snowflake,
   Star,
-  ThermometerSun,
   Trash2,
 } from "lucide-react";
 import { CafeLogForm } from "@/components/CafeLogForm";
@@ -53,10 +51,10 @@ const renderStars = (rating: number) => (
   <span className={styles.stars} aria-hidden="true">
     {Array.from({ length: 5 }, (_, index) => (
       <span key={index} className={styles.star}>
-        <Star size={16} className={styles.starEmpty} />
+        <Star className={styles.starEmpty} />
         {rating > index && (
           <span className={styles.starFill} data-half={rating < index + 1 || undefined}>
-            <Star size={16} />
+            <Star />
           </span>
         )}
       </span>
@@ -286,48 +284,46 @@ const LogDetailPage = () => {
               )}
               <span>{coffeeTitle || "飲んだコーヒー"}</span>
             </h3>
-            <dl className={styles.summaryGrid}>
-              <div className={styles.summaryItem}>
-                <dt className={styles.label}>提供方法</dt>
-                <dd className={styles.summaryValue}>
-                  {log.servingStyle === "hot" || log.servingStyle === "iced" ? (
-                    <span className={styles.temperature} data-temperature={log.servingStyle}>
-                      {log.servingStyle === "iced" ? (
-                        <Snowflake size={15} aria-hidden="true" />
-                      ) : (
-                        <ThermometerSun size={15} aria-hidden="true" />
-                      )}
-                      {log.servingStyle === "iced" ? "アイス" : "ホット"}
-                    </span>
-                  ) : (
-                    <span className={styles.muted}>未登録</span>
-                  )}
-                </dd>
+            <div className={styles.summaryOptions}>
+              <ul aria-label="提供方法" className={styles.optionGroup}>
+                <li
+                  className={styles.summaryOption}
+                  data-temperature="hot"
+                  aria-current={log.servingStyle === "hot" || undefined}
+                >
+                  ホット
+                </li>
+                <li
+                  className={styles.summaryOption}
+                  data-temperature="iced"
+                  aria-current={log.servingStyle === "iced" || undefined}
+                >
+                  アイス
+                </li>
+              </ul>
+              <ul aria-label="豆の種類" className={styles.optionGroup}>
+                <li
+                  className={styles.summaryOption}
+                  aria-current={log.isBlend === false || undefined}
+                >
+                  シングル
+                </li>
+                <li
+                  className={styles.summaryOption}
+                  aria-current={log.isBlend === true || undefined}
+                >
+                  ブレンド
+                </li>
+              </ul>
+            </div>
+            {log.rating == null ? (
+              <p className={styles.muted}>評価なし</p>
+            ) : (
+              <div className={styles.rating} role="img" aria-label={`評価 ${log.rating} / 5`}>
+                {renderStars(log.rating)}
+                <span>{log.rating}</span>
               </div>
-              <div className={styles.summaryItem}>
-                <dt className={styles.label}>豆の種類</dt>
-                <dd className={styles.summaryValue}>
-                  {log.isBlend == null ? "未登録" : log.isBlend ? "ブレンド" : "シングル"}
-                </dd>
-              </div>
-              <div className={styles.summaryItem}>
-                <dt className={styles.label}>評価</dt>
-                <dd className={styles.summaryValue}>
-                  {log.rating == null ? (
-                    <span className={styles.muted}>評価なし</span>
-                  ) : (
-                    <span
-                      className={styles.rating}
-                      role="img"
-                      aria-label={`評価 ${log.rating} / 5`}
-                    >
-                      {renderStars(log.rating)}
-                      <span>{log.rating}</span>
-                    </span>
-                  )}
-                </dd>
-              </div>
-            </dl>
+            )}
           </section>
           <CoffeeAttributes coffee={log} />
           <section className={styles.section}>
