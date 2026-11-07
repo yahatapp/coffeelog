@@ -53,6 +53,8 @@ test("theme text pairs and input boundaries meet contrast requirements", async (
       ["color-text", "color-background"],
       ["color-text-muted", "color-background"],
       ["color-text-muted", "color-surface"],
+      ["color-text-subtle", "color-background"],
+      ["color-text-subtle", "color-surface"],
       ["color-on-action-primary", "color-action-primary"],
       ["color-on-action-primary", "color-action-primary-hover"],
       ["color-on-action-secondary", "color-action-secondary-hover"],

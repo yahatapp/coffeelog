@@ -8,6 +8,7 @@
     --cl-ref-brand-outline: #a18a76;
     --cl-color-text: var(--cl-ref-brand-text);
     --cl-color-text-muted: var(--cl-ref-brand-muted);
+    --cl-color-text-subtle: #816955;
     --cl-color-background: var(--cl-ref-brand-background);
     --cl-color-surface: #ffffff;
     --cl-color-surface-tonal: var(--cl-ref-brand-tonal);
