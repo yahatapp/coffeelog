@@ -105,19 +105,18 @@
   .storeHistoryLink {
     min-height: var(--cl-size-target-min);
     color: var(--cl-color-action-primary);
-    font-weight: var(--cl-font-weight-medium);
   }
   .storeHistoryLink span {
     text-decoration: underline;
   }
   .rating {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: var(--cl-space-field-gap);
-    flex-wrap: wrap;
+    gap: var(--cl-space-tight);
     color: var(--cl-color-action-primary);
     font-weight: var(--cl-font-weight-medium);
-    font-size: var(--cl-font-size-body);
+    font-size: var(--cl-font-size-helper);
   }
   .stars {
     display: flex;
@@ -145,35 +144,35 @@
     width: 50%;
     overflow: hidden;
   }
-  .summaryOptions,
+  .summaryOptions {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) var(--cl-border-width) minmax(0, 1fr);
+    align-items: baseline;
+    column-gap: var(--cl-space-field-gap);
+  }
+  .summaryOptions::before {
+    content: "";
+    grid-column: 2;
+    grid-row: 1;
+    align-self: stretch;
+    margin-block: var(--cl-space-tight);
+    background: var(--cl-color-border-decorative);
+  }
   .optionGroup {
     display: flex;
+    align-items: baseline;
+    justify-content: center;
     flex-wrap: wrap;
-  }
-  .summaryOptions {
     gap: var(--cl-space-field-gap);
   }
-  .optionGroup {
-    gap: var(--cl-space-tight);
-  }
   .summaryOption {
-    padding: var(--cl-space-tight) var(--cl-space-field-gap);
-    border-radius: var(--cl-radius-action);
     color: var(--cl-color-text-muted);
     font-size: var(--cl-font-size-helper);
   }
   .summaryOption[aria-current="true"] {
-    color: var(--cl-color-action-primary);
-    background: var(--cl-color-action-secondary);
+    color: var(--cl-color-text);
+    font-size: var(--cl-font-size-label);
     font-weight: var(--cl-font-weight-strong);
-  }
-  .summaryOption[aria-current="true"][data-temperature="hot"] {
-    color: var(--cl-color-temperature-hot);
-    background: var(--cl-color-temperature-hot-surface);
-  }
-  .summaryOption[aria-current="true"][data-temperature="iced"] {
-    color: var(--cl-color-temperature-iced);
-    background: var(--cl-color-temperature-iced-surface);
   }
   .muted {
     font-size: var(--cl-font-size-helper);

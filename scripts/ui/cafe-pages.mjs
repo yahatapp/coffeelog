@@ -53,20 +53,38 @@ export async function verifyCafePages(
         (await heading.getByText(coffeeTitle, { exact: true }).boundingBox()).x,
       );
     }
-    for (const [label, options, value] of [
-      ["提供方法", ["ホット", "アイス"], { hot: "ホット", iced: "アイス" }[data.log.servingStyle]],
+    const servingOptions = coffee.getByRole("list", { name: "提供方法", exact: true });
+    const beanOptions = coffee.getByRole("list", { name: "豆の種類", exact: true });
+    const optionRow = servingOptions.locator("..");
+    await expect(optionRow).toHaveCSS("align-items", "baseline");
+    const divider = await optionRow.evaluate((row) => {
+      const style = getComputedStyle(row, "::before");
+      return { column: style.gridColumnStart, width: style.width };
+    });
+    expect(divider).toEqual({ column: "2", width: "1px" });
+    for (const [group, label, options, value] of [
       [
+        servingOptions,
+        "提供方法",
+        ["ホット", "アイス"],
+        { hot: "ホット", iced: "アイス" }[data.log.servingStyle],
+      ],
+      [
+        beanOptions,
         "豆の種類",
         ["シングル", "ブレンド"],
         data.log.isBlend == null ? undefined : data.log.isBlend ? "ブレンド" : "シングル",
       ],
     ]) {
-      const group = coffee.getByRole("list", { name: label, exact: true });
       await expect(group.getByRole("listitem")).toHaveText(options);
+      await expect(group).toHaveCSS("align-items", "baseline");
+      for (const option of await group.getByRole("listitem").all())
+        await expect(option).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
       const current = group.locator('[aria-current="true"]');
       if (value) {
         await expect(current).toHaveText(value);
         await expect(current).toHaveCSS("font-weight", "700");
+        await expect(current).toHaveCSS("font-size", "14px");
       } else {
         await expect(current).toHaveCount(0);
       }
@@ -77,11 +95,18 @@ export async function verifyCafePages(
     if (data.log.rating != null) {
       const rating = coffee.getByRole("img", { name: `評価 ${data.log.rating} / 5`, exact: true });
       const ratingBox = await rating.boundingBox();
-      const options = coffee.getByRole("list", { name: "豆の種類", exact: true });
-      const optionsBox = await options.boundingBox();
+      const optionsBox = await optionRow.boundingBox();
       expect(ratingBox.y).toBeGreaterThan(optionsBox.y + optionsBox.height);
       expect(ratingBox.width).toBe(coffeeBox.width);
-      await expect(rating.locator('[aria-hidden="true"] > span')).toHaveCount(5);
+      const stars = rating.locator(':scope > [aria-hidden="true"]');
+      await expect(stars.locator("> span")).toHaveCount(5);
+      const score = rating.getByText(String(data.log.rating), { exact: true });
+      await expect(score).toHaveCSS("font-size", "12px");
+      const starBox = await stars.boundingBox();
+      const scoreBox = await score.boundingBox();
+      expect(scoreBox.y).toBeGreaterThan(starBox.y + starBox.height);
+      for (const box of [starBox, scoreBox])
+        expect(Math.abs(box.x + box.width / 2 - ratingBox.x - ratingBox.width / 2)).toBeLessThan(1);
     }
     const linkList = store.getByRole("list", { name: "お店のリンク", exact: true });
     await expect(linkList).toHaveCount(data.log.links.length > 0 ? 1 : 0);
@@ -111,6 +136,7 @@ export async function verifyCafePages(
       Math.abs(historyBox.y + historyBox.height / 2 - prefectureBox.y - prefectureBox.height / 2),
     ).toBeLessThan(1);
     await expect(history.getByText("お店の記録")).toHaveCSS("text-decoration-line", "underline");
+    await expect(history).toHaveCSS("font-weight", "400");
     await history.focus();
     await expect(history).toBeFocused();
     await expect(history).toHaveCSS("outline-style", "solid");

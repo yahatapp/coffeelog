@@ -288,14 +288,12 @@ const LogDetailPage = () => {
               <ul aria-label="提供方法" className={styles.optionGroup}>
                 <li
                   className={styles.summaryOption}
-                  data-temperature="hot"
                   aria-current={log.servingStyle === "hot" || undefined}
                 >
                   ホット
                 </li>
                 <li
                   className={styles.summaryOption}
-                  data-temperature="iced"
                   aria-current={log.servingStyle === "iced" || undefined}
                 >
                   アイス
