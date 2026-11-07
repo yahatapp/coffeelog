@@ -1,4 +1,5 @@
 import { Button, Loading, ErrorState, EmptyState, StoreLink } from "@yahatapp/ui";
+import { getCountryCode } from "@yahatapp/coffee-reference";
 import styles from "./log-detail.module.css";
 import { mutationNotices } from "@/lib/mutationNotices";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -6,14 +7,12 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import {
   ArrowLeft,
+  ArrowRight,
   Calendar,
-  Coffee,
   Edit2,
   MessageSquare,
   MapPin,
-  Snowflake,
   Star,
-  ThermometerSun,
   Trash2,
 } from "lucide-react";
 import { CafeLogForm } from "@/components/CafeLogForm";
@@ -52,10 +51,10 @@ const renderStars = (rating: number) => (
   <span className={styles.stars} aria-hidden="true">
     {Array.from({ length: 5 }, (_, index) => (
       <span key={index} className={styles.star}>
-        <Star size={16} className={styles.starEmpty} />
+        <Star className={styles.starEmpty} />
         {rating > index && (
           <span className={styles.starFill} data-half={rating < index + 1 || undefined}>
-            <Star size={16} />
+            <Star />
           </span>
         )}
       </span>
@@ -156,6 +155,9 @@ const LogDetailPage = () => {
         }
       />
     );
+  const origin = log.origin?.trim();
+  const coffeeTitle = [origin, log.variety?.trim(), log.process?.trim()].filter(Boolean).join(" ");
+
   return (
     <div className={styles.root}>
       <header className={styles.header}>
@@ -244,89 +246,82 @@ const LogDetailPage = () => {
           <section aria-label="お店の情報" className={styles.storeSection}>
             <header className={styles.storeHeading}>
               <h3 className={styles.storeTitle}>{log.cafeName}</h3>
-              <p className={styles.metadata}>
-                <MapPin size={14} aria-hidden="true" />
-                {log.prefecture || "都道府県未登録"}
-              </p>
+              <div className={styles.metadata}>
+                <p className={styles.prefecture}>
+                  <MapPin size={14} aria-hidden="true" />
+                  <span>{log.prefecture || "都道府県未登録"}</span>
+                </p>
+                <Link className={styles.storeHistoryLink} to={`/stores/${log.storeId}`}>
+                  <span>お店の記録</span>
+                  <ArrowRight size={14} aria-hidden="true" />
+                </Link>
+              </div>
             </header>
-            <ul
-              aria-label="お店のリンク"
-              className={styles.storeActions}
-              data-columns={log.links.length + 1 >= 4 ? "4" : "3"}
-            >
-              {log.links.map((link) => (
-                <li key={link.id} className={styles.storeAction}>
-                  <StoreLink
-                    href={link.url}
-                    appearance="icon"
-                    onClick={() => analytics.trackEvent("external_link_click")}
-                  />
-                </li>
-              ))}
-              <li className={styles.storeAction}>
-                <Button asChild variant="secondary" size="icon-lg">
-                  <Link
-                    to={`/stores/${log.storeId}`}
-                    aria-label="このお店のコーヒー記録"
-                    title="このお店のコーヒー記録"
-                  >
-                    <Coffee size={24} aria-hidden="true" />
-                  </Link>
-                </Button>
-              </li>
-            </ul>
+            {log.links.length > 0 && (
+              <ul
+                aria-label="お店のリンク"
+                className={styles.storeActions}
+                data-columns={log.links.length >= 4 ? "4" : "3"}
+              >
+                {log.links.map((link) => (
+                  <li key={link.id} className={styles.storeAction}>
+                    <StoreLink
+                      href={link.url}
+                      appearance="icon"
+                      onClick={() => analytics.trackEvent("external_link_click")}
+                    />
+                  </li>
+                ))}
+              </ul>
+            )}
           </section>
           <section aria-label="飲んだコーヒーの概要" className={styles.coffeeSummary}>
-            <h3 className={styles.summaryHeading}>飲んだコーヒー</h3>
-            <dl className={styles.summaryGrid}>
-              <div className={styles.summaryItem}>
-                <dt className={styles.label}>国</dt>
-                <dd className={styles.summaryValue}>
-                  <OriginFlag origin={log.origin} />
-                  {log.origin || "産地未登録"}
-                </dd>
+            <h3 className={styles.summaryHeading}>
+              {getCountryCode(origin) && (
+                <span aria-hidden="true">
+                  <OriginFlag origin={origin} />
+                </span>
+              )}
+              <span>{coffeeTitle || "飲んだコーヒー"}</span>
+            </h3>
+            <div className={styles.summaryOptions}>
+              <ul aria-label="提供方法" className={styles.optionGroup}>
+                <li
+                  className={styles.summaryOption}
+                  aria-current={log.servingStyle === "hot" || undefined}
+                >
+                  ホット
+                </li>
+                <li
+                  className={styles.summaryOption}
+                  aria-current={log.servingStyle === "iced" || undefined}
+                >
+                  アイス
+                </li>
+              </ul>
+              <ul aria-label="豆の種類" className={styles.optionGroup}>
+                <li
+                  className={styles.summaryOption}
+                  aria-current={log.isBlend === false || undefined}
+                >
+                  シングル
+                </li>
+                <li
+                  className={styles.summaryOption}
+                  aria-current={log.isBlend === true || undefined}
+                >
+                  ブレンド
+                </li>
+              </ul>
+            </div>
+            {log.rating == null ? (
+              <p className={styles.muted}>評価なし</p>
+            ) : (
+              <div className={styles.rating} role="img" aria-label={`評価 ${log.rating} / 5`}>
+                {renderStars(log.rating)}
+                <span>{log.rating}</span>
               </div>
-              <div className={styles.summaryItem}>
-                <dt className={styles.label}>提供方法</dt>
-                <dd className={styles.summaryValue}>
-                  {log.servingStyle === "hot" || log.servingStyle === "iced" ? (
-                    <span className={styles.temperature} data-temperature={log.servingStyle}>
-                      {log.servingStyle === "iced" ? (
-                        <Snowflake size={15} aria-hidden="true" />
-                      ) : (
-                        <ThermometerSun size={15} aria-hidden="true" />
-                      )}
-                      {log.servingStyle === "iced" ? "アイス" : "ホット"}
-                    </span>
-                  ) : (
-                    <span className={styles.muted}>未登録</span>
-                  )}
-                </dd>
-              </div>
-              <div className={styles.summaryItem}>
-                <dt className={styles.label}>豆の種類</dt>
-                <dd className={styles.summaryValue}>
-                  {log.isBlend == null ? "未登録" : log.isBlend ? "ブレンド" : "シングル"}
-                </dd>
-              </div>
-              <div className={styles.summaryItem}>
-                <dt className={styles.label}>評価</dt>
-                <dd className={styles.summaryValue}>
-                  {log.rating == null ? (
-                    <span className={styles.muted}>評価なし</span>
-                  ) : (
-                    <span
-                      className={styles.rating}
-                      role="img"
-                      aria-label={`評価 ${log.rating} / 5`}
-                    >
-                      {renderStars(log.rating)}
-                      <span>{log.rating}</span>
-                    </span>
-                  )}
-                </dd>
-              </div>
-            </dl>
+            )}
           </section>
           <CoffeeAttributes coffee={log} />
           <section className={styles.section}>

@@ -9,7 +9,9 @@ declare const styles: {
   readonly metadata: string;
   readonly muted: string;
   readonly note: string;
+  readonly optionGroup: string;
   readonly panel: string;
+  readonly prefecture: string;
   readonly rating: string;
   readonly root: string;
   readonly section: string;
@@ -20,13 +22,12 @@ declare const styles: {
   readonly storeAction: string;
   readonly storeActions: string;
   readonly storeHeading: string;
+  readonly storeHistoryLink: string;
   readonly storeSection: string;
   readonly storeTitle: string;
-  readonly summaryGrid: string;
   readonly summaryHeading: string;
-  readonly summaryItem: string;
-  readonly summaryValue: string;
-  readonly temperature: string;
+  readonly summaryOption: string;
+  readonly summaryOptions: string;
   readonly titleRow: string;
   readonly visit: string;
 };

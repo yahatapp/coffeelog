@@ -40,7 +40,7 @@
   .storeSection {
     display: flex;
     flex-direction: column;
-    gap: var(--cl-space-page-inline);
+    gap: var(--cl-space-field-gap);
   }
   .storeHeading {
     display: flex;
@@ -67,59 +67,67 @@
     justify-content: center;
   }
   .coffeeSummary {
+    display: flex;
+    flex-direction: column;
+    gap: var(--cl-space-page-inline);
     border-top: var(--cl-border-width) solid var(--cl-color-border-decorative);
     padding-top: var(--cl-space-section-gap);
   }
   .summaryHeading {
-    margin-bottom: var(--cl-space-page-inline);
-    font-size: var(--cl-font-size-label);
+    display: flex;
+    align-items: flex-start;
+    gap: var(--cl-space-field-gap);
+    font-size: var(--cl-font-size-heading);
     font-weight: var(--cl-font-weight-strong);
     color: var(--cl-color-action-primary);
-  }
-  .summaryGrid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--cl-space-page-inline);
-  }
-  .summaryItem {
-    display: flex;
-    flex-direction: column;
-    gap: var(--cl-space-field-gap);
-    min-width: 0;
-  }
-  .summaryValue {
-    display: flex;
-    align-items: center;
-    gap: var(--cl-space-field-gap);
-    min-height: var(--cl-size-brand-icon);
-    margin: 0;
-    font-size: var(--cl-font-size-label);
-    font-weight: var(--cl-font-weight-medium);
-    color: var(--cl-color-text);
-    overflow-wrap: anywhere;
+    word-break: keep-all;
   }
   .metadata {
     display: flex;
     align-items: center;
-    gap: var(--cl-space-field-gap);
+    justify-content: space-between;
+    column-gap: var(--cl-space-field-gap);
     flex-wrap: wrap;
+  }
+  .prefecture,
+  .storeHistoryLink {
+    display: flex;
+    align-items: center;
+    gap: var(--cl-space-field-gap);
     font-size: var(--cl-font-size-helper);
+  }
+  .prefecture {
     color: var(--cl-color-text-muted);
+  }
+  .prefecture svg {
+    flex-shrink: 0;
+  }
+  .storeHistoryLink {
+    min-height: var(--cl-size-target-min);
+    color: var(--cl-color-action-primary);
+  }
+  .storeHistoryLink span {
+    text-decoration: underline;
   }
   .rating {
     display: flex;
+    flex-direction: column;
     align-items: center;
     gap: var(--cl-space-tight);
-    flex-wrap: wrap;
     color: var(--cl-color-action-primary);
     font-weight: var(--cl-font-weight-medium);
-    font-size: var(--cl-font-size-label);
+    font-size: var(--cl-font-size-helper);
   }
   .stars {
     display: flex;
+    gap: var(--cl-space-tight);
   }
   .star {
     position: relative;
+  }
+  .star svg {
+    width: var(--cl-size-icon-large);
+    height: var(--cl-size-icon-large);
   }
   .starEmpty {
     color: var(--cl-color-border-input);
@@ -136,22 +144,35 @@
     width: 50%;
     overflow: hidden;
   }
-  .temperature {
-    display: inline-flex;
-    align-items: center;
+  .summaryOptions {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) var(--cl-border-width) minmax(0, 1fr);
+    align-items: baseline;
+    column-gap: var(--cl-space-field-gap);
+  }
+  .summaryOptions::before {
+    content: "";
+    grid-column: 2;
+    grid-row: 1;
+    align-self: stretch;
+    margin-block: var(--cl-space-tight);
+    background: var(--cl-color-border-decorative);
+  }
+  .optionGroup {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-around;
+    flex-wrap: wrap;
     gap: var(--cl-space-tight);
-    padding: var(--cl-space-tight) var(--cl-space-field-gap);
-    border-radius: var(--cl-radius-action);
-    font-size: var(--cl-font-size-helper);
-    font-weight: var(--cl-font-weight-medium);
   }
-  .temperature[data-temperature="hot"] {
-    color: var(--cl-color-temperature-hot);
-    background: var(--cl-color-temperature-hot-surface);
+  .summaryOption {
+    color: var(--cl-color-text-muted);
+    font-size: var(--cl-font-size-caption);
   }
-  .temperature[data-temperature="iced"] {
-    color: var(--cl-color-temperature-iced);
-    background: var(--cl-color-temperature-iced-surface);
+  .summaryOption[aria-current="true"] {
+    color: var(--cl-color-text);
+    font-size: var(--cl-font-size-body);
+    font-weight: var(--cl-font-weight-strong);
   }
   .muted {
     font-size: var(--cl-font-size-helper);

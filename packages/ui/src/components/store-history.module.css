@@ -102,6 +102,13 @@
     gap: var(--cl-space-field-gap);
     padding: 0 var(--cl-space-page-inline) var(--cl-space-page-inline);
   }
+  .storePanel[data-link-spacing="compact"] .storeButton {
+    padding-block-end: var(--cl-space-tight);
+  }
+  .storePanel[data-link-spacing="compact"] .storeLinks {
+    row-gap: var(--cl-space-tight);
+    padding-block-end: var(--cl-space-field-gap);
+  }
   .storeButton,
   .recordButton {
     min-height: var(--cl-size-target-min);

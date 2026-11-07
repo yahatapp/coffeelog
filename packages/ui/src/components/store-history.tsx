@@ -55,9 +55,11 @@ type BrewRecord = CoffeeRecord & {
 export function StoreList({
   stores,
   onSelect,
+  linkSpacing = "default",
 }: {
   stores: readonly StoreInfo[];
   onSelect: (id: string) => void;
+  linkSpacing?: "default" | "compact";
 }) {
   const [search, setSearch] = useState("");
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -196,7 +198,11 @@ export function StoreList({
       ) : (
         <ul className={styles.list}>
           {filtered.map((store) => (
-            <li key={store.id} className={styles.storePanel}>
+            <li
+              key={store.id}
+              className={styles.storePanel}
+              data-link-spacing={store.links.length > 0 ? linkSpacing : undefined}
+            >
               <button
                 type="button"
                 onClick={() => onSelect(store.id)}
