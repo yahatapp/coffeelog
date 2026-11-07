@@ -76,15 +76,24 @@ export async function verifyCafePages(
         data.log.isBlend == null ? undefined : data.log.isBlend ? "ブレンド" : "シングル",
       ],
     ]) {
-      await expect(group.getByRole("listitem")).toHaveText(options);
+      const items = group.getByRole("listitem");
+      await expect(items).toHaveText(options);
       await expect(group).toHaveCSS("align-items", "baseline");
-      for (const option of await group.getByRole("listitem").all())
-        await expect(option).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
+      await expect(group).toHaveCSS("justify-content", "space-around");
+      for (const item of await items.all()) {
+        await expect(item).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
+        await expect(item).toHaveCSS(
+          "font-size",
+          (await item.textContent()) === value ? "16px" : "12px",
+        );
+      }
+      const first = await items.first().boundingBox();
+      const second = await items.last().boundingBox();
+      expect(second.x).toBeGreaterThan(first.x + first.width);
       const current = group.locator('[aria-current="true"]');
       if (value) {
         await expect(current).toHaveText(value);
         await expect(current).toHaveCSS("font-weight", "700");
-        await expect(current).toHaveCSS("font-size", "14px");
       } else {
         await expect(current).toHaveCount(0);
       }

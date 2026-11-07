@@ -161,9 +161,9 @@
   .optionGroup {
     display: flex;
     align-items: baseline;
-    justify-content: center;
+    justify-content: space-around;
     flex-wrap: wrap;
-    gap: var(--cl-space-field-gap);
+    gap: var(--cl-space-tight);
   }
   .summaryOption {
     color: var(--cl-color-text-muted);
@@ -171,7 +171,7 @@
   }
   .summaryOption[aria-current="true"] {
     color: var(--cl-color-text);
-    font-size: var(--cl-font-size-label);
+    font-size: var(--cl-font-size-body);
     font-weight: var(--cl-font-weight-strong);
   }
   .muted {
