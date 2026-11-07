@@ -84,7 +84,7 @@ export async function verifyCafePages(
         await expect(item).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
         await expect(item).toHaveCSS(
           "font-size",
-          (await item.textContent()) === value ? "16px" : "11px",
+          (await item.textContent()) === value ? "16px" : "12px",
         );
       }
       const first = await items.first().boundingBox();
@@ -109,7 +109,7 @@ export async function verifyCafePages(
       expect(ratingBox.width).toBe(coffeeBox.width);
       const stars = rating.locator(':scope > [aria-hidden="true"]');
       await expect(stars.locator("> span")).toHaveCount(5);
-      const score = rating.getByText(String(data.log.rating), { exact: true });
+      const score = rating.getByText(data.log.rating.toFixed(1), { exact: true });
       await expect(score).toHaveCSS("font-size", "12px");
       const starBox = await stars.boundingBox();
       const scoreBox = await score.boundingBox();
@@ -217,13 +217,16 @@ export async function verifyCafePages(
     await audit(name);
   }
   const originalLinks = data.log.links;
+  const originalRating = data.log.rating;
   data.log.links = [...originalLinks, { id: "fourth-link", url: "https://example.com/cafe/other" }];
   data.log.servingStyle = "iced";
   data.log.isBlend = true;
+  data.log.rating = 4;
   await visit(`/logs/${ids.log}`);
   await audit("log-detail-four-links");
   data.log.servingStyle = "hot";
   data.log.isBlend = false;
+  data.log.rating = originalRating;
   data.log.links = Array.from({ length: 10 }, (_, index) => ({
     id: `many-link-${index}`,
     url: `https://example.com/cafe/${index}`,
