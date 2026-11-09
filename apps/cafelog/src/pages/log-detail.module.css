@@ -166,8 +166,8 @@
     gap: var(--cl-space-tight);
   }
   .summaryOption {
-    color: var(--cl-color-text-muted);
-    font-size: var(--cl-font-size-caption);
+    color: var(--cl-color-text-subtle);
+    font-size: var(--cl-font-size-helper);
   }
   .summaryOption[aria-current="true"] {
     color: var(--cl-color-text);

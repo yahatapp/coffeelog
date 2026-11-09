@@ -319,7 +319,7 @@ const LogDetailPage = () => {
             ) : (
               <div className={styles.rating} role="img" aria-label={`評価 ${log.rating} / 5`}>
                 {renderStars(log.rating)}
-                <span>{log.rating}</span>
+                <span>{log.rating.toFixed(1)}</span>
               </div>
             )}
           </section>

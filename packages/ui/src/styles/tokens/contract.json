@@ -91,6 +91,10 @@
     "type": "color",
     "required": true
   },
+  "--cl-color-text-subtle": {
+    "type": "color",
+    "required": true
+  },
   "--cl-color-background": {
     "type": "color",
     "required": true
