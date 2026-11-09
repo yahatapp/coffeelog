@@ -31,7 +31,7 @@
     "postcss": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
-    "stylelint": "17.16.0",
+    "stylelint": "18.0.0",
     "turbo": "^2.11.10",
     "vite-plus": "1.4.0"
   },
