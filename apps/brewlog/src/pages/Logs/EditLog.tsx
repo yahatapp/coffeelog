@@ -47,7 +47,6 @@ const toFormValues = (log: BrewLogResponse): LogFormValues => ({
   note: log.note ?? "",
   tempType: parseTempType(log.tempType),
   iceAmount: log.iceAmount ?? "",
-  yieldAmount: log.yieldAmount ?? "",
   drawdownTime: log.drawdownTime ?? "",
   hasBypass: log.hasBypass ?? false,
   pours:
@@ -72,7 +71,6 @@ const dirtyFieldLabels: Record<keyof LogFormValues, string> = {
   note: "テイスティングノート",
   tempType: "抽出タイプ",
   iceAmount: "氷の量",
-  yieldAmount: "仕上がり量",
   drawdownTime: "落ち切り時間",
   hasBypass: "加水",
   pours: "注ぎ方",
@@ -112,8 +110,6 @@ const EditLogForm = ({
         throw new Error("豆量には0より大きい数値を入力してください。");
       if (values.waterAmount === "" || values.waterAmount <= 0)
         throw new Error("注水量には0より大きい数値を入力してください。");
-      if (values.yieldAmount === "" || values.yieldAmount <= 0)
-        throw new Error("仕上がり量には0より大きい数値を入力してください。");
       if (values.tempType === "ice" && (values.iceAmount === "" || values.iceAmount <= 0))
         throw new Error("氷の量には0より大きい数値を入力してください。");
       const parsed = logUpdateSchema.safeParse(toLogUpdateInput(values));

@@ -88,13 +88,11 @@ export const BrewLogFields = ({
         if (tempType === "ice") {
           form.setFieldValue("tempType", "ice");
           form.setFieldValue("iceAmount", values.iceAmount || 80);
-          form.setFieldValue("yieldAmount", values.yieldAmount || 200);
           if (values.beanAmount === 10) form.setFieldValue("beanAmount", 16);
           if (values.waterAmount === 150) form.setFieldValue("waterAmount", 120);
         } else {
           form.setFieldValue("tempType", "hot");
           form.setFieldValue("iceAmount", "");
-          form.setFieldValue("yieldAmount", values.waterAmount === 120 ? 150 : values.yieldAmount);
           if (values.beanAmount === 16) form.setFieldValue("beanAmount", 10);
           if (values.waterAmount === 120) form.setFieldValue("waterAmount", 150);
         }
@@ -433,11 +431,9 @@ export const BrewLogFields = ({
                             id="waterAmt"
                             type="number"
                             value={field.state.value}
-                            onChange={(event) => {
-                              const parsed = parseNumber(event.target.value, true);
-                              field.handleChange(parsed);
-                              form.setFieldValue("yieldAmount", parsed);
-                            }}
+                            onChange={(event) =>
+                              field.handleChange(parseNumber(event.target.value, true))
+                            }
                             onBlur={field.handleBlur}
                             required
                           />
@@ -683,37 +679,6 @@ export const BrewLogFields = ({
                   </div>
                 </div>
               </div>
-              <form.Field name="yieldAmount">
-                {(field) => (
-                  <div className={styles.divider}>
-                    <Field
-                      id="yieldAmt"
-                      label={<>{values.tempType === "ice" ? "🥛 " : ""}仕上がり量 (ml)</>}
-                      required
-                      error={getFirstValidationError(field.state.meta.errors)}
-                    >
-                      {(control) => (
-                        <>
-                          <Input
-                            {...control}
-                            id="yieldAmt"
-                            type="number"
-                            value={field.state.value}
-                            onChange={(event) =>
-                              field.handleChange(parseNumber(event.target.value, true))
-                            }
-                            onBlur={field.handleBlur}
-                            placeholder={
-                              values.waterAmount ? String(values.waterAmount) : "例: 150"
-                            }
-                            required
-                          />
-                        </>
-                      )}
-                    </Field>
-                  </div>
-                )}
-              </form.Field>
               <div className={styles.divider} role="group" aria-labelledby="brewlogfields-group-5">
                 <span id="brewlogfields-group-5" className={styles.groupLabel}>
                   加水

@@ -140,6 +140,7 @@ export async function verifyBrewForms(
   await page
     .getByRole("textbox", { name: "抽出コメント", exact: true })
     .fill("試験した抽出コメント");
+  await expect(page.getByText(/仕上がり量/)).toHaveCount(0);
   await audit("log-create");
   await save({
     success: false,
@@ -157,6 +158,7 @@ export async function verifyBrewForms(
     .getByRole("textbox", { name: "テイスティングノート", exact: true })
     .fill("編集したノート");
   await expect(page.getByText(/未保存の変更があります/)).toBeVisible();
+  await expect(page.getByText(/仕上がり量/)).toHaveCount(0);
   await audit("log-edit");
   await save({
     success: false,
@@ -167,6 +169,7 @@ export async function verifyBrewForms(
   });
   await save({ success: true, path: `/logs/${ids.log}` });
   await expect(page.getByText("編集したノート")).toBeVisible();
+  await expect(page.getByText(/仕上がり量/)).toHaveCount(0);
   await expect(
     page
       .getByRole("region", { name: "操作結果の通知" })

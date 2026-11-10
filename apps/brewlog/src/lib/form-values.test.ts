@@ -45,7 +45,6 @@ describe("抽出記録フォームの変換", () => {
       note: "  フローラル  ",
       tempType: "hot",
       iceAmount: "",
-      yieldAmount: 150,
       drawdownTime: "",
       hasBypass: false,
       pours: [
@@ -63,6 +62,7 @@ describe("抽出記録フォームの変換", () => {
       ],
     });
     expect(toLogCreateInput(values)).not.toHaveProperty("bloomingTime");
+    expect(toLogCreateInput(values)).not.toHaveProperty("yieldAmount");
   });
 });
 
