@@ -1,10 +1,9 @@
 import styles from "./forms.module.css";
 import { getFirstValidationError } from "./formValidation";
-import { Field, Select, Textarea } from "@yahatapp/ui";
+import { Checkbox, Field, Label, Select, Textarea } from "@yahatapp/ui";
 import { Minus, Plus, Star } from "lucide-react";
 import { Button, cn } from "../ui/button";
 import { Input } from "../ui/input";
-import "../ui/label";
 import { Card } from "../ui/card";
 import { Slider } from "../ui/slider";
 import type { Bean, Dripper, Grinder } from "@/lib/queries";
@@ -679,35 +678,21 @@ export const BrewLogFields = ({
                   </div>
                 </div>
               </div>
-              <div className={styles.divider} role="group" aria-labelledby="brewlogfields-group-5">
-                <span id="brewlogfields-group-5" className={styles.groupLabel}>
-                  加水
-                </span>
-                <div className={styles.choices}>
-                  <button
-                    type="button"
-                    onClick={() => form.setFieldValue("hasBypass", false)}
-                    className={cn(
-                      styles.choice,
-                      !values.hasBypass ? styles.choiceActive : styles.muted,
-                    )}
-                    aria-pressed={!values.hasBypass}
-                  >
-                    なし
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => form.setFieldValue("hasBypass", true)}
-                    className={cn(
-                      styles.choice,
-                      values.hasBypass ? styles.choiceActive : styles.muted,
-                    )}
-                    aria-pressed={values.hasBypass}
-                  >
-                    あり
-                  </button>
-                </div>
-              </div>
+              <form.Field name="hasBypass">
+                {(field) => (
+                  <div className={styles.divider}>
+                    <Label className={cn(styles.row, styles.label)}>
+                      <Checkbox
+                        name="hasBypass"
+                        checked={field.state.value}
+                        onChange={(event) => field.handleChange(event.target.checked)}
+                        onBlur={field.handleBlur}
+                      />
+                      加水した
+                    </Label>
+                  </div>
+                )}
+              </form.Field>
               <form.Field name="brewComment">
                 {(field) => (
                   <div className={styles.divider}>

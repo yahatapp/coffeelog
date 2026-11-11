@@ -71,6 +71,8 @@ export function createBrewFixtures() {
     grinders = [grinder];
   let next = 6;
   const id = () => `00000000-0000-4000-8000-${String(next++).padStart(12, "0")}`;
+  const savedPours = (pours, brewLogId) =>
+    pours.map((pour) => ({ ...pour, id: id(), brewLogId }));
   return {
     bean,
     log,
@@ -99,6 +101,7 @@ export function createBrewFixtures() {
       if (path === "/api/logs") {
         if (method === "GET") return logs;
         const created = { ...log, ...payload, id: id() };
+        created.pours = savedPours(created.pours, created.id);
         logs.unshift(created);
         return created;
       }
@@ -108,7 +111,10 @@ export function createBrewFixtures() {
           logs.splice(logs.indexOf(target), 1);
           return { success: true };
         }
-        return method === "GET" ? target : Object.assign(target, payload);
+        if (method === "GET") return target;
+        Object.assign(target, payload);
+        if (payload.pours) target.pours = savedPours(payload.pours, target.id);
+        return target;
       }
       for (const [kind, items, seed] of [
         ["drippers", drippers, dripper],
