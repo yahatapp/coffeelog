@@ -2,7 +2,6 @@ declare const styles: {
   readonly cellTitle: string;
   readonly center: string;
   readonly choice: string;
-  readonly choiceActive: string;
   readonly choiceHot: string;
   readonly choiceIced: string;
   readonly choices: string;

@@ -105,10 +105,6 @@
     color: var(--cl-color-temperature-iced);
     background: var(--cl-color-surface);
   }
-  .choiceActive {
-    color: var(--cl-color-action-primary);
-    background: var(--cl-color-surface);
-  }
   .choice:focus-visible,
   .textAction:focus-visible {
     outline: var(--cl-focus-width) solid var(--cl-color-focus);

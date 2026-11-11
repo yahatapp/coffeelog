@@ -137,6 +137,10 @@ export async function verifyBrewForms(
     .first()
     .selectOption("center_only");
   await page.getByRole("button", { name: "評価上げる", exact: true }).click();
+  const bypass = page.getByRole("checkbox", { name: "加水した", exact: true });
+  await expect(bypass).not.toBeChecked();
+  await page.getByText("加水した", { exact: true }).click();
+  await expect(bypass).toBeChecked();
   await page
     .getByRole("textbox", { name: "抽出コメント", exact: true })
     .fill("試験した抽出コメント");
@@ -144,16 +148,25 @@ export async function verifyBrewForms(
   await audit("log-create");
   await save({
     success: false,
-    preserve: () =>
-      expect(page.getByRole("textbox", { name: "抽出コメント", exact: true })).toHaveValue(
+    preserve: async () => {
+      await expect(bypass).toBeChecked();
+      await expect(page.getByRole("textbox", { name: "抽出コメント", exact: true })).toHaveValue(
         "試験した抽出コメント",
-      ),
+      );
+    },
   });
   await save({ success: true, path: "/logs" });
   await expect(
     page.getByRole("region", { name: "操作結果の通知" }).getByText("抽出記録を保存しました。"),
   ).toBeVisible();
-  await page.goto(baseURL + `/logs/${ids.log}/edit`);
+  await page.getByRole("link", { name: /アイス/ }).click();
+  const bypassDetail = page.getByText("加水", { exact: true }).locator("..").locator("dd");
+  await expect(bypassDetail).toHaveText("あり");
+  const logPath = new URL(page.url()).pathname;
+  await page.goto(baseURL + `${logPath}/edit`);
+  await expect(bypass).toBeChecked();
+  await bypass.press("Space");
+  await expect(bypass).not.toBeChecked();
   await page
     .getByRole("textbox", { name: "テイスティングノート", exact: true })
     .fill("編集したノート");
@@ -162,12 +175,15 @@ export async function verifyBrewForms(
   await audit("log-edit");
   await save({
     success: false,
-    preserve: () =>
-      expect(page.getByRole("textbox", { name: "テイスティングノート", exact: true })).toHaveValue(
-        "編集したノート",
-      ),
+    preserve: async () => {
+      await expect(bypass).not.toBeChecked();
+      await expect(
+        page.getByRole("textbox", { name: "テイスティングノート", exact: true }),
+      ).toHaveValue("編集したノート");
+    },
   });
-  await save({ success: true, path: `/logs/${ids.log}` });
+  await save({ success: true, path: logPath });
+  await expect(bypassDetail).toHaveText("なし");
   await expect(page.getByText("編集したノート")).toBeVisible();
   await expect(page.getByText(/仕上がり量/)).toHaveCount(0);
   await expect(
@@ -177,7 +193,7 @@ export async function verifyBrewForms(
   ).toBeVisible();
   await page.screenshot({ path: resolve(output, `brewlog-edit-success-notice-${width}.png`) });
   readMode("error");
-  await page.goto(baseURL + `/logs/${ids.log}/edit`);
+  await page.goto(baseURL + `${logPath}/edit`);
   await expect(page.getByText("編集データの取得に失敗しました。")).toBeVisible();
   readMode("success");
   await page.getByRole("button", { name: "再試行", exact: true }).click();
