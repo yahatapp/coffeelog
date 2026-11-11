@@ -39,8 +39,6 @@ const AddLog = () => {
         throw new Error("豆量には0より大きい数値を入力してください。");
       if (values.waterAmount === "" || values.waterAmount <= 0)
         throw new Error("注水量には0より大きい数値を入力してください。");
-      if (values.yieldAmount === "" || values.yieldAmount <= 0)
-        throw new Error("仕上がり量には0より大きい数値を入力してください。");
       if (values.tempType === "ice" && (values.iceAmount === "" || values.iceAmount <= 0))
         throw new Error("氷の量には0より大きい数値を入力してください。");
       const payload = toLogCreateInput(values);
@@ -79,7 +77,6 @@ const AddLog = () => {
     note: "",
     tempType: "hot",
     iceAmount: "",
-    yieldAmount: 150,
     drawdownTime: "",
     hasBypass: false,
     pours: [],

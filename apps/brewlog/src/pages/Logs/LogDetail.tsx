@@ -185,12 +185,6 @@ const LogDetail = () => {
                 <dd>{log.iceAmount != null ? `${log.iceAmount} g` : "未設定"}</dd>
               </div>
             )}
-            {(log.tempType === "ice" || log.yieldAmount != null) && (
-              <div className={styles.detailRow}>
-                <dt>仕上がり量</dt>
-                <dd>{log.yieldAmount != null ? `${log.yieldAmount} ml` : "未設定"}</dd>
-              </div>
-            )}
             {firstPour?.duration != null && (
               <div className={styles.detailRow}>
                 <dt>蒸らし時間</dt>

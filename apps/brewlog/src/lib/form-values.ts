@@ -114,7 +114,6 @@ export type LogFormValues = {
   note: string;
   tempType: "hot" | "ice";
   iceAmount: number | "";
-  yieldAmount: number | "";
   drawdownTime: number | "";
   hasBypass: boolean;
   pours: PourFormValue[];
@@ -138,7 +137,6 @@ export const toLogCreateInput = (values: LogFormValues): LogCreateInput => ({
   tempType: values.tempType,
   hasBypass: values.hasBypass,
   iceAmount: values.tempType === "ice" ? numberOrNull(values.iceAmount) : null,
-  yieldAmount: numberOrNull(values.yieldAmount),
   drawdownTime: numberOrNull(values.drawdownTime),
   pours: values.pours.map((pour, index) => ({
     pourNumber: pour.pourNumber,
