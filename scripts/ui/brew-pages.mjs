@@ -191,9 +191,31 @@ export async function verifyBrewPages(page, { baseURL, output, width, ids, reset
   await expect(page).toHaveURL(baseURL + "/logs/" + ids.log + "/edit");
   reset();
   await visit("/beans");
-  await page.getByRole("button", { name: /豆名で.*に並べ替え/ }).click();
-  await page.getByRole("checkbox", { name: "アーカイブも表示", exact: true }).check();
-  await page.getByRole("link", { name: /検証用コーヒー豆/ }).click();
+  const beanSort = page.getByRole("group", { name: "並び替え", exact: true });
+  const archiveLabel = page.getByText("アーカイブも表示", { exact: true });
+  const archiveCheckbox = page.getByRole("checkbox", {
+    name: "アーカイブも表示",
+    exact: true,
+  });
+  await expect(beanSort.getByRole("checkbox")).toHaveCount(0);
+  await expect(beanSort.getByText("ソート", { exact: true })).toHaveCount(0);
+  const beanCard = page.getByRole("link", { name: /検証用コーヒー豆/ });
+  const [sortBox, archiveBox, beanBox] = await Promise.all([
+    beanSort.boundingBox(),
+    archiveLabel.boundingBox(),
+    beanCard.locator("xpath=../..").boundingBox(),
+  ]);
+  if (!sortBox || !archiveBox || !beanBox) throw new Error("Bean list controls are missing");
+  expect(archiveBox.y).toBeGreaterThanOrEqual(sortBox.y + sortBox.height);
+  expect(archiveBox.y + archiveBox.height).toBeLessThanOrEqual(beanBox.y);
+  expect(beanBox.y - (archiveBox.y + archiveBox.height)).toBeLessThanOrEqual(4);
+  expect(archiveBox.x + archiveBox.width).toBeCloseTo(sortBox.x + sortBox.width);
+  await beanSort.getByRole("button", { name: "豆名で五十音順に並べ替え" }).click();
+  await expect(beanSort.getByRole("button", { name: "豆名で降順に並べ替え" })).toHaveAttribute(
+    "aria-pressed",
+    "true",
+  );
+  await beanCard.click();
   await expect(page).toHaveURL(new RegExp(`/beans/${ids.bean}$`));
   await page.getByRole("button", { name: "アーカイブする", exact: true }).click();
   await expect(page.getByRole("button", { name: "アーカイブから戻す", exact: true })).toBeVisible();
@@ -202,6 +224,15 @@ export async function verifyBrewPages(page, { baseURL, output, width, ids, reset
   await audit("bean-detail-archived");
   await page.getByRole("link", { name: "バージョン追加", exact: true }).click();
   await expect(page).toHaveURL(baseURL + `/beans/new?parentBeanId=${ids.bean}`);
+  await visit("/beans");
+  await expect(beanCard).toHaveCount(0);
+  await archiveLabel.click();
+  await expect(archiveCheckbox).toBeChecked();
+  await expect(beanCard).toContainText("アーカイブ済み");
+  await audit("beans-with-archived");
+  await archiveCheckbox.press("Space");
+  await expect(archiveCheckbox).not.toBeChecked();
+  await expect(beanCard).toHaveCount(0);
   await visit(`/beans/${ids.bean}`);
   await page.getByRole("button", { name: "アーカイブから戻す", exact: true }).click();
   await visit("/logs");

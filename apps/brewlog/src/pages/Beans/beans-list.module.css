@@ -1,0 +1,14 @@
+@layer pages {
+  .results {
+    display: flex;
+    flex-direction: column;
+  }
+  .archiveFilter {
+    align-self: flex-end;
+    display: flex;
+    align-items: center;
+    color: var(--cl-color-text-muted);
+    font-size: var(--cl-font-size-helper);
+    cursor: pointer;
+  }
+}

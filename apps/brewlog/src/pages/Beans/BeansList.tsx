@@ -1,7 +1,7 @@
-import { Loading, ErrorState } from "@yahatapp/ui";
+import { Checkbox, EmptyState, ErrorState, Loading, SortControls } from "@yahatapp/ui";
+import beanListStyles from "./beans-list.module.css";
 import styles from "../content.module.css";
 import { Link } from "react-router-dom";
-import { Checkbox, EmptyState, SortControls } from "@yahatapp/ui";
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -82,47 +82,16 @@ const BeansList = () => {
       </div>
 
       {groupedBeans.length > 0 && (
-        <div
-          className={[
-            styles.tonal,
-            styles.border,
-            styles.rounded,
-            styles.compact,
-            styles.fieldStack,
-          ].join(" ")}
-        >
-          <label
-            className={[
-              styles.row,
-              styles.spread,
-              styles.target,
-              styles.body,
-              styles.strong,
-              styles.accent,
-              styles.interactive,
-            ].join(" ")}
-          >
-            <span>アーカイブも表示</span>
-            <Checkbox
-              type="checkbox"
-              checked={showArchived}
-              onChange={(event) => {
-                analytics.trackEvent("filter_change");
-                setShowArchived(event.target.checked);
-              }}
-            />
-          </label>
-          <SortControls
-            sortBy={sortBy}
-            sortOrder={sortOrder}
-            sortOptions={[
-              { value: "date", label: "登録日", initialOrder: "desc" },
-              { value: "name", label: "豆名", initialOrder: "asc", ascendingLabel: "五十音順" },
-              { value: "brews", label: "抽出回数", initialOrder: "desc" },
-            ]}
-            onSortChange={changeSort}
-          />
-        </div>
+        <SortControls
+          sortBy={sortBy}
+          sortOrder={sortOrder}
+          sortOptions={[
+            { value: "date", label: "登録日", initialOrder: "desc" },
+            { value: "name", label: "豆名", initialOrder: "asc", ascendingLabel: "五十音順" },
+            { value: "brews", label: "抽出回数", initialOrder: "desc" },
+          ]}
+          onSortChange={changeSort}
+        />
       )}
 
       {logsQuery.isError && (
@@ -145,188 +114,202 @@ const BeansList = () => {
         </div>
       )}
 
-      {visibleBeans.length === 0 ? (
-        <EmptyState
-          title={
-            <>
-              {groupedBeans.length > 0
-                ? "表示できる豆はありません。"
-                : "登録されている豆はありません。"}
-            </>
-          }
-          description={<>お気に入りの豆を登録しましょう！</>}
-          action={
-            <Button onClick={() => navigate("/beans/new")} type="button">
-              豆を登録する
-            </Button>
-          }
-        />
-      ) : (
-        <div className={styles.fieldStack}>
-          {visibleBeans.map((group) => {
-            const { latestBean } = group;
-            const brewCount = brewCountByGroupId.get(group.groupId) ?? 0;
-            const displayDate = latestBean.purchaseDate ?? latestBean.roastDate;
-            return (
-              <Card key={group.groupId}>
-                <div className={[styles.content, styles.row, styles.start].join(" ")}>
-                  <Link to={`/beans/${latestBean.id}`} className={styles.entryLink}>
-                    <div className={[styles.row, styles.grow].join(" ")}>
-                      <div
-                        className={[
-                          styles.tonal,
-                          styles.rounded,
-                          styles.row,
-                          styles.center,
-                          styles.fixed,
-                        ].join(" ")}
-                      >
-                        {(() => {
-                          const countryCode = getCountryCode(latestBean.origin);
-                          const isBlend =
-                            !latestBean.origin ||
-                            latestBean.origin.toLowerCase().includes("ブレンド") ||
-                            latestBean.origin.toLowerCase().includes("blend") ||
-                            latestBean.name.toLowerCase().includes("ブレンド") ||
-                            latestBean.name.toLowerCase().includes("blend");
-                          if (!isBlend && countryCode) {
-                            return <OriginFlag origin={latestBean.origin} size="lg" />;
-                          }
-                          return <CoffeeBeansIcon size="md" className={styles.accent} />;
-                        })()}
-                      </div>
-                      <div className={[styles.fieldStack, styles.grow].join(" ")}>
-                        <h3 className={[styles.strong, styles.foreground, styles.wrap].join(" ")}>
-                          {latestBean.name}
-                        </h3>
-                        {(latestBean.roastLevel || group.isArchived) && (
-                          <div className={[styles.row, styles.wrapping].join(" ")}>
-                            {group.isArchived && (
+      <div className={beanListStyles.results}>
+        {groupedBeans.length > 0 && (
+          <label className={beanListStyles.archiveFilter}>
+            <Checkbox
+              checked={showArchived}
+              onChange={(event) => {
+                analytics.trackEvent("filter_change");
+                setShowArchived(event.target.checked);
+              }}
+            />
+            アーカイブも表示
+          </label>
+        )}
+        {visibleBeans.length === 0 ? (
+          <EmptyState
+            title={
+              <>
+                {groupedBeans.length > 0
+                  ? "表示できる豆はありません。"
+                  : "登録されている豆はありません。"}
+              </>
+            }
+            description={<>お気に入りの豆を登録しましょう！</>}
+            action={
+              <Button onClick={() => navigate("/beans/new")} type="button">
+                豆を登録する
+              </Button>
+            }
+          />
+        ) : (
+          <div className={styles.fieldStack}>
+            {visibleBeans.map((group) => {
+              const { latestBean } = group;
+              const brewCount = brewCountByGroupId.get(group.groupId) ?? 0;
+              const displayDate = latestBean.purchaseDate ?? latestBean.roastDate;
+              return (
+                <Card key={group.groupId}>
+                  <div className={[styles.content, styles.row, styles.start].join(" ")}>
+                    <Link to={`/beans/${latestBean.id}`} className={styles.entryLink}>
+                      <div className={[styles.row, styles.grow].join(" ")}>
+                        <div
+                          className={[
+                            styles.tonal,
+                            styles.rounded,
+                            styles.row,
+                            styles.center,
+                            styles.fixed,
+                          ].join(" ")}
+                        >
+                          {(() => {
+                            const countryCode = getCountryCode(latestBean.origin);
+                            const isBlend =
+                              !latestBean.origin ||
+                              latestBean.origin.toLowerCase().includes("ブレンド") ||
+                              latestBean.origin.toLowerCase().includes("blend") ||
+                              latestBean.name.toLowerCase().includes("ブレンド") ||
+                              latestBean.name.toLowerCase().includes("blend");
+                            if (!isBlend && countryCode) {
+                              return <OriginFlag origin={latestBean.origin} size="lg" />;
+                            }
+                            return <CoffeeBeansIcon size="md" className={styles.accent} />;
+                          })()}
+                        </div>
+                        <div className={[styles.fieldStack, styles.grow].join(" ")}>
+                          <h3 className={[styles.strong, styles.foreground, styles.wrap].join(" ")}>
+                            {latestBean.name}
+                          </h3>
+                          {(latestBean.roastLevel || group.isArchived) && (
+                            <div className={[styles.row, styles.wrapping].join(" ")}>
+                              {group.isArchived && (
+                                <span
+                                  className={[
+                                    styles.tonal,
+                                    styles.pill,
+                                    styles.row,
+                                    styles.helper,
+                                    styles.strong,
+                                    styles.accent,
+                                  ].join(" ")}
+                                >
+                                  <Archive size={14} aria-hidden="true" />
+                                  アーカイブ済み
+                                </span>
+                              )}
+                              {latestBean.roastLevel && (
+                                <RoastLevelIndicator level={latestBean.roastLevel} />
+                              )}
+                            </div>
+                          )}
+                          <div
+                            className={[
+                              styles.row,
+                              styles.wrapping,
+                              styles.helper,
+                              styles.muted,
+                            ].join(" ")}
+                          >
+                            <span
+                              className={[
+                                styles.row,
+                                latestBean.coffeeType === "specialty" ? styles.warningText : "",
+                              ].join(" ")}
+                            >
+                              {latestBean.coffeeType === "specialty" && (
+                                <Sparkles
+                                  size={13}
+                                  className={styles.warningText}
+                                  aria-hidden="true"
+                                />
+                              )}
+                              {latestBean.coffeeType === "specialty"
+                                ? "スペシャルティ"
+                                : "レギュラー"}
+                            </span>
+                            <span className={styles.row}>
+                              <Coffee size={13} aria-hidden="true" />
+                              {logsQuery.isPending
+                                ? "抽出回数を取得中"
+                                : logsQuery.isError
+                                  ? "抽出回数未取得"
+                                  : `${brewCount}杯`}
+                            </span>
+                            <span>
+                              {displayDate
+                                ? `${latestBean.purchaseDate ? "" : "焙煎 "}${displayDate.replace(/-/g, ".")}`
+                                : "日付未設定"}
+                            </span>
+                          </div>
+                          <div
+                            className={[
+                              styles.row,
+                              styles.wrapping,
+                              styles.separated,
+                              styles.optionalDetails,
+                            ].join(" ")}
+                          >
+                            {latestBean.origin && (
                               <span
                                 className={[
                                   styles.tonal,
                                   styles.pill,
                                   styles.row,
                                   styles.helper,
-                                  styles.strong,
-                                  styles.accent,
+                                  styles.muted,
                                 ].join(" ")}
                               >
-                                <Archive size={14} aria-hidden="true" />
-                                アーカイブ済み
+                                <OriginFlag origin={latestBean.origin} size="sm" />
+                                {latestBean.origin}
                               </span>
                             )}
-                            {latestBean.roastLevel && (
-                              <RoastLevelIndicator level={latestBean.roastLevel} />
+                            {latestBean.purchaseStore && (
+                              <span
+                                className={[
+                                  styles.tonal,
+                                  styles.pill,
+                                  styles.helper,
+                                  styles.muted,
+                                ].join(" ")}
+                              >
+                                {latestBean.purchaseStore}
+                              </span>
+                            )}
+                            {latestBean.processMethod && (
+                              <span
+                                className={[
+                                  styles.tonal,
+                                  styles.pill,
+                                  styles.helper,
+                                  styles.muted,
+                                ].join(" ")}
+                              >
+                                {latestBean.processMethod}
+                              </span>
                             )}
                           </div>
-                        )}
-                        <div
-                          className={[
-                            styles.row,
-                            styles.wrapping,
-                            styles.helper,
-                            styles.muted,
-                          ].join(" ")}
-                        >
-                          <span
-                            className={[
-                              styles.row,
-                              latestBean.coffeeType === "specialty" ? styles.warningText : "",
-                            ].join(" ")}
-                          >
-                            {latestBean.coffeeType === "specialty" && (
-                              <Sparkles
-                                size={13}
-                                className={styles.warningText}
-                                aria-hidden="true"
-                              />
-                            )}
-                            {latestBean.coffeeType === "specialty"
-                              ? "スペシャルティ"
-                              : "レギュラー"}
-                          </span>
-                          <span className={styles.row}>
-                            <Coffee size={13} aria-hidden="true" />
-                            {logsQuery.isPending
-                              ? "抽出回数を取得中"
-                              : logsQuery.isError
-                                ? "抽出回数未取得"
-                                : `${brewCount}杯`}
-                          </span>
-                          <span>
-                            {displayDate
-                              ? `${latestBean.purchaseDate ? "" : "焙煎 "}${displayDate.replace(/-/g, ".")}`
-                              : "日付未設定"}
-                          </span>
-                        </div>
-                        <div
-                          className={[
-                            styles.row,
-                            styles.wrapping,
-                            styles.separated,
-                            styles.optionalDetails,
-                          ].join(" ")}
-                        >
-                          {latestBean.origin && (
-                            <span
-                              className={[
-                                styles.tonal,
-                                styles.pill,
-                                styles.row,
-                                styles.helper,
-                                styles.muted,
-                              ].join(" ")}
-                            >
-                              <OriginFlag origin={latestBean.origin} size="sm" />
-                              {latestBean.origin}
-                            </span>
-                          )}
-                          {latestBean.purchaseStore && (
-                            <span
-                              className={[
-                                styles.tonal,
-                                styles.pill,
-                                styles.helper,
-                                styles.muted,
-                              ].join(" ")}
-                            >
-                              {latestBean.purchaseStore}
-                            </span>
-                          )}
-                          {latestBean.processMethod && (
-                            <span
-                              className={[
-                                styles.tonal,
-                                styles.pill,
-                                styles.helper,
-                                styles.muted,
-                              ].join(" ")}
-                            >
-                              {latestBean.processMethod}
-                            </span>
-                          )}
                         </div>
                       </div>
-                    </div>
-                  </Link>
-                  <Button
-                    disabled={group.isArchived}
-                    onClick={() => navigate(`/beans/${latestBean.id}/edit`)}
-                    title="最新の豆を編集"
-                    type="button"
-                    aria-label="最新の豆を編集"
-                    variant="ghost"
-                    size="icon"
-                  >
-                    <Pencil size={18} aria-hidden="true" />
-                  </Button>
-                </div>
-              </Card>
-            );
-          })}
-        </div>
-      )}
+                    </Link>
+                    <Button
+                      disabled={group.isArchived}
+                      onClick={() => navigate(`/beans/${latestBean.id}/edit`)}
+                      title="最新の豆を編集"
+                      type="button"
+                      aria-label="最新の豆を編集"
+                      variant="ghost"
+                      size="icon"
+                    >
+                      <Pencil size={18} aria-hidden="true" />
+                    </Button>
+                  </div>
+                </Card>
+              );
+            })}
+          </div>
+        )}
+      </div>
     </div>
   );
 };
