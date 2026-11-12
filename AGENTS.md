@@ -15,6 +15,7 @@
 
 - Write code review comments in Japanese.
 - When creating a pull request based on an issue, include `Close #<issue-number>` in the pull request description.
+- When a pull request changes the UI, attach screenshots showing the changed areas to the pull request description.
 
 ## UI development
 
