@@ -1,4 +1,4 @@
-import { Loading, ErrorState } from "@yahatapp/ui";
+import { Loading, ErrorState, RecentRecord, RecentRecords, formatDisplayDate } from "@yahatapp/ui";
 import styles from "./content.module.css";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -17,11 +17,6 @@ const Home = () => {
     select: (logs): BrewLog[] => logs.slice(0, 3),
   });
   const recentLogs = logsQuery.data ?? [];
-  const formatDate = (dateStr: string) => {
-    const date = new Date(dateStr);
-    const dayOfWeek = ["日", "月", "火", "水", "木", "金", "土"][date.getDay()];
-    return `${date.getMonth() + 1}月${date.getDate()}日(${dayOfWeek})`;
-  };
   return (
     <div className={styles.stack}>
       <section>
@@ -64,67 +59,57 @@ const Home = () => {
             </div>
           ) : (
             <div className={styles.fieldStack}>
-              {recentLogs.map((log) => (
-                <Link
-                  key={log.id}
-                  className={[
-                    styles.tonal,
-                    styles.border,
-                    styles.rounded,
-                    styles.compact,
-                    styles.row,
-                    styles.spread,
-                    styles.interactive,
-                  ].join(" ")}
-                  to={`/logs/${log.id}`}
-                >
-                  <div className={styles.row}>
-                    <div
-                      className={[
-                        [styles.rounded, styles.elevated, styles.compact].join(" "),
-                        log.tempType === "ice"
-                          ? [styles.icedPanel, styles.icedText].join(" ")
-                          : [styles.hotPanel, styles.hotText].join(" "),
-                      ].join(" ")}
-                    >
-                      <Coffee
-                        size={16}
-                        role="img"
-                        aria-label={log.tempType === "ice" ? "アイス" : "ホット"}
-                      />
-                    </div>
-                    <div>
-                      <p
-                        className={[
-                          styles.body,
-                          styles.strong,
-                          styles.foreground,
-                          styles.wrap,
-                        ].join(" ")}
-                      >
-                        {log.bean.name}
-                      </p>
-                      <p
-                        className={[styles.row, styles.helper, styles.muted, styles.separated].join(
-                          " ",
+              <RecentRecords>
+                {recentLogs.map((log) => {
+                  const date = log.brewDate || log.createdAt;
+                  const isIced = log.tempType === "ice";
+                  return (
+                    <RecentRecord key={log.id}>
+                      <Link to={`/logs/${log.id}`}>
+                        <Coffee
+                          size={16}
+                          role="img"
+                          aria-label={isIced ? "アイス" : "ホット"}
+                          className={[styles.fixed, isIced ? styles.icedText : styles.hotText].join(
+                            " ",
+                          )}
+                        />
+                        <div className={styles.grow}>
+                          <p
+                            className={[
+                              styles.body,
+                              styles.strong,
+                              styles.foreground,
+                              styles.wrap,
+                            ].join(" ")}
+                          >
+                            {log.bean.name}
+                          </p>
+                          <p
+                            className={[
+                              styles.row,
+                              styles.wrapping,
+                              styles.helper,
+                              styles.muted,
+                            ].join(" ")}
+                          >
+                            <time dateTime={date}>{formatDisplayDate(date)}</time>
+                            {log.method && <span>• {log.method}</span>}
+                          </p>
+                        </div>
+                        {log.rating != null && (
+                          <div className={[styles.row, styles.warningText, styles.fixed].join(" ")}>
+                            <Star size={14} className={styles.ratingFilled} aria-hidden="true" />
+                            <span className={[styles.helper, styles.strong].join(" ")}>
+                              {log.rating}
+                            </span>
+                          </div>
                         )}
-                      >
-                        <span>{formatDate(log.createdAt)}</span>
-                        {log.method && <span>• {log.method}</span>}
-                      </p>
-                    </div>
-                  </div>
-                  {log.rating && (
-                    <div className={[styles.row, styles.warningText].join(" ")}>
-                      <Star
-                        size={14}
-                        className={[styles.warningText, styles.ratingFilled].join(" ")}
-                      />
-                      <span className={[styles.helper, styles.strong].join(" ")}>{log.rating}</span>
-                    </div>
-                  )}
-                </Link>
-              ))}
+                      </Link>
+                    </RecentRecord>
+                  );
+                })}
+              </RecentRecords>
               <Button onClick={() => navigate("/logs/new")} fullWidth type="button">
                 <Plus size={18} />
                 抽出を記録する

@@ -1,4 +1,13 @@
-import { Button, CardContent, CardHeader, CardTitle, ErrorState, Loading } from "@yahatapp/ui";
+import {
+  Button,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  ErrorState,
+  Loading,
+  SettingsAbout,
+  SettingsProfile,
+} from "@yahatapp/ui";
 import styles from "./content.module.css";
 import menuStyles from "./settings.module.css";
 import { useQuery } from "@tanstack/react-query";
@@ -28,41 +37,7 @@ const Settings = () => {
     <div className={[styles.stack, styles.separated].join(" ")}>
       <h2 className={[styles.heading, styles.strong, styles.accent].join(" ")}>設定</h2>
 
-      {/* User profile */}
-      <Card>
-        <CardContent>
-          <div className={styles.row}>
-            <div
-              className={[
-                styles.avatar,
-                styles.tonal,
-                styles.border,
-                styles.pill,
-                styles.elevated,
-                styles.clipped,
-              ].join(" ")}
-            >
-              {profile?.pictureUrl ? (
-                <img
-                  src={profile.pictureUrl}
-                  alt={profile.displayName}
-                  className={styles.avatarImage}
-                />
-              ) : (
-                <div className={menuStyles.avatarFallback}>
-                  <User size={32} className={styles.muted} />
-                </div>
-              )}
-            </div>
-            <div className={styles.grow}>
-              <p className={[styles.heading, styles.strong, styles.accent].join(" ")}>
-                {profile?.displayName || "ゲストユーザー"}
-              </p>
-              <p className={[styles.helper, styles.muted].join(" ")}>LINE連携済み</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      <SettingsProfile profile={profile} fallbackIcon={<User size={32} />} />
 
       {isLoading && <Loading label="器具を読み込み中" />}
       {(drippersQuery.isError || grindersQuery.isError) && (
@@ -166,34 +141,11 @@ const Settings = () => {
         </Card>
       )}
 
-      {/* About and logout */}
-      <section className={[styles.fieldStack, styles.separated].join(" ")}>
-        <h3 className={[styles.helper, styles.strong, styles.muted].join(" ")}>アプリについて</h3>
-        <Card>
-          <div className={menuStyles.menu}>
-            <button className={menuStyles.item} type="button">
-              <span className={styles.foreground}>利用規約</span>
-              <ChevronRight size={16} className={styles.muted} />
-            </button>
-            <button className={menuStyles.item} type="button">
-              <span className={styles.foreground}>プライバシーポリシー</span>
-              <ChevronRight size={16} className={styles.muted} />
-            </button>
-            <button
-              onClick={handleLogout}
-              className={[menuStyles.item, menuStyles.danger].join(" ")}
-              type="button"
-            >
-              <LogOut size={16} />
-              <span>ログアウト</span>
-            </button>
-          </div>
-        </Card>
-      </section>
-
-      <div className={styles.center}>
-        <p className={[styles.helper, styles.muted].join(" ")}>Brewlog v0.1.0</p>
-      </div>
+      <SettingsAbout
+        appName="Brewlog"
+        onLogout={handleLogout}
+        logoutIcon={<LogOut size={16} aria-hidden="true" />}
+      />
     </div>
   );
 };

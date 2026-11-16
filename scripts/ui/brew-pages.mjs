@@ -167,6 +167,31 @@ export async function verifyBrewPages(page, { baseURL, output, width, ids, reset
   await expect(page.getByRole("img", { name: "アイス", exact: true })).toBeVisible();
   await expect(page.getByText("アイス", { exact: true })).toHaveCount(0);
   await audit("home-iced");
+  const recent = page.getByRole("link", { name: /Sat\. 2026\.10\.31/ });
+  await expect(recent).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
+  await expect(recent.getByText("›", { exact: true })).toBeVisible();
+  await recent.click();
+  await expect(page).toHaveURL(baseURL + "/logs/" + ids.log);
+  await expect(page.getByText("Sat. 2026.10.31", { exact: true })).toBeVisible();
+  await visit("/logs");
+  const record = page.getByRole("link", { name: /Sat\. 2026\.10\.31/ });
+  const dot = record.getByRole("img", { name: "アイス", exact: true });
+  const flag = record.getByRole("img", { name: "エチオピア", exact: true });
+  await expect(dot).toBeVisible();
+  await expect(record.getByText("アイス", { exact: true })).toHaveCount(0);
+  const dotBounds = await dot.boundingBox();
+  const flagBounds = await flag.boundingBox();
+  expect(dotBounds.y).toBeGreaterThanOrEqual(flagBounds.y + flagBounds.height);
+  expect(dotBounds.width).toBeLessThan(flagBounds.width);
+  const ratingBounds = await record
+    .getByText(String(icedData.log.rating), { exact: true })
+    .boundingBox();
+  const recordBounds = await record.boundingBox();
+  expect(ratingBounds.y + ratingBounds.height / 2).toBeCloseTo(
+    recordBounds.y + recordBounds.height / 2,
+    0,
+  );
+
   const timelineData = reset();
   timelineData.log.pours = [
     { id: "pour-1", pourNumber: 1, waterAmount: 30, duration: 30, pourType: "center_only" },

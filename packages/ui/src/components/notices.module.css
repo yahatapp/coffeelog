@@ -22,7 +22,7 @@
     border: var(--cl-border-width) solid currentColor;
     border-radius: var(--cl-radius-card);
     background: var(--cl-color-surface);
-    padding: var(--cl-space-page-inline);
+    padding: var(--cl-space-field-gap) var(--cl-space-page-inline);
     box-shadow: var(--cl-shadow-card);
   }
   .toast[data-ending-style] {
@@ -48,7 +48,7 @@
   .content {
     display: flex;
     flex-direction: column;
-    gap: var(--cl-space-field-gap);
+    gap: var(--cl-space-tight);
   }
   .header {
     display: flex;

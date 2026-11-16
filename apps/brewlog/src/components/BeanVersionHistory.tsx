@@ -2,13 +2,9 @@ import styles from "./bean-history.module.css";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { ChevronRight, Loader2 } from "lucide-react";
-import { Button, Card, CardHeader, CardTitle, CardContent } from "@yahatapp/ui";
+import { Button, Card, CardHeader, CardTitle, CardContent, formatDisplayDate } from "@yahatapp/ui";
 import { beanQueries, type Bean } from "@/lib/queries";
 import { getBeanGroupId, getBeanVersionLabel, sortBeanVersions } from "@/lib/bean-versions";
-const formatCreatedAt = (date: string) =>
-  new Date(date).toLocaleDateString("ja-JP", {
-    timeZone: "Asia/Tokyo",
-  });
 export const BeanVersionHistory = ({ bean }: { bean: Bean }) => {
   const beansQuery = useQuery(beanQueries.all());
   const versions = sortBeanVersions(
@@ -56,7 +52,7 @@ export const BeanVersionHistory = ({ bean }: { bean: Bean }) => {
                       {getBeanVersionLabel(version)}
                     </p>
                     <p className={[styles.helper, styles.muted].join(" ")}>
-                      登録日: {formatCreatedAt(version.createdAt)}
+                      登録日: {formatDisplayDate(version.createdAt)}
                     </p>
                     <p
                       className={[styles.row, styles.wrapping, styles.helper, styles.muted].join(

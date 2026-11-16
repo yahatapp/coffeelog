@@ -1,0 +1,21 @@
+@layer pages {
+  .record {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: var(--cl-space-field-gap);
+  }
+  .origin {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    align-self: start;
+    gap: var(--cl-space-field-gap);
+  }
+  .temperature {
+    width: var(--cl-space-field-gap);
+    height: var(--cl-space-field-gap);
+    border-radius: var(--cl-radius-action);
+    background: currentColor;
+  }
+}

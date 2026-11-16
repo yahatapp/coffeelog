@@ -1,3 +1,4 @@
+import { formatDisplayDate } from "../lib/display-date";
 import styles from "./store-history.module.css";
 import { Dialog } from "@base-ui/react/dialog";
 import { Button } from "./button";
@@ -244,7 +245,7 @@ function SearchIcon() {
   );
 }
 
-const dateLabel = (date: string | null) => date?.replaceAll("-", ".") || "日付未登録";
+const dateLabel = (date: string | null) => formatDisplayDate(date) ?? "日付未登録";
 
 function Rating({ rating }: { rating: number | null }) {
   return <span className={styles.rating}>{rating == null ? "評価なし" : `★ ${rating}`}</span>;

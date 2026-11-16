@@ -1,0 +1,28 @@
+@layer components {
+  .list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .item + .item {
+    border-block-start: var(--cl-border-width) solid var(--cl-color-border-decorative);
+  }
+  .link {
+    display: flex;
+    align-items: center;
+    gap: var(--cl-space-field-gap);
+    min-height: var(--cl-size-target-min);
+    padding-block: var(--cl-space-field-gap);
+  }
+  .link:focus-visible {
+    outline: var(--cl-focus-width) solid var(--cl-color-focus);
+    outline-offset: var(--cl-focus-offset);
+  }
+  .chevron {
+    flex-shrink: 0;
+    margin-inline-start: auto;
+    color: var(--cl-color-text-muted);
+    font-size: var(--cl-font-size-section-title);
+    line-height: 1;
+  }
+}
