@@ -21,9 +21,17 @@ export async function verifyNotices(page, { app, width, output }) {
     await expect(body).toBeVisible();
     await close.focus();
     await expect(region.getByRole("button", { name: "通知を閉じる", exact: true })).toBeVisible();
-    const h = await heading.boundingBox(),
+    const toast = heading.locator("xpath=../../..");
+    const t = await toast.boundingBox(),
+      h = await heading.boundingBox(),
+      header = await heading.locator("..").boundingBox(),
       b = await body.boundingBox(),
-      c = await close.boundingBox();
+      c = await close.boundingBox(),
+      icon = await close.locator("svg").boundingBox();
+    await expect(toast).toHaveCSS("padding-top", "16px");
+    expect(header.y - t.y).toBeCloseTo(t.y + t.height - (b.y + b.height), 0);
+    expect(icon.y - t.y).toBeCloseTo(t.x + t.width - (icon.x + icon.width), 0);
+    expect(h.x + h.width).toBeLessThanOrEqual(c.x);
     expect(b.y).toBeGreaterThanOrEqual(Math.max(h.y + h.height, c.y + c.height));
     expect(c.y).toBeLessThan(h.y + h.height);
     expect(c.y + c.height).toBeGreaterThan(h.y);
@@ -33,10 +41,7 @@ export async function verifyNotices(page, { app, width, output }) {
     expect(b.x + b.width).toBeLessThanOrEqual(width);
     if (variant === "success") {
       await expect(heading).toHaveCSS("color", "rgb(22, 101, 52)");
-      await expect(heading.locator("xpath=../../..")).toHaveCSS(
-        "background-color",
-        "rgb(240, 253, 244)",
-      );
+      await expect(toast).toHaveCSS("background-color", "rgb(240, 253, 244)");
     }
     const audit = await new AxeBuilder({ page })
       .include('[aria-label="操作結果の通知"]')
