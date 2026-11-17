@@ -9,6 +9,11 @@
     flex-shrink: 0;
     margin-inline-end: calc(-1 * (var(--cl-space-page-inline) + var(--cl-border-width)));
   }
+  .records {
+    display: flex;
+    flex-direction: column;
+    gap: var(--cl-space-field-gap);
+  }
   .list {
     list-style: none;
     padding: 0;

@@ -5,5 +5,6 @@ declare const styles: {
   readonly item: string;
   readonly link: string;
   readonly list: string;
+  readonly records: string;
 };
 export default styles;

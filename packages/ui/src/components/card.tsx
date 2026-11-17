@@ -11,9 +11,17 @@ export const Card = React.forwardRef<HTMLDivElement, CardProps>(
 );
 Card.displayName = "Card";
 
-export const CardHeader = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
-  ({ className, ...props }, ref) => (
-    <div ref={ref} className={cn(styles.header, className)} {...props} />
+type CardHeaderProps = React.HTMLAttributes<HTMLDivElement> & {
+  spacing?: "default" | "compact";
+};
+
+export const CardHeader = React.forwardRef<HTMLDivElement, CardHeaderProps>(
+  ({ className, spacing = "default", ...props }, ref) => (
+    <div
+      ref={ref}
+      className={cn(styles.header, spacing === "compact" && styles.compactHeader, className)}
+      {...props}
+    />
   ),
 );
 CardHeader.displayName = "CardHeader";

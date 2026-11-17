@@ -25,4 +25,11 @@ export async function verifyRecentRecordsLayout(page, sectionTitle, record) {
   const actionBox = await action.boundingBox();
   expect(titleBox.y + titleBox.height / 2).toBeCloseTo(actionBox.y + actionBox.height / 2, 0);
   expect(actionBox.height).toBeGreaterThanOrEqual(44);
+
+  const list = record.locator("../..");
+  const listBox = await list.boundingBox();
+  const footerBox = await list.locator("+ *").boundingBox();
+  const gapAbove = listBox.y - (titleBox.y + titleBox.height);
+  const gapBelow = footerBox.y - (listBox.y + listBox.height);
+  expect(Math.abs(gapAbove - gapBelow)).toBeLessThanOrEqual(1);
 }

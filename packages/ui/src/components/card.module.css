@@ -12,6 +12,9 @@
     gap: var(--cl-space-field-gap);
     padding: var(--cl-space-section-gap);
   }
+  .compactHeader {
+    padding-block: var(--cl-space-page-inline) 0;
+  }
   .title {
     font-size: var(--cl-font-size-heading);
     font-weight: var(--cl-font-weight-medium);

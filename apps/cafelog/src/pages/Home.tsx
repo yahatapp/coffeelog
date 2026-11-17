@@ -62,47 +62,44 @@ const HomePage = () => {
               }
             />
           ) : (
-            <div className={styles.section}>
-              <RecentRecords>
-                {recentLogs.map((log) => (
-                  <RecentRecord key={log.id}>
-                    <Link to={`/logs/${log.id}`}>
-                      <OriginFlag origin={log.origin} />
-                      <span className={styles.recentBody}>
-                        <span className={styles.recordTitle}>{log.cafeName}</span>
-                        <span className={styles.visit}>
-                          {log.origin && (
-                            <span>
-                              <MapPin size={11} aria-hidden="true" />
-                              {log.origin}
-                            </span>
-                          )}
-                          {log.visitDate && (
-                            <time dateTime={log.visitDate}>{formatDisplayDate(log.visitDate)}</time>
-                          )}
-                        </span>
+            <RecentRecords
+              footer={
+                <Button asChild fullWidth>
+                  <Link to="/logs/new">
+                    <Plus size={18} aria-hidden="true" />
+                    新しい一杯を記録する
+                  </Link>
+                </Button>
+              }
+            >
+              {recentLogs.map((log) => (
+                <RecentRecord key={log.id}>
+                  <Link to={`/logs/${log.id}`}>
+                    <OriginFlag origin={log.origin} />
+                    <span className={styles.recentBody}>
+                      <span className={styles.recordTitle}>{log.cafeName}</span>
+                      <span className={styles.visit}>
+                        {log.origin && (
+                          <span>
+                            <MapPin size={11} aria-hidden="true" />
+                            {log.origin}
+                          </span>
+                        )}
+                        {log.visitDate && (
+                          <time dateTime={log.visitDate}>{formatDisplayDate(log.visitDate)}</time>
+                        )}
                       </span>
-                      {log.rating != null && (
-                        <span
-                          className={styles.rating}
-                          role="img"
-                          aria-label={`評価 ${log.rating}`}
-                        >
-                          <Star size={14} className={styles.star} aria-hidden="true" />
-                          {log.rating}
-                        </span>
-                      )}
-                    </Link>
-                  </RecentRecord>
-                ))}
-              </RecentRecords>
-              <Button asChild fullWidth>
-                <Link to="/logs/new">
-                  <Plus size={18} aria-hidden="true" />
-                  新しい一杯を記録する
-                </Link>
-              </Button>
-            </div>
+                    </span>
+                    {log.rating != null && (
+                      <span className={styles.rating} role="img" aria-label={`評価 ${log.rating}`}>
+                        <Star size={14} className={styles.star} aria-hidden="true" />
+                        {log.rating}
+                      </span>
+                    )}
+                  </Link>
+                </RecentRecord>
+              ))}
+            </RecentRecords>
           )}
         </CardContent>
       </Card>

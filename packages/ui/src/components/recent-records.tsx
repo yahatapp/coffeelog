@@ -6,7 +6,7 @@ import styles from "./recent-records.module.css";
 
 export function RecentRecordsHeader({ title, action }: { title: string; action?: ReactElement }) {
   return (
-    <CardHeader>
+    <CardHeader spacing={action ? "compact" : "default"}>
       <div className={styles.header}>
         <CardTitle>{title}</CardTitle>
         {action && (
@@ -21,11 +21,14 @@ export function RecentRecordsHeader({ title, action }: { title: string; action?:
   );
 }
 
-export function RecentRecords({ children }: { children: ReactNode }) {
+export function RecentRecords({ children, footer }: { children: ReactNode; footer: ReactNode }) {
   return (
-    <ul className={styles.list} role="list">
-      {children}
-    </ul>
+    <div className={styles.records}>
+      <ul className={styles.list} role="list">
+        {children}
+      </ul>
+      {footer}
+    </div>
   );
 }
 

@@ -59,67 +59,68 @@ const Home = () => {
               </Button>
             </div>
           ) : (
-            <div className={styles.fieldStack}>
-              <RecentRecords>
-                {recentLogs.map((log) => {
-                  const date = log.brewDate || log.createdAt;
-                  const isIced = log.tempType === "ice";
-                  return (
-                    <RecentRecord key={log.id}>
-                      <Link to={`/logs/${log.id}`}>
-                        <Coffee
-                          size={16}
-                          role="img"
-                          aria-label={isIced ? "アイス" : "ホット"}
-                          className={[styles.fixed, isIced ? styles.icedText : styles.hotText].join(
-                            " ",
-                          )}
-                        />
-                        <div className={styles.grow}>
-                          <p
-                            className={[
-                              styles.body,
-                              styles.strong,
-                              styles.foreground,
-                              styles.wrap,
-                            ].join(" ")}
-                          >
-                            {log.bean.name}
-                          </p>
-                          <p
-                            className={[
-                              styles.row,
-                              styles.wrapping,
-                              styles.helper,
-                              styles.muted,
-                            ].join(" ")}
-                          >
-                            <time dateTime={date}>{formatDisplayDate(date)}</time>
-                            {log.method && <span>• {log.method}</span>}
-                          </p>
-                        </div>
-                        {log.rating != null && (
-                          <div
-                            className={[styles.row, styles.warningText, styles.fixed].join(" ")}
-                            role="img"
-                            aria-label={`評価 ${log.rating}`}
-                          >
-                            <Star size={14} className={styles.ratingFilled} aria-hidden="true" />
-                            <span className={[styles.helper, styles.strong].join(" ")}>
-                              {log.rating}
-                            </span>
-                          </div>
+            <RecentRecords
+              footer={
+                <Button onClick={() => navigate("/logs/new")} fullWidth type="button">
+                  <Plus size={18} />
+                  抽出を記録する
+                </Button>
+              }
+            >
+              {recentLogs.map((log) => {
+                const date = log.brewDate || log.createdAt;
+                const isIced = log.tempType === "ice";
+                return (
+                  <RecentRecord key={log.id}>
+                    <Link to={`/logs/${log.id}`}>
+                      <Coffee
+                        size={16}
+                        role="img"
+                        aria-label={isIced ? "アイス" : "ホット"}
+                        className={[styles.fixed, isIced ? styles.icedText : styles.hotText].join(
+                          " ",
                         )}
-                      </Link>
-                    </RecentRecord>
-                  );
-                })}
-              </RecentRecords>
-              <Button onClick={() => navigate("/logs/new")} fullWidth type="button">
-                <Plus size={18} />
-                抽出を記録する
-              </Button>
-            </div>
+                      />
+                      <div className={styles.grow}>
+                        <p
+                          className={[
+                            styles.body,
+                            styles.strong,
+                            styles.foreground,
+                            styles.wrap,
+                          ].join(" ")}
+                        >
+                          {log.bean.name}
+                        </p>
+                        <p
+                          className={[
+                            styles.row,
+                            styles.wrapping,
+                            styles.helper,
+                            styles.muted,
+                          ].join(" ")}
+                        >
+                          <time dateTime={date}>{formatDisplayDate(date)}</time>
+                          {log.method && <span>• {log.method}</span>}
+                        </p>
+                      </div>
+                      {log.rating != null && (
+                        <div
+                          className={[styles.row, styles.warningText, styles.fixed].join(" ")}
+                          role="img"
+                          aria-label={`評価 ${log.rating}`}
+                        >
+                          <Star size={14} className={styles.ratingFilled} aria-hidden="true" />
+                          <span className={[styles.helper, styles.strong].join(" ")}>
+                            {log.rating}
+                          </span>
+                        </div>
+                      )}
+                    </Link>
+                  </RecentRecord>
+                );
+              })}
+            </RecentRecords>
           )}
         </CardContent>
       </Card>
