@@ -60,6 +60,7 @@
   .rating {
     display: flex;
     align-items: center;
+    flex-shrink: 0;
     gap: var(--cl-space-tight);
     font-size: var(--cl-font-size-helper);
     color: var(--cl-color-action-primary);

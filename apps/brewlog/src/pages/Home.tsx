@@ -1,4 +1,11 @@
-import { Loading, ErrorState, RecentRecord, RecentRecords, formatDisplayDate } from "@yahatapp/ui";
+import {
+  Loading,
+  ErrorState,
+  RecentRecord,
+  RecentRecords,
+  RecentRecordsHeader,
+  formatDisplayDate,
+} from "@yahatapp/ui";
 import styles from "./content.module.css";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -8,7 +15,7 @@ import { useLiff } from "../hooks/useLiff";
 import { logQueries, type BrewLog } from "@/lib/queries";
 import { CoffeeBeansIcon } from "../components/ui/CoffeeBeansIcon";
 import { Button } from "../components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
+import { Card, CardContent } from "../components/ui/card";
 const Home = () => {
   const { profile } = useLiff();
   const navigate = useNavigate();
@@ -27,16 +34,10 @@ const Home = () => {
       </section>
 
       <Card>
-        <CardHeader>
-          <div className={[styles.row, styles.spread].join(" ")}>
-            <CardTitle>最近の抽出記録</CardTitle>
-            {recentLogs.length > 0 && (
-              <Button variant="ghost" size="sm" onClick={() => navigate("/logs")} type="button">
-                すべて見る
-              </Button>
-            )}
-          </div>
-        </CardHeader>
+        <RecentRecordsHeader
+          title="最近の抽出記録"
+          action={recentLogs.length > 0 ? <Link to="/logs">すべて見る</Link> : undefined}
+        />
         <CardContent>
           {logsQuery.isPending ? (
             <Loading />
@@ -98,7 +99,11 @@ const Home = () => {
                           </p>
                         </div>
                         {log.rating != null && (
-                          <div className={[styles.row, styles.warningText, styles.fixed].join(" ")}>
+                          <div
+                            className={[styles.row, styles.warningText, styles.fixed].join(" ")}
+                            role="img"
+                            aria-label={`評価 ${log.rating}`}
+                          >
                             <Star size={14} className={styles.ratingFilled} aria-hidden="true" />
                             <span className={[styles.helper, styles.strong].join(" ")}>
                               {log.rating}
@@ -123,9 +128,7 @@ const Home = () => {
         <Link to={"/beans"} className={styles.entryLink}>
           <Card>
             <div className={[styles.content, styles.stack, styles.center].join(" ")}>
-              <div className={[styles.tonal, styles.rounded, styles.compact].join(" ")}>
-                <CoffeeBeansIcon size="md" className={styles.accent} aria-hidden="true" />
-              </div>
+              <CoffeeBeansIcon size="lg" className={styles.tileIcon} aria-hidden="true" />
               <span className={[styles.body, styles.strong].join(" ")}>豆を管理</span>
             </div>
           </Card>
@@ -133,9 +136,7 @@ const Home = () => {
         <Link to={"/logs"} className={styles.entryLink}>
           <Card>
             <div className={[styles.content, styles.stack, styles.center].join(" ")}>
-              <div className={[styles.tonal, styles.rounded, styles.compact].join(" ")}>
-                <ClipboardList size={24} className={styles.accent} />
-              </div>
+              <ClipboardList className={styles.tileIcon} aria-hidden="true" />
               <span className={[styles.body, styles.strong].join(" ")}>履歴を見る</span>
             </div>
           </Card>

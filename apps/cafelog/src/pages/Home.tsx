@@ -5,13 +5,12 @@ import {
   Button,
   Card,
   CardContent,
-  CardHeader,
-  CardTitle,
   Loading,
   ErrorState,
   EmptyState,
   RecentRecord,
   RecentRecords,
+  RecentRecordsHeader,
   formatDisplayDate,
 } from "@yahatapp/ui";
 import { MapPin, Plus, Star } from "lucide-react";
@@ -38,16 +37,10 @@ const HomePage = () => {
         <p className={styles.muted}>最近出会った一杯を振り返りましょう。</p>
       </section>
       <Card>
-        <CardHeader>
-          <div className={styles.header}>
-            <CardTitle>最近のカフェ記録</CardTitle>
-            {recentLogs.length > 0 && (
-              <Button asChild variant="ghost" size="sm">
-                <Link to="/logs">すべて見る</Link>
-              </Button>
-            )}
-          </div>
-        </CardHeader>
+        <RecentRecordsHeader
+          title="最近のカフェ記録"
+          action={recentLogs.length > 0 ? <Link to="/logs">すべて見る</Link> : undefined}
+        />
         <CardContent>
           {logsQuery.isPending ? (
             <Loading label="直近の記録を読み込み中..." />
@@ -76,15 +69,7 @@ const HomePage = () => {
                     <Link to={`/logs/${log.id}`}>
                       <OriginFlag origin={log.origin} />
                       <span className={styles.recentBody}>
-                        <span className={styles.header}>
-                          <span className={styles.recordTitle}>{log.cafeName}</span>
-                          {log.rating != null && (
-                            <span className={styles.rating} aria-label={`評価 ${log.rating}`}>
-                              <Star size={14} className={styles.star} aria-hidden="true" />
-                              {log.rating}
-                            </span>
-                          )}
-                        </span>
+                        <span className={styles.recordTitle}>{log.cafeName}</span>
                         <span className={styles.visit}>
                           {log.origin && (
                             <span>
@@ -97,6 +82,16 @@ const HomePage = () => {
                           )}
                         </span>
                       </span>
+                      {log.rating != null && (
+                        <span
+                          className={styles.rating}
+                          role="img"
+                          aria-label={`評価 ${log.rating}`}
+                        >
+                          <Star size={14} className={styles.star} aria-hidden="true" />
+                          {log.rating}
+                        </span>
+                      )}
                     </Link>
                   </RecentRecord>
                 ))}

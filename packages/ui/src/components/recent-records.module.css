@@ -1,4 +1,14 @@
 @layer components {
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--cl-space-field-gap);
+  }
+  .headerAction {
+    flex-shrink: 0;
+    margin-inline-end: calc(-1 * (var(--cl-space-page-inline) + var(--cl-border-width)));
+  }
   .list {
     list-style: none;
     padding: 0;

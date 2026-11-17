@@ -1,3 +1,4 @@
+import { verifyRecentRecordsLayout } from "./recent-records.mjs";
 import { storeLinkFixtures, verifyStoreLinks } from "./store-links.mjs";
 import { createRequire } from "node:module";
 import { resolve } from "node:path";
@@ -248,6 +249,7 @@ export async function verifyCafePages(
   const recent = page.getByRole("link", { name: /Sat\. 2026\.10\.31/ });
   await expect(recent).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
   await expect(recent.getByText("›", { exact: true })).toBeVisible();
+  await verifyRecentRecordsLayout(page, "最近のカフェ記録", recent);
   await expect(recent.locator("..")).toHaveCSS("border-top-width", "0px");
   await expect(page.getByRole("link", { name: /Fri\. 2026\.10\.30/ }).locator("..")).toHaveCSS(
     "border-top-width",

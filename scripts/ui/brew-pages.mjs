@@ -1,3 +1,4 @@
+import { verifyRecentRecordsLayout } from "./recent-records.mjs";
 import { storeLinkFixtures, verifyStoreLinks } from "./store-links.mjs";
 import { createRequire } from "node:module";
 import { resolve } from "node:path";
@@ -170,6 +171,13 @@ export async function verifyBrewPages(page, { baseURL, output, width, ids, reset
   const recent = page.getByRole("link", { name: /Sat\. 2026\.10\.31/ });
   await expect(recent).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
   await expect(recent.getByText("›", { exact: true })).toBeVisible();
+  await verifyRecentRecordsLayout(page, "最近の抽出記録", recent);
+  for (const name of ["豆を管理", "履歴を見る"]) {
+    const icon = page.getByRole("link", { name, exact: true }).locator("svg");
+    await expect(icon).toHaveCSS("width", "44px");
+    await expect(icon).toHaveCSS("height", "44px");
+    await expect(icon.locator("..")).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
+  }
   await recent.click();
   await expect(page).toHaveURL(baseURL + "/logs/" + ids.log);
   await expect(page.getByText("Sat. 2026.10.31", { exact: true })).toBeVisible();

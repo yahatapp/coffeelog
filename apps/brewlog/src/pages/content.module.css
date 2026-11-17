@@ -55,6 +55,11 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: var(--cl-space-page-inline);
   }
+  .tileIcon {
+    width: var(--cl-size-target-min);
+    height: var(--cl-size-target-min);
+    color: var(--cl-color-action-primary);
+  }
   .spread {
     flex-wrap: wrap;
     justify-content: space-between;

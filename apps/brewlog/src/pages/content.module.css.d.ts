@@ -57,6 +57,7 @@ declare const styles: {
   readonly surface: string;
   readonly target: string;
   readonly textLink: string;
+  readonly tileIcon: string;
   readonly tiles: string;
   readonly tonal: string;
   readonly visuallyHidden: string;
