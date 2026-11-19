@@ -13,9 +13,10 @@
     gap: var(--cl-space-field-gap);
   }
   .temperature {
-    width: var(--cl-space-field-gap);
-    height: var(--cl-space-field-gap);
+    width: calc(var(--cl-size-flag-medium) - var(--cl-space-tight));
+    height: calc(var(--cl-size-flag-medium) - var(--cl-space-tight));
+    border: var(--cl-border-width) solid currentColor;
     border-radius: var(--cl-radius-action);
-    background: currentColor;
+    background: color-mix(in srgb, currentColor 28%, var(--cl-color-surface));
   }
 }
