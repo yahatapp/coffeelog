@@ -2,7 +2,6 @@ declare const styles: {
   readonly absolute: string;
   readonly accent: string;
   readonly avatar: string;
-  readonly avatarImage: string;
   readonly body: string;
   readonly border: string;
   readonly cardContent: string;
@@ -30,7 +29,6 @@ declare const styles: {
   readonly icedPanel: string;
   readonly icedText: string;
   readonly icon: string;
-  readonly interactive: string;
   readonly masterActions: string;
   readonly masterEntry: string;
   readonly masterHeading: string;
@@ -59,6 +57,7 @@ declare const styles: {
   readonly surface: string;
   readonly target: string;
   readonly textLink: string;
+  readonly tileIcon: string;
   readonly tiles: string;
   readonly tonal: string;
   readonly visuallyHidden: string;

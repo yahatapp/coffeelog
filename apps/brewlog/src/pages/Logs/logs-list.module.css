@@ -1,0 +1,22 @@
+@layer pages {
+  .record {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: var(--cl-space-field-gap);
+  }
+  .origin {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    align-self: start;
+    gap: var(--cl-space-field-gap);
+  }
+  .temperature {
+    width: calc(var(--cl-size-flag-medium) - var(--cl-space-tight));
+    height: calc(var(--cl-size-flag-medium) - var(--cl-space-tight));
+    border: var(--cl-border-width) solid currentColor;
+    border-radius: var(--cl-radius-action);
+    background: color-mix(in srgb, currentColor 28%, var(--cl-color-surface));
+  }
+}

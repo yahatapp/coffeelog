@@ -1,4 +1,11 @@
-import { Checkbox, EmptyState, ErrorState, Loading, SortControls } from "@yahatapp/ui";
+import {
+  Checkbox,
+  EmptyState,
+  ErrorState,
+  Loading,
+  SortControls,
+  formatDisplayDate,
+} from "@yahatapp/ui";
 import beanListStyles from "./beans-list.module.css";
 import styles from "../content.module.css";
 import { Link } from "react-router-dom";
@@ -148,7 +155,9 @@ const BeansList = () => {
             {visibleBeans.map((group) => {
               const { latestBean } = group;
               const brewCount = brewCountByGroupId.get(group.groupId) ?? 0;
-              const displayDate = latestBean.purchaseDate ?? latestBean.roastDate;
+              const displayDate = formatDisplayDate(
+                latestBean.purchaseDate ?? latestBean.roastDate,
+              );
               return (
                 <Card key={group.groupId}>
                   <div className={[styles.content, styles.row, styles.start].join(" ")}>
@@ -238,7 +247,7 @@ const BeansList = () => {
                             </span>
                             <span>
                               {displayDate
-                                ? `${latestBean.purchaseDate ? "" : "焙煎 "}${displayDate.replace(/-/g, ".")}`
+                                ? `${latestBean.purchaseDate ? "" : "焙煎 "}${displayDate}`
                                 : "日付未設定"}
                             </span>
                           </div>

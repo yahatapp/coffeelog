@@ -3,15 +3,17 @@ import {
   ErrorState,
   EmptyState,
   LogListControls,
+  formatDisplayDate,
   type LogSortOrder,
   type LogTemperatureFilter,
 } from "@yahatapp/ui";
 import styles from "../content.module.css";
+import listStyles from "./logs-list.module.css";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { Plus, Star, Calendar, Snowflake, Sun } from "lucide-react";
+import { Plus, Star, Calendar } from "lucide-react";
 import { logQueries, type BrewLog } from "@/lib/queries";
 import { analytics } from "@/lib/analytics";
 import { OriginFlag } from "@/components/ui/OriginFlag";
@@ -32,17 +34,6 @@ const LogsList = () => {
     }
     setSortBy(nextSort);
     setSortOrder(nextSort === "bean" ? "asc" : "desc");
-  };
-  const formatDate = (log: BrewLog) => {
-    if (log.brewDate) {
-      const [year, month, day] = log.brewDate.split("-");
-      const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
-      const dayOfWeek = ["日", "月", "火", "水", "木", "金", "土"][date.getDay()];
-      return `${parseInt(month)}月${parseInt(day)}日(${dayOfWeek})`;
-    }
-    const date = new Date(log.createdAt);
-    const dayOfWeek = ["日", "月", "火", "水", "木", "金", "土"][date.getDay()];
-    return `${date.getMonth() + 1}月${date.getDate()}日(${dayOfWeek})`;
   };
   const hotLogsCount = logs.filter((log) => log.tempType !== "ice").length;
   const iceLogsCount = logs.filter((log) => log.tempType === "ice").length;
@@ -158,15 +149,27 @@ const LogsList = () => {
         />
       ) : (
         <div className={styles.fieldStack} key={activeTab}>
-          {sortedLogs.map((log) => (
-            <Link to={`/logs/${log.id}`} className={styles.entryLink} key={log.id}>
-              <Card>
-                <div className={styles.content}>
-                  <div className={[styles.row, styles.spread, styles.start].join(" ")}>
-                    <div className={[styles.fieldStack, styles.grow].join(" ")}>
-                      <h3 className={[styles.row, styles.strong, styles.foreground].join(" ")}>
-                        <OriginFlag origin={log.bean.origin} size="md" />
-                        <span>{log.bean.name}</span>
+          {sortedLogs.map((log) => {
+            const date = log.brewDate || log.createdAt;
+            const isIced = log.tempType === "ice";
+            return (
+              <Link to={`/logs/${log.id}`} className={styles.entryLink} key={log.id}>
+                <Card>
+                  <div className={[styles.content, listStyles.record].join(" ")}>
+                    <div className={listStyles.origin}>
+                      <OriginFlag origin={log.bean.origin} size="md" />
+                      <span
+                        className={[
+                          listStyles.temperature,
+                          isIced ? styles.icedText : styles.hotText,
+                        ].join(" ")}
+                        role="img"
+                        aria-label={isIced ? "アイス" : "ホット"}
+                      />
+                    </div>
+                    <div className={[styles.fieldStack, styles.wrap].join(" ")}>
+                      <h3 className={[styles.strong, styles.foreground].join(" ")}>
+                        {log.bean.name}
                       </h3>
                       <div
                         className={[styles.row, styles.wrapping, styles.helper, styles.muted].join(
@@ -174,60 +177,29 @@ const LogsList = () => {
                         )}
                       >
                         <span className={styles.row}>
-                          <Calendar size={12} />
-                          {formatDate(log)}
+                          <Calendar size={12} aria-hidden="true" />
+                          <time dateTime={date}>{formatDisplayDate(date)}</time>
                         </span>
                         {(log.dripper?.name || log.method) && (
                           <span>• {log.dripper?.name || log.method}</span>
                         )}
-                        <span>•</span>
-                        {log.tempType === "ice" ? (
-                          <span
-                            className={[
-                              styles.icedPanel,
-                              styles.pill,
-                              styles.row,
-                              styles.strong,
-                              styles.icedText,
-                            ].join(" ")}
-                          >
-                            <Snowflake size={13} aria-hidden="true" />
-                            アイス
-                          </span>
-                        ) : (
-                          <span
-                            className={[
-                              styles.hotPanel,
-                              styles.pill,
-                              styles.row,
-                              styles.strong,
-                              styles.hotText,
-                            ].join(" ")}
-                          >
-                            <Sun size={13} aria-hidden="true" />
-                            ホット
-                          </span>
-                        )}
                       </div>
                     </div>
-                    {log.rating && (
-                      <div className={[styles.warningPanel, styles.rounded, styles.row].join(" ")}>
+                    {log.rating != null && (
+                      <div className={[styles.warningPanel, styles.row].join(" ")}>
                         <Star
                           size={16}
-                          className={[styles.warningText, styles.ratingFilled, styles.icon].join(
-                            " ",
-                          )}
+                          className={[styles.ratingFilled, styles.fixed].join(" ")}
+                          aria-hidden="true"
                         />
-                        <span className={[styles.strong, styles.warningText].join(" ")}>
-                          {log.rating}
-                        </span>
+                        <span className={styles.strong}>{log.rating}</span>
                       </div>
                     )}
                   </div>
-                </div>
-              </Card>
-            </Link>
-          ))}
+                </Card>
+              </Link>
+            );
+          })}
         </div>
       )}
     </div>

@@ -48,3 +48,7 @@ export {
 
 export { StoreLink, type StoreLinkProps } from "./components/store-link";
 export { STORE_LINK_TYPES, classifyStoreLink, type StoreLinkType } from "./lib/store-links";
+
+export { RecentRecord, RecentRecords, RecentRecordsHeader } from "./components/recent-records";
+export { SettingsAbout, SettingsProfile } from "./components/settings-sections";
+export { formatDisplayDate } from "./lib/display-date";

@@ -6,6 +6,7 @@ import {
   CardHeader,
   CardTitle,
   CardContent,
+  formatDisplayDate,
 } from "@yahatapp/ui";
 import styles from "./bean-detail.module.css";
 import type { MutationNoticeResult } from "@yahatapp/ui";
@@ -18,7 +19,6 @@ import { OriginFlag } from "@/components/ui/OriginFlag";
 import { RoastLevelIndicator } from "@/components/ui/RoastLevelIndicator";
 import { BeanVersionHistory } from "@/components/BeanVersionHistory";
 import { getBeanVersionLabel } from "@/lib/bean-versions";
-const formatDate = (date: string | null) => date?.replaceAll("-", ".") || "未設定";
 const DetailRow = ({ label, value }: { label: string; value: React.ReactNode }) => (
   <div className={styles.detailRow}>
     <dt>{label}</dt>
@@ -159,8 +159,8 @@ const BeanDetail = () => {
                 )
               }
             />
-            <DetailRow label="購入日" value={formatDate(bean.purchaseDate)} />
-            <DetailRow label="焙煎日" value={formatDate(bean.roastDate)} />
+            <DetailRow label="購入日" value={formatDisplayDate(bean.purchaseDate)} />
+            <DetailRow label="焙煎日" value={formatDisplayDate(bean.roastDate)} />
             <DetailRow label="精製方法" value={bean.processMethod} />
           </dl>
         </CardContent>

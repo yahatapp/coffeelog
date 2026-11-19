@@ -1,3 +1,4 @@
+import { verifyRecentRecordsLayout } from "./recent-records.mjs";
 import { storeLinkFixtures, verifyStoreLinks } from "./store-links.mjs";
 import { createRequire } from "node:module";
 import { resolve } from "node:path";
@@ -244,6 +245,18 @@ export async function verifyCafePages(
     rating: null,
     visitDate: "2026-10-30",
   });
+  await visit("/");
+  const recent = page.getByRole("link", { name: /Sat\. 2026\.10\.31/ });
+  await expect(recent).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
+  await expect(recent.getByText("›", { exact: true })).toBeVisible();
+  await verifyRecentRecordsLayout(page, "最近のカフェ記録", recent);
+  await expect(recent.locator("..")).toHaveCSS("border-top-width", "0px");
+  await expect(page.getByRole("link", { name: /Fri\. 2026\.10\.30/ }).locator("..")).toHaveCSS(
+    "border-top-width",
+    "1px",
+  );
+  await recent.click();
+  await expect(page).toHaveURL(baseURL + "/logs/" + ids.log);
   await visit("/logs");
   await page.getByRole("button", { name: /アイス/ }).click();
   await expect(page.getByRole("link", { name: /アイスを飲んだカフェ/ })).toBeVisible();
@@ -268,16 +281,15 @@ export async function verifyCafePages(
   await page.getByRole("button", { name: "キャンセル", exact: true }).click();
   await expect(page.getByRole("button", { name: "編集", exact: true })).toBeFocused();
   await visit("/settings");
+  await expect(page.getByRole("heading", { name: "確認用ユーザー", exact: true })).toBeVisible();
+  await expect(page.getByText("LINE連携済み", { exact: true })).toBeVisible();
+  await expect(page.getByText("LINE ユーザーID", { exact: true })).toHaveCount(0);
+  await expect(page.getByRole("heading", { name: "アプリについて", exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "利用規約", exact: true })).toBeDisabled();
   await expect(
-    page.getByRole("heading", { name: "確認用ユーザー", exact: true }).locator("../../.."),
-  ).toHaveCSS("padding-top", "24px");
-  await expect(
-    page.getByRole("heading", { name: "アプリ情報", exact: true }).locator(".."),
-  ).toHaveCSS("padding-top", "24px");
-  await page.context().grantPermissions(["clipboard-read", "clipboard-write"], { origin: baseURL });
-  await page.getByRole("button", { name: "ユーザーIDをコピー", exact: true }).click();
-  await expect.poll(() => page.evaluate(() => navigator.clipboard.readText())).toBe("fixture-user");
-  await expect(page.getByRole("status")).toHaveText("ユーザーIDをコピーしました。");
+    page.getByRole("button", { name: "プライバシーポリシー", exact: true }),
+  ).toBeDisabled();
+  await expect(page.getByText("Cafelog v0.1.0", { exact: true })).toBeVisible();
   await page.getByRole("button", { name: "ログアウト / 再ログイン", exact: true }).click();
   await expect.poll(() => page.evaluate(() => globalThis.__uiLoginCount)).toBe(1);
   for (const [name, path] of [

@@ -8,6 +8,7 @@ import {
   ErrorState,
   EmptyState,
   LogListControls,
+  formatDisplayDate,
   type LogSortOrder,
   type LogTemperatureFilter,
 } from "@yahatapp/ui";
@@ -117,7 +118,7 @@ const LogsPage = () => {
               key={log.id}
               to={`/logs/${log.id}`}
               className={styles.recordLink}
-              aria-label={`${log.cafeName}の記録（${log.visitDate ?? "日付未登録"}）`}
+              aria-label={`${log.cafeName}の記録（${formatDisplayDate(log.visitDate) ?? "日付未登録"}）`}
             >
               <CafeLogListCard log={log} />
             </Link>

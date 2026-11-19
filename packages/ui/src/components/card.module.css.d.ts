@@ -1,4 +1,5 @@
 declare const styles: {
+  readonly compactHeader: string;
   readonly content: string;
   readonly footer: string;
   readonly header: string;

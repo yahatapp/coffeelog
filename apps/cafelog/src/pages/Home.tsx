@@ -5,25 +5,19 @@ import {
   Button,
   Card,
   CardContent,
-  CardHeader,
-  CardTitle,
   Loading,
   ErrorState,
   EmptyState,
+  RecentRecord,
+  RecentRecords,
+  RecentRecordsHeader,
+  formatDisplayDate,
 } from "@yahatapp/ui";
 import { MapPin, Plus, Star } from "lucide-react";
 import { OriginFlag } from "@/components/OriginFlag";
 import { useLiff } from "@/hooks/useLiff";
 import { getErrorMessage } from "@/lib/errors";
 import { cafelogQueries } from "@/lib/queries";
-
-const formatDate = (dateStr: string | null | undefined) => {
-  if (!dateStr) return null;
-
-  const date = new Date(dateStr);
-  const dayOfWeek = ["日", "月", "火", "水", "木", "金", "土"][date.getDay()];
-  return `${date.getMonth() + 1}月${date.getDate()}日(${dayOfWeek})`;
-};
 
 const HomePage = () => {
   const { profile } = useLiff();
@@ -43,16 +37,10 @@ const HomePage = () => {
         <p className={styles.muted}>最近出会った一杯を振り返りましょう。</p>
       </section>
       <Card>
-        <CardHeader>
-          <div className={styles.header}>
-            <CardTitle>最近のカフェ記録</CardTitle>
-            {recentLogs.length > 0 && (
-              <Button asChild variant="ghost" size="sm">
-                <Link to="/logs">すべて見る</Link>
-              </Button>
-            )}
-          </div>
-        </CardHeader>
+        <RecentRecordsHeader
+          title="最近のカフェ記録"
+          action={recentLogs.length > 0 ? <Link to="/logs">すべて見る</Link> : undefined}
+        />
         <CardContent>
           {logsQuery.isPending ? (
             <Loading label="直近の記録を読み込み中..." />
@@ -74,43 +62,44 @@ const HomePage = () => {
               }
             />
           ) : (
-            <div className={styles.section}>
+            <RecentRecords
+              footer={
+                <Button asChild fullWidth>
+                  <Link to="/logs/new">
+                    <Plus size={18} aria-hidden="true" />
+                    新しい一杯を記録する
+                  </Link>
+                </Button>
+              }
+            >
               {recentLogs.map((log) => (
-                <Link key={log.id} to={`/logs/${log.id}`} className={styles.recentRecord}>
-                  <OriginFlag origin={log.origin} />
-                  <span className={styles.recentBody}>
-                    <span className={styles.header}>
+                <RecentRecord key={log.id}>
+                  <Link to={`/logs/${log.id}`}>
+                    <OriginFlag origin={log.origin} />
+                    <span className={styles.recentBody}>
                       <span className={styles.recordTitle}>{log.cafeName}</span>
-                      {log.rating != null && (
-                        <span className={styles.rating} aria-label={`評価 ${log.rating}`}>
-                          <Star size={14} className={styles.star} aria-hidden="true" />
-                          {log.rating}
-                        </span>
-                      )}
+                      <span className={styles.visit}>
+                        {log.origin && (
+                          <span>
+                            <MapPin size={11} aria-hidden="true" />
+                            {log.origin}
+                          </span>
+                        )}
+                        {log.visitDate && (
+                          <time dateTime={log.visitDate}>{formatDisplayDate(log.visitDate)}</time>
+                        )}
+                      </span>
                     </span>
-                    <span className={styles.visit}>
-                      {log.origin && (
-                        <span>
-                          <MapPin size={11} aria-hidden="true" />
-                          {log.origin}
-                        </span>
-                      )}
-                      {formatDate(log.visitDate) && (
-                        <time dateTime={log.visitDate ?? undefined}>
-                          {formatDate(log.visitDate)}
-                        </time>
-                      )}
-                    </span>
-                  </span>
-                </Link>
+                    {log.rating != null && (
+                      <span className={styles.rating} role="img" aria-label={`評価 ${log.rating}`}>
+                        <Star size={14} className={styles.star} aria-hidden="true" />
+                        {log.rating}
+                      </span>
+                    )}
+                  </Link>
+                </RecentRecord>
               ))}
-              <Button asChild fullWidth>
-                <Link to="/logs/new">
-                  <Plus size={18} aria-hidden="true" />
-                  新しい一杯を記録する
-                </Link>
-              </Button>
-            </div>
+            </RecentRecords>
           )}
         </CardContent>
       </Card>

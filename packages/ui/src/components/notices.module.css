@@ -16,6 +16,7 @@
     padding-bottom: var(--cl-space-page-inline);
   }
   .toast {
+    position: relative;
     pointer-events: auto;
     width: 100%;
     flex-shrink: 0;
@@ -54,6 +55,9 @@
     display: flex;
     align-items: center;
     gap: var(--cl-space-field-gap);
+    padding-inline-end: calc(
+      var(--cl-size-target-min) + var(--cl-space-field-gap) - var(--cl-space-page-inline)
+    );
   }
   .icon {
     width: var(--cl-font-size-heading);
@@ -73,14 +77,19 @@
     font-size: var(--cl-font-size-body);
   }
   .close {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-end: 0;
     display: flex;
     width: var(--cl-size-target-min);
     height: var(--cl-size-target-min);
-    flex-shrink: 0;
     align-items: center;
     justify-content: center;
     border-radius: var(--cl-radius-action);
     cursor: pointer;
+  }
+  .close:focus-visible {
+    outline-offset: calc(-1 * var(--cl-focus-width));
   }
   .close:hover {
     background: var(--cl-color-surface-tonal);

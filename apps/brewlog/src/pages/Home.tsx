@@ -1,4 +1,11 @@
-import { Loading, ErrorState } from "@yahatapp/ui";
+import {
+  Loading,
+  ErrorState,
+  RecentRecord,
+  RecentRecords,
+  RecentRecordsHeader,
+  formatDisplayDate,
+} from "@yahatapp/ui";
 import styles from "./content.module.css";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -8,7 +15,7 @@ import { useLiff } from "../hooks/useLiff";
 import { logQueries, type BrewLog } from "@/lib/queries";
 import { CoffeeBeansIcon } from "../components/ui/CoffeeBeansIcon";
 import { Button } from "../components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
+import { Card, CardContent } from "../components/ui/card";
 const Home = () => {
   const { profile } = useLiff();
   const navigate = useNavigate();
@@ -17,11 +24,6 @@ const Home = () => {
     select: (logs): BrewLog[] => logs.slice(0, 3),
   });
   const recentLogs = logsQuery.data ?? [];
-  const formatDate = (dateStr: string) => {
-    const date = new Date(dateStr);
-    const dayOfWeek = ["日", "月", "火", "水", "木", "金", "土"][date.getDay()];
-    return `${date.getMonth() + 1}月${date.getDate()}日(${dayOfWeek})`;
-  };
   return (
     <div className={styles.stack}>
       <section>
@@ -32,16 +34,10 @@ const Home = () => {
       </section>
 
       <Card>
-        <CardHeader>
-          <div className={[styles.row, styles.spread].join(" ")}>
-            <CardTitle>最近の抽出記録</CardTitle>
-            {recentLogs.length > 0 && (
-              <Button variant="ghost" size="sm" onClick={() => navigate("/logs")} type="button">
-                すべて見る
-              </Button>
-            )}
-          </div>
-        </CardHeader>
+        <RecentRecordsHeader
+          title="最近の抽出記録"
+          action={recentLogs.length > 0 ? <Link to="/logs">すべて見る</Link> : undefined}
+        />
         <CardContent>
           {logsQuery.isPending ? (
             <Loading />
@@ -63,73 +59,68 @@ const Home = () => {
               </Button>
             </div>
           ) : (
-            <div className={styles.fieldStack}>
-              {recentLogs.map((log) => (
-                <Link
-                  key={log.id}
-                  className={[
-                    styles.tonal,
-                    styles.border,
-                    styles.rounded,
-                    styles.compact,
-                    styles.row,
-                    styles.spread,
-                    styles.interactive,
-                  ].join(" ")}
-                  to={`/logs/${log.id}`}
-                >
-                  <div className={styles.row}>
-                    <div
-                      className={[
-                        [styles.rounded, styles.elevated, styles.compact].join(" "),
-                        log.tempType === "ice"
-                          ? [styles.icedPanel, styles.icedText].join(" ")
-                          : [styles.hotPanel, styles.hotText].join(" "),
-                      ].join(" ")}
-                    >
+            <RecentRecords
+              footer={
+                <Button onClick={() => navigate("/logs/new")} fullWidth type="button">
+                  <Plus size={18} />
+                  抽出を記録する
+                </Button>
+              }
+            >
+              {recentLogs.map((log) => {
+                const date = log.brewDate || log.createdAt;
+                const isIced = log.tempType === "ice";
+                return (
+                  <RecentRecord key={log.id}>
+                    <Link to={`/logs/${log.id}`}>
                       <Coffee
                         size={16}
                         role="img"
-                        aria-label={log.tempType === "ice" ? "アイス" : "ホット"}
-                      />
-                    </div>
-                    <div>
-                      <p
-                        className={[
-                          styles.body,
-                          styles.strong,
-                          styles.foreground,
-                          styles.wrap,
-                        ].join(" ")}
-                      >
-                        {log.bean.name}
-                      </p>
-                      <p
-                        className={[styles.row, styles.helper, styles.muted, styles.separated].join(
+                        aria-label={isIced ? "アイス" : "ホット"}
+                        className={[styles.fixed, isIced ? styles.icedText : styles.hotText].join(
                           " ",
                         )}
-                      >
-                        <span>{formatDate(log.createdAt)}</span>
-                        {log.method && <span>• {log.method}</span>}
-                      </p>
-                    </div>
-                  </div>
-                  {log.rating && (
-                    <div className={[styles.row, styles.warningText].join(" ")}>
-                      <Star
-                        size={14}
-                        className={[styles.warningText, styles.ratingFilled].join(" ")}
                       />
-                      <span className={[styles.helper, styles.strong].join(" ")}>{log.rating}</span>
-                    </div>
-                  )}
-                </Link>
-              ))}
-              <Button onClick={() => navigate("/logs/new")} fullWidth type="button">
-                <Plus size={18} />
-                抽出を記録する
-              </Button>
-            </div>
+                      <div className={styles.grow}>
+                        <p
+                          className={[
+                            styles.body,
+                            styles.strong,
+                            styles.foreground,
+                            styles.wrap,
+                          ].join(" ")}
+                        >
+                          {log.bean.name}
+                        </p>
+                        <p
+                          className={[
+                            styles.row,
+                            styles.wrapping,
+                            styles.helper,
+                            styles.muted,
+                          ].join(" ")}
+                        >
+                          <time dateTime={date}>{formatDisplayDate(date)}</time>
+                          {log.method && <span>• {log.method}</span>}
+                        </p>
+                      </div>
+                      {log.rating != null && (
+                        <div
+                          className={[styles.row, styles.warningText, styles.fixed].join(" ")}
+                          role="img"
+                          aria-label={`評価 ${log.rating}`}
+                        >
+                          <Star size={14} className={styles.ratingFilled} aria-hidden="true" />
+                          <span className={[styles.helper, styles.strong].join(" ")}>
+                            {log.rating}
+                          </span>
+                        </div>
+                      )}
+                    </Link>
+                  </RecentRecord>
+                );
+              })}
+            </RecentRecords>
           )}
         </CardContent>
       </Card>
@@ -138,9 +129,7 @@ const Home = () => {
         <Link to={"/beans"} className={styles.entryLink}>
           <Card>
             <div className={[styles.content, styles.stack, styles.center].join(" ")}>
-              <div className={[styles.tonal, styles.rounded, styles.compact].join(" ")}>
-                <CoffeeBeansIcon size="md" className={styles.accent} aria-hidden="true" />
-              </div>
+              <CoffeeBeansIcon size="lg" className={styles.tileIcon} aria-hidden="true" />
               <span className={[styles.body, styles.strong].join(" ")}>豆を管理</span>
             </div>
           </Card>
@@ -148,9 +137,7 @@ const Home = () => {
         <Link to={"/logs"} className={styles.entryLink}>
           <Card>
             <div className={[styles.content, styles.stack, styles.center].join(" ")}>
-              <div className={[styles.tonal, styles.rounded, styles.compact].join(" ")}>
-                <ClipboardList size={24} className={styles.accent} />
-              </div>
+              <ClipboardList className={styles.tileIcon} aria-hidden="true" />
               <span className={[styles.body, styles.strong].join(" ")}>履歴を見る</span>
             </div>
           </Card>

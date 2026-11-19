@@ -1,0 +1,82 @@
+@layer components {
+  .profile {
+    display: flex;
+    align-items: center;
+    gap: var(--cl-space-field-gap);
+  }
+  .avatar {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: var(--cl-size-avatar);
+    height: var(--cl-size-avatar);
+    overflow: hidden;
+    border: var(--cl-border-width) solid var(--cl-color-border-decorative);
+    border-radius: var(--cl-radius-action);
+    background: var(--cl-color-surface-tonal);
+    color: var(--cl-color-text-muted);
+    box-shadow: var(--cl-shadow-card);
+  }
+  .avatarImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .profileText {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+  .name {
+    color: var(--cl-color-action-primary);
+    font-size: var(--cl-font-size-section-title);
+    font-weight: var(--cl-font-weight-medium);
+  }
+  .caption,
+  .version {
+    color: var(--cl-color-text-muted);
+    font-size: var(--cl-font-size-helper);
+  }
+  .about {
+    display: flex;
+    flex-direction: column;
+    gap: var(--cl-space-field-gap);
+  }
+  .version {
+    margin-block-start: var(--cl-space-field-gap);
+    text-align: center;
+  }
+  .menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border-radius: inherit;
+    overflow: hidden;
+  }
+  .item + .item {
+    border-block-start: var(--cl-border-width) solid var(--cl-color-border-decorative);
+  }
+  .action {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    min-height: var(--cl-size-target-min);
+    gap: var(--cl-space-field-gap);
+    padding: var(--cl-space-page-inline);
+    color: var(--cl-color-text-muted);
+    font-size: var(--cl-font-size-label);
+    text-align: start;
+  }
+  .action:focus-visible {
+    outline: var(--cl-focus-width) solid var(--cl-color-focus);
+    outline-offset: calc(-1 * var(--cl-focus-width));
+  }
+  .logout {
+    justify-content: flex-start;
+    color: var(--cl-color-error);
+    cursor: pointer;
+  }
+  .logout:hover {
+    background: var(--cl-color-surface-tonal);
+  }
+}

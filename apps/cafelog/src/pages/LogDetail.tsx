@@ -1,4 +1,11 @@
-import { Button, Loading, ErrorState, EmptyState, StoreLink } from "@yahatapp/ui";
+import {
+  Button,
+  Loading,
+  ErrorState,
+  EmptyState,
+  StoreLink,
+  formatDisplayDate,
+} from "@yahatapp/ui";
 import { getCountryCode } from "@yahatapp/coffee-reference";
 import styles from "./log-detail.module.css";
 import { mutationNotices } from "@/lib/mutationNotices";
@@ -61,15 +68,6 @@ const renderStars = (rating: number) => (
     ))}
   </span>
 );
-
-const formatDate = (value: string | null | undefined) =>
-  value
-    ? new Date(value).toLocaleDateString("ja-JP", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-      })
-    : "未設定";
 
 const LogDetailPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -345,7 +343,7 @@ const LogDetailPage = () => {
                 <Calendar size={14} aria-hidden="true" />
                 訪問日
               </dt>
-              <dd>{formatDate(log.visitDate)}</dd>
+              <dd>{formatDisplayDate(log.visitDate) ?? "未設定"}</dd>
             </div>
           </dl>
         </article>

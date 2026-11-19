@@ -7,6 +7,7 @@ import {
   CardHeader,
   CardTitle,
   CardContent,
+  formatDisplayDate,
 } from "@yahatapp/ui";
 import { useQuery } from "@tanstack/react-query";
 import { Link, useParams } from "react-router-dom";
@@ -25,16 +26,6 @@ import { OriginFlag } from "@/components/ui/OriginFlag";
 import { PourTimeline } from "@/components/PourTimeline";
 import styles from "./log-detail.module.css";
 
-const formatBrewDate = (log: BrewLog) => {
-  const date = log.brewDate ? new Date(`${log.brewDate}T00:00:00`) : new Date(log.createdAt);
-  return new Intl.DateTimeFormat("ja-JP", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    weekday: "short",
-    ...(!log.brewDate && { hour: "2-digit", minute: "2-digit" }),
-  }).format(date);
-};
 const grindLabel = (clicks: number, grinder: BrewLog["grinder"]) => {
   if (clicks <= (grinder?.fineMax ?? 6)) return "細挽き";
   if (clicks <= (grinder?.mediumFineMax ?? 9)) return "中細挽き";
@@ -95,7 +86,9 @@ const LogDetail = () => {
         <CardContent>
           <div className={styles.overview}>
             <div className={styles.metadata}>
-              <span className={styles.date}>{formatBrewDate(log)}</span>
+              <span className={styles.date}>
+                {formatDisplayDate(log.brewDate || log.createdAt)}
+              </span>
               <div className={styles.badges}>
                 <span className={log.tempType === "ice" ? styles.iced : styles.hot}>
                   {log.tempType === "ice" ? "アイス" : "ホット"}

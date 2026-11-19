@@ -1,9 +1,9 @@
+import { formatDisplayDate } from "@yahatapp/ui";
 import { Star } from "lucide-react";
 import type { LogsResponse } from "@/lib/queries";
 import { OriginFlag } from "./OriginFlag";
 import styles from "./cafe-log-list-card.module.css";
 type CafeLogListCardProps = { log: LogsResponse[number] };
-const formatVisitDate = (date: string | null) => date?.replaceAll("-", ".") ?? "日付未登録";
 const DetailItem = ({ label, value }: { label: string; value: string | null }) => (
   <div className={styles.detail}>
     <dt className={styles.muted}>{label}</dt>
@@ -31,7 +31,9 @@ export const CafeLogListCard = ({ log }: CafeLogListCardProps) => (
         <h3 className={styles.title}>{log.cafeName}</h3>
         <div className={styles.visit}>
           <span>{log.prefecture || "都道府県未登録"}</span>
-          <time dateTime={log.visitDate ?? undefined}>{formatVisitDate(log.visitDate)}</time>
+          <time dateTime={log.visitDate ?? undefined}>
+            {formatDisplayDate(log.visitDate) ?? "日付未登録"}
+          </time>
         </div>
         <div className={styles.rating}>
           {log.rating == null ? (
