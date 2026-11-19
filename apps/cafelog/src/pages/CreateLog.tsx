@@ -1,9 +1,9 @@
-import { Button } from "@yahatapp/ui";
+import { Button, notify, PageHeading, useAppBack } from "@yahatapp/ui";
 import styles from "./create-log.module.css";
-import { mutationNotices } from "@/lib/mutationNotices";
+import { cafeMutationError } from "@/lib/mutationNotices";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useMemo } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useMemo, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { CafeLogForm } from "@/components/CafeLogForm";
 import { createCafeLogDefaults, type CafeLogFormValues } from "@/lib/cafeLogForm";
@@ -13,15 +13,21 @@ import { analytics } from "@/lib/analytics";
 
 const CreateLogPage = () => {
   const navigate = useNavigate();
+  const goBack = useAppBack("/logs");
+  const saved = useRef(false);
   const queryClient = useQueryClient();
   const defaultValues = useMemo(() => createCafeLogDefaults(), []);
   const createMutation = useMutation({
-    meta: mutationNotices.createLog,
     mutationFn: (values: CafeLogFormValues) => saveLogWithImages({ values }),
-    onSuccess: async ({ data: newLog }) => {
+    onSuccess: async ({ data: newLog, notice }) => {
       analytics.trackEvent("record_create_success");
       await queryClient.invalidateQueries({ queryKey: cafelogQueries.all });
-      void navigate(`/logs/${newLog.id}`);
+      saved.current = true;
+      if (!notice) notify({ variant: "success", message: "記録を保存しました。" });
+      void navigate(`/logs/${newLog.id}`, {
+        replace: true,
+        state: { photoWarning: notice?.message },
+      });
     },
   });
 
@@ -38,16 +44,22 @@ const CreateLogPage = () => {
   return (
     <div className={styles.root}>
       <div className={styles.header}>
-        <Button asChild variant="ghost" size="icon">
-          <Link to="/logs" aria-label="記録一覧に戻る">
-            <ArrowLeft size={20} aria-hidden="true" />
-          </Link>
+        <Button
+          variant="ghost"
+          size="icon"
+          aria-label="記録一覧に戻る"
+          disabled={createMutation.isPending}
+          onClick={goBack}
+        >
+          <ArrowLeft size={20} aria-hidden="true" />
         </Button>
-        <h2 className={styles.heading}>記録を追加</h2>
+        <PageHeading className={styles.heading}>記録を追加</PageHeading>
       </div>
 
       <CafeLogForm
         defaultValues={defaultValues}
+        saved={saved}
+        error={createMutation.error ? cafeMutationError(createMutation.error, "保存") : null}
         onSubmit={handleSubmit}
         submitLabel="この内容で保存する"
         isSubmitting={createMutation.isPending}

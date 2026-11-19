@@ -98,20 +98,27 @@ export const CoffeeAttributes = ({
         },
       ],
     },
-  ];
+  ]
+    .map((section) => ({
+      ...section,
+      rows: section.rows.filter(({ value }) => Boolean(value?.trim())),
+    }))
+    .filter(({ rows }) => rows.length > 0);
+
+  if (sections.length === 0) return null;
 
   return (
     <section aria-labelledby="coffee-attributes-heading" className={styles.stack}>
       <div className={styles.header}>
         <Layers3 aria-hidden="true" className={styles.accent} size={16} />
-        <h4 id="coffee-attributes-heading" className={styles.heading}>
+        <h2 id="coffee-attributes-heading" className={styles.heading}>
           コーヒーの情報
-        </h4>
+        </h2>
       </div>
       <div className={styles.stack}>
         {sections.map(({ title, rows }) => (
           <div key={title}>
-            <h5 className={styles.sectionTitle}>{title}</h5>
+            <h3 className={styles.sectionTitle}>{title}</h3>
             <dl className={styles.details}>
               {rows.map(({ label, value }) => (
                 <div
@@ -119,9 +126,7 @@ export const CoffeeAttributes = ({
                   className={label === "フレーバーノート" ? styles.multilineRow : styles.row}
                 >
                   <dt className={styles.label}>{label}</dt>
-                  <dd className={styles.value}>
-                    {value || <span className={styles.muted}>未登録</span>}
-                  </dd>
+                  <dd className={styles.value}>{value}</dd>
                 </div>
               ))}
             </dl>

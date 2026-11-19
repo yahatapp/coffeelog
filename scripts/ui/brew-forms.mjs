@@ -32,16 +32,14 @@ export async function verifyBrewForms(
       timeout: 30000,
     });
   };
-  const save = async ({ success, path, preserve }) => {
+  const save = async ({ success, path, preserve, pending }) => {
     const before = count();
     hold();
-    await page
-      .getByRole("button", { name: /保存/ })
-      .last()
-      .click();
+    await page.getByRole("button", { name: /保存/ }).last().click();
     await expect.poll(count).toBe(before + 1);
     await expect(page.getByRole("button", { name: /保存中/ })).toBeDisabled();
     await page.keyboard.press("Enter");
+    if (pending) await pending();
     await expect.poll(count).toBe(before + 1);
     await release(success ? 200 : 500);
     if (success) await expect(page).toHaveURL(new RegExp(path + "$"));
@@ -145,10 +143,27 @@ export async function verifyBrewForms(
     .getByRole("textbox", { name: "抽出コメント", exact: true })
     .fill("試験した抽出コメント");
   await expect(page.getByText(/仕上がり量/)).toHaveCount(0);
+  const waterTemp = page.getByRole("spinbutton", { name: /湯温/ });
+  const beforeInvalid = count();
+  await waterTemp.fill("0");
+  await page.getByRole("button", { name: "記録を保存する", exact: true }).click();
+  await expect(waterTemp).toBeFocused();
+  await expect(waterTemp).toHaveAttribute("aria-invalid", "true");
+  expect(count()).toBe(beforeInvalid);
+  await waterTemp.fill("85");
   await audit("log-create");
   await save({
     success: false,
+    pending: async () => {
+      await expect(page.getByRole("textbox", { name: "抽出コメント", exact: true })).toBeDisabled();
+      await expect(
+        page.getByRole("spinbutton", { name: "注ぎ回数 (投)", exact: true }),
+      ).toBeDisabled();
+      await page.getByRole("navigation").getByRole("link", { name: "設定", exact: true }).click();
+      await expect(page).toHaveURL(/\/logs\/new/);
+    },
     preserve: async () => {
+      await expect(page.getByRole("alert")).toContainText("入力内容は保持されています");
       await expect(bypass).toBeChecked();
       await expect(page.getByRole("textbox", { name: "抽出コメント", exact: true })).toHaveValue(
         "試験した抽出コメント",
@@ -162,6 +177,7 @@ export async function verifyBrewForms(
   await page.getByRole("link", { name: /アイス/ }).click();
   const bypassDetail = page.getByText("加水", { exact: true }).locator("..").locator("dd");
   await expect(bypassDetail).toHaveText("あり");
+  await expect(page.getByText("試験した抽出コメント", { exact: true })).toBeVisible();
   const logPath = new URL(page.url()).pathname;
   await page.goto(baseURL + `${logPath}/edit`);
   await expect(bypass).toBeChecked();
@@ -175,7 +191,12 @@ export async function verifyBrewForms(
   await audit("log-edit");
   await save({
     success: false,
+    pending: () =>
+      expect(
+        page.getByRole("textbox", { name: "テイスティングノート", exact: true }),
+      ).toBeDisabled(),
     preserve: async () => {
+      await expect(page.getByRole("alert")).toContainText("入力内容は保持されています");
       await expect(bypass).not.toBeChecked();
       await expect(
         page.getByRole("textbox", { name: "テイスティングノート", exact: true }),

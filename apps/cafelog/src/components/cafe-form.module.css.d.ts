@@ -8,6 +8,9 @@ declare const styles: {
   readonly group: string;
   readonly legend: string;
   readonly measurements: string;
+  readonly optional: string;
+  readonly optionalFields: string;
+  readonly optionalSummary: string;
   readonly panel: string;
   readonly rating: string;
   readonly ratingValue: string;

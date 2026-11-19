@@ -1,5 +1,4 @@
 declare const styles: {
-  readonly floatingAction: string;
   readonly greeting: string;
   readonly header: string;
   readonly heading: string;

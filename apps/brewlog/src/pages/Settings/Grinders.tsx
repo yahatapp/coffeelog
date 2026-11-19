@@ -1,3 +1,4 @@
+import { PageHeading, useAppBack } from "@yahatapp/ui";
 import { Loading, ErrorState } from "@yahatapp/ui";
 import { Field } from "@yahatapp/ui";
 import styles from "./equipment.module.css";
@@ -6,7 +7,6 @@ import { mutationNotices } from "@/lib/mutationNotices";
 import { useForm } from "@tanstack/react-form";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { ArrowLeft, CheckCircle, Loader2, Pencil, Plus, Sliders, Trash2 } from "lucide-react";
 import { grinderQueries, mutations, queryKeys, type Grinder } from "@/lib/queries";
 import { Button } from "@/components/ui/button";
@@ -168,7 +168,7 @@ const GrinderFields = ({
   );
 };
 const Grinders = () => {
-  const navigate = useNavigate();
+  const goBack = useAppBack("/settings");
   const queryClient = useQueryClient();
   const grindersQuery = useQuery(grinderQueries.all());
   const grinders = grindersQuery.data ?? [];
@@ -274,18 +274,12 @@ const Grinders = () => {
   return (
     <div className={styles.stack}>
       <div className={styles.row}>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => navigate(-1)}
-          type="button"
-          aria-label="戻る"
-        >
+        <Button variant="ghost" size="icon" onClick={goBack} type="button" aria-label="戻る">
           <ArrowLeft size={20} />
         </Button>
-        <h2 className={[styles.heading, styles.strong, styles.accent].join(" ")}>
+        <PageHeading className={[styles.heading, styles.strong, styles.accent].join(" ")}>
           グラインダー管理
-        </h2>
+        </PageHeading>
       </div>
       <Card>
         <form
@@ -298,7 +292,9 @@ const Grinders = () => {
           className={styles.form}
         >
           <CardHeader>
-            <CardTitle>{editingId ? "グラインダーの設定を編集" : "新規グラインダー登録"}</CardTitle>
+            <CardTitle as="h2">
+              {editingId ? "グラインダーの設定を編集" : "新規グラインダー登録"}
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className={styles.formFields}>
@@ -358,7 +354,7 @@ const Grinders = () => {
       ) : (
         <Card>
           <CardHeader>
-            <CardTitle>登録済みのグラインダー</CardTitle>
+            <CardTitle as="h2">登録済みのグラインダー</CardTitle>
           </CardHeader>
           <CardContent>
             <div className={styles.divided}>

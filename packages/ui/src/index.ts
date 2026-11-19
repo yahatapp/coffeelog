@@ -52,3 +52,12 @@ export { STORE_LINK_TYPES, classifyStoreLink, type StoreLinkType } from "./lib/s
 export { RecentRecord, RecentRecords, RecentRecordsHeader } from "./components/recent-records";
 export { SettingsAbout, SettingsProfile } from "./components/settings-sections";
 export { formatDisplayDate } from "./lib/display-date";
+export { FormNotice, focusFirstInvalidField, useUnsavedChanges } from "./components/form-behavior";
+export {
+  AppNavigation,
+  PageHeading,
+  PageStatus,
+  useAppBack,
+  usePreviousAppPath,
+} from "./components/app-navigation";
+export { useListSearchParams, useStoreListOptions } from "./lib/list-search-params";

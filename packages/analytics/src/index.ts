@@ -47,17 +47,30 @@ export function safePagePath(pathname: string): string {
 
 export function createAnalytics(config: AnalyticsConfig) {
   const gaId = /^G-[A-Z0-9]+$/.test(config.gaId ?? "") ? config.gaId : undefined;
-  const clarityId = /^[a-z0-9]+$/i.test(config.clarityId ?? "")
-    ? config.clarityId
-    : undefined;
+  const clarityId = /^[a-z0-9]+$/i.test(config.clarityId ?? "") ? config.clarityId : undefined;
   const configured = config.production && Boolean(gaId || clarityId);
   const servicesLabel = [gaId && "GA4", clarityId && "Clarity"].filter(Boolean).join("と");
   const storageKey = `coffeelog.analytics.${config.app}.v1`;
   let initialized = false;
   let lastPage: string | null = null;
+  let deniedForSession = false;
+  const listeners = new Set<() => void>();
+
+  function subscribe(listener: () => void) {
+    listeners.add(listener);
+    const handleStorage = (event: StorageEvent) => {
+      if (event.key === storageKey || event.key === null) listener();
+    };
+    window.addEventListener("storage", handleStorage);
+    return () => {
+      listeners.delete(listener);
+      window.removeEventListener("storage", handleStorage);
+    };
+  }
 
   function getConsent(): AnalyticsConsent {
     if (!configured || typeof window === "undefined") return null;
+    if (deniedForSession) return "disabled";
     try {
       const stored = window.localStorage.getItem(storageKey);
       return stored === "enabled" || stored === "disabled" ? stored : null;
@@ -66,13 +79,17 @@ export function createAnalytics(config: AnalyticsConfig) {
     }
   }
 
-  function setConsent(consent: Exclude<AnalyticsConsent, null>): void {
+  function setConsent(next: Exclude<AnalyticsConsent, null>): void {
+    const previous = getConsent();
     try {
-      window.localStorage.setItem(storageKey, consent);
+      window.localStorage.setItem(storageKey, next);
+      deniedForSession = false;
     } catch {
-      if (consent === "enabled") return;
+      if (next === "enabled") return;
+      deniedForSession = true;
     }
-    if (consent === "disabled") {
+    for (const listener of listeners) listener();
+    if (next === "disabled" && previous === "enabled") {
       (window as AnalyticsWindow).gtag?.("consent", "update", {
         analytics_storage: "denied",
       });
@@ -80,8 +97,8 @@ export function createAnalytics(config: AnalyticsConfig) {
         ad_Storage: "denied",
         analytics_Storage: "denied",
       });
+      if (!deniedForSession) window.location.reload();
     }
-    window.location.reload();
   }
 
   function initialize(): void {
@@ -134,7 +151,7 @@ export function createAnalytics(config: AnalyticsConfig) {
 
   function trackPage(pathname: string): void {
     initialize();
-    if (!initialized) return;
+    if (!initialized || getConsent() !== "enabled") return;
     const page = safePagePath(pathname);
     if (lastPage === pathname) return;
     const firstPage = lastPage === null;
@@ -162,5 +179,14 @@ export function createAnalytics(config: AnalyticsConfig) {
     (window as AnalyticsWindow).clarity?.("event", event);
   }
 
-  return { configured, servicesLabel, getConsent, setConsent, initialize, trackPage, trackEvent };
+  return {
+    configured,
+    servicesLabel,
+    subscribe,
+    getConsent,
+    setConsent,
+    initialize,
+    trackPage,
+    trackEvent,
+  };
 }

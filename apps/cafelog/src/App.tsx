@@ -1,6 +1,19 @@
-import { AppShell, BottomNavigation, ConsentNotice, SessionState } from "@yahatapp/ui";
-import { useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route, Link, useLocation } from "react-router-dom";
+import {
+  AppNavigation,
+  AppShell,
+  BottomNavigation,
+  ConsentNotice,
+  SessionState,
+} from "@yahatapp/ui";
+import { useEffect, useSyncExternalStore } from "react";
+import {
+  createBrowserRouter,
+  RouterProvider,
+  Outlet,
+  Link,
+  useLocation,
+  type RouteObject,
+} from "react-router-dom";
 import { Home as HomeIcon, ClipboardList, User } from "lucide-react";
 import { LiffProvider, useLiff } from "./hooks/useLiff";
 import { analytics } from "./lib/analytics";
@@ -14,12 +27,13 @@ import LogDetailPage from "./pages/LogDetail";
 import SettingsPage from "./pages/Settings";
 import StoresPage, { StoreDetailPage } from "./pages/Stores";
 
-const Layout = ({ children }: { children: React.ReactNode }) => {
+const Layout = () => {
+  const consent = useSyncExternalStore(analytics.subscribe, analytics.getConsent);
   const location = useLocation();
 
   useEffect(() => {
     analytics.trackPage(location.pathname);
-  }, [location.pathname]);
+  }, [location.pathname, consent]);
 
   const isTabActive = (paths: string[]) => {
     return paths.some((path) => {
@@ -35,35 +49,57 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   ];
 
   return (
-    <AppShell
-      banner={
-        analytics.configured && analytics.getConsent() === null ? (
-          <ConsentNotice
-            servicesLabel={analytics.servicesLabel}
-            onAccept={() => analytics.setConsent("enabled")}
-            onDecline={() => analytics.setConsent("disabled")}
+    <AppNavigation app="Cafelog">
+      <AppShell
+        banner={
+          analytics.configured && consent === null ? (
+            <ConsentNotice
+              servicesLabel={analytics.servicesLabel}
+              onAccept={() => analytics.setConsent("enabled")}
+              onDecline={() => analytics.setConsent("disabled")}
+            />
+          ) : undefined
+        }
+        navigation={
+          <BottomNavigation
+            items={navItems.map((item) => {
+              const Icon = item.icon;
+              return {
+                href: item.to,
+                label: item.label,
+                active: isTabActive(item.paths),
+                icon: <Icon size={20} />,
+              };
+            })}
+            renderLink={(item, props) => <Link to={item.href} {...props} />}
           />
-        ) : undefined
-      }
-      navigation={
-        <BottomNavigation
-          items={navItems.map((item) => {
-            const Icon = item.icon;
-            return {
-              href: item.to,
-              label: item.label,
-              active: isTabActive(item.paths),
-              icon: <Icon size={20} />,
-            };
-          })}
-          renderLink={(item, props) => <Link to={item.href} {...props} />}
-        />
-      }
-    >
-      {children}
-    </AppShell>
+        }
+      >
+        <Outlet />
+      </AppShell>
+    </AppNavigation>
   );
 };
+
+const routes: RouteObject[] = [
+  {
+    element: <Layout />,
+    children: [
+      { path: "/", element: <HomePage />, handle: { title: "ホーム" } },
+      { path: "/logs", element: <LogsPage />, handle: { title: "記録一覧" } },
+      { path: "/logs/new", element: <CreateLogPage />, handle: { title: "記録を追加" } },
+      { path: "/logs/:id", element: <LogDetailPage />, handle: { title: "記録の詳細" } },
+      { path: "/stores", element: <StoresPage />, handle: { title: "お店" } },
+      { path: "/stores/:id", element: <StoreDetailPage />, handle: { title: "お店の詳細" } },
+      { path: "/settings", element: <SettingsPage />, handle: { title: "設定" } },
+      { path: "*", element: <NotFoundPage />, handle: { title: "ページが見つかりません" } },
+    ],
+  },
+];
+
+// LIFF can update the address during initialization. Read it after authentication.
+let router: ReturnType<typeof createBrowserRouter> | undefined;
+const getRouter = () => (router ??= createBrowserRouter(routes));
 
 const AppContent = () => {
   const { isLoading, error, relogin } = useLiff();
@@ -78,22 +114,7 @@ const AppContent = () => {
       />
     );
 
-  return (
-    <Router>
-      <Layout>
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/logs" element={<LogsPage />} />
-          <Route path="/logs/new" element={<CreateLogPage />} />
-          <Route path="/logs/:id" element={<LogDetailPage />} />
-          <Route path="/stores" element={<StoresPage />} />
-          <Route path="/stores/:id" element={<StoreDetailPage />} />
-          <Route path="/settings" element={<SettingsPage />} />
-          <Route path="*" element={<NotFoundPage />} />
-        </Routes>
-      </Layout>
-    </Router>
-  );
+  return <RouterProvider router={getRouter()} />;
 };
 
 function App() {

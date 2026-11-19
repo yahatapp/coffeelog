@@ -1,3 +1,4 @@
+import { useListSearchParams, PageHeading, PageStatus } from "@yahatapp/ui";
 import {
   Checkbox,
   EmptyState,
@@ -9,7 +10,7 @@ import {
 import beanListStyles from "./beans-list.module.css";
 import styles from "../content.module.css";
 import { Link } from "react-router-dom";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Archive, Plus, Coffee, Pencil, Sparkles } from "lucide-react";
@@ -22,13 +23,17 @@ import { OriginFlag } from "../../components/ui/OriginFlag";
 import { getCountryCode } from "@/utils/flag";
 import { CoffeeBeansIcon } from "../../components/ui/CoffeeBeansIcon";
 import { RoastLevelIndicator } from "../../components/ui/RoastLevelIndicator";
+const sortOptions = [
+  { value: "date", label: "登録日", initialOrder: "desc" },
+  { value: "name", label: "豆名", initialOrder: "asc", ascendingLabel: "五十音順" },
+  { value: "brews", label: "抽出回数", initialOrder: "desc" },
+] as const;
 const BeansList = () => {
   const navigate = useNavigate();
   const beansQuery = useQuery(beanQueries.all());
   const logsQuery = useQuery(logQueries.all());
-  const [showArchived, setShowArchived] = useState(false);
-  const [sortBy, setSortBy] = useState<"date" | "name" | "brews">("date");
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+  const { showArchived, setShowArchived, sortBy, sortOrder, changeSort } =
+    useListSearchParams(sortOptions);
   const beans = useMemo(() => beansQuery.data ?? [], [beansQuery.data]);
   const groupedBeans = useMemo(() => groupBeanVersions(beans), [beans]);
   const brewCountByGroupId = useMemo(() => {
@@ -58,31 +63,31 @@ const BeansList = () => {
       return sortOrder === "asc" ? comparison : -comparison;
     });
   }, [brewCountByGroupId, groupedBeans, showArchived, sortBy, sortOrder]);
-  const changeSort = (nextSort: typeof sortBy) => {
-    analytics.trackEvent("sort_change");
-    if (sortBy === nextSort) setSortOrder((order) => (order === "asc" ? "desc" : "asc"));
-    else {
-      setSortBy(nextSort);
-      setSortOrder(nextSort === "name" ? "asc" : "desc");
-    }
-  };
   if (beansQuery.isPending) {
-    return <Loading className={styles.state} />;
+    return (
+      <PageStatus>
+        <Loading className={styles.state} />
+      </PageStatus>
+    );
   }
   if (beansQuery.isError) {
     return (
-      <div className={[styles.roomy, styles.center, styles.muted].join(" ")}>
-        <ErrorState
-          message={<>豆一覧の取得に失敗しました。</>}
-          onRetry={() => void beansQuery.refetch()}
-        />
-      </div>
+      <PageStatus>
+        <div className={[styles.roomy, styles.center, styles.muted].join(" ")}>
+          <ErrorState
+            message={<>豆一覧の取得に失敗しました。</>}
+            onRetry={() => void beansQuery.refetch()}
+          />
+        </div>
+      </PageStatus>
     );
   }
   return (
     <div className={styles.stack}>
       <div className={[styles.row, styles.spread].join(" ")}>
-        <h2 className={[styles.heading, styles.strong, styles.accent].join(" ")}>コーヒー豆一覧</h2>
+        <PageHeading className={[styles.heading, styles.strong, styles.accent].join(" ")}>
+          コーヒー豆一覧
+        </PageHeading>
         <Button size="sm" variant="outline" onClick={() => navigate("/beans/new")} type="button">
           <Plus size={16} /> 追加
         </Button>
@@ -92,12 +97,11 @@ const BeansList = () => {
         <SortControls
           sortBy={sortBy}
           sortOrder={sortOrder}
-          sortOptions={[
-            { value: "date", label: "登録日", initialOrder: "desc" },
-            { value: "name", label: "豆名", initialOrder: "asc", ascendingLabel: "五十音順" },
-            { value: "brews", label: "抽出回数", initialOrder: "desc" },
-          ]}
-          onSortChange={changeSort}
+          sortOptions={sortOptions}
+          onSortChange={(value) => {
+            analytics.trackEvent("sort_change");
+            changeSort(value);
+          }}
         />
       )}
 
@@ -161,7 +165,11 @@ const BeansList = () => {
               return (
                 <Card key={group.groupId}>
                   <div className={[styles.content, styles.row, styles.start].join(" ")}>
-                    <Link to={`/beans/${latestBean.id}`} className={styles.entryLink}>
+                    <Link
+                      data-return-card={latestBean.id}
+                      to={`/beans/${latestBean.id}`}
+                      className={styles.entryLink}
+                    >
                       <div className={[styles.row, styles.grow].join(" ")}>
                         <div
                           className={[
@@ -187,9 +195,9 @@ const BeansList = () => {
                           })()}
                         </div>
                         <div className={[styles.fieldStack, styles.grow].join(" ")}>
-                          <h3 className={[styles.strong, styles.foreground, styles.wrap].join(" ")}>
+                          <h2 className={[styles.strong, styles.foreground, styles.wrap].join(" ")}>
                             {latestBean.name}
-                          </h3>
+                          </h2>
                           {(latestBean.roastLevel || group.isArchived) && (
                             <div className={[styles.row, styles.wrapping].join(" ")}>
                               {group.isArchived && (

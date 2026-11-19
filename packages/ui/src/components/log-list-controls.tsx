@@ -71,10 +71,7 @@ export const SortControls = <T extends string>({
   className,
 }: SortControlsProps<T>) => (
   <div className={cn(styles.sort, className)} role="group" aria-label="並び替え">
-    <div
-      className={styles.sortOptions}
-      style={{ gridTemplateColumns: `repeat(${sortOptions.length}, minmax(0, 1fr))` }}
-    >
+    <div className={styles.sortOptions}>
       {sortOptions.map((option) => {
         const active = sortBy === option.value;
         const next = active ? (sortOrder === "desc" ? "asc" : "desc") : option.initialOrder;

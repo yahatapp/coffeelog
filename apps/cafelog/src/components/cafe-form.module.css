@@ -100,4 +100,20 @@
     font-size: var(--cl-font-size-label);
     overflow-wrap: anywhere;
   }
+
+  .optional {
+    border-block-start: var(--cl-border-width) solid var(--cl-color-border-decorative);
+  }
+
+  .optionalSummary {
+    min-height: var(--cl-size-target-min);
+    padding-block: var(--cl-space-field-gap);
+    cursor: pointer;
+    font-weight: var(--cl-font-weight-medium);
+  }
+
+  .optionalFields {
+    display: grid;
+    gap: var(--cl-space-page-inline);
+  }
 }

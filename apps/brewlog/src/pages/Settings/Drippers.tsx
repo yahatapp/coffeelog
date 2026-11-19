@@ -1,3 +1,4 @@
+import { PageHeading, useAppBack } from "@yahatapp/ui";
 import { Loading, ErrorState } from "@yahatapp/ui";
 import { getFirstValidationError } from "@/components/forms/formValidation";
 import { Field } from "@yahatapp/ui";
@@ -7,7 +8,6 @@ import { mutationNotices } from "@/lib/mutationNotices";
 import { useForm } from "@tanstack/react-form";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { ArrowLeft, CheckCircle, Loader2, Pencil, Plus, Trash2 } from "lucide-react";
 import { dripperCreateSchema, dripperUpdateSchema } from "@/contracts";
 import { dripperQueries, mutations, queryKeys, type Dripper } from "@/lib/queries";
@@ -23,7 +23,7 @@ const emptyValues: DripperFormValues = {
   isDefault: false,
 };
 const Drippers = () => {
-  const navigate = useNavigate();
+  const goBack = useAppBack("/settings");
   const queryClient = useQueryClient();
   const drippersQuery = useQuery(dripperQueries.all());
   const drippers = drippersQuery.data ?? [];
@@ -127,16 +127,12 @@ const Drippers = () => {
   return (
     <div className={styles.stack}>
       <div className={styles.row}>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => navigate(-1)}
-          type="button"
-          aria-label="戻る"
-        >
+        <Button variant="ghost" size="icon" onClick={goBack} type="button" aria-label="戻る">
           <ArrowLeft size={20} />
         </Button>
-        <h2 className={[styles.heading, styles.strong, styles.accent].join(" ")}>ドリッパー管理</h2>
+        <PageHeading className={[styles.heading, styles.strong, styles.accent].join(" ")}>
+          ドリッパー管理
+        </PageHeading>
       </div>
 
       <Card>
@@ -150,7 +146,9 @@ const Drippers = () => {
           className={styles.form}
         >
           <CardHeader>
-            <CardTitle>{editingId ? "ドリッパーの設定を編集" : "新規ドリッパー登録"}</CardTitle>
+            <CardTitle as="h2">
+              {editingId ? "ドリッパーの設定を編集" : "新規ドリッパー登録"}
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className={styles.formFields}>
@@ -233,7 +231,7 @@ const Drippers = () => {
       ) : (
         <Card>
           <CardHeader>
-            <CardTitle>登録済みのドリッパー</CardTitle>
+            <CardTitle as="h2">登録済みのドリッパー</CardTitle>
           </CardHeader>
           <CardContent>
             <div className={styles.divided}>

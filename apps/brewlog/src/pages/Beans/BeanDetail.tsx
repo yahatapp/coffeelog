@@ -1,3 +1,4 @@
+import { PageHeading, PageStatus, useAppBack } from "@yahatapp/ui";
 import {
   Loading,
   ErrorState,
@@ -29,6 +30,7 @@ const BeanDetail = () => {
   const { id } = useParams<{
     id: string;
   }>();
+  const goBack = useAppBack("/beans");
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const beanQuery = useQuery(beanQueries.detail(id ?? ""));
@@ -65,14 +67,20 @@ const BeanDetail = () => {
     },
   });
   if (beanQuery.isPending) {
-    return <Loading />;
+    return (
+      <PageStatus>
+        <Loading />
+      </PageStatus>
+    );
   }
   if (beanQuery.isError || !beanQuery.data) {
     return (
-      <ErrorState
-        message="豆の詳細を取得できませんでした。"
-        onRetry={() => void beanQuery.refetch()}
-      />
+      <PageStatus>
+        <ErrorState
+          message="豆の詳細を取得できませんでした。"
+          onRetry={() => void beanQuery.refetch()}
+        />
+      </PageStatus>
     );
   }
   const bean = beanQuery.data;
@@ -80,12 +88,10 @@ const BeanDetail = () => {
     <div className={styles.page}>
       <div className={styles.toolbar}>
         <div className={styles.titleRow}>
-          <Button asChild variant="ghost" size="icon" aria-label="豆一覧へ戻る">
-            <Link to="/beans">
-              <ArrowLeft size={20} aria-hidden="true" />
-            </Link>
+          <Button variant="ghost" size="icon" aria-label="豆一覧へ戻る" onClick={goBack}>
+            <ArrowLeft size={20} aria-hidden="true" />
           </Button>
-          <h2 className={styles.pageTitle}>豆の詳細</h2>
+          <PageHeading className={styles.pageTitle}>豆の詳細</PageHeading>
         </div>
         <Button
           size="sm"
@@ -113,7 +119,7 @@ const BeanDetail = () => {
               </span>
               {bean.roastLevel != null && <RoastLevelIndicator level={bean.roastLevel} />}
             </div>
-            <h3 className={styles.beanName}>{bean.name}</h3>
+            <h2 className={styles.beanName}>{bean.name}</h2>
             {bean.origin && (
               <div className={styles.origin}>
                 <OriginFlag origin={bean.origin} size="sm" />
@@ -142,7 +148,7 @@ const BeanDetail = () => {
 
       <Card>
         <CardHeader>
-          <CardTitle>購入・焙煎情報</CardTitle>
+          <CardTitle as="h2">購入・焙煎情報</CardTitle>
         </CardHeader>
         <CardContent>
           <dl className={styles.details}>
@@ -170,7 +176,7 @@ const BeanDetail = () => {
         (bean.region || bean.variety || bean.farm || bean.producer) && (
           <Card>
             <CardHeader>
-              <CardTitle>生産情報</CardTitle>
+              <CardTitle as="h2">生産情報</CardTitle>
             </CardHeader>
             <CardContent>
               <dl className={styles.details}>
@@ -185,7 +191,7 @@ const BeanDetail = () => {
 
       <Card>
         <CardHeader>
-          <CardTitle>メモ</CardTitle>
+          <CardTitle as="h2">メモ</CardTitle>
         </CardHeader>
         <CardContent>
           <p className={styles.note}>{bean.note || "メモはありません。"}</p>

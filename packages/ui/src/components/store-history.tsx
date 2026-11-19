@@ -4,7 +4,7 @@ import { Dialog } from "@base-ui/react/dialog";
 import { Button } from "./button";
 import { Input } from "./input";
 import { StoreLink } from "./store-link";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { EmptyState } from "./status";
 
 export type StoreInfo = {
@@ -53,18 +53,29 @@ type BrewRecord = CoffeeRecord & {
   waterAmount: number | null;
 };
 
+type StoreListOptions = { search: string; isSearchOpen: boolean; sort: "name" | "prefecture" };
+
 export function StoreList({
   stores,
   onSelect,
   linkSpacing = "default",
+  options,
+  onOptionsChange,
 }: {
   stores: readonly StoreInfo[];
   onSelect: (id: string) => void;
   linkSpacing?: "default" | "compact";
+  options?: StoreListOptions;
+  onOptionsChange?: (options: StoreListOptions) => void;
 }) {
-  const [search, setSearch] = useState("");
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [sort, setSort] = useState<"name" | "prefecture">("name");
+  const [localOptions, setLocalOptions] = useState<StoreListOptions>({
+    search: "",
+    isSearchOpen: false,
+    sort: "name",
+  });
+  const current = options ?? localOptions;
+  const { search, isSearchOpen, sort } = current;
+  const updateOptions = onOptionsChange ?? setLocalOptions;
   const searchRef = useRef<HTMLInputElement>(null);
   const prefectures = [
     "北海道",
@@ -131,10 +142,6 @@ export function StoreList({
       });
   }, [search, sort, stores]);
 
-  useEffect(() => {
-    if (isSearchOpen) searchRef.current?.focus();
-  }, [isSearchOpen]);
-
   return (
     <div className={styles.stack}>
       <div className={styles.toolbar}>
@@ -148,7 +155,7 @@ export function StoreList({
             <button
               key={value}
               type="button"
-              onClick={() => setSort(value)}
+              onClick={() => updateOptions({ ...current, sort: value })}
               aria-pressed={sort === value}
               className={styles.sortOption}
             >
@@ -161,8 +168,8 @@ export function StoreList({
           aria-label={isSearchOpen ? "検索を閉じる" : "店舗を検索"}
           aria-expanded={isSearchOpen}
           onClick={() => {
-            setIsSearchOpen((open) => !open);
-            if (isSearchOpen) setSearch("");
+            updateOptions({ ...current, isSearchOpen: !isSearchOpen, search: "" });
+            if (!isSearchOpen) requestAnimationFrame(() => searchRef.current?.focus());
           }}
           className={styles.iconButton}
         >
@@ -182,7 +189,7 @@ export function StoreList({
             ref={searchRef}
             type="search"
             value={search}
-            onChange={(event) => setSearch(event.target.value)}
+            onChange={(event) => updateOptions({ ...current, search: event.target.value })}
             placeholder="店舗名・都道府県"
           />
         </label>
@@ -207,6 +214,7 @@ export function StoreList({
               <button
                 type="button"
                 onClick={() => onSelect(store.id)}
+                data-return-card={store.id}
                 className={styles.storeButton}
               >
                 <span className={styles.storeName}>{store.name}</span>

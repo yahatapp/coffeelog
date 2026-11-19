@@ -4,8 +4,12 @@ import { FREQUENT_PREFECTURES, PREFECTURES } from "./prefectures";
 import { classifyCafeLink } from "./cafeLinks";
 
 describe("createCafeLogDefaults", () => {
-  it("defaults the serving style to hot", () => {
-    expect(createCafeLogDefaults().servingStyle).toBe("hot");
+  it("未選択の豆の種類・提供温度・評価をnullで送信する", () => {
+    expect(toCafeLogPayload(createCafeLogDefaults())).toMatchObject({
+      isBlend: null,
+      servingStyle: null,
+      rating: null,
+    });
   });
 
   it("defaults the prefecture to unselected", () => {

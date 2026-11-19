@@ -27,7 +27,6 @@ declare const styles: {
   readonly storeTitle: string;
   readonly summaryHeading: string;
   readonly summaryOption: string;
-  readonly summaryOptions: string;
   readonly titleRow: string;
   readonly visit: string;
 };

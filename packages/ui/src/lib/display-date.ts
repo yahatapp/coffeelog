@@ -1,4 +1,4 @@
-const displayDate = new Intl.DateTimeFormat("en-US", {
+const displayDate = new Intl.DateTimeFormat("ja-JP", {
   timeZone: "Asia/Tokyo",
   weekday: "short",
   year: "numeric",
@@ -15,5 +15,5 @@ export function formatDisplayDate(value: string | null | undefined): string | nu
   const parts = Object.fromEntries(
     displayDate.formatToParts(date).map(({ type, value }) => [type, value]),
   );
-  return `${parts.weekday}. ${parts.year}.${parts.month}.${parts.day}`;
+  return `${parts.year}.${parts.month}.${parts.day}（${parts.weekday}）`;
 }

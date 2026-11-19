@@ -8,7 +8,7 @@ export function RecentRecordsHeader({ title, action }: { title: string; action?:
   return (
     <CardHeader spacing={action ? "compact" : "default"}>
       <div className={styles.header}>
-        <CardTitle>{title}</CardTitle>
+        <CardTitle as="h2">{title}</CardTitle>
         {action && (
           <div className={styles.headerAction}>
             <Button asChild variant="ghost" size="sm">
@@ -21,7 +21,7 @@ export function RecentRecordsHeader({ title, action }: { title: string; action?:
   );
 }
 
-export function RecentRecords({ children, footer }: { children: ReactNode; footer: ReactNode }) {
+export function RecentRecords({ children, footer }: { children: ReactNode; footer?: ReactNode }) {
   return (
     <div className={styles.records}>
       <ul className={styles.list} role="list">

@@ -1,3 +1,4 @@
+import { PageHeading, PageStatus, useAppBack } from "@yahatapp/ui";
 import { Loading } from "@yahatapp/ui";
 import styles from "../form-page.module.css";
 import { mutationNotices } from "@/lib/mutationNotices";
@@ -15,6 +16,7 @@ const EditBean = () => {
   const { id } = useParams<{
     id: string;
   }>();
+  const goBack = useAppBack(id ? `/beans/${id}` : "/beans");
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const beanQuery = useQuery(beanQueries.detail(id ?? ""));
@@ -98,23 +100,29 @@ const EditBean = () => {
     });
   }, [beanQuery.data, form]);
   if (beanQuery.isPending) {
-    return <Loading />;
+    return (
+      <PageStatus>
+        <Loading />
+      </PageStatus>
+    );
   }
   if (beanQuery.isError || !beanQuery.data) {
     return (
-      <div className={styles.fallback}>
-        <p>豆が見つかりませんでした。</p>
-        <Button onClick={() => void navigate("/beans")}>豆一覧へ戻る</Button>
-      </div>
+      <PageStatus>
+        <div className={styles.fallback}>
+          <p>豆が見つかりませんでした。</p>
+          <Button onClick={() => void navigate("/beans")}>豆一覧へ戻る</Button>
+        </div>
+      </PageStatus>
     );
   }
   return (
     <div className={styles.page}>
       <div className={styles.row}>
-        <Button variant="ghost" size="icon" onClick={() => navigate(-1)} aria-label="戻る">
+        <Button variant="ghost" size="icon" onClick={goBack} aria-label="戻る">
           <ArrowLeft size={20} aria-hidden={true} />
         </Button>
-        <h2 className={styles.pageHeading}>豆の編集</h2>
+        <PageHeading className={styles.pageHeading}>豆の編集</PageHeading>
       </div>
 
       <form

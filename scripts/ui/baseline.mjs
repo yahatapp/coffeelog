@@ -1,3 +1,4 @@
+import { verifyReviewNavigation, addReviewLogFixtures } from "./review-regressions.mjs";
 import { startUIServer } from "./server.mjs";
 import { verifyNotices } from "./notices.mjs";
 import { verifyCafePages } from "./cafe-pages.mjs";
@@ -431,10 +432,31 @@ try {
               await expect(
                 page.getByRole("complementary", { name: "利用状況の計測について" }),
               ).toBeVisible();
-              await Promise.all([
-                page.waitForEvent("domcontentloaded"),
-                page.getByRole("button", { name: label, exact: true }).click(),
-              ]);
+              const before = await page.evaluate(() => performance.timeOrigin);
+              const nav = page.getByRole("navigation");
+              await nav.getByRole("link", { name: "記録", exact: true }).click();
+              await page
+                .getByRole("main")
+                .getByRole(app === "brewlog" ? "button" : "link", { name: "追加", exact: true })
+                .click();
+              const input = page.getByRole(app === "brewlog" ? "textbox" : "combobox", {
+                name: app === "brewlog" ? "抽出コメント" : "店舗名",
+                exact: true,
+              });
+              await input.fill("同意選択時の入力");
+              await page.getByRole("button", { name: label, exact: true }).click();
+              await expect(input).toHaveValue("同意選択時の入力");
+              expect(await page.evaluate(() => performance.timeOrigin)).toBe(before);
+              await expect(
+                page.getByRole("complementary", { name: "利用状況の計測について" }),
+              ).toHaveCount(0);
+              const views = await page.evaluate(
+                () =>
+                  (globalThis.dataLayer ?? []).filter((command) => command[1] === "page_view")
+                    .length,
+              );
+              expect(views).toBe(value === "enabled" ? 1 : 0);
+              await input.fill("");
               await page.getByRole("navigation").waitFor();
               if (
                 (await page.evaluate(
@@ -577,6 +599,22 @@ try {
               },
             });
             results.push({ app, width, path: "cafe-pages", routes, errors: [...errors] });
+          }
+          if (process.env.UI_ALL === "1") {
+            brewFixtures = createBrewFixtures();
+            cafeFixtures = createCafeFixtures();
+            readMode = "success";
+            saveMode = "success";
+            const data = app === "brewlog" ? brewFixtures : cafeFixtures;
+            addReviewLogFixtures(app, data);
+            await verifyReviewNavigation(page, {
+              app,
+              width,
+              output,
+              data,
+              baseURL: `http://127.0.0.1:${portBase + index}`,
+            });
+            results.push({ app, width, path: "review-navigation", errors: [...errors] });
           }
           if (process.env.UI_CATALOG === "1") {
             await page.goto(`http://127.0.0.1:${portBase + index}/__catalog`);

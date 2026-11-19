@@ -1,3 +1,4 @@
+import { PageHeading } from "@yahatapp/ui";
 import styles from "./content.module.css";
 import { Link } from "react-router-dom";
 import { Home, AlertCircle } from "lucide-react";
@@ -8,9 +9,11 @@ const NotFound = () => {
       <div className={[styles.tonal, styles.pill, styles.roomy, styles.separated].join(" ")}>
         <AlertCircle size={64} className={styles.accent} />
       </div>
-      <h2 className={[styles.hero, styles.strong, styles.accent, styles.separated].join(" ")}>
+      <PageHeading
+        className={[styles.hero, styles.strong, styles.accent, styles.separated].join(" ")}
+      >
         ページが見つかりません
-      </h2>
+      </PageHeading>
       <p className={[styles.muted, styles.separated].join(" ")}>
         お探しのページは削除されたか、URLが間違っている可能性があります。
       </p>

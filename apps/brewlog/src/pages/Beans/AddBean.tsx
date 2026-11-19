@@ -1,3 +1,4 @@
+import { PageHeading, PageStatus, useAppBack } from "@yahatapp/ui";
 import { Loading } from "@yahatapp/ui";
 import styles from "../form-page.module.css";
 import { mutationNotices } from "@/lib/mutationNotices";
@@ -13,6 +14,7 @@ import { BeanFields } from "@/components/forms/BeanFields";
 import { Button } from "@/components/ui/button";
 import { analytics } from "@/lib/analytics";
 const AddBean = () => {
+  const goBack = useAppBack("/beans");
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const queryClient = useQueryClient();
@@ -85,25 +87,31 @@ const AddBean = () => {
     form.setFieldValue("processMethod", parentQuery.data.processMethod ?? "");
   }, [form, isVersionMode, parentQuery.data]);
   if (isVersionMode && parentQuery.isPending) {
-    return <Loading />;
+    return (
+      <PageStatus>
+        <Loading />
+      </PageStatus>
+    );
   }
   if (isVersionMode && parentQuery.isError) {
     return (
-      <div className={styles.fallback}>
-        <p>元の豆情報を取得できませんでした。</p>
-        <Button onClick={() => void parentQuery.refetch()}>再読み込み</Button>
-      </div>
+      <PageStatus>
+        <div className={styles.fallback}>
+          <p>元の豆情報を取得できませんでした。</p>
+          <Button onClick={() => void parentQuery.refetch()}>再読み込み</Button>
+        </div>
+      </PageStatus>
     );
   }
   return (
     <div className={styles.page}>
       <div className={styles.row}>
-        <Button variant="ghost" size="icon" onClick={() => navigate(-1)} aria-label="戻る">
+        <Button variant="ghost" size="icon" onClick={goBack} aria-label="戻る">
           <ArrowLeft size={20} aria-hidden={true} />
         </Button>
-        <h2 className={styles.pageHeading}>
+        <PageHeading className={styles.pageHeading}>
           {isVersionMode ? "豆のバージョンを追加" : "豆を登録する"}
-        </h2>
+        </PageHeading>
       </div>
 
       <form

@@ -29,7 +29,8 @@
     "@base-ui/react": "catalog:",
     "@radix-ui/react-slot": "catalog:",
     "@tanstack/react-query": "catalog:",
-    "clsx": "catalog:"
+    "clsx": "catalog:",
+    "react-router-dom": "catalog:"
   },
   "devDependencies": {
     "@types/react": "catalog:",

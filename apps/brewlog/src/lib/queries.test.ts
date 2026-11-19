@@ -119,10 +119,13 @@ describe("MutationCacheによる更新結果の通知", () => {
   it.each(cases)("HTTPエラー: %s %s", async (key, _message, mutationFn) => {
     fetchMock.mockResolvedValue(new Response("Server error", { status: 500 }));
     await expect(execute(mutationFn, mutationNotices[key])).rejects.toThrow();
-    expect(addNotice).toHaveBeenCalledTimes(1);
-    expect(addNotice).toHaveBeenCalledWith(
-      expect.objectContaining({ type: "error", timeout: 0, priority: "high" }),
-    );
+    if (key === "createLog" || key === "updateLog") {
+      expect(addNotice).not.toHaveBeenCalled();
+    } else {
+      expect(addNotice).toHaveBeenCalledExactlyOnceWith(
+        expect.objectContaining({ type: "error", timeout: 0, priority: "high" }),
+      );
+    }
   });
 
   it("API関数を直接呼んだ場合や通知指定のないmutationでは通知しない", async () => {
