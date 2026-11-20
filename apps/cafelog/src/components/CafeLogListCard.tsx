@@ -7,50 +7,51 @@ type CafeLogListCardProps = { log: LogsResponse[number] };
 const DetailItem = ({ label, value }: { label: string; value: string | null }) => (
   <div className={styles.detail}>
     <dt className={styles.muted}>{label}</dt>
-    <dd className={styles.value}>{value || "未登録"}</dd>
+    <dd className={styles.value}>{value}</dd>
   </div>
 );
 export const CafeLogListCard = ({ log }: CafeLogListCardProps) => (
   <article className={styles.root}>
     <div className={styles.summary}>
       <div className={styles.origin}>
-        <OriginFlag origin={log.origin} />
-        <p className={styles.muted}>{log.origin || "産地未登録"}</p>
-        <span className={styles.badge}>
-          {log.isBlend == null ? "未登録" : log.isBlend ? "ブレンド" : "シングル"}
-        </span>
-        <span className={styles.temperature} data-temperature={log.servingStyle ?? "unknown"}>
-          {log.servingStyle === "iced"
-            ? "アイス"
-            : log.servingStyle === "hot"
-              ? "ホット"
-              : "未登録"}
-        </span>
+        {log.origin && (
+          <>
+            <OriginFlag origin={log.origin} />
+            <p className={styles.muted}>{log.origin}</p>
+          </>
+        )}
+        {log.isBlend != null && (
+          <span className={styles.badge}>{log.isBlend ? "ブレンド" : "シングル"}</span>
+        )}
+        {log.servingStyle && (
+          <span className={styles.temperature} data-temperature={log.servingStyle}>
+            {log.servingStyle === "iced" ? "アイス" : "ホット"}
+          </span>
+        )}
       </div>
       <div className={styles.main}>
-        <h3 className={styles.title}>{log.cafeName}</h3>
+        <h2 className={styles.title}>{log.cafeName}</h2>
         <div className={styles.visit}>
-          <span>{log.prefecture || "都道府県未登録"}</span>
-          <time dateTime={log.visitDate ?? undefined}>
-            {formatDisplayDate(log.visitDate) ?? "日付未登録"}
+          {log.prefecture && <span>{log.prefecture}</span>}
+          <time dateTime={log.visitDate ?? log.createdAt}>
+            {!log.visitDate && "登録日 "}
+            {formatDisplayDate(log.visitDate ?? log.createdAt)}
           </time>
         </div>
-        <div className={styles.rating}>
-          {log.rating == null ? (
-            <span className={styles.muted}>スコア未登録</span>
-          ) : (
-            <>
-              <Star size={17} className={styles.star} aria-hidden="true" />
-              <span aria-label={`スコア ${log.rating} / 5`}>{log.rating} / 5</span>
-            </>
-          )}
-        </div>
+        {log.rating != null && (
+          <div className={styles.rating}>
+            <Star size={17} className={styles.star} aria-hidden="true" />
+            <span aria-label={`評価 ${log.rating} / 5`}>{log.rating} / 5</span>
+          </div>
+        )}
       </div>
     </div>
-    <dl className={styles.details}>
-      <DetailItem label="品種" value={log.variety} />
-      <DetailItem label="精製方法" value={log.process} />
-      <DetailItem label="焙煎度" value={log.roast} />
-    </dl>
+    {(log.variety || log.process || log.roast) && (
+      <dl className={styles.details}>
+        {log.variety && <DetailItem label="品種" value={log.variety} />}
+        {log.process && <DetailItem label="精製方法" value={log.process} />}
+        {log.roast && <DetailItem label="焙煎度" value={log.roast} />}
+      </dl>
+    )}
   </article>
 );

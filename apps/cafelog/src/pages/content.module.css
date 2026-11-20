@@ -93,8 +93,7 @@
   .recordLink:hover {
     border-color: var(--cl-color-border-input);
   }
-  .recordLink:focus-visible,
-  .floatingAction:focus-visible {
+  .recordLink:focus-visible {
     outline: var(--cl-focus-width) solid var(--cl-color-focus);
     outline-offset: var(--cl-focus-offset);
   }
@@ -103,28 +102,6 @@
     flex-direction: column;
     gap: var(--cl-space-section-gap);
     min-width: 0;
-    padding-block-end: calc(var(--cl-size-floating-action) + var(--cl-space-page-inline));
-  }
-  .floatingAction {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: fixed;
-    right: max(
-      var(--cl-space-page-inline),
-      calc((100vw - var(--cl-size-content-max))/2 + var(--cl-space-page-inline))
-    );
-    bottom: calc(var(--cl-size-nav) + env(safe-area-inset-bottom) + var(--cl-space-page-inline));
-    z-index: var(--cl-layer-floating);
-    width: var(--cl-size-floating-action);
-    height: var(--cl-size-floating-action);
-    background: var(--cl-color-action-primary);
-    color: var(--cl-color-on-action-primary);
-    border-radius: var(--cl-radius-action);
-    box-shadow: var(--cl-shadow-card);
-  }
-  .floatingAction:hover {
-    background: var(--cl-color-action-primary-hover);
   }
   .panel {
     display: flex;

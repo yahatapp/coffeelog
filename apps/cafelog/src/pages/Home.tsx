@@ -1,3 +1,4 @@
+import { PageHeading } from "@yahatapp/ui";
 import styles from "./content.module.css";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
@@ -16,7 +17,6 @@ import {
 import { MapPin, Plus, Star } from "lucide-react";
 import { OriginFlag } from "@/components/OriginFlag";
 import { useLiff } from "@/hooks/useLiff";
-import { getErrorMessage } from "@/lib/errors";
 import { cafelogQueries } from "@/lib/queries";
 
 const HomePage = () => {
@@ -26,55 +26,41 @@ const HomePage = () => {
     select: (logs) => logs.slice(0, 4),
   });
   const recentLogs = logsQuery.data ?? [];
-  const errorMessage = logsQuery.error
-    ? getErrorMessage(logsQuery.error, "記録の取得に失敗しました。")
-    : null;
 
   return (
     <div className={styles.page}>
       <section>
-        <h2 className={styles.greeting}>こんにちは、{profile?.displayName || "ゲスト"}さん</h2>
+        <PageHeading className={styles.greeting}>
+          こんにちは、{profile?.displayName || "ゲスト"}さん
+        </PageHeading>
         <p className={styles.muted}>最近出会った一杯を振り返りましょう。</p>
       </section>
+      <Button asChild fullWidth>
+        <Link to="/logs/new">
+          <Plus size={18} aria-hidden="true" />
+          新しい一杯を記録する
+        </Link>
+      </Button>
       <Card>
         <RecentRecordsHeader
-          title="最近のカフェ記録"
+          title="最近登録した記録"
           action={recentLogs.length > 0 ? <Link to="/logs">すべて見る</Link> : undefined}
         />
         <CardContent>
           {logsQuery.isPending ? (
             <Loading label="直近の記録を読み込み中..." />
-          ) : errorMessage ? (
+          ) : logsQuery.isError ? (
             <ErrorState
               message="記録を取得できませんでした。"
               onRetry={() => void logsQuery.refetch()}
             />
           ) : recentLogs.length === 0 ? (
-            <EmptyState
-              title="まだ記録がありません。"
-              action={
-                <Button asChild fullWidth>
-                  <Link to="/logs/new">
-                    <Plus size={18} aria-hidden="true" />
-                    最初の一杯を記録する
-                  </Link>
-                </Button>
-              }
-            />
+            <EmptyState title="まだ記録がありません。" />
           ) : (
-            <RecentRecords
-              footer={
-                <Button asChild fullWidth>
-                  <Link to="/logs/new">
-                    <Plus size={18} aria-hidden="true" />
-                    新しい一杯を記録する
-                  </Link>
-                </Button>
-              }
-            >
+            <RecentRecords>
               {recentLogs.map((log) => (
                 <RecentRecord key={log.id}>
-                  <Link to={`/logs/${log.id}`}>
+                  <Link to={`/logs/${log.id}`} data-return-card={log.id}>
                     <OriginFlag origin={log.origin} />
                     <span className={styles.recentBody}>
                       <span className={styles.recordTitle}>{log.cafeName}</span>
@@ -85,9 +71,10 @@ const HomePage = () => {
                             {log.origin}
                           </span>
                         )}
-                        {log.visitDate && (
-                          <time dateTime={log.visitDate}>{formatDisplayDate(log.visitDate)}</time>
-                        )}
+                        <time dateTime={log.visitDate ?? log.createdAt}>
+                          {!log.visitDate && "登録日 "}
+                          {formatDisplayDate(log.visitDate ?? log.createdAt)}
+                        </time>
                       </span>
                     </span>
                     {log.rating != null && (
@@ -103,9 +90,6 @@ const HomePage = () => {
           )}
         </CardContent>
       </Card>
-      <Button asChild variant="outline" fullWidth>
-        <Link to="/logs">記録の履歴を見る</Link>
-      </Button>
     </div>
   );
 };

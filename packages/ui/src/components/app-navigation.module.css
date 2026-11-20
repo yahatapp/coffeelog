@@ -1,0 +1,8 @@
+@layer components {
+  .heading {
+    margin-block-end: var(--cl-space-field-gap);
+    color: var(--cl-color-text);
+    font-size: var(--cl-font-size-heading);
+    font-weight: var(--cl-font-weight-strong);
+  }
+}

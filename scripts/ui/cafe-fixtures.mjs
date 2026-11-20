@@ -37,6 +37,7 @@ export function createCafeFixtures() {
     user: { displayName: "確認用ユーザー", avatarUrl: null },
   };
   let imageBytes = cafePhoto;
+  const stores = [store];
   const logs = [log],
     images = new Map([[log.id, []]]);
   let next = 3;
@@ -45,6 +46,7 @@ export function createCafeFixtures() {
   const id = () => `10000000-0000-4000-8000-${String(next++).padStart(12, "0")}`;
   return {
     store,
+    stores,
     log,
     logs,
     images,
@@ -67,7 +69,7 @@ export function createCafeFixtures() {
           return { success: true };
         }
       }
-      if (path === "/api/stores") return [store];
+      if (path === "/api/stores") return stores;
       if (path === `/api/stores/${store.id}`)
         return {
           store,

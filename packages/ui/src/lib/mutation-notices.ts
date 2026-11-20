@@ -4,7 +4,7 @@ import { notify, type Notice } from "./notices";
 export type MutationNoticeMeta = Record<string, unknown> & {
   notice?: {
     success?: string;
-    error: string | ((error: Error) => string);
+    error?: string | ((error: Error) => string);
   };
 };
 
@@ -43,7 +43,7 @@ export const createMutationNoticeCache = () =>
     },
     onError: (error, _variables, _context, mutation) => {
       const config = mutation.meta?.notice;
-      if (!config) return;
+      if (!config?.error) return;
       notify({
         variant: "error",
         message: typeof config.error === "function" ? config.error(error) : config.error,

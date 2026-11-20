@@ -29,9 +29,9 @@ export async function verifyCafePages(
     const store = page.getByRole("region", { name: "お店の情報", exact: true });
     const coffee = page.getByRole("region", { name: "飲んだコーヒーの概要", exact: true });
     await expect(
-      page.getByRole("heading", { name: "記録の詳細", level: 2, exact: true }),
+      page.getByRole("heading", { name: "記録の詳細", level: 1, exact: true }),
     ).toBeVisible();
-    const storeTitle = store.getByRole("heading", { level: 3 });
+    const storeTitle = store.getByRole("heading", { level: 2 });
     await expect(storeTitle).toHaveText(data.log.cafeName);
     await expect(storeTitle).toHaveCSS("font-size", "24px");
     const storeBox = await store.boundingBox();
@@ -43,7 +43,7 @@ export async function verifyCafePages(
       .map((value) => value?.trim())
       .filter(Boolean)
       .join(" ");
-    const heading = coffee.getByRole("heading", { level: 3 });
+    const heading = coffee.getByRole("heading", { level: 2 });
     await expect(heading).toHaveAccessibleName(coffeeTitle || "飲んだコーヒー");
     await expect(heading).toHaveCSS("font-size", "18px");
     const flag = heading.locator('[aria-label$="の国旗"]');
@@ -54,59 +54,25 @@ export async function verifyCafePages(
         (await heading.getByText(coffeeTitle, { exact: true }).boundingBox()).x,
       );
     }
-    const servingOptions = coffee.getByRole("list", { name: "提供方法", exact: true });
-    const beanOptions = coffee.getByRole("list", { name: "豆の種類", exact: true });
-    const optionRow = servingOptions.locator("..");
-    await expect(optionRow).toHaveCSS("align-items", "baseline");
-    const divider = await optionRow.evaluate((row) => {
-      const style = getComputedStyle(row, "::before");
-      return { column: style.gridColumnStart, width: style.width };
-    });
-    expect(divider).toEqual({ column: "2", width: "1px" });
-    for (const [group, label, options, value] of [
-      [
-        servingOptions,
-        "提供方法",
-        ["ホット", "アイス"],
-        { hot: "ホット", iced: "アイス" }[data.log.servingStyle],
-      ],
-      [
-        beanOptions,
-        "豆の種類",
-        ["シングル", "ブレンド"],
-        data.log.isBlend == null ? undefined : data.log.isBlend ? "ブレンド" : "シングル",
-      ],
-    ]) {
-      const items = group.getByRole("listitem");
-      await expect(items).toHaveText(options);
-      await expect(group).toHaveCSS("align-items", "baseline");
-      await expect(group).toHaveCSS("justify-content", "space-around");
-      for (const item of await items.all()) {
-        await expect(item).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
-        await expect(item).toHaveCSS(
-          "font-size",
-          (await item.textContent()) === value ? "16px" : "12px",
-        );
-      }
-      const first = await items.first().boundingBox();
-      const second = await items.last().boundingBox();
-      expect(second.x).toBeGreaterThan(first.x + first.width);
-      const current = group.locator('[aria-current="true"]');
-      if (value) {
-        await expect(current).toHaveText(value);
-        await expect(current).toHaveCSS("font-weight", "700");
-      } else {
-        await expect(current).toHaveCount(0);
-      }
-      await expect(group.getByRole("button")).toHaveCount(0);
-      await expect(coffee.getByText(label, { exact: true })).toHaveCount(0);
+    const optionRow = coffee.getByRole("list", { name: "一杯のスタイル", exact: true });
+    const values = [
+      { hot: "ホット", iced: "アイス" }[data.log.servingStyle],
+      data.log.isBlend == null ? null : data.log.isBlend ? "ブレンド" : "シングル",
+    ].filter(Boolean);
+    if (values.length > 0) {
+      await expect(optionRow.getByRole("listitem")).toHaveText(values);
+      await expect(optionRow.getByRole("button")).toHaveCount(0);
+    } else {
+      await expect(optionRow).toHaveCount(0);
     }
     await expect(coffee.getByText("評価", { exact: true })).toHaveCount(0);
     if (data.log.rating != null) {
       const rating = coffee.getByRole("img", { name: `評価 ${data.log.rating} / 5`, exact: true });
       const ratingBox = await rating.boundingBox();
-      const optionsBox = await optionRow.boundingBox();
-      expect(ratingBox.y).toBeGreaterThan(optionsBox.y + optionsBox.height);
+      if (values.length > 0) {
+        const optionsBox = await optionRow.boundingBox();
+        expect(ratingBox.y).toBeGreaterThan(optionsBox.y + optionsBox.height);
+      }
       expect(ratingBox.width).toBe(coffeeBox.width);
       const stars = rating.locator(':scope > [aria-hidden="true"]');
       await expect(stars.locator("> span")).toHaveCount(5);
@@ -246,12 +212,12 @@ export async function verifyCafePages(
     visitDate: "2026-10-30",
   });
   await visit("/");
-  const recent = page.getByRole("link", { name: /Sat\. 2026\.10\.31/ });
+  const recent = page.getByRole("link", { name: /2026\.10\.31（土）/ });
   await expect(recent).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
   await expect(recent.getByText("›", { exact: true })).toBeVisible();
-  await verifyRecentRecordsLayout(page, "最近のカフェ記録", recent);
+  await verifyRecentRecordsLayout(page, "最近登録した記録", recent);
   await expect(recent.locator("..")).toHaveCSS("border-top-width", "0px");
-  await expect(page.getByRole("link", { name: /Fri\. 2026\.10\.30/ }).locator("..")).toHaveCSS(
+  await expect(page.getByRole("link", { name: /2026\.10\.30（金）/ }).locator("..")).toHaveCSS(
     "border-top-width",
     "1px",
   );
@@ -358,8 +324,8 @@ export async function verifyCafePages(
   data.log.price = null;
   data.log.links = [];
   await visit(`/logs/${ids.log}`);
-  await expect(page.getByText("評価なし", { exact: true })).toBeVisible();
-  await expect(page.getByText("メモは登録されていません。", { exact: true })).toBeVisible();
+  await expect(page.getByRole("img", { name: /^評価 / })).toHaveCount(0);
+  await expect(page.getByRole("heading", { name: "メモ / 味の感想" })).toHaveCount(0);
   await audit("detail-without-optional");
   data.log.process = null;
   await visit(`/logs/${ids.log}`);
@@ -381,9 +347,7 @@ export async function verifyCafePages(
   await expect(page.getByRole("button", { name: "削除中...", exact: true })).toBeDisabled();
   await expect.poll(count).toBe(before + 1);
   await release(500);
-  await expect(deletion).toBeVisible();
-  await closeNotices();
-  await deletion.click();
+  await expect(page.getByRole("alert")).toContainText("記録の削除に失敗しました");
   await page.getByRole("button", { name: "削除する", exact: true }).click();
   await expect(page).toHaveURL(baseURL + "/logs");
   await expect(page.getByText("まだ記録がありません", { exact: true })).toBeVisible();

@@ -165,32 +165,23 @@ export async function verifyBrewPages(page, { baseURL, output, width, ids, reset
   const icedData = reset();
   icedData.log.tempType = "ice";
   await visit("/");
-  await expect(page.getByRole("img", { name: "アイス", exact: true })).toBeVisible();
-  await expect(page.getByText("アイス", { exact: true })).toHaveCount(0);
+  await expect(page.getByText("アイス", { exact: true })).toBeVisible();
   await audit("home-iced");
-  const recent = page.getByRole("link", { name: /Sat\. 2026\.10\.31/ });
+  const recent = page.getByRole("link", { name: /2026\.10\.31（土）/ });
   await expect(recent).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
   await expect(recent.getByText("›", { exact: true })).toBeVisible();
-  await verifyRecentRecordsLayout(page, "最近の抽出記録", recent);
-  for (const name of ["豆を管理", "履歴を見る"]) {
-    const icon = page.getByRole("link", { name, exact: true }).locator("svg");
-    await expect(icon).toHaveCSS("width", "44px");
-    await expect(icon).toHaveCSS("height", "44px");
-    await expect(icon.locator("..")).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
-  }
+  await verifyRecentRecordsLayout(page, "最近登録した記録", recent);
+  const beansIcon = page.getByRole("link", { name: "豆を管理", exact: true }).locator("svg");
+  await expect(beansIcon).toHaveCSS("width", "44px");
+  await expect(beansIcon).toHaveCSS("height", "44px");
+  await expect(page.getByRole("link", { name: "履歴を見る", exact: true })).toHaveCount(0);
   await recent.click();
   await expect(page).toHaveURL(baseURL + "/logs/" + ids.log);
-  await expect(page.getByText("Sat. 2026.10.31", { exact: true })).toBeVisible();
+  await expect(page.getByText("2026.10.31（土）", { exact: true })).toBeVisible();
   await visit("/logs");
-  const record = page.getByRole("link", { name: /Sat\. 2026\.10\.31/ });
-  const dot = record.getByRole("img", { name: "アイス", exact: true });
-  const flag = record.getByRole("img", { name: "エチオピア", exact: true });
-  await expect(dot).toBeVisible();
-  await expect(record.getByText("アイス", { exact: true })).toHaveCount(0);
-  const dotBounds = await dot.boundingBox();
-  const flagBounds = await flag.boundingBox();
-  expect(dotBounds.y).toBeGreaterThanOrEqual(flagBounds.y + flagBounds.height);
-  expect(dotBounds.width).toBeLessThan(flagBounds.width);
+  const record = page.getByRole("link", { name: /2026\.10\.31（土）/ });
+  await expect(record.getByText("アイス", { exact: true })).toBeVisible();
+  await expect(record.getByRole("img", { name: "エチオピア", exact: true })).toBeVisible();
   const ratingBounds = await record
     .getByText(String(icedData.log.rating), { exact: true })
     .boundingBox();

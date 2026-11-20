@@ -1,16 +1,8 @@
-import {
-  Loading,
-  ErrorState,
-  EmptyState,
-  LogListControls,
-  formatDisplayDate,
-  type LogSortOrder,
-  type LogTemperatureFilter,
-} from "@yahatapp/ui";
+import { useListSearchParams, PageHeading, PageStatus } from "@yahatapp/ui";
+import { Loading, ErrorState, EmptyState, LogListControls, formatDisplayDate } from "@yahatapp/ui";
 import styles from "../content.module.css";
 import listStyles from "./logs-list.module.css";
 import { Link } from "react-router-dom";
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Plus, Star, Calendar } from "lucide-react";
@@ -19,28 +11,22 @@ import { analytics } from "@/lib/analytics";
 import { OriginFlag } from "@/components/ui/OriginFlag";
 import { Button } from "../../components/ui/button";
 import { Card } from "../../components/ui/card";
+const sortOptions = [
+  { value: "date", label: "抽出日", initialOrder: "desc" },
+  { value: "bean", label: "豆", initialOrder: "asc" },
+  { value: "rating", label: "評価", initialOrder: "desc" },
+] as const;
 const LogsList = () => {
   const navigate = useNavigate();
   const logsQuery = useQuery(logQueries.all());
   const logs: BrewLog[] = logsQuery.data ?? [];
-  const [activeTab, setActiveTab] = useState<LogTemperatureFilter>("all");
-  const [sortBy, setSortBy] = useState<"date" | "bean" | "rating">("date");
-  const [sortOrder, setSortOrder] = useState<LogSortOrder>("desc");
-  const changeSort = (nextSort: "date" | "bean" | "rating") => {
-    analytics.trackEvent("sort_change");
-    if (sortBy === nextSort) {
-      setSortOrder(sortOrder === "desc" ? "asc" : "desc");
-      return;
-    }
-    setSortBy(nextSort);
-    setSortOrder(nextSort === "bean" ? "asc" : "desc");
-  };
+  const { filter, setFilter, sortBy, sortOrder, changeSort } = useListSearchParams(sortOptions);
   const hotLogsCount = logs.filter((log) => log.tempType !== "ice").length;
   const iceLogsCount = logs.filter((log) => log.tempType === "ice").length;
   const filteredLogs = logs.filter((log) => {
-    if (activeTab === "all") return true;
-    if (activeTab === "hot") return log.tempType !== "ice";
-    if (activeTab === "iced") return log.tempType === "ice";
+    if (filter === "all") return true;
+    if (filter === "hot") return log.tempType !== "ice";
+    if (filter === "iced") return log.tempType === "ice";
     return true;
   });
   const getLogTimestamp = (log: BrewLog): number => {
@@ -89,22 +75,30 @@ const LogsList = () => {
     return 0;
   });
   if (logsQuery.isPending) {
-    return <Loading className={styles.state} />;
+    return (
+      <PageStatus>
+        <Loading className={styles.state} />
+      </PageStatus>
+    );
   }
   if (logsQuery.isError) {
     return (
-      <div className={[styles.roomy, styles.center, styles.muted].join(" ")}>
-        <ErrorState
-          message={<>抽出履歴の取得に失敗しました。</>}
-          onRetry={() => void logsQuery.refetch()}
-        />
-      </div>
+      <PageStatus>
+        <div className={[styles.roomy, styles.center, styles.muted].join(" ")}>
+          <ErrorState
+            message={<>抽出履歴の取得に失敗しました。</>}
+            onRetry={() => void logsQuery.refetch()}
+          />
+        </div>
+      </PageStatus>
     );
   }
   return (
     <div className={styles.stack}>
       <div className={[styles.row, styles.spread].join(" ")}>
-        <h2 className={[styles.heading, styles.strong, styles.accent].join(" ")}>抽出履歴</h2>
+        <PageHeading className={[styles.heading, styles.strong, styles.accent].join(" ")}>
+          抽出履歴
+        </PageHeading>
         <Button size="sm" variant="outline" onClick={() => navigate("/logs/new")} type="button">
           <Plus size={16} /> 追加
         </Button>
@@ -112,20 +106,19 @@ const LogsList = () => {
 
       {logs.length > 0 && (
         <LogListControls
-          filter={activeTab}
+          filter={filter}
           counts={{ all: logs.length, hot: hotLogsCount, iced: iceLogsCount }}
           onFilterChange={(next) => {
             analytics.trackEvent("filter_change");
-            setActiveTab(next);
+            setFilter(next);
           }}
           sortBy={sortBy}
           sortOrder={sortOrder}
-          sortOptions={[
-            { value: "date", label: "日付", initialOrder: "desc" },
-            { value: "bean", label: "豆", initialOrder: "asc" },
-            { value: "rating", label: "評価", initialOrder: "desc" },
-          ]}
-          onSortChange={changeSort}
+          sortOptions={sortOptions}
+          onSortChange={(value) => {
+            analytics.trackEvent("sort_change");
+            changeSort(value);
+          }}
         />
       )}
 
@@ -133,9 +126,9 @@ const LogsList = () => {
         <EmptyState
           title={
             <>
-              {activeTab === "all"
+              {filter === "all"
                 ? "記録はまだありません。"
-                : activeTab === "hot"
+                : filter === "hot"
                   ? "ホットコーヒーの記録はまだありません。"
                   : "アイスコーヒーの記録はまだありません。"}
             </>
@@ -148,29 +141,26 @@ const LogsList = () => {
           }
         />
       ) : (
-        <div className={styles.fieldStack} key={activeTab}>
+        <div className={styles.fieldStack} key={filter}>
           {sortedLogs.map((log) => {
             const date = log.brewDate || log.createdAt;
             const isIced = log.tempType === "ice";
             return (
-              <Link to={`/logs/${log.id}`} className={styles.entryLink} key={log.id}>
+              <Link
+                data-return-card={log.id}
+                to={`/logs/${log.id}`}
+                className={styles.entryLink}
+                key={log.id}
+              >
                 <Card>
                   <div className={[styles.content, listStyles.record].join(" ")}>
                     <div className={listStyles.origin}>
                       <OriginFlag origin={log.bean.origin} size="md" />
-                      <span
-                        className={[
-                          listStyles.temperature,
-                          isIced ? styles.icedText : styles.hotText,
-                        ].join(" ")}
-                        role="img"
-                        aria-label={isIced ? "アイス" : "ホット"}
-                      />
                     </div>
                     <div className={[styles.fieldStack, styles.wrap].join(" ")}>
-                      <h3 className={[styles.strong, styles.foreground].join(" ")}>
+                      <h2 className={[styles.strong, styles.foreground].join(" ")}>
                         {log.bean.name}
-                      </h3>
+                      </h2>
                       <div
                         className={[styles.row, styles.wrapping, styles.helper, styles.muted].join(
                           " ",
@@ -178,7 +168,13 @@ const LogsList = () => {
                       >
                         <span className={styles.row}>
                           <Calendar size={12} aria-hidden="true" />
-                          <time dateTime={date}>{formatDisplayDate(date)}</time>
+                          <time dateTime={date}>
+                            {!log.brewDate && "登録日 "}
+                            {formatDisplayDate(date)}
+                          </time>
+                        </span>
+                        <span className={isIced ? styles.icedText : styles.hotText}>
+                          {isIced ? "アイス" : "ホット"}
                         </span>
                         {(log.dripper?.name || log.method) && (
                           <span>• {log.dripper?.name || log.method}</span>

@@ -1,3 +1,4 @@
+import { PageHeading } from "@yahatapp/ui";
 import {
   Loading,
   ErrorState,
@@ -9,8 +10,7 @@ import {
 import styles from "./content.module.css";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
-import { Plus, Coffee, ClipboardList, Star } from "lucide-react";
+import { Plus, Star } from "lucide-react";
 import { useLiff } from "../hooks/useLiff";
 import { logQueries, type BrewLog } from "@/lib/queries";
 import { CoffeeBeansIcon } from "../components/ui/CoffeeBeansIcon";
@@ -18,7 +18,6 @@ import { Button } from "../components/ui/button";
 import { Card, CardContent } from "../components/ui/card";
 const Home = () => {
   const { profile } = useLiff();
-  const navigate = useNavigate();
   const logsQuery = useQuery({
     ...logQueries.all(),
     select: (logs): BrewLog[] => logs.slice(0, 3),
@@ -27,15 +26,23 @@ const Home = () => {
   return (
     <div className={styles.stack}>
       <section>
-        <h2 className={[styles.hero, styles.strong, styles.accent, styles.separated].join(" ")}>
+        <PageHeading
+          className={[styles.hero, styles.strong, styles.accent, styles.separated].join(" ")}
+        >
           こんにちは、{profile?.displayName || "ゲスト"}さん
-        </h2>
+        </PageHeading>
         <p className={[styles.body, styles.muted].join(" ")}>今日はどんなコーヒーを淹れますか？</p>
       </section>
+      <Button asChild fullWidth>
+        <Link to="/logs/new">
+          <Plus size={18} aria-hidden="true" />
+          抽出を記録する
+        </Link>
+      </Button>
 
       <Card>
         <RecentRecordsHeader
-          title="最近の抽出記録"
+          title="最近登録した記録"
           action={recentLogs.length > 0 ? <Link to="/logs">すべて見る</Link> : undefined}
         />
         <CardContent>
@@ -53,34 +60,15 @@ const Home = () => {
               <p className={[styles.body, styles.muted, styles.separated].join(" ")}>
                 まだ記録がありません。
               </p>
-              <Button onClick={() => navigate("/logs/new")} fullWidth type="button">
-                <Plus size={18} />
-                抽出を記録する
-              </Button>
             </div>
           ) : (
-            <RecentRecords
-              footer={
-                <Button onClick={() => navigate("/logs/new")} fullWidth type="button">
-                  <Plus size={18} />
-                  抽出を記録する
-                </Button>
-              }
-            >
+            <RecentRecords>
               {recentLogs.map((log) => {
                 const date = log.brewDate || log.createdAt;
                 const isIced = log.tempType === "ice";
                 return (
                   <RecentRecord key={log.id}>
-                    <Link to={`/logs/${log.id}`}>
-                      <Coffee
-                        size={16}
-                        role="img"
-                        aria-label={isIced ? "アイス" : "ホット"}
-                        className={[styles.fixed, isIced ? styles.icedText : styles.hotText].join(
-                          " ",
-                        )}
-                      />
+                    <Link to={`/logs/${log.id}`} data-return-card={log.id}>
                       <div className={styles.grow}>
                         <p
                           className={[
@@ -100,7 +88,13 @@ const Home = () => {
                             styles.muted,
                           ].join(" ")}
                         >
-                          <time dateTime={date}>{formatDisplayDate(date)}</time>
+                          <time dateTime={date}>
+                            {!log.brewDate && "登録日 "}
+                            {formatDisplayDate(date)}
+                          </time>
+                          <span className={isIced ? styles.icedText : styles.hotText}>
+                            {isIced ? "アイス" : "ホット"}
+                          </span>
                           {log.method && <span>• {log.method}</span>}
                         </p>
                       </div>
@@ -131,14 +125,6 @@ const Home = () => {
             <div className={[styles.content, styles.stack, styles.center].join(" ")}>
               <CoffeeBeansIcon size="lg" className={styles.tileIcon} aria-hidden="true" />
               <span className={[styles.body, styles.strong].join(" ")}>豆を管理</span>
-            </div>
-          </Card>
-        </Link>
-        <Link to={"/logs"} className={styles.entryLink}>
-          <Card>
-            <div className={[styles.content, styles.stack, styles.center].join(" ")}>
-              <ClipboardList className={styles.tileIcon} aria-hidden="true" />
-              <span className={[styles.body, styles.strong].join(" ")}>履歴を見る</span>
             </div>
           </Card>
         </Link>

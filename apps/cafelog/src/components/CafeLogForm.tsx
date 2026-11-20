@@ -1,10 +1,19 @@
 import { useForm } from "@tanstack/react-form";
 import { useQuery } from "@tanstack/react-query";
 import { Minus, Plus, Save, Star } from "lucide-react";
-import { useState } from "react";
-import { Button, ErrorState, Field, Input, Select, Textarea } from "@yahatapp/ui";
+import { useRef, useState, type RefObject } from "react";
+import {
+  Button,
+  ErrorState,
+  Field,
+  Input,
+  Select,
+  Textarea,
+  FormNotice,
+  focusFirstInvalidField,
+  useUnsavedChanges,
+} from "@yahatapp/ui";
 import { ImagePicker } from "@/components/ImagePicker";
-import { FloatingNotice } from "@/components/FloatingNotice";
 import { ProcessField } from "@/components/ProcessField";
 import { Segment } from "@/components/Segment";
 import { cafeLogFormSchema, type CafeLogFormValues } from "@/lib/cafeLogForm";
@@ -16,7 +25,7 @@ type CafeLogFormProps = {
   defaultValues: CafeLogFormValues;
   onSubmit: (values: CafeLogFormValues) => Promise<void>;
   error?: string | null;
-  warning?: string | null;
+  saved: RefObject<boolean>;
   submitLabel: string;
   isSubmitting?: boolean;
   onCancel?: () => void;
@@ -42,17 +51,19 @@ const coffeeFields = [
 ] as const;
 
 export const CafeLogForm = ({
-  defaultValues,
+  defaultValues: initialValues,
   onSubmit,
   error,
-  warning,
+  saved,
   submitLabel,
   isSubmitting = false,
   onCancel,
   maxImages = 5,
 }: CafeLogFormProps) => {
+  const [defaultValues] = useState(() => initialValues);
   const [imageError, setImageError] = useState<string | null>(null);
-  const [imageErrorId, setImageErrorId] = useState(0);
+  const manualPrefecture = useRef(false);
+  const manualLinks = useRef(defaultValues.cafeLinks.map(() => false));
   const storesQuery = useQuery(cafelogQueries.stores());
   const form = useForm({
     defaultValues,
@@ -62,21 +73,24 @@ export const CafeLogForm = ({
     },
   });
 
+  const guard = useUnsavedChanges(
+    () => !form.state.isDefaultValue,
+    () => form.state.isSubmitting || isSubmitting,
+    saved,
+  );
+
   return (
     <form
       onSubmit={(event) => {
         event.preventDefault();
-        if (!isSubmitting) void form.handleSubmit();
+        if (isSubmitting || form.state.isSubmitting) return;
+        const element = event.currentTarget;
+        void form.handleSubmit().then(() => focusFirstInvalidField(element));
       }}
+      noValidate
       className={styles.form}
     >
-      {(error || imageError || warning) && (
-        <FloatingNotice
-          key={`${error || imageError || warning}:${imageErrorId}`}
-          message={error || imageError || warning || ""}
-          warning={!error && !imageError}
-        />
-      )}
+      {guard.confirmation}
       <fieldset disabled={isSubmitting} className={styles.fields}>
         <div className={styles.panel}>
           <form.Field name="cafeName">
@@ -96,17 +110,44 @@ export const CafeLogForm = ({
                       value={field.state.value}
                       onChange={(event) => {
                         const name = event.target.value;
+                        const previousName = field.state.value.trim().toLowerCase();
                         field.handleChange(name);
+                        const trimmed = name.trim().toLowerCase();
+                        if (previousName === trimmed) return;
+
                         const matches = (storesQuery.data ?? []).filter(
-                          (store) => store.name === name,
+                          (store) => store.name.toLowerCase() === trimmed,
                         );
-                        if (matches.length === 1) {
-                          form.setFieldValue("prefecture", matches[0].prefecture ?? "");
+                        const original =
+                          trimmed === defaultValues.cafeName.trim().toLowerCase() && trimmed !== "";
+                        const store = matches.length === 1 ? matches[0] : undefined;
+                        if (!manualPrefecture.current) {
                           form.setFieldValue(
-                            "cafeLinks",
-                            matches[0].links.length ? matches[0].links : [""],
+                            "prefecture",
+                            original ? defaultValues.prefecture : (store?.prefecture ?? ""),
                           );
                         }
+                        const storeLinks = original
+                          ? defaultValues.cafeLinks
+                          : (store?.links ?? []);
+                        const currentLinks = form.getFieldValue("cafeLinks");
+                        const links: string[] = [];
+                        const manual: boolean[] = [];
+                        for (
+                          let index = 0;
+                          index < Math.max(currentLinks.length, storeLinks.length);
+                          index++
+                        ) {
+                          if (manualLinks.current[index]) {
+                            links.push(currentLinks[index]);
+                            manual.push(true);
+                          } else if (index < storeLinks.length) {
+                            links.push(storeLinks[index]);
+                            manual.push(false);
+                          }
+                        }
+                        manualLinks.current = manual.length ? manual : [false];
+                        form.setFieldValue("cafeLinks", links.length ? links : [""]);
                       }}
                       onBlur={field.handleBlur}
                       placeholder="例: ブルーボトルコーヒー"
@@ -129,6 +170,56 @@ export const CafeLogForm = ({
               onRetry={() => void storesQuery.refetch()}
             />
           )}
+          <form.Field name="visitDate">
+            {(field) => (
+              <Field
+                id="cafe-visit-date"
+                label="訪問日"
+                error={errorMessage(field.state.meta.errors)}
+              >
+                {(control) => (
+                  <Input
+                    {...control}
+                    type="date"
+                    value={field.state.value}
+                    onChange={(event) => field.handleChange(event.target.value)}
+                    onBlur={field.handleBlur}
+                  />
+                )}
+              </Field>
+            )}
+          </form.Field>
+          <form.Field name="note">
+            {(field) => (
+              <Field
+                id="cafe-note"
+                label="メモ / 味の感想"
+                error={errorMessage(field.state.meta.errors)}
+              >
+                {(control) => (
+                  <Textarea
+                    {...control}
+                    value={field.state.value}
+                    onChange={(event) => field.handleChange(event.target.value)}
+                    onBlur={field.handleBlur}
+                    placeholder="味の特徴、豆の情報、お店の雰囲気など..."
+                    rows={4}
+                  />
+                )}
+              </Field>
+            )}
+          </form.Field>
+          <form.Field name="images">
+            {(field) => (
+              <ImagePicker
+                images={field.state.value}
+                onChange={field.handleChange}
+                onError={setImageError}
+                maxImages={maxImages}
+              />
+            )}
+          </form.Field>
+          {imageError && <FormNotice message={imageError} />}
           <form.Field name="prefecture">
             {(field) => (
               <Field
@@ -140,7 +231,10 @@ export const CafeLogForm = ({
                   <Select
                     {...control}
                     value={field.state.value}
-                    onChange={(event) => field.handleChange(event.target.value)}
+                    onChange={(event) => {
+                      manualPrefecture.current = true;
+                      field.handleChange(event.target.value);
+                    }}
                     onBlur={field.handleBlur}
                   >
                     <option value="">選択してください</option>
@@ -170,11 +264,16 @@ export const CafeLogForm = ({
               <fieldset className={styles.group}>
                 <legend className={styles.legend}>豆の種類</legend>
                 <Segment
-                  value={field.state.value ? "blend" : "single"}
-                  onValueChange={(value) => field.handleChange(value === "blend")}
+                  value={
+                    field.state.value === null ? "unset" : field.state.value ? "blend" : "single"
+                  }
+                  onValueChange={(value) =>
+                    field.handleChange(value === "unset" ? null : value === "blend")
+                  }
                   options={[
                     { label: "シングル", value: "single" },
                     { label: "ブレンド", value: "blend" },
+                    { label: "未登録", value: "unset" },
                   ]}
                   ariaLabel="豆の種類"
                 />
@@ -198,7 +297,10 @@ export const CafeLogForm = ({
                               {...control}
                               type="url"
                               value={linkField.state.value}
-                              onChange={(event) => linkField.handleChange(event.target.value)}
+                              onChange={(event) => {
+                                manualLinks.current[index] = true;
+                                linkField.handleChange(event.target.value);
+                              }}
                               onBlur={linkField.handleBlur}
                               placeholder="Instagram・ホームページ・Google Map"
                             />
@@ -210,7 +312,10 @@ export const CafeLogForm = ({
                             variant="ghost"
                             size="icon"
                             aria-label={`リンク ${index + 1} を削除`}
-                            onClick={() => field.removeValue(index)}
+                            onClick={() => {
+                              manualLinks.current.splice(index, 1);
+                              field.removeValue(index);
+                            }}
                           >
                             <Minus size={18} aria-hidden="true" />
                           </Button>
@@ -220,7 +325,14 @@ export const CafeLogForm = ({
                   </form.Field>
                 ))}
                 {field.state.value.length < 10 && (
-                  <Button type="button" variant="ghost" onClick={() => field.pushValue("")}>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    onClick={() => {
+                      manualLinks.current.push(false);
+                      field.pushValue("");
+                    }}
+                  >
                     <Plus size={14} aria-hidden="true" />
                     リンクを追加
                   </Button>
@@ -233,121 +345,20 @@ export const CafeLogForm = ({
               </fieldset>
             )}
           </form.Field>
-          <div className={styles.coffeeFields}>
-            {coffeeFields.map(({ name, label, placeholder }) => (
-              <form.Field key={name} name={name}>
-                {(field) => (
-                  <Field
-                    id={`cafe-${name}`}
-                    label={label}
-                    error={errorMessage(field.state.meta.errors)}
-                  >
-                    {(control) => (
-                      <Input
-                        {...control}
-                        type="text"
-                        value={field.state.value}
-                        onChange={(event) => field.handleChange(event.target.value)}
-                        onBlur={field.handleBlur}
-                        placeholder={placeholder}
-                      />
-                    )}
-                  </Field>
-                )}
-              </form.Field>
-            ))}
-          </div>
-          <form.Field name="process">
-            {(field) => (
-              <ProcessField
-                id="cafe-process"
-                value={field.state.value}
-                onChange={field.handleChange}
-                onBlur={field.handleBlur}
-                error={errorMessage(field.state.meta.errors)}
-              >
-                <form.Field name="roast">
-                  {(roastField) => (
-                    <Field
-                      id="cafe-roast"
-                      label="焙煎度"
-                      error={errorMessage(roastField.state.meta.errors)}
-                    >
-                      {(control) => (
-                        <Input
-                          {...control}
-                          type="text"
-                          value={roastField.state.value}
-                          onChange={(event) => roastField.handleChange(event.target.value)}
-                          onBlur={roastField.handleBlur}
-                          placeholder="例: 浅煎り"
-                        />
-                      )}
-                    </Field>
-                  )}
-                </form.Field>
-              </ProcessField>
-            )}
-          </form.Field>
           <form.Field name="servingStyle">
             {(field) => (
               <fieldset className={styles.group}>
                 <legend className={styles.legend}>提供温度</legend>
                 <Segment
-                  value={field.state.value}
-                  onValueChange={field.handleChange}
+                  value={field.state.value ?? "unset"}
+                  onValueChange={(value) => field.handleChange(value === "unset" ? null : value)}
                   options={[
                     { label: "ホット", value: "hot" },
                     { label: "アイス", value: "iced" },
+                    { label: "未登録", value: "unset" },
                   ]}
                   ariaLabel="提供温度"
                 />
-              </fieldset>
-            )}
-          </form.Field>
-          <form.Field name="flavorNotes" mode="array">
-            {(field) => (
-              <fieldset className={styles.group}>
-                <legend className={styles.legend}>フレーバーノート</legend>
-                {field.state.value.map((_, index) => (
-                  <form.Field key={index} name={`flavorNotes[${index}]`}>
-                    {(noteField) => (
-                      <div className={styles.dynamicRow}>
-                        <Field
-                          label={`フレーバーノート ${index + 1}`}
-                          labelVariant="secondary"
-                          error={errorMessage(noteField.state.meta.errors)}
-                        >
-                          {(control) => (
-                            <Input
-                              {...control}
-                              type="text"
-                              value={noteField.state.value}
-                              onChange={(event) => noteField.handleChange(event.target.value)}
-                              onBlur={noteField.handleBlur}
-                              placeholder="例: ベリー"
-                            />
-                          )}
-                        </Field>
-                        <div className={styles.remove}>
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="icon"
-                            aria-label={`フレーバーノート ${index + 1}を削除`}
-                            onClick={() => field.removeValue(index)}
-                          >
-                            <Minus size={18} aria-hidden="true" />
-                          </Button>
-                        </div>
-                      </div>
-                    )}
-                  </form.Field>
-                ))}
-                <Button type="button" variant="ghost" onClick={() => field.pushValue("")}>
-                  <Plus size={14} aria-hidden="true" />
-                  フレーバーを追加
-                </Button>
               </fieldset>
             )}
           </form.Field>
@@ -387,7 +398,9 @@ export const CafeLogForm = ({
                       ))}
                     </div>
                     <output aria-label="評価">
-                      {field.state.value !== null ? field.state.value.toFixed(1) : "未登録"} / 5.0
+                      {field.state.value !== null
+                        ? `${field.state.value.toFixed(1)} / 5.0`
+                        : "未登録"}
                     </output>
                   </div>
                   <Button
@@ -405,9 +418,129 @@ export const CafeLogForm = ({
                     <Plus size={18} aria-hidden="true" />
                   </Button>
                 </div>
+                {field.state.value !== null && (
+                  <Button type="button" variant="ghost" onClick={() => field.handleChange(null)}>
+                    評価を未登録に戻す
+                  </Button>
+                )}
               </fieldset>
             )}
           </form.Field>
+          <details
+            className={styles.optional}
+            open={[
+              ...coffeeFields.map(({ name }) => defaultValues[name]),
+              defaultValues.process,
+              defaultValues.roast,
+              ...defaultValues.flavorNotes,
+            ].some((value) => value.trim())}
+          >
+            <summary className={styles.optionalSummary}>豆の来歴・製法・フレーバー</summary>
+            <div className={styles.optionalFields}>
+              <div className={styles.coffeeFields}>
+                {coffeeFields.map(({ name, label, placeholder }) => (
+                  <form.Field key={name} name={name}>
+                    {(field) => (
+                      <Field
+                        id={`cafe-${name}`}
+                        label={label}
+                        error={errorMessage(field.state.meta.errors)}
+                      >
+                        {(control) => (
+                          <Input
+                            {...control}
+                            type="text"
+                            value={field.state.value}
+                            onChange={(event) => field.handleChange(event.target.value)}
+                            onBlur={field.handleBlur}
+                            placeholder={placeholder}
+                          />
+                        )}
+                      </Field>
+                    )}
+                  </form.Field>
+                ))}
+              </div>
+              <form.Field name="process">
+                {(field) => (
+                  <ProcessField
+                    id="cafe-process"
+                    value={field.state.value}
+                    onChange={field.handleChange}
+                    onBlur={field.handleBlur}
+                    error={errorMessage(field.state.meta.errors)}
+                  >
+                    <form.Field name="roast">
+                      {(roastField) => (
+                        <Field
+                          id="cafe-roast"
+                          label="焙煎度"
+                          error={errorMessage(roastField.state.meta.errors)}
+                        >
+                          {(control) => (
+                            <Input
+                              {...control}
+                              type="text"
+                              value={roastField.state.value}
+                              onChange={(event) => roastField.handleChange(event.target.value)}
+                              onBlur={roastField.handleBlur}
+                              placeholder="例: 浅煎り"
+                            />
+                          )}
+                        </Field>
+                      )}
+                    </form.Field>
+                  </ProcessField>
+                )}
+              </form.Field>
+              <form.Field name="flavorNotes" mode="array">
+                {(field) => (
+                  <fieldset className={styles.group}>
+                    <legend className={styles.legend}>フレーバーノート</legend>
+                    {field.state.value.map((_, index) => (
+                      <form.Field key={index} name={`flavorNotes[${index}]`}>
+                        {(noteField) => (
+                          <div className={styles.dynamicRow}>
+                            <Field
+                              label={`フレーバーノート ${index + 1}`}
+                              labelVariant="secondary"
+                              error={errorMessage(noteField.state.meta.errors)}
+                            >
+                              {(control) => (
+                                <Input
+                                  {...control}
+                                  type="text"
+                                  value={noteField.state.value}
+                                  onChange={(event) => noteField.handleChange(event.target.value)}
+                                  onBlur={noteField.handleBlur}
+                                  placeholder="例: ベリー"
+                                />
+                              )}
+                            </Field>
+                            <div className={styles.remove}>
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="icon"
+                                aria-label={`フレーバーノート ${index + 1}を削除`}
+                                onClick={() => field.removeValue(index)}
+                              >
+                                <Minus size={18} aria-hidden="true" />
+                              </Button>
+                            </div>
+                          </div>
+                        )}
+                      </form.Field>
+                    ))}
+                    <Button type="button" variant="ghost" onClick={() => field.pushValue("")}>
+                      <Plus size={14} aria-hidden="true" />
+                      フレーバーを追加
+                    </Button>
+                  </fieldset>
+                )}
+              </form.Field>
+            </div>
+          </details>
           <div className={styles.measurements}>
             <form.Field name="price">
               {(field) => (
@@ -432,61 +565,10 @@ export const CafeLogForm = ({
                 </Field>
               )}
             </form.Field>
-            <form.Field name="visitDate">
-              {(field) => (
-                <Field
-                  id="cafe-visit-date"
-                  label="訪問日"
-                  error={errorMessage(field.state.meta.errors)}
-                >
-                  {(control) => (
-                    <Input
-                      {...control}
-                      type="date"
-                      value={field.state.value}
-                      onChange={(event) => field.handleChange(event.target.value)}
-                      onBlur={field.handleBlur}
-                    />
-                  )}
-                </Field>
-              )}
-            </form.Field>
           </div>
-          <form.Field name="note">
-            {(field) => (
-              <Field
-                id="cafe-note"
-                label="メモ / 味の感想"
-                error={errorMessage(field.state.meta.errors)}
-              >
-                {(control) => (
-                  <Textarea
-                    {...control}
-                    value={field.state.value}
-                    onChange={(event) => field.handleChange(event.target.value)}
-                    onBlur={field.handleBlur}
-                    placeholder="味の特徴、豆の情報、お店の雰囲気など..."
-                    rows={4}
-                  />
-                )}
-              </Field>
-            )}
-          </form.Field>
-          <form.Field name="images">
-            {(field) => (
-              <ImagePicker
-                images={field.state.value}
-                onChange={field.handleChange}
-                onError={(message) => {
-                  setImageError(message);
-                  if (message) setImageErrorId((current) => current + 1);
-                }}
-                maxImages={maxImages}
-              />
-            )}
-          </form.Field>
         </div>
         <div className={styles.actions}>
+          {error && <FormNotice message={error} />}
           <Button type="submit" loading={isSubmitting} fullWidth>
             <Save size={18} aria-hidden="true" />
             {isSubmitting ? "保存中..." : submitLabel}
@@ -496,7 +578,7 @@ export const CafeLogForm = ({
               type="button"
               variant="outline"
               fullWidth
-              onClick={onCancel}
+              onClick={() => guard.cancel(onCancel)}
               disabled={isSubmitting}
             >
               キャンセル

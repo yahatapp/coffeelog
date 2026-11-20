@@ -1,6 +1,19 @@
-import { AppShell, BottomNavigation, ConsentNotice, SessionState } from "@yahatapp/ui";
-import { useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route, Link, useLocation } from "react-router-dom";
+import {
+  AppNavigation,
+  AppShell,
+  BottomNavigation,
+  ConsentNotice,
+  SessionState,
+} from "@yahatapp/ui";
+import { useEffect, useSyncExternalStore } from "react";
+import {
+  createBrowserRouter,
+  RouterProvider,
+  Outlet,
+  Link,
+  useLocation,
+  type RouteObject,
+} from "react-router-dom";
 import { Home as HomeIcon, ClipboardList, User } from "lucide-react";
 import { LiffProvider, useLiff } from "./hooks/useLiff";
 import { CoffeeBeansIcon } from "./components/ui/CoffeeBeansIcon";
@@ -22,12 +35,13 @@ import DrippersPage from "./pages/Settings/Drippers";
 import GrindersPage from "./pages/Settings/Grinders";
 import NotFoundPage from "./pages/NotFound";
 
-const Layout = ({ children }: { children: React.ReactNode }) => {
+const Layout = () => {
+  const consent = useSyncExternalStore(analytics.subscribe, analytics.getConsent);
   const location = useLocation();
 
   useEffect(() => {
     analytics.trackPage(location.pathname);
-  }, [location.pathname]);
+  }, [location.pathname, consent]);
 
   const isTabActive = (paths: string[]) => {
     return paths.some((path) => {
@@ -44,34 +58,71 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   ];
 
   return (
-    <AppShell
-      banner={
-        analytics.configured && analytics.getConsent() === null ? (
-          <ConsentNotice
-            servicesLabel={analytics.servicesLabel}
-            onAccept={() => analytics.setConsent("enabled")}
-            onDecline={() => analytics.setConsent("disabled")}
+    <AppNavigation app="Brewlog">
+      <AppShell
+        banner={
+          analytics.configured && consent === null ? (
+            <ConsentNotice
+              servicesLabel={analytics.servicesLabel}
+              onAccept={() => analytics.setConsent("enabled")}
+              onDecline={() => analytics.setConsent("disabled")}
+            />
+          ) : undefined
+        }
+        navigation={
+          <BottomNavigation
+            items={navItems.map((item) => {
+              return {
+                href: item.to,
+                label: item.label,
+                active: isTabActive(item.paths),
+                icon: item.icon,
+              };
+            })}
+            renderLink={(item, props) => <Link to={item.href} {...props} />}
           />
-        ) : undefined
-      }
-      navigation={
-        <BottomNavigation
-          items={navItems.map((item) => {
-            return {
-              href: item.to,
-              label: item.label,
-              active: isTabActive(item.paths),
-              icon: item.icon,
-            };
-          })}
-          renderLink={(item, props) => <Link to={item.href} {...props} />}
-        />
-      }
-    >
-      {children}
-    </AppShell>
+        }
+      >
+        <Outlet />
+      </AppShell>
+    </AppNavigation>
   );
 };
+
+const routes: RouteObject[] = [
+  {
+    element: <Layout />,
+    children: [
+      { path: "/", element: <HomePage />, handle: { title: "ホーム" } },
+      { path: "/beans", element: <BeansPage />, handle: { title: "豆一覧" } },
+      { path: "/beans/new", element: <AddBeanPage />, handle: { title: "豆を登録" } },
+      { path: "/beans/:id", element: <BeanDetailPage />, handle: { title: "豆の詳細" } },
+      { path: "/beans/:id/edit", element: <EditBeanPage />, handle: { title: "豆を編集" } },
+      { path: "/logs", element: <LogsPage />, handle: { title: "抽出履歴" } },
+      { path: "/logs/new", element: <AddLogPage />, handle: { title: "抽出を記録する" } },
+      { path: "/logs/:id", element: <LogDetailPage />, handle: { title: "抽出記録詳細" } },
+      { path: "/logs/:id/edit", element: <EditLogPage />, handle: { title: "抽出記録を編集" } },
+      { path: "/stores", element: <StoresPage />, handle: { title: "お店" } },
+      { path: "/stores/:id", element: <StoreDetailPage />, handle: { title: "お店の詳細" } },
+      { path: "/settings", element: <SettingsPage />, handle: { title: "設定" } },
+      {
+        path: "/settings/drippers",
+        element: <DrippersPage />,
+        handle: { title: "ドリッパー管理" },
+      },
+      {
+        path: "/settings/grinders",
+        element: <GrindersPage />,
+        handle: { title: "グラインダー管理" },
+      },
+      { path: "*", element: <NotFoundPage />, handle: { title: "ページが見つかりません" } },
+    ],
+  },
+];
+
+// LIFF can update the address during initialization. Read it after authentication.
+let router: ReturnType<typeof createBrowserRouter> | undefined;
+const getRouter = () => (router ??= createBrowserRouter(routes));
 
 const AppContent = () => {
   const { isLoading, error, relogin } = useLiff();
@@ -86,29 +137,7 @@ const AppContent = () => {
       />
     );
 
-  return (
-    <Router>
-      <Layout>
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/beans" element={<BeansPage />} />
-          <Route path="/beans/new" element={<AddBeanPage />} />
-          <Route path="/beans/:id" element={<BeanDetailPage />} />
-          <Route path="/beans/:id/edit" element={<EditBeanPage />} />
-          <Route path="/logs" element={<LogsPage />} />
-          <Route path="/logs/new" element={<AddLogPage />} />
-          <Route path="/logs/:id" element={<LogDetailPage />} />
-          <Route path="/logs/:id/edit" element={<EditLogPage />} />
-          <Route path="/stores" element={<StoresPage />} />
-          <Route path="/stores/:id" element={<StoreDetailPage />} />
-          <Route path="/settings" element={<SettingsPage />} />
-          <Route path="/settings/drippers" element={<DrippersPage />} />
-          <Route path="/settings/grinders" element={<GrindersPage />} />
-          <Route path="*" element={<NotFoundPage />} />
-        </Routes>
-      </Layout>
-    </Router>
-  );
+  return <RouterProvider router={getRouter()} />;
 };
 
 function App() {

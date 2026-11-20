@@ -22,7 +22,6 @@ const sentId = (init?: RequestInit) => {
 const save = ({ id, values }: { id?: string; values: CafeLogFormValues }) =>
   new MutationObserver(client, {
     mutationFn: saveLogWithImages,
-    meta: id ? mutationNotices.updateLog : mutationNotices.createLog,
   }).mutate({ id, values });
 const remove = () =>
   new MutationObserver(client, { mutationFn: deleteLog, meta: mutationNotices.deleteLog }).mutate(
@@ -50,7 +49,7 @@ afterEach(() => {
 
 describe("記録と写真の保存結果の通知", () => {
   it.each([undefined, "log"])(
-    "写真も保存し終えてから一度だけ成功を通知する（id: %s）",
+    "写真の送信が終わってから保存済みの記録を返す（id: %s）",
     async (id) => {
       const upload = Promise.withResolvers<Response>();
       fetchMock
@@ -60,71 +59,34 @@ describe("記録と写真の保存結果の通知", () => {
       await vi.advanceTimersByTimeAsync(0);
       expect(fetchMock).toHaveBeenCalledTimes(2);
       expect(fetchMock.mock.calls[0][1]?.method).toBe(id ? "PATCH" : "POST");
-      expect(addNotice).not.toHaveBeenCalled();
       upload.resolve(new Response(null, { status: 201 }));
       await expect(pending).resolves.toEqual({ data: { id: "log" } });
-      expect(addNotice).toHaveBeenCalledExactlyOnceWith({
-        description: id ? "記録を更新しました。" : "記録を保存しました。",
-        title: "完了しました",
-        type: "success",
-        timeout: 5000,
-        priority: "low",
-      });
     },
   );
 
-  it.each([undefined, "log"])("写真なしの作成・編集でも成功を通知する（id: %s）", async (id) => {
-    fetchMock.mockResolvedValue(Response.json({ id: "log" }));
-    await save({ id, values: createCafeLogDefaults() });
-    expect(fetchMock).toHaveBeenCalledTimes(1);
-    expect(addNotice).toHaveBeenCalledExactlyOnceWith({
-      title: "完了しました",
-      description: id ? "記録を更新しました。" : "記録を保存しました。",
-      type: "success",
-      timeout: 5000,
-      priority: "low",
-    });
-  });
-
   it.each([undefined, "log"])(
-    "写真だけ失敗したら保存済みの記録を返し、警告だけを通知する（id: %s）",
+    "写真だけ失敗した場合は保存済みの記録と案内を返す（id: %s）",
     async (id) => {
       fetchMock
         .mockResolvedValueOnce(Response.json({ id: "log" }))
         .mockResolvedValueOnce(new Response("Invalid image", { status: 400 }));
-      await expect(
-        save({ id, values: { ...createCafeLogDefaults(), images: [photo()] } }),
-      ).resolves.toMatchObject({ data: { id: "log" }, notice: { variant: "warning" } });
-      expect(addNotice).toHaveBeenCalledTimes(1);
-      expect(addNotice).toHaveBeenCalledWith(
-        expect.objectContaining({
-          title: "確認してください",
-          type: "warning",
-          timeout: 0,
-          priority: "high",
-        }),
-      );
-      const message = addNotice.mock.calls[0][0].description;
-      expect(message).toContain("記録は保存済みです。");
-      expect(message).toContain("編集画面からもう一度追加してください。");
+      const result = await save({ id, values: { ...createCafeLogDefaults(), images: [photo()] } });
+      expect(result).toMatchObject({ data: { id: "log" }, notice: { variant: "warning" } });
+      expect(result.notice?.message).toContain("記録は保存済みです。");
+      expect(result.notice?.message).toContain("編集画面からもう一度追加してください。");
+      expect(addNotice).not.toHaveBeenCalled();
     },
   );
 
   it.each([undefined, "log"])(
-    "記録が保存できない場合は写真を送らず、エラーだけを通知する（id: %s）",
+    "記録が保存できない場合は写真を送らず、エラーを呼び出し元へ返す（id: %s）",
     async (id) => {
-      fetchMock.mockResolvedValue(new Response("保存できませんでした。", { status: 500 }));
+      fetchMock.mockResolvedValue(new Response("fixture", { status: 500 }));
       await expect(
         save({ id, values: { ...createCafeLogDefaults(), images: [photo()] } }),
-      ).rejects.toThrow();
+      ).rejects.toThrow("fixture");
       expect(fetchMock).toHaveBeenCalledTimes(1);
-      expect(addNotice).toHaveBeenCalledExactlyOnceWith({
-        description: "保存できませんでした。",
-        title: "エラーが発生しました",
-        type: "error",
-        timeout: 0,
-        priority: "high",
-      });
+      expect(addNotice).not.toHaveBeenCalled();
     },
   );
 
@@ -140,12 +102,11 @@ describe("記録と写真の保存結果の通知", () => {
     });
   });
 
-  it("削除の通信エラーを一度だけ通知し、呼び出し元にも返す", async () => {
+  it("削除の通信エラーを呼び出し元に返す", async () => {
     const error = new TypeError("Failed to fetch");
     fetchMock.mockRejectedValue(error);
     await expect(remove()).rejects.toBe(error);
-    expect(addNotice).toHaveBeenCalledTimes(1);
-    expect(addNotice).toHaveBeenCalledWith(expect.objectContaining({ type: "error" }));
+    expect(addNotice).not.toHaveBeenCalled();
   });
 });
 

@@ -4,12 +4,28 @@ import { writeFile } from "node:fs/promises";
 const require = createRequire(resolve("apps/cafelog/package.json"));
 const { expect } = require("@playwright/test");
 export async function verifyCafeControlHeights(page) {
-  const processBox = await page
-    .getByRole("combobox", { name: "精製方法", exact: true })
-    .boundingBox();
-  const roastBox = await page.getByRole("textbox", { name: "焙煎度", exact: true }).boundingBox();
-  expect(processBox.height).toBe(roastBox.height);
-  expect(processBox.y).toBe(roastBox.y);
+  const details = page.getByText("豆の来歴・製法・フレーバー", { exact: true }).locator("..");
+  const wasOpen = (await details.getAttribute("open")) !== null;
+  if (!wasOpen)
+    await details.evaluate((el) => {
+      el.open = true;
+    });
+  await expect(page.getByRole("combobox", { name: "精製方法", exact: true })).toBeVisible();
+  const controls = await page.evaluate(() => {
+    const process = document.getElementById("cafe-process").getBoundingClientRect();
+    const roast = document.getElementById("cafe-roast").getBoundingClientRect();
+    return {
+      processHeight: process.height,
+      roastHeight: roast.height,
+      aligned: process.y === roast.y,
+    };
+  });
+  expect(controls.processHeight).toBe(controls.roastHeight);
+  expect(controls.aligned).toBe(true);
+  if (!wasOpen)
+    await details.evaluate((el) => {
+      el.open = false;
+    });
 }
 export async function verifyCafeForms(
   page,
@@ -101,6 +117,7 @@ export async function verifyCafeForms(
   await page.getByRole("combobox", { name: "店舗名", exact: true }).fill(" ");
   await submit("この内容で保存する");
   await expect(page.getByText("店舗名は必須項目です。", { exact: true })).toBeVisible();
+  await expect(page.getByRole("combobox", { name: "店舗名", exact: true })).toBeFocused();
   await page.getByRole("combobox", { name: "店舗名", exact: true }).fill(data.store.name);
   await expect(page.getByRole("combobox", { name: "都道府県", exact: true })).toHaveValue("東京都");
   await expect(page.getByRole("textbox", { name: "お店のリンク 1", exact: true })).toHaveValue(
@@ -128,6 +145,7 @@ export async function verifyCafeForms(
     .locator("label")
     .filter({ hasText: "ブレンド" })
     .click();
+  await page.getByText("豆の来歴・製法・フレーバー", { exact: true }).click();
   await page.getByRole("textbox", { name: "原産国", exact: true }).fill("エチオピア");
   await page.getByRole("combobox", { name: "精製方法", exact: true }).selectOption("その他");
   await page
@@ -142,7 +160,7 @@ export async function verifyCafeForms(
     .focus();
   await page.keyboard.press("Space");
   await page.getByRole("button", { name: "評価を上げる", exact: true }).click();
-  await expect(page.getByLabel("評価", { exact: true })).toHaveText("3.5 / 5.0");
+  await expect(page.getByLabel("評価", { exact: true })).toHaveText("3.0 / 5.0");
   await page.getByRole("spinbutton", { name: "金額 (円)", exact: true }).fill("780");
   await page
     .getByRole("textbox", { name: "メモ / 味の感想", exact: true })
@@ -170,12 +188,7 @@ export async function verifyCafeForms(
     })),
   );
   await expect(
-    page
-      .getByRole("region", { name: "操作結果の通知" })
-      .locator("p")
-      .filter({ hasText: "写真は1つの記録につき5枚までです。" })
-      .filter({ visible: true })
-      .first(),
+    page.getByRole("alert").filter({ hasText: "写真は1つの記録につき5枚までです。" }),
   ).toBeVisible();
   await expect(page.getByAltText(/選択した写真/)).toHaveCount(5);
   await preview("選択した写真 1 を拡大表示");
@@ -193,6 +206,7 @@ export async function verifyCafeForms(
     "独自の発酵・精製方法",
   );
   await expect(page.getByAltText(/選択した写真/)).toHaveCount(1);
+  await expect(page.getByRole("alert")).toContainText("入力内容は保持されています");
   await audit("create-save-error");
   mode("upload-hold");
   await submit("この内容で保存する");
@@ -207,7 +221,7 @@ export async function verifyCafeForms(
       .getByRole("region", { name: "操作結果の通知" })
       .getByText("記録を保存しました。", { exact: true }),
   ).toBeVisible();
-  await page.locator("summary").click();
+  await page.locator("summary").filter({ hasText: "写真" }).click();
   await preview("記録の写真 1 を拡大表示");
   await closeNotices();
   await page.getByRole("button", { name: "編集", exact: true }).click();
@@ -238,14 +252,7 @@ export async function verifyCafeForms(
     .setInputFiles({ name: "retry.png", mimeType: "image/png", buffer: png });
   mode("upload-error");
   await submit("保存する");
-  await expect(
-    page
-      .getByRole("region", { name: "操作結果の通知" })
-      .locator("p")
-      .filter({ hasText: "記録は保存済みです" })
-      .filter({ visible: true })
-      .first(),
-  ).toBeVisible();
+  await expect(page.getByRole("status").filter({ hasText: "記録は保存済みです" })).toBeVisible();
   await closeNotices();
   await page.getByRole("button", { name: "編集", exact: true }).click();
   mode("success");
@@ -254,11 +261,83 @@ export async function verifyCafeForms(
     .setInputFiles({ name: "retry.png", mimeType: "image/png", buffer: png });
   await submit("保存する");
   await expect.poll(() => data.uploads).toBe(2);
+  await expect(page.getByRole("heading", { level: 1, name: "記録の詳細" })).toBeVisible();
+  await expect(page.getByRole("status").filter({ hasText: "記録は保存済みです" })).toHaveCount(0);
   readMode("images-error");
   await visit(`/logs/${ids.log}`);
   await expect(page.getByText("写真を取得できませんでした。", { exact: true })).toBeVisible();
   readMode("success");
   await page.getByRole("button", { name: "再試行", exact: true }).click();
   await expect(page.getByText("写真を取得できませんでした。", { exact: true })).toHaveCount(0);
+  const provenance = reset();
+  provenance.store.links.push("https://example.com/second");
+  provenance.stores.push(
+    {
+      id: "store-other",
+      name: "別のカフェ",
+      prefecture: "京都府",
+      links: ["https://example.com/kyoto"],
+    },
+    {
+      id: "duplicate-a",
+      name: "同名カフェ",
+      prefecture: "東京都",
+      links: ["https://example.com/duplicate-a"],
+    },
+    {
+      id: "duplicate-b",
+      name: "同名カフェ",
+      prefecture: "京都府",
+      links: ["https://example.com/duplicate-b"],
+    },
+  );
+  await visit("/logs/new");
+  const name = page.getByRole("combobox", { name: "店舗名", exact: true });
+  const prefecture = page.getByRole("combobox", { name: "都道府県", exact: true });
+  const link = (number) =>
+    page.getByRole("textbox", { name: `お店のリンク ${number}`, exact: true });
+  await expect(page.locator("#registered-stores option")).toHaveCount(4);
+  await name.fill(provenance.store.name);
+  await expect(link(2)).toHaveValue("https://example.com/second");
+  await name.fill("別のカフェ");
+  await expect(prefecture).toHaveValue("京都府");
+  await expect(link(1)).toHaveValue("https://example.com/kyoto");
+  await expect(link(2)).toHaveCount(0);
+  await name.fill(provenance.store.name);
+  await link(1).fill("https://example.com/manual");
+  await name.fill("同名カフェ");
+  await expect(prefecture).toHaveValue("");
+  await expect(link(1)).toHaveValue("https://example.com/manual");
+  await expect(link(2)).toHaveCount(0);
+  await name.fill("新規登録のカフェ");
+  await submit("この内容で保存する");
+  await expect(page.getByRole("heading", { name: "新規登録のカフェ" })).toBeVisible();
+  expect(provenance.writes[0]).toMatchObject({
+    cafeName: "新規登録のカフェ",
+    prefecture: null,
+    cafeLinks: ["https://example.com/manual"],
+    isBlend: null,
+    servingStyle: null,
+    rating: null,
+  });
+  await closeNotices();
+  await page.getByRole("button", { name: "編集", exact: true }).click();
+  await expect(
+    page.getByRole("radiogroup", { name: "豆の種類" }).getByRole("radio", { name: "未登録" }),
+  ).toBeChecked();
+  const memo = page.getByRole("textbox", { name: "メモ / 味の感想" });
+  await memo.fill("編集キャンセルの確認");
+  await page.getByRole("button", { name: "キャンセル", exact: true }).click();
+  const discard = page.getByRole("alertdialog", { name: "入力内容を破棄しますか？" });
+  await discard.getByRole("button", { name: "入力を続ける" }).click();
+  await expect(memo).toHaveValue("編集キャンセルの確認");
+  await submit("保存する");
+  await expect(page.getByRole("heading", { name: "記録の詳細", exact: true })).toBeVisible();
+  expect(provenance.writes[1]).toMatchObject({
+    note: "編集キャンセルの確認",
+    isBlend: null,
+    servingStyle: null,
+    rating: null,
+  });
   return records;
 }

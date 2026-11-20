@@ -1,0 +1,55 @@
+@layer components {
+  .backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: var(--cl-layer-overlay);
+    background: var(--cl-color-overlay);
+  }
+
+  .dialog {
+    position: fixed;
+    inset: 50% auto auto 50%;
+    z-index: var(--cl-layer-overlay);
+    transform: translate(-50%, -50%);
+    width: calc(100% - 2 * var(--cl-space-page-inline));
+    max-width: var(--cl-size-content-max);
+    max-height: calc(100dvh - 2 * var(--cl-space-page-inline));
+    overflow: auto;
+    display: grid;
+    gap: var(--cl-space-field-gap);
+    padding: var(--cl-space-section-gap);
+    border-radius: var(--cl-radius-card);
+    background: var(--cl-color-surface);
+    color: var(--cl-color-text);
+  }
+
+  .title {
+    font-size: var(--cl-font-size-label);
+    font-weight: var(--cl-font-weight-strong);
+  }
+
+  .actions {
+    display: flex;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: var(--cl-space-field-gap);
+  }
+
+  .error,
+  .warning {
+    padding: var(--cl-space-field-gap);
+    border: var(--cl-border-width) solid currentColor;
+    border-radius: var(--cl-radius-control);
+    overflow-wrap: anywhere;
+  }
+
+  .error {
+    color: var(--cl-color-error);
+    background: var(--cl-color-error-surface);
+  }
+
+  .warning {
+    color: var(--cl-color-warning);
+    background: var(--cl-color-warning-surface);
+  }
+}

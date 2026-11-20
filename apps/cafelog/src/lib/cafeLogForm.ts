@@ -13,7 +13,7 @@ export type CafeLogFormValues = {
   producer: string;
   process: string;
   roast: string;
-  isBlend: boolean;
+  isBlend: boolean | null;
   servingStyle: "hot" | "iced" | null;
   flavorNotes: string[];
   rating: number | null;
@@ -51,7 +51,7 @@ export const cafeLogFormSchema = z.object({
   producer: z.string(),
   process: z.string(),
   roast: z.string(),
-  isBlend: z.boolean(),
+  isBlend: z.boolean().nullable(),
   servingStyle: z.enum(["hot", "iced"]).nullable(),
   flavorNotes: z.array(z.string()),
   rating: z.number().min(1).max(5).nullable(),
@@ -78,10 +78,10 @@ export const createCafeLogDefaults = (): CafeLogFormValues => {
     producer: "",
     process: "",
     roast: "",
-    isBlend: false,
-    servingStyle: "hot",
+    isBlend: null,
+    servingStyle: null,
     flavorNotes: [""],
-    rating: 3,
+    rating: null,
     price: "",
     visitDate: `${yyyy}-${mm}-${dd}`,
     note: "",

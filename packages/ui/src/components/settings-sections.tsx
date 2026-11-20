@@ -20,7 +20,7 @@ export function SettingsProfile({ profile, fallbackIcon }: SettingsProfileProps)
             )}
           </div>
           <div className={styles.profileText}>
-            <h3 className={styles.name}>{profile?.displayName || "ゲストユーザー"}</h3>
+            <h2 className={styles.name}>{profile?.displayName || "ゲストユーザー"}</h2>
             {profile && <p className={styles.caption}>LINE連携済み</p>}
           </div>
         </div>
@@ -44,7 +44,7 @@ export function SettingsAbout({
 }: SettingsAboutProps) {
   return (
     <section className={styles.about}>
-      <h3 className={styles.caption}>アプリについて</h3>
+      <h2 className={styles.caption}>アプリについて</h2>
       <Card>
         <ul className={styles.menu} role="list">
           {["利用規約", "プライバシーポリシー"].map((label) => (

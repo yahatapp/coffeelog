@@ -1,23 +1,23 @@
 import type { MutationNoticeMeta } from "@yahatapp/ui";
-import { getErrorMessage } from "./errors";
+import { ApiError } from "./api";
 
 export const mutationNotices = {
-  createLog: {
-    notice: {
-      success: "記録を保存しました。",
-      error: (error: Error) => getErrorMessage(error, "記録の保存に失敗しました。"),
-    },
-  },
-  updateLog: {
-    notice: {
-      success: "記録を更新しました。",
-      error: (error: Error) => getErrorMessage(error, "記録の更新に失敗しました。"),
-    },
-  },
-  deleteLog: {
-    notice: {
-      success: "記録を削除しました。",
-      error: (error: Error) => getErrorMessage(error, "記録の削除に失敗しました。"),
-    },
-  },
+  deleteLog: { notice: { success: "記録を削除しました。" } },
 } satisfies Record<string, MutationNoticeMeta>;
+
+export function cafeMutationError(error: unknown, action: "保存" | "更新" | "削除") {
+  const summary = `記録の${action}に失敗しました。`;
+  const retained = action === "削除" ? "" : "入力内容は保持されています。";
+  if (error instanceof ApiError) {
+    if (error.status === 401 || error.status === 403) {
+      return `${summary}${retained}LINEでログインし直してからお試しください。`;
+    }
+    if (error.status === 404) {
+      return `${summary}記録一覧から対象の記録を開き直してください。`;
+    }
+    if (error.status === 400 || error.status === 422) {
+      return `${summary}${retained}入力内容を確認してください。`;
+    }
+  }
+  return `${summary}${retained}通信状況を確認し、もう一度${action}してください。`;
+}

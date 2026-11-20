@@ -1,5 +1,5 @@
+import { useListSearchParams, PageHeading, PageStatus } from "@yahatapp/ui";
 import styles from "./content.module.css";
-import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import {
@@ -9,32 +9,38 @@ import {
   EmptyState,
   LogListControls,
   formatDisplayDate,
-  type LogSortOrder,
-  type LogTemperatureFilter,
 } from "@yahatapp/ui";
-import { getErrorMessage } from "@/lib/errors";
-import { cafelogQueries } from "@/lib/queries";
+import { cafelogQueries, type LogsResponse } from "@/lib/queries";
 import { ClipboardList, Plus } from "lucide-react";
 import { CafeLogListCard } from "@/components/CafeLogListCard";
 import { analytics } from "@/lib/analytics";
 
+const sortOptions = [
+  { value: "date", label: "訪問日", initialOrder: "desc" },
+  { value: "prefecture", label: "都道府県", initialOrder: "asc" },
+  { value: "rating", label: "評価", initialOrder: "desc" },
+] as const;
+function cardLabel(log: LogsResponse[number]) {
+  const date = log.visitDate
+    ? formatDisplayDate(log.visitDate)
+    : `登録日 ${formatDisplayDate(log.createdAt)}`;
+  return [
+    `${log.cafeName}の記録（${date}）`,
+    log.origin,
+    log.variety,
+    log.process,
+    log.roast,
+    log.isBlend == null ? null : log.isBlend ? "ブレンド" : "シングル",
+    log.servingStyle === "hot" ? "ホット" : log.servingStyle === "iced" ? "アイス" : null,
+    log.rating == null ? null : `評価 ${log.rating}`,
+  ]
+    .filter(Boolean)
+    .join("、");
+}
+
 const LogsPage = () => {
   const { data: logs = [], isPending: isLoading, error, refetch } = useQuery(cafelogQueries.logs());
-  const errorMessage = error ? getErrorMessage(error, "通信エラーが発生しました。") : null;
-  const [filter, setFilter] = useState<LogTemperatureFilter>("all");
-  const [sortBy, setSortBy] = useState<"date" | "prefecture" | "rating">("date");
-  const [sortOrder, setSortOrder] = useState<LogSortOrder>("desc");
-
-  const changeSort = (nextSort: "date" | "prefecture" | "rating") => {
-    analytics.trackEvent("sort_change");
-    if (sortBy === nextSort) {
-      setSortOrder((current) => (current === "desc" ? "asc" : "desc"));
-      return;
-    }
-    setSortBy(nextSort);
-    setSortOrder(nextSort === "prefecture" ? "asc" : "desc");
-  };
-
+  const { filter, setFilter, sortBy, sortOrder, changeSort } = useListSearchParams(sortOptions);
   const filteredLogs = logs.filter((log) => filter === "all" || log.servingStyle === filter);
   const sortedLogs = filteredLogs.toSorted((a, b) => {
     if (sortBy === "date") {
@@ -57,15 +63,35 @@ const LogsPage = () => {
     return sortOrder === "desc" ? b.rating - a.rating : a.rating - b.rating;
   });
 
-  if (isLoading) return <Loading label="記録を読み込み中..." />;
-  if (errorMessage)
-    return <ErrorState message="記録一覧を取得できませんでした。" onRetry={() => void refetch()} />;
+  const cardLabels = sortedLogs.map(cardLabel);
+  const totals = new Map<string, number>();
+  const occurrences = new Map<string, number>();
+  for (const label of cardLabels) totals.set(label, (totals.get(label) ?? 0) + 1);
+  const distinctLabels = cardLabels.map((label) => {
+    if (totals.get(label) === 1) return label;
+    const position = (occurrences.get(label) ?? 0) + 1;
+    occurrences.set(label, position);
+    return `${label}、${position}件目`;
+  });
+
+  if (isLoading)
+    return (
+      <PageStatus>
+        <Loading label="記録を読み込み中..." />
+      </PageStatus>
+    );
+  if (error)
+    return (
+      <PageStatus>
+        <ErrorState message="記録一覧を取得できませんでした。" onRetry={() => void refetch()} />
+      </PageStatus>
+    );
   return (
     <div className={styles.listPage}>
       <header className={styles.header}>
         <div className={styles.titleRow}>
           <ClipboardList size={24} aria-hidden="true" />
-          <h2 className={styles.heading}>記録一覧</h2>
+          <PageHeading className={styles.heading}>記録一覧</PageHeading>
         </div>
         <Button asChild variant="secondary">
           <Link to="/logs/new">
@@ -88,12 +114,11 @@ const LogsPage = () => {
           }}
           sortBy={sortBy}
           sortOrder={sortOrder}
-          sortOptions={[
-            { value: "date", label: "日付", initialOrder: "desc" },
-            { value: "prefecture", label: "都道府県", initialOrder: "asc" },
-            { value: "rating", label: "評価", initialOrder: "desc" },
-          ]}
-          onSortChange={changeSort}
+          sortOptions={sortOptions}
+          onSortChange={(value) => {
+            analytics.trackEvent("sort_change");
+            changeSort(value);
+          }}
         />
       )}
       {logs.length === 0 ? (
@@ -113,22 +138,18 @@ const LogsPage = () => {
         <EmptyState title={`${filter === "hot" ? "ホット" : "アイス"}の記録はまだありません。`} />
       ) : (
         <div className={styles.section}>
-          {sortedLogs.map((log) => (
+          {sortedLogs.map((log, index) => (
             <Link
               key={log.id}
+              data-return-card={log.id}
               to={`/logs/${log.id}`}
               className={styles.recordLink}
-              aria-label={`${log.cafeName}の記録（${formatDisplayDate(log.visitDate) ?? "日付未登録"}）`}
+              aria-label={distinctLabels[index]}
             >
               <CafeLogListCard log={log} />
             </Link>
           ))}
         </div>
-      )}
-      {logs.length > 0 && (
-        <Link to="/logs/new" className={styles.floatingAction} aria-label="新規追加">
-          <Plus size={24} aria-hidden="true" />
-        </Link>
       )}
     </div>
   );

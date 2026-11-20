@@ -1,3 +1,5 @@
+import { PageHeading } from "@yahatapp/ui";
+import { useSyncExternalStore } from "react";
 import {
   Button,
   CardContent,
@@ -25,7 +27,7 @@ const Settings = () => {
   const drippers = drippersQuery.data ?? [];
   const grinders = grindersQuery.data ?? [];
   const isLoading = drippersQuery.isPending || grindersQuery.isPending;
-  const analyticsConsent = analytics.getConsent();
+  const analyticsConsent = useSyncExternalStore(analytics.subscribe, analytics.getConsent);
   const isAnalyticsEnabled = analyticsConsent === "enabled";
   const handleLogout = () => {
     if (liff?.isLoggedIn()) {
@@ -35,7 +37,9 @@ const Settings = () => {
   };
   return (
     <div className={[styles.stack, styles.separated].join(" ")}>
-      <h2 className={[styles.heading, styles.strong, styles.accent].join(" ")}>設定</h2>
+      <PageHeading className={[styles.heading, styles.strong, styles.accent].join(" ")}>
+        設定
+      </PageHeading>
 
       <SettingsProfile profile={profile} fallbackIcon={<User size={32} />} />
 
@@ -53,7 +57,7 @@ const Settings = () => {
       <section className={styles.fieldStack}>
         <div className={styles.row}>
           <Settings2 size={16} className={styles.accent} />
-          <h3 className={[styles.body, styles.strong, styles.accent].join(" ")}>器具マスタ管理</h3>
+          <h2 className={[styles.body, styles.strong, styles.accent].join(" ")}>器具マスタ管理</h2>
         </div>
         <Card>
           <div className={menuStyles.menu}>
@@ -110,7 +114,7 @@ const Settings = () => {
       {analytics.configured && (
         <Card>
           <CardHeader>
-            <CardTitle>利用状況の計測</CardTitle>
+            <CardTitle as="h2">利用状況の計測</CardTitle>
           </CardHeader>
           <CardContent>
             <div className={styles.fieldStack}>

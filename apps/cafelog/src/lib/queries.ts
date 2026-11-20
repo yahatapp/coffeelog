@@ -120,9 +120,13 @@ export const uploadLogImages = async (logId: string, images: CafeLogFormValues["
         });
       }
       if (error instanceof ApiError && error.status === 400) {
-        throw new Error("写真の枚数や形式を確認してください。写真は5枚まで保存できます。", {
-          cause: error,
-        });
+        const message =
+          error.message === "Up to 5 images can be uploaded"
+            ? "写真は5枚まで保存できます。追加する写真を選び直してください。"
+            : error.message === "Image must be 1 MB or smaller"
+              ? "写真の容量が上限を超えています。別の写真を選んでください。"
+              : "写真の枚数や形式を確認してください。JPEGやPNGの写真を選び直してください。";
+        throw new Error(message, { cause: error });
       }
       throw new Error("写真を送信できませんでした。通信状況を確認してお試しください。", {
         cause: error,

@@ -6,6 +6,7 @@
   }
   .filters {
     display: flex;
+    flex-wrap: wrap;
     gap: var(--cl-space-tight);
     padding: var(--cl-space-tight);
     border-radius: var(--cl-radius-control);
@@ -13,7 +14,8 @@
   }
   .option {
     display: flex;
-    flex: 1;
+    flex: 1 0 auto;
+    max-inline-size: 100%;
     align-items: center;
     justify-content: center;
     gap: var(--cl-space-tight);
@@ -22,6 +24,7 @@
     padding-inline: var(--cl-space-field-gap);
     color: var(--cl-color-text-muted);
     font-size: var(--cl-font-size-helper);
+    white-space: nowrap;
     font-weight: var(--cl-font-weight-medium);
     cursor: pointer;
   }
@@ -69,7 +72,8 @@
     background: var(--cl-color-action-primary);
   }
   .sortOptions {
-    display: grid;
+    display: flex;
+    flex-wrap: wrap;
     min-width: 0;
     flex: 1;
     gap: var(--cl-space-tight);

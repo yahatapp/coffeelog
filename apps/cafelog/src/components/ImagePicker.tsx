@@ -39,6 +39,7 @@ export const ImagePicker = ({
     onChange([...images, ...additions]);
   };
   const remove = (index: number) => {
+    onError(null);
     URL.revokeObjectURL(images[index].previewUrl);
     onChange(images.filter((_, current) => current !== index));
   };
@@ -46,10 +47,10 @@ export const ImagePicker = ({
   return (
     <section className={styles.root} aria-labelledby={`${id}-heading`}>
       <div className={styles.header}>
-        <h3 id={`${id}-heading`} className={styles.heading}>
+        <h2 id={`${id}-heading`} className={styles.heading}>
           <Camera size={15} aria-hidden="true" />
           写真
-        </h3>
+        </h2>
         <span className={styles.count} aria-live="polite">
           {images.length} / {maxImages}枚
         </span>

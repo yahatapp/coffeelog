@@ -1,3 +1,4 @@
+import { PageHeading, PageStatus, useAppBack } from "@yahatapp/ui";
 import {
   Loading,
   ErrorState,
@@ -40,26 +41,36 @@ const formatSeconds = (seconds: number) =>
 
 const LogDetail = () => {
   const { id } = useParams<{ id: string }>();
+  const goBack = useAppBack("/logs");
   const logQuery = useQuery(logQueries.detail(id ?? ""));
-  if (logQuery.isPending) return <Loading />;
+  if (logQuery.isPending)
+    return (
+      <PageStatus>
+        <Loading />
+      </PageStatus>
+    );
   if (logQuery.isError)
     return (
-      <ErrorState
-        message="抽出記録の取得に失敗しました。"
-        onRetry={() => void logQuery.refetch()}
-      />
+      <PageStatus>
+        <ErrorState
+          message="抽出記録の取得に失敗しました。"
+          onRetry={() => void logQuery.refetch()}
+        />
+      </PageStatus>
     );
   const log = logQuery.data;
   if (!log)
     return (
-      <EmptyState
-        title="記録が見つかりませんでした。"
-        action={
-          <Button asChild>
-            <Link to="/logs">履歴に戻る</Link>
-          </Button>
-        }
-      />
+      <PageStatus>
+        <EmptyState
+          title="記録が見つかりませんでした。"
+          action={
+            <Button asChild>
+              <Link to="/logs">履歴に戻る</Link>
+            </Button>
+          }
+        />
+      </PageStatus>
     );
 
   const firstPour = log.pours?.find((pour) => pour.pourNumber === 1);
@@ -67,12 +78,10 @@ const LogDetail = () => {
     <div className={styles.page}>
       <div className={styles.toolbar}>
         <div className={styles.titleRow}>
-          <Button asChild variant="ghost" size="icon" aria-label="戻る">
-            <Link to="/logs">
-              <ArrowLeft size={20} aria-hidden="true" />
-            </Link>
+          <Button variant="ghost" size="icon" aria-label="戻る" onClick={goBack}>
+            <ArrowLeft size={20} aria-hidden="true" />
           </Button>
-          <h2 className={styles.pageTitle}>抽出記録詳細</h2>
+          <PageHeading className={styles.pageTitle}>抽出記録詳細</PageHeading>
         </div>
         <Button asChild size="sm" variant="outline">
           <Link to={`/logs/${log.id}/edit`}>
@@ -87,6 +96,7 @@ const LogDetail = () => {
           <div className={styles.overview}>
             <div className={styles.metadata}>
               <span className={styles.date}>
+                {!log.brewDate && "登録日 "}
                 {formatDisplayDate(log.brewDate || log.createdAt)}
               </span>
               <div className={styles.badges}>
@@ -109,7 +119,7 @@ const LogDetail = () => {
             >
               <div className={styles.beanInfo}>
                 <span className={styles.eyebrow}>コーヒー豆</span>
-                <h3 className={styles.beanName}>{log.bean.name}</h3>
+                <h2 className={styles.beanName}>{log.bean.name}</h2>
                 {log.bean.origin && (
                   <span className={styles.origin}>
                     <OriginFlag origin={log.bean.origin} size="sm" />
@@ -142,7 +152,7 @@ const LogDetail = () => {
 
       <Card>
         <CardHeader>
-          <CardTitle>抽出レシピ詳細</CardTitle>
+          <CardTitle as="h2">抽出レシピ詳細</CardTitle>
         </CardHeader>
         <CardContent>
           <dl className={styles.details}>
@@ -201,7 +211,7 @@ const LogDetail = () => {
       {log.pours && log.pours.length > 0 && (
         <Card>
           <CardHeader>
-            <CardTitle>注ぎ方レシピ・タイムライン</CardTitle>
+            <CardTitle as="h2">注ぎ方レシピ・タイムライン</CardTitle>
           </CardHeader>
           <CardContent>
             <PourTimeline
@@ -221,7 +231,7 @@ const LogDetail = () => {
           text && (
             <Card key={title}>
               <CardHeader>
-                <CardTitle>{title}</CardTitle>
+                <CardTitle as="h2">{title}</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className={styles.note}>{text}</p>

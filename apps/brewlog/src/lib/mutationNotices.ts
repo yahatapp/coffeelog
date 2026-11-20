@@ -6,10 +6,10 @@ export const mutationNotices = {
   setBeanArchived: { notice: { error: "豆のアーカイブ状態の変更に失敗しました。" } },
   deleteBean: { notice: { success: "豆を削除しました。", error: "豆の削除に失敗しました。" } },
   createLog: {
-    notice: { success: "抽出記録を保存しました。", error: "抽出記録の保存に失敗しました。" },
+    notice: { success: "抽出記録を保存しました。" },
   },
   updateLog: {
-    notice: { success: "抽出記録を更新しました。", error: "抽出記録の更新に失敗しました。" },
+    notice: { success: "抽出記録を更新しました。" },
   },
   createDripper: {
     notice: { success: "ドリッパーを登録しました。", error: "ドリッパーの登録に失敗しました。" },

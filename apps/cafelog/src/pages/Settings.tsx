@@ -1,3 +1,5 @@
+import { PageHeading } from "@yahatapp/ui";
+import { useSyncExternalStore } from "react";
 import { useLiff } from "@/hooks/useLiff";
 import { User, LogOut } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -14,13 +16,13 @@ import { analytics } from "@/lib/analytics";
 import styles from "./content.module.css";
 const SettingsPage = () => {
   const { profile, relogin } = useLiff();
-  const analyticsConsent = analytics.getConsent();
+  const analyticsConsent = useSyncExternalStore(analytics.subscribe, analytics.getConsent);
   const isAnalyticsEnabled = analyticsConsent === "enabled";
   return (
     <div className={styles.page}>
       <header className={styles.titleRow}>
         <User size={24} aria-hidden="true" />
-        <h2 className={styles.heading}>設定</h2>
+        <PageHeading className={styles.heading}>設定</PageHeading>
       </header>
       <SettingsProfile profile={profile} fallbackIcon={<User size={32} />} />
       <Link to="/stores" className={styles.recordLink}>
@@ -30,7 +32,7 @@ const SettingsPage = () => {
       {analytics.configured && (
         <Card>
           <CardHeader>
-            <CardTitle>利用状況の計測</CardTitle>
+            <CardTitle as="h2">利用状況の計測</CardTitle>
           </CardHeader>
           <CardContent>
             <div className={styles.section}>

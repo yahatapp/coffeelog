@@ -22,6 +22,7 @@ type BrewLogFieldsProps = {
   drippers: Dripper[];
   grinders: Grinder[];
   isFetchingMasters?: boolean;
+  disabled: boolean;
   navigate: (to: string) => void;
 };
 const parseNumber = (value: string, integer = false): number | "" => {
@@ -52,6 +53,7 @@ export const BrewLogFields = ({
   drippers,
   grinders,
   isFetchingMasters = false,
+  disabled,
   navigate,
 }: BrewLogFieldsProps) => (
   <form.Subscribe selector={(state) => state.values}>
@@ -118,51 +120,53 @@ export const BrewLogFields = ({
       return (
         <Card>
           <div className={styles.content}>
-            <div className={styles.field}>
-              <Field id="bean" label={<>コーヒー豆</>} required>
-                {(control) => (
-                  <>
-                    {isFetchingMasters ? (
-                      <div className={styles.placeholder} />
-                    ) : (
-                      <form.Field name="beanId">
-                        {(field) => (
-                          <Select
-                            {...control}
-                            id="bean"
-                            value={field.state.value}
-                            onChange={(event) => field.handleChange(event.target.value)}
-                            onBlur={field.handleBlur}
-                            required
-                          >
-                            <option value="" disabled>
-                              豆を選択してください
-                            </option>
-                            {beans.map((bean) => (
-                              <option key={bean.id} value={bean.id}>
-                                {bean.name}
-                              </option>
-                            ))}
-                          </Select>
-                        )}
-                      </form.Field>
-                    )}
-                    {beans.length === 0 && !isFetchingMasters && (
-                      <p className={styles.error}>
-                        豆が登録されていません。{" "}
-                        <button
-                          type="button"
-                          onClick={() => navigate("/beans/new")}
-                          className={styles.textAction}
+            <form.Field name="beanId">
+              {(field) => (
+                <div className={styles.field}>
+                  <Field
+                    id="bean"
+                    label="コーヒー豆"
+                    required
+                    error={getFirstValidationError(field.state.meta.errors)}
+                  >
+                    {(control) =>
+                      isFetchingMasters ? (
+                        <div className={styles.placeholder} />
+                      ) : (
+                        <Select
+                          {...control}
+                          value={field.state.value}
+                          onChange={(event) => field.handleChange(event.target.value)}
+                          onBlur={field.handleBlur}
+                          required
                         >
-                          先に豆を登録してください。
-                        </button>
-                      </p>
-                    )}
-                  </>
-                )}
-              </Field>
-            </div>
+                          <option value="" disabled>
+                            豆を選択してください
+                          </option>
+                          {beans.map((bean) => (
+                            <option key={bean.id} value={bean.id}>
+                              {bean.name}
+                            </option>
+                          ))}
+                        </Select>
+                      )
+                    }
+                  </Field>
+                  {beans.length === 0 && !isFetchingMasters && (
+                    <p className={styles.error}>
+                      豆が登録されていません。{" "}
+                      <button
+                        type="button"
+                        onClick={() => navigate("/beans/new")}
+                        className={styles.textAction}
+                      >
+                        先に豆を登録してください。
+                      </button>
+                    </p>
+                  )}
+                </div>
+              )}
+            </form.Field>
 
             <form.Field name="brewDate">
               {(field) => (
@@ -191,51 +195,53 @@ export const BrewLogFields = ({
               )}
             </form.Field>
 
-            <div className={styles.field}>
-              <Field id="dripper" label={<>ドリッパー</>} required>
-                {(control) => (
-                  <>
-                    {isFetchingMasters ? (
-                      <div className={styles.placeholder} />
-                    ) : (
-                      <form.Field name="dripperId">
-                        {(field) => (
-                          <Select
-                            {...control}
-                            id="dripper"
-                            value={field.state.value}
-                            onChange={(event) => field.handleChange(event.target.value)}
-                            onBlur={field.handleBlur}
-                            required
-                          >
-                            <option value="" disabled>
-                              ドリッパーを選択してください
-                            </option>
-                            {drippers.map((dripper) => (
-                              <option key={dripper.id} value={dripper.id}>
-                                {dripper.name}
-                              </option>
-                            ))}
-                          </Select>
-                        )}
-                      </form.Field>
-                    )}
-                    {drippers.length === 0 && !isFetchingMasters && (
-                      <p className={styles.error}>
-                        ドリッパーが登録されていません。{" "}
-                        <button
-                          type="button"
-                          onClick={() => navigate("/settings/drippers")}
-                          className={styles.textAction}
+            <form.Field name="dripperId">
+              {(field) => (
+                <div className={styles.field}>
+                  <Field
+                    id="dripper"
+                    label="ドリッパー"
+                    required
+                    error={getFirstValidationError(field.state.meta.errors)}
+                  >
+                    {(control) =>
+                      isFetchingMasters ? (
+                        <div className={styles.placeholder} />
+                      ) : (
+                        <Select
+                          {...control}
+                          value={field.state.value}
+                          onChange={(event) => field.handleChange(event.target.value)}
+                          onBlur={field.handleBlur}
+                          required
                         >
-                          設定から登録してください
-                        </button>
-                      </p>
-                    )}
-                  </>
-                )}
-              </Field>
-            </div>
+                          <option value="" disabled>
+                            ドリッパーを選択してください
+                          </option>
+                          {drippers.map((dripper) => (
+                            <option key={dripper.id} value={dripper.id}>
+                              {dripper.name}
+                            </option>
+                          ))}
+                        </Select>
+                      )
+                    }
+                  </Field>
+                  {drippers.length === 0 && !isFetchingMasters && (
+                    <p className={styles.error}>
+                      ドリッパーが登録されていません。{" "}
+                      <button
+                        type="button"
+                        onClick={() => navigate("/settings/drippers")}
+                        className={styles.textAction}
+                      >
+                        設定から登録してください
+                      </button>
+                    </p>
+                  )}
+                </div>
+              )}
+            </form.Field>
 
             <div className={styles.field}>
               <Field id="grinder" label={<>グラインダー</>}>
@@ -273,6 +279,7 @@ export const BrewLogFields = ({
                 {(field) => (
                   <Slider
                     id="grindSize"
+                    disabled={disabled}
                     label={
                       <>
                         挽き目 (クリック数:{" "}
