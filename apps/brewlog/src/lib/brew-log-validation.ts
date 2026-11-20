@@ -4,6 +4,7 @@ import { toLogCreateInput, type LogFormValues } from "./form-values";
 export function validateBrewLog({ value }: { value: LogFormValues }) {
   const fields: Record<string, string> = {};
   if (!value.beanId) fields.beanId = "コーヒー豆を選択してください。";
+  if (!value.brewDate.trim()) fields.brewDate = "抽出日を入力してください。";
   if (!value.dripperId) fields.dripperId = "ドリッパーを選択してください。";
 
   const amounts = [

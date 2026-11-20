@@ -48,6 +48,20 @@ export async function verifyBrewForms(
       if (preserve) await preserve();
     }
   };
+  const verifyRequiredBrewDate = async (submitLabel, mode) => {
+    const brewDate = page.locator("#brewDate");
+    const date = await brewDate.inputValue();
+    expect(date).not.toBe("");
+    const before = count();
+    await brewDate.fill("");
+    await page.getByRole("button", { name: submitLabel, exact: true }).click();
+    await expect(brewDate).toBeFocused();
+    await expect(brewDate).toHaveAttribute("aria-invalid", "true");
+    await expect(brewDate).toHaveAccessibleDescription("抽出日を入力してください。");
+    expect(count()).toBe(before);
+    await page.screenshot({ path: resolve(output, `brewlog-${mode}-missing-date-${width}.png`) });
+    await brewDate.fill(date);
+  };
   await page.goto(baseURL + "/beans/new");
   await page.getByRole("textbox", { name: "豆の名前", exact: true }).fill("検証用の新しい豆");
   await page.locator("label").filter({ hasText: "スペシャルティコーヒー" }).click();
@@ -151,6 +165,7 @@ export async function verifyBrewForms(
   await expect(waterTemp).toHaveAttribute("aria-invalid", "true");
   expect(count()).toBe(beforeInvalid);
   await waterTemp.fill("85");
+  await verifyRequiredBrewDate("記録を保存する", "create");
   await audit("log-create");
   await save({
     success: false,
@@ -188,6 +203,7 @@ export async function verifyBrewForms(
     .fill("編集したノート");
   await expect(page.getByText(/未保存の変更があります/)).toBeVisible();
   await expect(page.getByText(/仕上がり量/)).toHaveCount(0);
+  await verifyRequiredBrewDate("変更を保存する", "edit");
   await audit("log-edit");
   await save({
     success: false,
