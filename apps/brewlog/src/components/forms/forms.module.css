@@ -53,7 +53,7 @@
   .presetRow {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--cl-space-field-gap);
+    column-gap: var(--cl-space-field-gap);
   }
   .spread {
     display: flex;

@@ -1,6 +1,6 @@
 import styles from "./forms.module.css";
 import { getFirstValidationError } from "./formValidation";
-import { Checkbox, Field, Label, Select, Textarea } from "@yahatapp/ui";
+import { Checkbox, ChipButton, Field, Label, Select, Textarea } from "@yahatapp/ui";
 import { Minus, Plus, Star } from "lucide-react";
 import { Button, cn } from "../ui/button";
 import { Input } from "../ui/input";
@@ -720,11 +720,9 @@ export const BrewLogFields = ({
                             aria-label="抽出コメントに追加"
                           >
                             {brewCommentPresets.map((preset) => (
-                              <Button
+                              <ChipButton
                                 key={preset}
-                                type="button"
-                                variant="secondary"
-                                size="xs"
+                                variant="outline"
                                 disabled={disabled}
                                 aria-controls={control.id}
                                 onClick={() => {
@@ -736,7 +734,7 @@ export const BrewLogFields = ({
                                 }}
                               >
                                 {preset}
-                              </Button>
+                              </ChipButton>
                             ))}
                           </div>
                           <Textarea

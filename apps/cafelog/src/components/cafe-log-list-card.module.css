@@ -20,25 +20,6 @@
     color: var(--cl-color-text-muted);
     font-size: var(--cl-font-size-helper);
   }
-  .badge,
-  .temperature {
-    width: 100%;
-    padding: var(--cl-space-tight);
-    border-radius: var(--cl-radius-action);
-    font-size: var(--cl-font-size-helper);
-    font-weight: var(--cl-font-weight-medium);
-    text-align: center;
-    background: var(--cl-color-surface-tonal);
-    color: var(--cl-color-action-primary);
-  }
-  .temperature[data-temperature="hot"] {
-    background: var(--cl-color-temperature-hot-surface);
-    color: var(--cl-color-temperature-hot);
-  }
-  .temperature[data-temperature="iced"] {
-    background: var(--cl-color-temperature-iced-surface);
-    color: var(--cl-color-temperature-iced);
-  }
   .main {
     display: flex;
     flex-direction: column;

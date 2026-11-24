@@ -1,14 +1,4 @@
 @layer components {
-  .root {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--cl-space-tight);
-    padding: var(--cl-space-tight) var(--cl-space-field-gap);
-    border: var(--cl-border-width) solid var(--cl-color-border-decorative);
-    border-radius: var(--cl-radius-action);
-    background: var(--cl-color-surface-tonal);
-    flex-shrink: 0;
-  }
   .dot {
     width: var(--cl-space-field-gap);
     height: var(--cl-space-field-gap);
@@ -30,11 +20,6 @@
   }
   .dot[data-level="5"] {
     background: var(--cl-color-roast-dark);
-  }
-  .label {
-    font-size: var(--cl-font-size-helper);
-    font-weight: var(--cl-font-weight-medium);
-    color: var(--cl-color-text);
   }
   .visuallyHidden {
     position: absolute;

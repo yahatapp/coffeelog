@@ -26,7 +26,11 @@ export async function verifyStoreLinks(
     await expect(link.locator('[data-external-indicator="true"]')).toHaveCount(
       externalIndicator ? 1 : 0,
     );
-    if (!iconOnly) await expect(link).toHaveCSS("font-size", "11px");
+    const surface = iconOnly ? link : link.locator(":scope > span");
+    if (!iconOnly) {
+      await expect(surface).toHaveCSS("padding-top", "2px");
+      await expect(surface).toHaveCSS("padding-inline-start", "6px");
+    }
     for (const icon of await link.locator("img, svg").all()) {
       const iconBox = await icon.boundingBox();
       expect(iconBox.width).toBe(iconOnly ? 24 : 16);
@@ -36,7 +40,7 @@ export async function verifyStoreLinks(
       await expect.poll(() => link.locator("img").evaluate((img) => img.naturalWidth)).toBe(96);
     }
     await expect(link).toHaveCSS("text-decoration-line", "none");
-    const appearance = await link.evaluate((el) => {
+    const appearance = await surface.evaluate((el) => {
       const css = getComputedStyle(el);
       return {
         background: css.backgroundColor,
@@ -47,12 +51,16 @@ export async function verifyStoreLinks(
     expect(appearance.radius).toBeGreaterThanOrEqual(20);
     const box = await link.boundingBox();
     expect(box.height).toBeGreaterThanOrEqual(44);
+    expect(box.width).toBeGreaterThanOrEqual(44);
     if (iconOnly) {
       expect(box.width).toBe(56);
       expect(box.height).toBe(56);
+    } else {
+      const surfaceBox = await surface.boundingBox();
+      expect(surfaceBox.height).toBeLessThan(box.height);
     }
     await link.hover();
-    await expect(link).not.toHaveCSS("background-color", appearance.background);
+    await expect(surface).not.toHaveCSS("background-color", appearance.background);
     await link.focus();
     await expect(link).toBeFocused();
     await expect(link).toHaveCSS("outline-style", "solid");

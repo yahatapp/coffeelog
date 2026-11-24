@@ -156,6 +156,10 @@ export async function verifyBrewForms(
   const brewComment = page.getByRole("textbox", { name: "抽出コメント", exact: true });
   const firstPourPreset = page.getByRole("button", { name: "一投目ステア", exact: true });
   const fourthPourPreset = page.getByRole("button", { name: "四投目75度", exact: true });
+  const presetSurface = firstPourPreset.locator(":scope > span");
+  await expect(presetSurface).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
+  await expect(presetSurface).toHaveCSS("border-top-style", "solid");
+  await expect(presetSurface).toHaveCSS("padding-top", "2px");
   const beforePresets = count();
   await firstPourPreset.press("Enter");
   await expect(brewComment).toHaveValue("一投目ステア\n");

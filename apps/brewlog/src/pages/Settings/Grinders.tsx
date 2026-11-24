@@ -10,7 +10,15 @@ import { useState } from "react";
 import { ArrowLeft, CheckCircle, Loader2, Pencil, Plus, Sliders, Trash2 } from "lucide-react";
 import { grinderQueries, mutations, queryKeys, type Grinder } from "@/lib/queries";
 import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardTitle, CardContent, EmptyState } from "@yahatapp/ui";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  Chip,
+  ChipButton,
+  EmptyState,
+} from "@yahatapp/ui";
 import { Input } from "@/components/ui/input";
 import type { FormApiLike } from "@/components/forms/types";
 import { getFirstValidationError } from "@/components/forms/formValidation";
@@ -381,34 +389,19 @@ const Grinders = () => {
                       </Button>
                       <span className={styles.masterName}>
                         {grinder.name}
-                        {grinder.isDefault && (
-                          <span
-                            className={[
-                              styles.tonal,
-                              styles.pill,
-                              styles.helper,
-                              styles.strong,
-                              styles.accent,
-                            ].join(" ")}
-                          >
-                            デフォルト
-                          </span>
-                        )}
+                        {grinder.isDefault && <Chip>デフォルト</Chip>}
                       </span>
                     </div>
                     <div className={styles.masterActions}>
-                      <Button
-                        type="button"
+                      <ChipButton
                         onClick={() => handleStartEdit(grinder)}
                         title="編集"
                         aria-label="編集"
                         variant="outline"
-                        size="sm"
                       >
                         <Pencil size={16} aria-hidden="true" /> 編集
-                      </Button>
-                      <Button
-                        type="button"
+                      </ChipButton>
+                      <ChipButton
                         onClick={() => {
                           if (confirm("このグラインダーを削除しますか？"))
                             deleteMutation.mutate(grinder.id);
@@ -417,30 +410,25 @@ const Grinders = () => {
                         disabled={editingId !== null || deleteMutation.isPending}
                         aria-label="削除"
                         variant="outline"
-                        size="sm"
                       >
                         <Trash2 size={16} aria-hidden="true" /> 削除
-                      </Button>
+                      </ChipButton>
                     </div>
                   </div>
                   <div
                     className={[styles.row, styles.wrapping, styles.helper, styles.muted].join(" ")}
                   >
-                    <span className={[styles.tonal, styles.rounded].join(" ")}>
-                      細: ~{grinder.fineMax}
-                    </span>
-                    <span className={[styles.tonal, styles.rounded].join(" ")}>
+                    <Chip>細: ~{grinder.fineMax}</Chip>
+                    <Chip>
                       中細: {grinder.fineMax + 1}~{grinder.mediumFineMax}
-                    </span>
-                    <span className={[styles.tonal, styles.rounded].join(" ")}>
+                    </Chip>
+                    <Chip>
                       中: {grinder.mediumFineMax + 1}~{grinder.mediumMax}
-                    </span>
-                    <span className={[styles.tonal, styles.rounded].join(" ")}>
+                    </Chip>
+                    <Chip>
                       中粗: {grinder.mediumMax + 1}~{grinder.mediumCoarseMax}
-                    </span>
-                    <span className={[styles.tonal, styles.rounded].join(" ")}>
-                      粗: {grinder.mediumCoarseMax + 1}+
-                    </span>
+                    </Chip>
+                    <Chip>粗: {grinder.mediumCoarseMax + 1}+</Chip>
                   </div>
                 </div>
               ))}
