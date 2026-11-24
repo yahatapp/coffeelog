@@ -31,9 +31,9 @@
     "postcss": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
-    "stylelint": "18.0.0",
-    "turbo": "^2.11.10",
-    "vite-plus": "1.5.0"
+    "stylelint": "18.1.0",
+    "turbo": "^2.11.13",
+    "vite-plus": "1.7.0"
   },
   "packageManager": "pnpm@11.11.0"
 }
