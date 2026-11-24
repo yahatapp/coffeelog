@@ -26,7 +26,8 @@ overrides:
   "@types/node": 26.6.6
   # Drizzle Kit's legacy loader pins an esbuild with unsafe dev-server CORS.
   "@esbuild-kit/core-utils>esbuild": 0.25.12
-  vite@*: npm:@voidzero-dev/vite-plus-core@1.5.0
+  # Match the Vite core required by the root vite-plus package.
+  vite@*: npm:@voidzero-dev/vite-plus-core@8.3.8000
   vitest@*: 5.1.0
 
 catalog:
@@ -57,7 +58,7 @@ catalog:
   react-icons: 5.7.0
   react-router-dom: 7.18.6
   typescript: 7.0.2
-  vite: npm:@voidzero-dev/vite-plus-core@1.5.0
+  vite: npm:@voidzero-dev/vite-plus-core@8.3.8000
   vitest: 5.1.1
   wrangler: 4.165.0
   zod: 4.6.7
