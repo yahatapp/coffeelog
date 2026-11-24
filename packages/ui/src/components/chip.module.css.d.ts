@@ -1,5 +1,6 @@
 declare const styles: {
   readonly action: string;
+  readonly caption: string;
   readonly chip: string;
   readonly filled: string;
   readonly hot: string;

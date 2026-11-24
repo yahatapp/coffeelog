@@ -4,16 +4,39 @@ import styles from "./chip.module.css";
 
 type ChipVariant = "filled" | "outline";
 type ChipTone = "neutral" | "hot" | "iced" | "warning";
+type ChipTextSize = "helper" | "caption";
 
-export type ChipProps = ComponentProps<"span"> & { variant?: ChipVariant; tone?: ChipTone };
-type ChipAction = { children: ReactNode; variant?: ChipVariant };
+export type ChipProps = ComponentProps<"span"> & {
+  variant?: ChipVariant;
+  tone?: ChipTone;
+  textSize?: ChipTextSize;
+};
+type ChipAction = Pick<ChipProps, "variant" | "textSize"> & { children: ReactNode };
 
-export function Chip({ variant = "filled", tone = "neutral", className, ...props }: ChipProps) {
-  return <span className={cn(styles.chip, styles[variant], styles[tone], className)} {...props} />;
+export function Chip({
+  variant = "filled",
+  tone = "neutral",
+  textSize = "helper",
+  className,
+  ...props
+}: ChipProps) {
+  return (
+    <span
+      className={cn(
+        styles.chip,
+        styles[variant],
+        styles[tone],
+        textSize === "caption" && styles.caption,
+        className,
+      )}
+      {...props}
+    />
+  );
 }
 
 export function ChipButton({
   variant,
+  textSize,
   children,
   type = "button",
   className,
@@ -21,20 +44,25 @@ export function ChipButton({
 }: ComponentProps<"button"> & ChipAction) {
   return (
     <button type={type} className={cn(styles.action, className)} {...props}>
-      <Chip variant={variant}>{children}</Chip>
+      <Chip variant={variant} textSize={textSize}>
+        {children}
+      </Chip>
     </button>
   );
 }
 
 export function ChipLink({
   variant,
+  textSize,
   children,
   className,
   ...props
 }: ComponentProps<"a"> & ChipAction & { href: string }) {
   return (
     <a className={cn(styles.action, className)} {...props}>
-      <Chip variant={variant}>{children}</Chip>
+      <Chip variant={variant} textSize={textSize}>
+        {children}
+      </Chip>
     </a>
   );
 }

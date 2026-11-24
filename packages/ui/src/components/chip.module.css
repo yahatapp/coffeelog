@@ -19,6 +19,9 @@
     --_chip-text: var(--cl-color-action-primary);
     --_chip-surface: var(--cl-color-surface-tonal);
   }
+  .caption {
+    font-size: var(--cl-font-size-caption);
+  }
   .hot {
     --_chip-text: var(--cl-color-temperature-hot);
     --_chip-surface: var(--cl-color-temperature-hot-surface);

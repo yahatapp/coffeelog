@@ -60,7 +60,9 @@ function Catalog() {
         <Chip tone="iced">アイス</Chip>
         <Chip tone="warning">評価 4</Chip>
         <ChipButton>背景ありのチップ</ChipButton>
-        <ChipButton variant="outline">枠線のチップ</ChipButton>
+        <ChipButton variant="outline" textSize="caption">
+          枠線のチップ
+        </ChipButton>
         <ChipButton variant="outline" disabled>
           利用不可のチップ
         </ChipButton>

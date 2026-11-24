@@ -160,6 +160,7 @@ export async function verifyBrewForms(
   await expect(presetSurface).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
   await expect(presetSurface).toHaveCSS("border-top-style", "solid");
   await expect(presetSurface).toHaveCSS("padding-top", "2px");
+  await expect(presetSurface).toHaveCSS("font-size", "11px");
   const beforePresets = count();
   await firstPourPreset.press("Enter");
   await expect(brewComment).toHaveValue("一投目ステア\n");

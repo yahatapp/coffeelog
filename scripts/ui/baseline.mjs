@@ -748,6 +748,12 @@ try {
             expect((await chipFace.boundingBox()).height).toBeLessThan(chipTarget.height);
             await expect(chipFace).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
             await expect(chipFace).toHaveCSS("border-top-style", "solid");
+            await expect(chipFace).toHaveCSS("font-size", "11px");
+            await expect(
+              page
+                .getByRole("button", { name: "背景ありのチップ", exact: true })
+                .locator(":scope > span"),
+            ).toHaveCSS("font-size", "12px");
             await outlineChip.focus();
             await expect(outlineChip).toHaveCSS("outline-style", "solid");
             await expect(

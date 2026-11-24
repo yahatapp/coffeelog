@@ -723,6 +723,7 @@ export const BrewLogFields = ({
                               <ChipButton
                                 key={preset}
                                 variant="outline"
+                                textSize="caption"
                                 disabled={disabled}
                                 aria-controls={control.id}
                                 onClick={() => {

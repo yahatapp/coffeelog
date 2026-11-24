@@ -16,6 +16,7 @@
 - Checkboxは見た目と操作領域を分ける。小さな枠の周囲も44px以上の範囲で操作でき、ラベルのクリックとSpaceキーで切り替えられる。
 - ButtonにclassNameを渡して見た目を変える前に、既存の型付きAPIで表せるか確認する。
 - Chipは表示用のラベル、ChipButtonはボタン、ChipLinkはリンクに使う。背景付きは`filled`、背景なしの枠線は`outline`を指定する。操作できるチップは、表示部分の余白を詰めながら44px以上の操作領域を保つ。
+- チップの文字サイズは通常 `helper` を使う。抽出コメントの定型文のような短い候補には `textSize="caption"` で一段階小さくできる。
 - 必須、invalid、read-only、disabled、loading、hover、focusは、利用する部品の状態として確認する。
 - FieldのlabelVariant="secondary"は、fieldset内の繰り返し入力など、親見出しの下にあるラベルに使う。小さめの通常ウェイトと補助文字色で階層を示し、入力との関連付けは保つ。
 
