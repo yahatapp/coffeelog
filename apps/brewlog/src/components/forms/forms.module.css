@@ -4,7 +4,6 @@
     flex-direction: column;
     gap: var(--cl-space-page-inline);
     padding: var(--cl-space-section-gap);
-    container-type: inline-size;
   }
   .field,
   .stack,
@@ -50,6 +49,11 @@
   }
   .growRow {
     flex: 1;
+  }
+  .presetRow {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: var(--cl-space-field-gap);
   }
   .spread {
     display: flex;
@@ -112,6 +116,9 @@
   }
   .iced {
     color: var(--cl-color-temperature-iced);
+  }
+  .measurementContainer {
+    container-type: inline-size;
   }
   .measurements {
     display: grid;

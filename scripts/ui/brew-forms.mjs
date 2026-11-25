@@ -153,9 +153,22 @@ export async function verifyBrewForms(
   await expect(bypass).not.toBeChecked();
   await page.getByText("加水した", { exact: true }).click();
   await expect(bypass).toBeChecked();
-  await page
-    .getByRole("textbox", { name: "抽出コメント", exact: true })
-    .fill("試験した抽出コメント");
+  const brewComment = page.getByRole("textbox", { name: "抽出コメント", exact: true });
+  const firstPourPreset = page.getByRole("button", { name: "一投目ステア", exact: true });
+  const fourthPourPreset = page.getByRole("button", { name: "四投目75度", exact: true });
+  const presetSurface = firstPourPreset.locator(":scope > span");
+  await expect(presetSurface).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
+  await expect(presetSurface).toHaveCSS("border-top-style", "solid");
+  await expect(presetSurface).toHaveCSS("padding-top", "2px");
+  await expect(presetSurface).toHaveCSS("font-size", "11px");
+  const beforePresets = count();
+  await firstPourPreset.press("Enter");
+  await expect(brewComment).toHaveValue("一投目ステア\n");
+  await fourthPourPreset.click();
+  await expect(brewComment).toHaveValue("一投目ステア\n四投目75度\n");
+  expect(count()).toBe(beforePresets);
+  const savedComment = "一投目ステア\n四投目75度\n試験した抽出コメント";
+  await brewComment.fill(savedComment);
   await expect(page.getByText(/仕上がり量/)).toHaveCount(0);
   const waterTemp = page.getByRole("spinbutton", { name: /湯温/ });
   const beforeInvalid = count();
@@ -170,7 +183,8 @@ export async function verifyBrewForms(
   await save({
     success: false,
     pending: async () => {
-      await expect(page.getByRole("textbox", { name: "抽出コメント", exact: true })).toBeDisabled();
+      await expect(brewComment).toBeDisabled();
+      await expect(firstPourPreset).toBeDisabled();
       await expect(
         page.getByRole("spinbutton", { name: "注ぎ回数 (投)", exact: true }),
       ).toBeDisabled();
@@ -180,9 +194,7 @@ export async function verifyBrewForms(
     preserve: async () => {
       await expect(page.getByRole("alert")).toContainText("入力内容は保持されています");
       await expect(bypass).toBeChecked();
-      await expect(page.getByRole("textbox", { name: "抽出コメント", exact: true })).toHaveValue(
-        "試験した抽出コメント",
-      );
+      await expect(brewComment).toHaveValue(savedComment);
     },
   });
   await save({ success: true, path: "/logs" });
@@ -192,9 +204,13 @@ export async function verifyBrewForms(
   await page.getByRole("link", { name: /アイス/ }).click();
   const bypassDetail = page.getByText("加水", { exact: true }).locator("..").locator("dd");
   await expect(bypassDetail).toHaveText("あり");
-  await expect(page.getByText("試験した抽出コメント", { exact: true })).toBeVisible();
+  const commentDetail = page.getByRole("heading", { name: "抽出コメント", exact: true });
+  await expect(commentDetail.locator("../..").locator("p")).toHaveText(savedComment);
   const logPath = new URL(page.url()).pathname;
   await page.goto(baseURL + `${logPath}/edit`);
+  await expect(brewComment).toHaveValue(savedComment);
+  await fourthPourPreset.click();
+  await expect(brewComment).toHaveValue(`${savedComment}\n四投目75度\n`);
   await expect(bypass).toBeChecked();
   await bypass.press("Space");
   await expect(bypass).not.toBeChecked();

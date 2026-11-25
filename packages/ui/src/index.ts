@@ -1,6 +1,7 @@
 export { Button, cn, type ButtonProps } from "./components/button";
 export { Card, CardContent, CardFooter, CardHeader, CardTitle } from "./components/card";
 export { Checkbox } from "./components/checkbox";
+export { Chip, ChipButton, ChipLink, type ChipProps } from "./components/chip";
 export { Input } from "./components/input";
 export { Label } from "./components/label";
 export {

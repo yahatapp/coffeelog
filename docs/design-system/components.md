@@ -2,18 +2,21 @@
 
 ## 入力と操作
 
-| 場面             | 部品と定義元                                                                                                                                                              | 実装時の確認                                                        |
-| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| 保存・追加・削除 | [Button](../../packages/ui/src/components/button.tsx)                                                                                                                     | loadingで連打を防ぐ。遷移はasChildとLinkを組み合わせる              |
-| 入力             | [Field](../../packages/ui/src/components/field.tsx)と[Input](../../packages/ui/src/components/input.tsx)・[Textarea](../../packages/ui/src/components/textarea.tsx)       | Fieldのrender propsを入力へ渡し、id・説明・エラーを結ぶ             |
-| 選択             | [Select](../../packages/ui/src/components/select.tsx)・[Segment](../../packages/ui/src/components/segment.tsx)・[Checkbox](../../packages/ui/src/components/checkbox.tsx) | 選択肢の名前、選択中、disabledを確認する                            |
-| 情報のまとまり   | [Card](../../packages/ui/src/components/card.tsx)                                                                                                                         | 標準のHeader・Contentを使う。独自の中身は自分のラッパーに配置を書く |
+| 場面                 | 部品と定義元                                                                                                                                                              | 実装時の確認                                                        |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| 保存・追加・削除     | [Button](../../packages/ui/src/components/button.tsx)                                                                                                                     | loadingで連打を防ぐ。遷移はasChildとLinkを組み合わせる              |
+| 入力                 | [Field](../../packages/ui/src/components/field.tsx)と[Input](../../packages/ui/src/components/input.tsx)・[Textarea](../../packages/ui/src/components/textarea.tsx)       | Fieldのrender propsを入力へ渡し、id・説明・エラーを結ぶ             |
+| 選択                 | [Select](../../packages/ui/src/components/select.tsx)・[Segment](../../packages/ui/src/components/segment.tsx)・[Checkbox](../../packages/ui/src/components/checkbox.tsx) | 選択肢の名前、選択中、disabledを確認する                            |
+| 情報のまとまり       | [Card](../../packages/ui/src/components/card.tsx)                                                                                                                         | 標準のHeader・Contentを使う。独自の中身は自分のラッパーに配置を書く |
+| 短いラベル・補助操作 | [Chip・ChipButton・ChipLink](../../packages/ui/src/components/chip.tsx)                                                                                                   | カード内のラベル、編集・削除、外部リンク、定型文の入力に使う        |
 
 - variant・size・状態の正確な型は定義元を参照する。
 - CardContentはカードの先頭に置くと全方向に余白が入り、CardHeaderの後では上の余白を省く。
 - iconボタンには操作名を付ける。装飾アイコンは読み上げ対象から外す。
 - Checkboxは見た目と操作領域を分ける。小さな枠の周囲も44px以上の範囲で操作でき、ラベルのクリックとSpaceキーで切り替えられる。
 - ButtonにclassNameを渡して見た目を変える前に、既存の型付きAPIで表せるか確認する。
+- Chipは表示用のラベル、ChipButtonはボタン、ChipLinkはリンクに使う。背景付きは`filled`、背景なしの枠線は`outline`を指定する。操作できるチップは、表示部分の余白を詰めながら44px以上の操作領域を保つ。
+- チップの文字サイズは通常 `helper` を使う。抽出コメントの定型文のような短い候補には `textSize="caption"` で一段階小さくできる。
 - 必須、invalid、read-only、disabled、loading、hover、focusは、利用する部品の状態として確認する。
 - FieldのlabelVariant="secondary"は、fieldset内の繰り返し入力など、親見出しの下にあるラベルに使う。小さめの通常ウェイトと補助文字色で階層を示し、入力との関連付けは保つ。
 
@@ -33,7 +36,7 @@
 - Cafelogの記録の作成・編集・削除、Brewlogの記録・豆・器具の更新結果は共通のMutationCacheで通知する。ページ遷移後も通知を表示し、写真だけ保存できなかった場合は成功の代わりに警告を表示する。
 - 色や寸法の新しい意味が必要なら、部品の型とトークンを同じ変更で整備する。
 
-- 店舗の外部リンクは[StoreLink](../../packages/ui/src/components/store-link.tsx)を使う。URLからサービスを判別し、共通Buttonのsecondary・xsを使い、アイコンとサービス名を丸いチップとして表示する。チップにはshowExternalIndicatorで外部リンクの矢印を添える。Cafelogの記録詳細はappearance="icon"でアイコンだけを表示し、共通Buttonのicon-lgサイズを使う。アイコンだけのリンクには読み上げ名とtitleを付ける。xsサイズでも44px以上の操作領域を保つ。店舗一覧では店舗を開くボタンと外部リンクを別の操作として配置する。Cafelogの一覧ではStoreListのlinkSpacing="compact"でリンクの上下と折り返し時の行間を詰める。
+- 店舗の外部リンクは[StoreLink](../../packages/ui/src/components/store-link.tsx)を使う。URLからサービスを判別し、ChipLinkにアイコンとサービス名を表示する。showExternalIndicatorで外部リンクの矢印を添える。Cafelogの記録詳細はappearance="icon"でアイコンだけを表示し、共通Buttonのicon-lgサイズを使う。アイコンだけのリンクには読み上げ名とtitleを付ける。店舗一覧では店舗を開くボタンと外部リンクを別の操作として配置する。Cafelogの一覧ではStoreListのlinkSpacing="compact"で店名とリンクの上下の余白を詰める。
 
 ## 実行できる例
 

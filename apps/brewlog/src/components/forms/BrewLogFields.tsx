@@ -1,6 +1,6 @@
 import styles from "./forms.module.css";
 import { getFirstValidationError } from "./formValidation";
-import { Checkbox, Field, Label, Select, Textarea } from "@yahatapp/ui";
+import { Checkbox, ChipButton, Field, Label, Select, Textarea } from "@yahatapp/ui";
 import { Minus, Plus, Star } from "lucide-react";
 import { Button, cn } from "../ui/button";
 import { Input } from "../ui/input";
@@ -25,6 +25,8 @@ type BrewLogFieldsProps = {
   disabled: boolean;
   navigate: (to: string) => void;
 };
+const brewCommentPresets = ["一投目ステア", "四投目75度"];
+
 const parseNumber = (value: string, integer = false): number | "" => {
   if (value === "") return "";
   const parsed = integer ? Number.parseInt(value, 10) : Number.parseFloat(value);
@@ -363,92 +365,94 @@ export const BrewLogFields = ({
               </form.Field>
             )}
 
-            <div className={styles.measurements}>
-              <form.Field name="waterTemp">
-                {(field) => (
-                  <div className={styles.field}>
-                    <Field
-                      id="temp"
-                      label={<>湯温 (℃)</>}
-                      required
-                      error={getFirstValidationError(field.state.meta.errors)}
-                    >
-                      {(control) => (
-                        <>
-                          <Input
-                            {...control}
-                            id="temp"
-                            type="number"
-                            value={field.state.value}
-                            onChange={(event) =>
-                              field.handleChange(parseNumber(event.target.value, true))
-                            }
-                            onBlur={field.handleBlur}
-                            required
-                          />
-                        </>
-                      )}
-                    </Field>
-                  </div>
-                )}
-              </form.Field>
-              <form.Field name="beanAmount">
-                {(field) => (
-                  <div className={styles.field}>
-                    <Field
-                      id="beanAmt"
-                      label={<>豆量 (g)</>}
-                      required
-                      error={getFirstValidationError(field.state.meta.errors)}
-                    >
-                      {(control) => (
-                        <>
-                          <Input
-                            {...control}
-                            id="beanAmt"
-                            type="number"
-                            step="0.1"
-                            value={field.state.value}
-                            onChange={(event) =>
-                              field.handleChange(parseNumber(event.target.value))
-                            }
-                            onBlur={field.handleBlur}
-                            required
-                          />
-                        </>
-                      )}
-                    </Field>
-                  </div>
-                )}
-              </form.Field>
-              <form.Field name="waterAmount">
-                {(field) => (
-                  <div className={styles.field}>
-                    <Field
-                      id="waterAmt"
-                      label={<>注水量 (ml)</>}
-                      required
-                      error={getFirstValidationError(field.state.meta.errors)}
-                    >
-                      {(control) => (
-                        <>
-                          <Input
-                            {...control}
-                            id="waterAmt"
-                            type="number"
-                            value={field.state.value}
-                            onChange={(event) =>
-                              field.handleChange(parseNumber(event.target.value, true))
-                            }
-                            onBlur={field.handleBlur}
-                            required
-                          />
-                        </>
-                      )}
-                    </Field>
-                  </div>
-                )}
-              </form.Field>
+            <div className={styles.measurementContainer}>
+              <div className={styles.measurements}>
+                <form.Field name="waterTemp">
+                  {(field) => (
+                    <div className={styles.field}>
+                      <Field
+                        id="temp"
+                        label={<>湯温 (℃)</>}
+                        required
+                        error={getFirstValidationError(field.state.meta.errors)}
+                      >
+                        {(control) => (
+                          <>
+                            <Input
+                              {...control}
+                              id="temp"
+                              type="number"
+                              value={field.state.value}
+                              onChange={(event) =>
+                                field.handleChange(parseNumber(event.target.value, true))
+                              }
+                              onBlur={field.handleBlur}
+                              required
+                            />
+                          </>
+                        )}
+                      </Field>
+                    </div>
+                  )}
+                </form.Field>
+                <form.Field name="beanAmount">
+                  {(field) => (
+                    <div className={styles.field}>
+                      <Field
+                        id="beanAmt"
+                        label={<>豆量 (g)</>}
+                        required
+                        error={getFirstValidationError(field.state.meta.errors)}
+                      >
+                        {(control) => (
+                          <>
+                            <Input
+                              {...control}
+                              id="beanAmt"
+                              type="number"
+                              step="0.1"
+                              value={field.state.value}
+                              onChange={(event) =>
+                                field.handleChange(parseNumber(event.target.value))
+                              }
+                              onBlur={field.handleBlur}
+                              required
+                            />
+                          </>
+                        )}
+                      </Field>
+                    </div>
+                  )}
+                </form.Field>
+                <form.Field name="waterAmount">
+                  {(field) => (
+                    <div className={styles.field}>
+                      <Field
+                        id="waterAmt"
+                        label={<>注水量 (ml)</>}
+                        required
+                        error={getFirstValidationError(field.state.meta.errors)}
+                      >
+                        {(control) => (
+                          <>
+                            <Input
+                              {...control}
+                              id="waterAmt"
+                              type="number"
+                              value={field.state.value}
+                              onChange={(event) =>
+                                field.handleChange(parseNumber(event.target.value, true))
+                              }
+                              onBlur={field.handleBlur}
+                              required
+                            />
+                          </>
+                        )}
+                      </Field>
+                    </div>
+                  )}
+                </form.Field>
+              </div>
             </div>
 
             <div className={styles.field} role="group" aria-labelledby="brewlogfields-group-2">
@@ -705,14 +709,37 @@ export const BrewLogFields = ({
                   <div className={styles.divider}>
                     <Field
                       id="brewComment"
-                      label={<>抽出コメント</>}
+                      label="抽出コメント"
                       error={getFirstValidationError(field.state.meta.errors)}
                     >
                       {(control) => (
                         <>
+                          <div
+                            className={styles.presetRow}
+                            role="group"
+                            aria-label="抽出コメントに追加"
+                          >
+                            {brewCommentPresets.map((preset) => (
+                              <ChipButton
+                                key={preset}
+                                variant="outline"
+                                textSize="caption"
+                                disabled={disabled}
+                                aria-controls={control.id}
+                                onClick={() => {
+                                  field.handleChange((current) => {
+                                    const separator =
+                                      current && !current.endsWith("\n") ? "\n" : "";
+                                    return `${current}${separator}${preset}\n`;
+                                  });
+                                }}
+                              >
+                                {preset}
+                              </ChipButton>
+                            ))}
+                          </div>
                           <Textarea
                             {...control}
-                            id="brewComment"
                             rows={3}
                             value={field.state.value}
                             onChange={(event) => field.handleChange(event.target.value)}

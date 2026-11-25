@@ -8,9 +8,6 @@
   .rounded {
     border-radius: var(--cl-radius-card);
   }
-  .pill {
-    border-radius: var(--cl-radius-action);
-  }
   .roomy {
     padding: var(--cl-space-section-gap);
   }
@@ -104,8 +101,9 @@
   }
   .masterActions {
     display: flex;
+    flex-wrap: wrap;
     justify-content: flex-end;
-    gap: var(--cl-space-field-gap);
+    column-gap: var(--cl-space-tight);
   }
   .form {
     min-width: 0;

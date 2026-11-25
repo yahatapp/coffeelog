@@ -17,6 +17,7 @@ declare const styles: {
   readonly hint: string;
   readonly iced: string;
   readonly label: string;
+  readonly measurementContainer: string;
   readonly measurements: string;
   readonly muted: string;
   readonly panel: string;
@@ -24,6 +25,7 @@ declare const styles: {
   readonly pourHeader: string;
   readonly pourMode: string;
   readonly pourRow: string;
+  readonly presetRow: string;
   readonly rating: string;
   readonly ratingValue: string;
   readonly row: string;

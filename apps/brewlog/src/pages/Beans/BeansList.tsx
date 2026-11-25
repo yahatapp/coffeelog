@@ -1,6 +1,7 @@
 import { useListSearchParams, PageHeading, PageStatus } from "@yahatapp/ui";
 import {
   Checkbox,
+  Chip,
   EmptyState,
   ErrorState,
   Loading,
@@ -201,19 +202,10 @@ const BeansList = () => {
                           {(latestBean.roastLevel || group.isArchived) && (
                             <div className={[styles.row, styles.wrapping].join(" ")}>
                               {group.isArchived && (
-                                <span
-                                  className={[
-                                    styles.tonal,
-                                    styles.pill,
-                                    styles.row,
-                                    styles.helper,
-                                    styles.strong,
-                                    styles.accent,
-                                  ].join(" ")}
-                                >
+                                <Chip>
                                   <Archive size={14} aria-hidden="true" />
                                   アーカイブ済み
-                                </span>
+                                </Chip>
                               )}
                               {latestBean.roastLevel && (
                                 <RoastLevelIndicator level={latestBean.roastLevel} />
@@ -268,43 +260,13 @@ const BeansList = () => {
                             ].join(" ")}
                           >
                             {latestBean.origin && (
-                              <span
-                                className={[
-                                  styles.tonal,
-                                  styles.pill,
-                                  styles.row,
-                                  styles.helper,
-                                  styles.muted,
-                                ].join(" ")}
-                              >
+                              <Chip>
                                 <OriginFlag origin={latestBean.origin} size="sm" />
                                 {latestBean.origin}
-                              </span>
+                              </Chip>
                             )}
-                            {latestBean.purchaseStore && (
-                              <span
-                                className={[
-                                  styles.tonal,
-                                  styles.pill,
-                                  styles.helper,
-                                  styles.muted,
-                                ].join(" ")}
-                              >
-                                {latestBean.purchaseStore}
-                              </span>
-                            )}
-                            {latestBean.processMethod && (
-                              <span
-                                className={[
-                                  styles.tonal,
-                                  styles.pill,
-                                  styles.helper,
-                                  styles.muted,
-                                ].join(" ")}
-                              >
-                                {latestBean.processMethod}
-                              </span>
-                            )}
+                            {latestBean.purchaseStore && <Chip>{latestBean.purchaseStore}</Chip>}
+                            {latestBean.processMethod && <Chip>{latestBean.processMethod}</Chip>}
                           </div>
                         </div>
                       </div>

@@ -10,6 +10,9 @@ import {
   Textarea,
   Select,
   Checkbox,
+  Chip,
+  ChipButton,
+  ChipLink,
   Label,
   Segment,
   Card,
@@ -50,6 +53,20 @@ function Catalog() {
         ))}
         <Button disabled>利用不可</Button>
         <Button loading>保存中</Button>
+      </section>
+      <section className={styles.section} aria-label="チップ">
+        <Chip>情報ラベル</Chip>
+        <Chip tone="hot">ホット</Chip>
+        <Chip tone="iced">アイス</Chip>
+        <Chip tone="warning">評価 4</Chip>
+        <ChipButton>背景ありのチップ</ChipButton>
+        <ChipButton variant="outline" textSize="caption">
+          枠線のチップ
+        </ChipButton>
+        <ChipButton variant="outline" disabled>
+          利用不可のチップ
+        </ChipButton>
+        <ChipLink href="#catalog-input">入力欄へのリンク</ChipLink>
       </section>
       <section className={styles.section} aria-label="入力部品">
         <Card>

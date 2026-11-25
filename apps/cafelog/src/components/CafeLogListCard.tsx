@@ -1,4 +1,4 @@
-import { formatDisplayDate } from "@yahatapp/ui";
+import { Chip, formatDisplayDate } from "@yahatapp/ui";
 import { Star } from "lucide-react";
 import type { LogsResponse } from "@/lib/queries";
 import { OriginFlag } from "./OriginFlag";
@@ -20,13 +20,11 @@ export const CafeLogListCard = ({ log }: CafeLogListCardProps) => (
             <p className={styles.muted}>{log.origin}</p>
           </>
         )}
-        {log.isBlend != null && (
-          <span className={styles.badge}>{log.isBlend ? "ブレンド" : "シングル"}</span>
-        )}
+        {log.isBlend != null && <Chip>{log.isBlend ? "ブレンド" : "シングル"}</Chip>}
         {log.servingStyle && (
-          <span className={styles.temperature} data-temperature={log.servingStyle}>
+          <Chip tone={log.servingStyle === "iced" ? "iced" : "hot"}>
             {log.servingStyle === "iced" ? "アイス" : "ホット"}
-          </span>
+          </Chip>
         )}
       </div>
       <div className={styles.main}>

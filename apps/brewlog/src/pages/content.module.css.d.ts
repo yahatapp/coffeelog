@@ -61,7 +61,6 @@ declare const styles: {
   readonly tiles: string;
   readonly tonal: string;
   readonly visuallyHidden: string;
-  readonly warningPanel: string;
   readonly warningText: string;
   readonly wrap: string;
   readonly wrapping: string;

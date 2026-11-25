@@ -288,6 +288,10 @@ export async function verifyBrewPages(page, { baseURL, output, width, ids, reset
       })
       .click();
     const card = page.getByRole("group", { name: `追加した${label}`, exact: true });
+    for (const name of ["編集", "削除"]) {
+      const action = card.getByRole("button", { name, exact: true });
+      await expect(action.locator(":scope > span")).toHaveCSS("padding-top", "2px");
+    }
     await card.getByRole("button", { name: "デフォルトに設定", exact: true }).click();
     await expect(card.getByRole("button", { name: "デフォルト", exact: true })).toBeVisible();
     await card.getByRole("button", { name: "編集", exact: true }).click();

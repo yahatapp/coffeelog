@@ -1,5 +1,12 @@
 import { useListSearchParams, PageHeading, PageStatus } from "@yahatapp/ui";
-import { Loading, ErrorState, EmptyState, LogListControls, formatDisplayDate } from "@yahatapp/ui";
+import {
+  Loading,
+  ErrorState,
+  EmptyState,
+  Chip,
+  LogListControls,
+  formatDisplayDate,
+} from "@yahatapp/ui";
 import styles from "../content.module.css";
 import listStyles from "./logs-list.module.css";
 import { Link } from "react-router-dom";
@@ -182,14 +189,14 @@ const LogsList = () => {
                       </div>
                     </div>
                     {log.rating != null && (
-                      <div className={[styles.warningPanel, styles.row].join(" ")}>
+                      <Chip tone="warning">
                         <Star
                           size={16}
                           className={[styles.ratingFilled, styles.fixed].join(" ")}
                           aria-hidden="true"
                         />
-                        <span className={styles.strong}>{log.rating}</span>
-                      </div>
+                        <span>{log.rating}</span>
+                      </Chip>
                     )}
                   </div>
                 </Card>

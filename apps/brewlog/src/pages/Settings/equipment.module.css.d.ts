@@ -17,7 +17,6 @@ declare const styles: {
   readonly masterHeading: string;
   readonly masterName: string;
   readonly muted: string;
-  readonly pill: string;
   readonly rangeFields: string;
   readonly rangeLegend: string;
   readonly roomy: string;

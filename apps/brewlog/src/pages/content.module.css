@@ -144,12 +144,6 @@
     color: var(--cl-color-error);
     background: var(--cl-color-error-surface);
   }
-  .warningPanel {
-    padding: var(--cl-space-field-gap);
-    border-radius: var(--cl-radius-control);
-    color: var(--cl-color-warning);
-    background: var(--cl-color-warning-surface);
-  }
   .hotPanel {
     color: var(--cl-color-temperature-hot);
     background: var(--cl-color-temperature-hot-surface);

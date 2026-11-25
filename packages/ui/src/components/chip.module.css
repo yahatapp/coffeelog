@@ -1,0 +1,71 @@
+@layer components {
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--cl-space-tight);
+    max-inline-size: 100%;
+    min-inline-size: 0;
+    padding-block: calc(var(--cl-space-tight) / 2);
+    padding-inline: calc(var(--cl-space-field-gap) - var(--cl-space-tight) / 2);
+    border: var(--cl-border-width) solid transparent;
+    border-radius: var(--cl-radius-action);
+    font-size: var(--cl-font-size-helper);
+    font-weight: var(--cl-font-weight-medium);
+    overflow-wrap: anywhere;
+    color: var(--_chip-text);
+  }
+  .neutral {
+    --_chip-text: var(--cl-color-action-primary);
+    --_chip-surface: var(--cl-color-surface-tonal);
+  }
+  .caption {
+    font-size: var(--cl-font-size-caption);
+  }
+  .hot {
+    --_chip-text: var(--cl-color-temperature-hot);
+    --_chip-surface: var(--cl-color-temperature-hot-surface);
+  }
+  .iced {
+    --_chip-text: var(--cl-color-temperature-iced);
+    --_chip-surface: var(--cl-color-temperature-iced-surface);
+  }
+  .warning {
+    --_chip-text: var(--cl-color-warning);
+    --_chip-surface: var(--cl-color-warning-surface);
+  }
+  .filled {
+    background: var(--_chip-surface);
+  }
+  .outline {
+    border-color: var(--cl-color-text-muted);
+  }
+  .action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-inline-size: var(--cl-size-target-min);
+    min-block-size: var(--cl-size-target-min);
+    max-inline-size: 100%;
+    border-radius: var(--cl-radius-action);
+    vertical-align: middle;
+  }
+  .action > .filled {
+    color: var(--cl-color-on-action-secondary);
+    background: var(--cl-color-action-secondary);
+  }
+  .action > .chip {
+    transition: background-color var(--cl-motion-fast);
+  }
+  .action:hover:not(:disabled) > .chip {
+    background: var(--cl-color-action-secondary-hover);
+  }
+  .action:focus-visible {
+    outline: var(--cl-focus-width) solid var(--cl-color-focus);
+    outline-offset: var(--cl-focus-offset);
+  }
+  .action:disabled {
+    cursor: not-allowed;
+    opacity: var(--cl-opacity-disabled);
+  }
+}

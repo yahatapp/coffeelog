@@ -12,7 +12,15 @@ import { ArrowLeft, CheckCircle, Loader2, Pencil, Plus, Trash2 } from "lucide-re
 import { dripperCreateSchema, dripperUpdateSchema } from "@/contracts";
 import { dripperQueries, mutations, queryKeys, type Dripper } from "@/lib/queries";
 import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardTitle, CardContent, EmptyState } from "@yahatapp/ui";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  Chip,
+  ChipButton,
+  EmptyState,
+} from "@yahatapp/ui";
 import { Input } from "@/components/ui/input";
 type DripperFormValues = {
   name: string;
@@ -257,34 +265,19 @@ const Drippers = () => {
                     </Button>
                     <span className={styles.masterName}>
                       {dripper.name}
-                      {dripper.isDefault && (
-                        <span
-                          className={[
-                            styles.tonal,
-                            styles.pill,
-                            styles.helper,
-                            styles.strong,
-                            styles.accent,
-                          ].join(" ")}
-                        >
-                          デフォルト
-                        </span>
-                      )}
+                      {dripper.isDefault && <Chip>デフォルト</Chip>}
                     </span>
                   </div>
                   <div className={styles.masterActions}>
-                    <Button
-                      type="button"
+                    <ChipButton
                       onClick={() => handleStartEdit(dripper)}
                       title="編集"
                       aria-label="編集"
                       variant="outline"
-                      size="sm"
                     >
                       <Pencil size={16} aria-hidden="true" /> 編集
-                    </Button>
-                    <Button
-                      type="button"
+                    </ChipButton>
+                    <ChipButton
                       onClick={() => {
                         if (confirm("このドリッパーを削除しますか？"))
                           deleteMutation.mutate(dripper.id);
@@ -293,10 +286,9 @@ const Drippers = () => {
                       disabled={editingId !== null || deleteMutation.isPending}
                       aria-label="削除"
                       variant="outline"
-                      size="sm"
                     >
                       <Trash2 size={16} aria-hidden="true" /> 削除
-                    </Button>
+                    </ChipButton>
                   </div>
                 </div>
               ))}
