@@ -43,22 +43,33 @@ test("theme text pairs and input boundaries meet contrast requirements", async (
     return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05);
   }
   for (const theme of ["brewlog", "cafelog"]) {
-    const values = declarations(readFileSync(new URL(`themes/${theme}.css`, root), "utf8"));
-    const color = (name) => {
-      const value = values.get(`--cl-${name}`);
+    const values = new Map([
+      ...declarations(readFileSync(new URL("tokens/semantic.css", root), "utf8")),
+      ...declarations(readFileSync(new URL(`themes/${theme}.css`, root), "utf8")),
+    ]);
+    const resolveColor = (token) => {
+      const value = values.get(token);
       const ref = value.match(/^var\(([^)]+)\)$/);
-      return ref ? values.get(ref[1]) : value;
+      return ref ? resolveColor(ref[1]) : value;
     };
+    const color = (name) => resolveColor(`--cl-${name}`);
+    assert.equal(color("color-surface"), "#f5f5f5");
+    assert.equal(color("color-background"), color("color-surface"));
     for (const [foreground, background] of [
       ["color-text", "color-background"],
       ["color-text-muted", "color-background"],
-      ["color-text-muted", "color-surface"],
+      ["color-text-muted", "color-surface-container-lowest"],
       ["color-text-subtle", "color-background"],
-      ["color-text-subtle", "color-surface"],
+      ["color-text-subtle", "color-surface-container-lowest"],
+      ["color-on-surface", "color-surface"],
+      ["color-on-surface-variant", "color-surface"],
       ["color-on-action-primary", "color-action-primary"],
       ["color-on-action-primary", "color-action-primary-hover"],
       ["color-on-action-secondary", "color-action-secondary-hover"],
       ["color-on-action-secondary", "color-action-secondary"],
+      ["color-on-primary-container", "color-primary-container"],
+      ["color-on-tertiary", "color-tertiary"],
+      ["color-on-tertiary-container", "color-tertiary-container"],
       ["color-success", "color-success-surface"],
       ["color-warning", "color-warning-surface"],
       ["color-error", "color-error-surface"],
@@ -67,9 +78,16 @@ test("theme text pairs and input boundaries meet contrast requirements", async (
         contrast(color(foreground), color(background)) >= 4.5,
         `${theme}: ${foreground}/${background}`,
       );
-    assert.ok(
-      contrast(color("color-border-input"), color("color-surface")) >= 3,
-      `${theme}: input boundary`,
-    );
+    for (const background of [
+      "color-surface",
+      "color-surface-container-lowest",
+      "color-tertiary-container",
+    ])
+      assert.ok(
+        contrast(color("color-outline"), color(background)) >= 3,
+        `${theme}: color-outline/${background}`,
+      );
+    assert.equal(color("color-border-input"), color("color-outline"));
+    assert.equal(color("color-border-decorative"), color("color-outline-variant"));
   }
 });

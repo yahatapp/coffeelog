@@ -13,7 +13,7 @@
     padding: var(--cl-space-page-inline);
     border: var(--cl-border-width) solid var(--cl-color-border-decorative);
     border-radius: var(--cl-radius-card);
-    background: var(--cl-color-surface);
+    background: var(--cl-color-surface-container-lowest);
     box-shadow: var(--cl-shadow-card);
     min-width: 0;
   }

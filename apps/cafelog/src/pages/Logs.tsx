@@ -93,7 +93,7 @@ const LogsPage = () => {
           <ClipboardList size={24} aria-hidden="true" />
           <PageHeading className={styles.heading}>記録一覧</PageHeading>
         </div>
-        <Button asChild variant="secondary">
+        <Button asChild variant="primary-container">
           <Link to="/logs/new">
             <Plus size={18} aria-hidden="true" />
             追加

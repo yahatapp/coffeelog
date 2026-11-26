@@ -13,7 +13,7 @@
     width: 100%;
     padding: var(--cl-space-page-inline);
     color: var(--cl-color-text);
-    background: var(--cl-color-surface);
+    background: var(--cl-color-surface-container-lowest);
     font-size: var(--cl-font-size-label);
     text-align: start;
     cursor: pointer;

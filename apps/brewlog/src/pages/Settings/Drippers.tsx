@@ -265,7 +265,7 @@ const Drippers = () => {
                     </Button>
                     <span className={styles.masterName}>
                       {dripper.name}
-                      {dripper.isDefault && <Chip>デフォルト</Chip>}
+                      {dripper.isDefault && <Chip tone="tertiary">デフォルト</Chip>}
                     </span>
                   </div>
                   <div className={styles.masterActions}>

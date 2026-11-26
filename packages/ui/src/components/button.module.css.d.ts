@@ -9,6 +9,7 @@ declare const styles: {
   readonly medium: string;
   readonly outline: string;
   readonly primary: string;
+  readonly primaryContainer: string;
   readonly root: string;
   readonly secondary: string;
   readonly small: string;

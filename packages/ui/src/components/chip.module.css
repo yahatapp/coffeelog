@@ -19,6 +19,10 @@
     --_chip-text: var(--cl-color-action-primary);
     --_chip-surface: var(--cl-color-surface-tonal);
   }
+  .tertiary {
+    --_chip-text: var(--cl-color-on-tertiary-container);
+    --_chip-surface: var(--cl-color-tertiary-container);
+  }
   .caption {
     font-size: var(--cl-font-size-caption);
   }

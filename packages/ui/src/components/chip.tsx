@@ -3,7 +3,7 @@ import { cn } from "../lib/cn";
 import styles from "./chip.module.css";
 
 type ChipVariant = "filled" | "outline";
-type ChipTone = "neutral" | "hot" | "iced" | "warning";
+type ChipTone = "neutral" | "tertiary" | "hot" | "iced" | "warning";
 type ChipTextSize = "helper" | "caption";
 
 export type ChipProps = ComponentProps<"span"> & {

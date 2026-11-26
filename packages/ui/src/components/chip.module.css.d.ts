@@ -7,6 +7,7 @@ declare const styles: {
   readonly iced: string;
   readonly neutral: string;
   readonly outline: string;
+  readonly tertiary: string;
   readonly warning: string;
 };
 export default styles;

@@ -106,7 +106,12 @@ const LogsList = () => {
         <PageHeading className={[styles.heading, styles.strong, styles.accent].join(" ")}>
           抽出履歴
         </PageHeading>
-        <Button size="sm" variant="outline" onClick={() => navigate("/logs/new")} type="button">
+        <Button
+          size="sm"
+          variant="primary-container"
+          onClick={() => navigate("/logs/new")}
+          type="button"
+        >
           <Plus size={16} /> 追加
         </Button>
       </div>

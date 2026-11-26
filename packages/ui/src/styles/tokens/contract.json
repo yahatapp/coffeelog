@@ -111,6 +111,10 @@
     "type": "color",
     "required": true
   },
+  "--cl-color-surface-container-lowest": {
+    "type": "color",
+    "required": true
+  },
   "--cl-color-surface-tonal": {
     "type": "color",
     "required": true
@@ -123,11 +127,43 @@
     "type": "color",
     "required": true
   },
+  "--cl-color-primary-container": {
+    "type": "color",
+    "required": true
+  },
+  "--cl-color-on-primary-container": {
+    "type": "color",
+    "required": true
+  },
+  "--cl-color-tertiary": {
+    "type": "color",
+    "required": true
+  },
+  "--cl-color-on-tertiary": {
+    "type": "color",
+    "required": true
+  },
+  "--cl-color-tertiary-container": {
+    "type": "color",
+    "required": true
+  },
+  "--cl-color-on-tertiary-container": {
+    "type": "color",
+    "required": true
+  },
   "--cl-color-action-secondary": {
     "type": "color",
     "required": true
   },
   "--cl-color-on-action-secondary": {
+    "type": "color",
+    "required": true
+  },
+  "--cl-color-outline": {
+    "type": "color",
+    "required": true
+  },
+  "--cl-color-outline-variant": {
     "type": "color",
     "required": true
   },

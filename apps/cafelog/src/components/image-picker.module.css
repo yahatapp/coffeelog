@@ -61,13 +61,13 @@
     min-height: var(--cl-size-target-min);
     border: var(--cl-border-width) dashed var(--cl-color-border-input);
     border-radius: var(--cl-radius-control);
-    background: var(--cl-color-surface-tonal);
-    color: var(--cl-color-text-muted);
+    background: var(--cl-color-tertiary-container);
+    color: var(--cl-color-on-tertiary-container);
     font-size: var(--cl-font-size-helper);
     font-weight: var(--cl-font-weight-medium);
   }
   .add:hover {
-    border-color: var(--cl-color-action-primary);
+    border-color: var(--cl-color-tertiary);
   }
   .file {
     position: absolute;

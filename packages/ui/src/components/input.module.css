@@ -9,7 +9,7 @@
     padding: var(--cl-space-field-gap);
     font-size: var(--cl-font-size-label);
     color: var(--cl-color-text);
-    background: var(--cl-color-surface);
+    background: var(--cl-color-surface-container-lowest);
     transition: border-color var(--cl-motion-fast);
   }
   .root::placeholder {

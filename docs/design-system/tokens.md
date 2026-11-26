@@ -7,6 +7,18 @@
 - ブランドの配色は[brewlog.css](../../packages/ui/src/styles/themes/brewlog.css)と[cafelog.css](../../packages/ui/src/styles/themes/cafelog.css)に置く。ブランドの基本値と、それを使う公開名を同じ要素に定義する。
 - 公開名・型・必須条件は[contract.json](../../packages/ui/src/styles/tokens/contract.json)に記す。値はCSSだけで管理する。
 
+## 色の役割
+
+[Material Design 3の色の役割](https://m3.material.io/styles/color/the-color-system/)に沿って、面とその上の文字・アイコンの色を組み合わせる。
+
+| 役割 | 用途 |
+| --- | --- |
+| Surface | 両アプリのページ背景。白いカードや入力欄などの面には Surface Container Lowest を使う。 |
+| Primary Container / On Primary Container | 記録一覧から記録を追加するボタンの背景と文字・アイコン。 |
+| Tertiary / On Tertiary | 差し色と、その色で塗った面に載せる文字・アイコン。 |
+| Tertiary Container / On Tertiary Container | 器具の「デフォルト」ラベルや写真追加のような、個別に目を留めてほしい要素の背景と文字・アイコン。 |
+| Outline / Outline Variant | 入力などの境界には Outline、カードの枠や区切り線には Outline Variant を使う。 |
+
 ## 公開名の追加
 
 1. 既存の公開名で意味が合うものを探す。

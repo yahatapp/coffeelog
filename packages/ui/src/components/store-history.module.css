@@ -41,7 +41,7 @@
     cursor: pointer;
   }
   .sortOption[aria-pressed="true"] {
-    background: var(--cl-color-surface);
+    background: var(--cl-color-surface-container-lowest);
     color: var(--cl-color-action-primary);
     box-shadow: var(--cl-shadow-card);
   }
@@ -83,7 +83,7 @@
     border-radius: var(--cl-radius-card);
     padding: var(--cl-space-page-inline);
     text-align: start;
-    background: var(--cl-color-surface);
+    background: var(--cl-color-surface-container-lowest);
     color: var(--cl-color-text);
   }
   .storeButton {
@@ -169,7 +169,7 @@
     overflow-y: auto;
     padding: var(--cl-space-section-gap);
     border-radius: var(--cl-radius-card);
-    background: var(--cl-color-surface);
+    background: var(--cl-color-surface-container-lowest);
     color: var(--cl-color-text);
     box-shadow: var(--cl-shadow-card);
   }

@@ -30,6 +30,17 @@
     color: var(--cl-color-on-action-primary);
     background: var(--cl-color-action-primary);
   }
+  .primaryContainer {
+    color: var(--cl-color-on-primary-container);
+    background: var(--cl-color-primary-container);
+  }
+  .primaryContainer:hover:not([aria-disabled="true"]) {
+    background: color-mix(
+      in srgb,
+      var(--cl-color-on-primary-container) 8%,
+      var(--cl-color-primary-container)
+    );
+  }
   .secondary {
     color: var(--cl-color-on-action-secondary);
     background: var(--cl-color-action-secondary);

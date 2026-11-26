@@ -30,6 +30,9 @@
   --cl-font-weight-strong: 700;
   --cl-space-tight: var(--cl-ref-space-1);
   --cl-shadow-card: 0 1px 3px rgb(0 0 0 / 10%);
+  --cl-color-surface: #f5f5f5;
+  --cl-color-background: var(--cl-color-surface);
+  --cl-color-surface-container-lowest: #ffffff;
   --cl-color-on-surface: #242424;
   --cl-color-on-surface-variant: #595959;
   --cl-color-temperature-hot: #9a3412;

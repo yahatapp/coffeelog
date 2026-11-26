@@ -3,6 +3,7 @@
 ## 2026年11月27日　ホームの文字色
 
 - BrewlogとCafelogのホームでは、見出し・本文・補足情報・評価にニュートラルな文字色を使う。
+- 両アプリのページ背景を共通の Surface に揃える。記録一覧の追加ボタンには Primary Container、器具の既定ラベルと写真追加には Tertiary Container を使う。入力の境界と装飾の罫線は Outline と Outline Variant で分ける。
 
 ## 2026年11月25日　一覧カードと定型文のチップ
 
