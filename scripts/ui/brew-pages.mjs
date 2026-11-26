@@ -166,22 +166,53 @@ export async function verifyBrewPages(page, { baseURL, output, width, ids, reset
   icedData.log.tempType = "ice";
   await visit("/");
   await expect(page.getByText("アイス", { exact: true })).toBeVisible();
+  await expect(page.getByText("今日はどんなコーヒーを淹れますか？", { exact: true })).toHaveCount(
+    0,
+  );
+  const beansShortcut = page.getByRole("link", { name: "豆を管理", exact: true });
+  const historyShortcut = page.getByRole("link", { name: "抽出履歴", exact: true });
+  const beansBox = await beansShortcut.boundingBox();
+  const historyBox = await historyShortcut.boundingBox();
+  expect(historyBox.x).toBeGreaterThan(beansBox.x + beansBox.width);
+  expect(historyBox.y).toBeCloseTo(beansBox.y, 0);
+  expect(historyBox.width).toBeCloseTo(beansBox.width, 0);
+  expect(historyBox.height).toBeCloseTo(beansBox.height, 0);
+  for (const shortcut of [beansShortcut, historyShortcut]) {
+    await expect(shortcut.locator("svg")).toHaveCSS("width", "44px");
+    await expect(shortcut.locator("svg")).toHaveCSS("height", "44px");
+  }
+  const historyIcon = historyShortcut.locator("svg");
+  const navHistoryIcon = page
+    .getByRole("navigation")
+    .getByRole("link", { name: "記録", exact: true })
+    .locator("svg");
+  expect(await historyIcon.innerHTML()).toBe(await navHistoryIcon.innerHTML());
   await audit("home-iced");
+  await historyShortcut.focus();
+  await page.keyboard.press("Enter");
+  await expect(page).toHaveURL(baseURL + "/logs");
+  await visit("/");
   const recent = page.getByRole("link", { name: /2026\.10\.31（土）/ });
   await expect(recent).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
   await expect(recent.getByText("›", { exact: true })).toBeVisible();
   await verifyRecentRecordsLayout(page, "最近登録した記録", recent);
-  const beansIcon = page.getByRole("link", { name: "豆を管理", exact: true }).locator("svg");
-  await expect(beansIcon).toHaveCSS("width", "44px");
-  await expect(beansIcon).toHaveCSS("height", "44px");
-  await expect(page.getByRole("link", { name: "履歴を見る", exact: true })).toHaveCount(0);
   await recent.click();
   await expect(page).toHaveURL(baseURL + "/logs/" + ids.log);
   await expect(page.getByText("2026.10.31（土）", { exact: true })).toBeVisible();
   await visit("/logs");
   const record = page.getByRole("link", { name: /2026\.10\.31（土）/ });
   await expect(record.getByText("アイス", { exact: true })).toBeVisible();
-  await expect(record.getByRole("img", { name: "エチオピア", exact: true })).toBeVisible();
+  const flag = record.getByRole("img", { name: "エチオピア", exact: true });
+  await expect(flag).toBeVisible();
+  const title = record.getByRole("heading", { name: icedData.bean.name, exact: true });
+  const titleTextTop = await title.evaluate((heading) => {
+    const { lineHeight, fontSize } = getComputedStyle(heading);
+    return (
+      heading.getBoundingClientRect().top + (parseFloat(lineHeight) - parseFloat(fontSize)) / 2
+    );
+  });
+  expect((await flag.boundingBox()).y).toBeCloseTo(titleTextTop, 0);
+  await expect(record.getByText(icedData.dripper.name, { exact: true })).toBeVisible();
   const ratingBounds = await record
     .getByText(String(icedData.log.rating), { exact: true })
     .boundingBox();
@@ -190,6 +221,7 @@ export async function verifyBrewPages(page, { baseURL, output, width, ids, reset
     recordBounds.y + recordBounds.height / 2,
     0,
   );
+  await audit("logs-iced");
 
   const timelineData = reset();
   timelineData.log.pours = [
