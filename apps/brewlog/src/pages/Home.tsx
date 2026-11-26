@@ -24,7 +24,7 @@ const Home = () => {
   const recentLogs = logsQuery.data ?? [];
   return (
     <div className={styles.stack}>
-      <PageHeading className={[styles.hero, styles.strong, styles.accent].join(" ")}>
+      <PageHeading className={[styles.hero, styles.strong].join(" ")}>
         こんにちは、{profile?.displayName || "ゲスト"}さん
       </PageHeading>
 
@@ -88,11 +88,11 @@ const Home = () => {
                       </div>
                       {log.rating != null && (
                         <div
-                          className={[styles.row, styles.warningText, styles.fixed].join(" ")}
+                          className={[styles.row, styles.muted, styles.fixed].join(" ")}
                           role="img"
                           aria-label={`評価 ${log.rating}`}
                         >
-                          <Star size={14} className={styles.ratingFilled} aria-hidden="true" />
+                          <Star size={14} className={styles.filled} aria-hidden="true" />
                           <span className={[styles.helper, styles.strong].join(" ")}>
                             {log.rating}
                           </span>

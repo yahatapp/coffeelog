@@ -6,6 +6,10 @@
     color: var(--cl-color-text);
     background: var(--cl-color-background);
   }
+  .neutralText {
+    --cl-color-text: var(--cl-color-on-surface);
+    --cl-color-text-muted: var(--cl-color-on-surface-variant);
+  }
   .main {
     flex: 1;
     min-width: 0;
@@ -59,6 +63,9 @@
   .navigationLabel {
     font-size: var(--cl-font-size-helper);
     font-weight: var(--cl-font-weight-medium);
+  }
+  .neutralText .navigationLink[aria-current="page"] .navigationLabel {
+    color: var(--cl-color-text);
   }
   .navigationLink:focus-visible {
     outline: var(--cl-focus-width) solid var(--cl-color-focus);

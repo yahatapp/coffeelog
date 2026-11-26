@@ -95,6 +95,14 @@
     "type": "color",
     "required": true
   },
+  "--cl-color-on-surface": {
+    "type": "color",
+    "required": true
+  },
+  "--cl-color-on-surface-variant": {
+    "type": "color",
+    "required": true
+  },
   "--cl-color-background": {
     "type": "color",
     "required": true

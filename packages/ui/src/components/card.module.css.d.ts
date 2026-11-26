@@ -6,5 +6,6 @@ declare const styles: {
   readonly root: string;
   readonly selected: string;
   readonly title: string;
+  readonly titleText: string;
 };
 export default styles;

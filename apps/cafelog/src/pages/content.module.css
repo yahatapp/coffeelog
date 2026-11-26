@@ -35,7 +35,7 @@
   .greeting {
     font-size: var(--cl-font-size-page-title);
     font-weight: var(--cl-font-weight-medium);
-    color: var(--cl-color-action-primary);
+    color: var(--cl-color-text);
     overflow-wrap: anywhere;
   }
   .muted {
@@ -63,10 +63,9 @@
     flex-shrink: 0;
     gap: var(--cl-space-tight);
     font-size: var(--cl-font-size-helper);
-    color: var(--cl-color-action-primary);
+    color: var(--cl-color-text-muted);
   }
   .star {
-    color: var(--cl-color-rating);
     fill: currentColor;
   }
   .visit,

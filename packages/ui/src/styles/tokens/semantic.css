@@ -30,6 +30,8 @@
   --cl-font-weight-strong: 700;
   --cl-space-tight: var(--cl-ref-space-1);
   --cl-shadow-card: 0 1px 3px rgb(0 0 0 / 10%);
+  --cl-color-on-surface: #242424;
+  --cl-color-on-surface-variant: #595959;
   --cl-color-temperature-hot: #9a3412;
   --cl-color-temperature-hot-surface: #fff7ed;
   --cl-color-temperature-iced: #1e40af;
