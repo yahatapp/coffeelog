@@ -8,14 +8,12 @@ import {
   formatDisplayDate,
 } from "@yahatapp/ui";
 import styles from "./content.module.css";
-import homeStyles from "./home.module.css";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { Plus, Star } from "lucide-react";
+import { ClipboardList, Star } from "lucide-react";
 import { useLiff } from "../hooks/useLiff";
 import { logQueries, type BrewLog } from "@/lib/queries";
 import { CoffeeBeansIcon } from "../components/ui/CoffeeBeansIcon";
-import { Button } from "../components/ui/button";
 import { Card, CardContent } from "../components/ui/card";
 const Home = () => {
   const { profile } = useLiff();
@@ -25,7 +23,7 @@ const Home = () => {
   });
   const recentLogs = logsQuery.data ?? [];
   return (
-    <div className={[styles.stack, homeStyles.page].join(" ")}>
+    <div className={styles.stack}>
       <PageHeading className={[styles.hero, styles.strong, styles.accent].join(" ")}>
         こんにちは、{profile?.displayName || "ゲスト"}さん
       </PageHeading>
@@ -110,7 +108,7 @@ const Home = () => {
       </Card>
 
       <section className={styles.tiles}>
-        <Link to={"/beans"} className={styles.entryLink}>
+        <Link to="/beans" className={styles.entryLink}>
           <Card>
             <div className={[styles.content, styles.stack, styles.center].join(" ")}>
               <CoffeeBeansIcon size="lg" className={styles.tileIcon} aria-hidden="true" />
@@ -118,13 +116,15 @@ const Home = () => {
             </div>
           </Card>
         </Link>
-      </section>
-      <Button asChild className={homeStyles.recordAction}>
-        <Link to="/logs/new">
-          <Plus size={18} aria-hidden="true" />
-          抽出を記録する
+        <Link to="/logs" className={styles.entryLink}>
+          <Card>
+            <div className={[styles.content, styles.stack, styles.center].join(" ")}>
+              <ClipboardList className={styles.tileIcon} aria-hidden="true" />
+              <span className={[styles.body, styles.strong].join(" ")}>抽出履歴</span>
+            </div>
+          </Card>
         </Link>
-      </Button>
+      </section>
     </div>
   );
 };

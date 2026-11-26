@@ -169,25 +169,33 @@ export async function verifyBrewPages(page, { baseURL, output, width, ids, reset
   await expect(page.getByText("今日はどんなコーヒーを淹れますか？", { exact: true })).toHaveCount(
     0,
   );
-  const create = page.getByRole("link", { name: "抽出を記録する", exact: true });
-  await expect(create).toHaveCSS("position", "fixed");
-  const actionBox = await create.boundingBox();
-  const navBox = await page.getByRole("navigation").boundingBox();
-  expect(actionBox.y + actionBox.height).toBeLessThan(navBox.y);
-  expect(actionBox.x + actionBox.width / 2).toBeGreaterThan(width / 2);
+  const beansShortcut = page.getByRole("link", { name: "豆を管理", exact: true });
+  const historyShortcut = page.getByRole("link", { name: "抽出履歴", exact: true });
+  const beansBox = await beansShortcut.boundingBox();
+  const historyBox = await historyShortcut.boundingBox();
+  expect(historyBox.x).toBeGreaterThan(beansBox.x + beansBox.width);
+  expect(historyBox.y).toBeCloseTo(beansBox.y, 0);
+  expect(historyBox.width).toBeCloseTo(beansBox.width, 0);
+  expect(historyBox.height).toBeCloseTo(beansBox.height, 0);
+  for (const shortcut of [beansShortcut, historyShortcut]) {
+    await expect(shortcut.locator("svg")).toHaveCSS("width", "44px");
+    await expect(shortcut.locator("svg")).toHaveCSS("height", "44px");
+  }
+  const historyIcon = historyShortcut.locator("svg");
+  const navHistoryIcon = page
+    .getByRole("navigation")
+    .getByRole("link", { name: "記録", exact: true })
+    .locator("svg");
+  expect(await historyIcon.innerHTML()).toBe(await navHistoryIcon.innerHTML());
   await audit("home-iced");
-  await create.focus();
+  await historyShortcut.focus();
   await page.keyboard.press("Enter");
-  await expect(page).toHaveURL(baseURL + "/logs/new");
+  await expect(page).toHaveURL(baseURL + "/logs");
   await visit("/");
   const recent = page.getByRole("link", { name: /2026\.10\.31（土）/ });
   await expect(recent).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
   await expect(recent.getByText("›", { exact: true })).toBeVisible();
   await verifyRecentRecordsLayout(page, "最近登録した記録", recent);
-  const beansIcon = page.getByRole("link", { name: "豆を管理", exact: true }).locator("svg");
-  await expect(beansIcon).toHaveCSS("width", "44px");
-  await expect(beansIcon).toHaveCSS("height", "44px");
-  await expect(page.getByRole("link", { name: "履歴を見る", exact: true })).toHaveCount(0);
   await recent.click();
   await expect(page).toHaveURL(baseURL + "/logs/" + ids.log);
   await expect(page.getByText("2026.10.31（土）", { exact: true })).toBeVisible();
