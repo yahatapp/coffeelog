@@ -212,6 +212,12 @@ export async function verifyCafePages(
     visitDate: "2026-10-30",
   });
   await visit("/");
+  await expect(page.getByText("最近出会った一杯を振り返りましょう。", { exact: true })).toHaveCount(
+    0,
+  );
+  const createBox = await page.getByRole("link", { name: "新しい一杯を記録する" }).boundingBox();
+  const recentHeading = page.getByRole("heading", { name: "最近登録した記録", exact: true });
+  expect(createBox.y + createBox.height).toBeLessThan((await recentHeading.boundingBox()).y);
   const recent = page.getByRole("link", { name: /2026\.10\.31（土）/ });
   await expect(recent).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
   await expect(recent.getByText("›", { exact: true })).toBeVisible();

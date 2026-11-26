@@ -166,7 +166,20 @@ export async function verifyBrewPages(page, { baseURL, output, width, ids, reset
   icedData.log.tempType = "ice";
   await visit("/");
   await expect(page.getByText("アイス", { exact: true })).toBeVisible();
+  await expect(page.getByText("今日はどんなコーヒーを淹れますか？", { exact: true })).toHaveCount(
+    0,
+  );
+  const create = page.getByRole("link", { name: "抽出を記録する", exact: true });
+  await expect(create).toHaveCSS("position", "fixed");
+  const actionBox = await create.boundingBox();
+  const navBox = await page.getByRole("navigation").boundingBox();
+  expect(actionBox.y + actionBox.height).toBeLessThan(navBox.y);
+  expect(actionBox.x + actionBox.width / 2).toBeGreaterThan(width / 2);
   await audit("home-iced");
+  await create.focus();
+  await page.keyboard.press("Enter");
+  await expect(page).toHaveURL(baseURL + "/logs/new");
+  await visit("/");
   const recent = page.getByRole("link", { name: /2026\.10\.31（土）/ });
   await expect(recent).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
   await expect(recent.getByText("›", { exact: true })).toBeVisible();
@@ -181,7 +194,17 @@ export async function verifyBrewPages(page, { baseURL, output, width, ids, reset
   await visit("/logs");
   const record = page.getByRole("link", { name: /2026\.10\.31（土）/ });
   await expect(record.getByText("アイス", { exact: true })).toBeVisible();
-  await expect(record.getByRole("img", { name: "エチオピア", exact: true })).toBeVisible();
+  const flag = record.getByRole("img", { name: "エチオピア", exact: true });
+  await expect(flag).toBeVisible();
+  const title = record.getByRole("heading", { name: icedData.bean.name, exact: true });
+  const titleTextTop = await title.evaluate((heading) => {
+    const { lineHeight, fontSize } = getComputedStyle(heading);
+    return (
+      heading.getBoundingClientRect().top + (parseFloat(lineHeight) - parseFloat(fontSize)) / 2
+    );
+  });
+  expect((await flag.boundingBox()).y).toBeCloseTo(titleTextTop, 0);
+  await expect(record.getByText(icedData.dripper.name, { exact: true })).toBeVisible();
   const ratingBounds = await record
     .getByText(String(icedData.log.rating), { exact: true })
     .boundingBox();
@@ -190,6 +213,7 @@ export async function verifyBrewPages(page, { baseURL, output, width, ids, reset
     recordBounds.y + recordBounds.height / 2,
     0,
   );
+  await audit("logs-iced");
 
   const timelineData = reset();
   timelineData.log.pours = [

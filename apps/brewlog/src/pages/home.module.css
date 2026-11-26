@@ -1,0 +1,15 @@
+@layer pages {
+  .page {
+    padding-block-end: calc(var(--cl-size-target-min) + var(--cl-space-page-inline));
+  }
+  .recordAction {
+    position: fixed;
+    z-index: var(--cl-layer-floating);
+    inset-inline-end: calc(
+      max(0%, (100% - var(--cl-size-content-max)) / 2) + var(--cl-space-page-inline)
+    );
+    inset-block-end: calc(
+      var(--cl-size-nav) + env(safe-area-inset-bottom) + var(--cl-space-page-inline)
+    );
+  }
+}

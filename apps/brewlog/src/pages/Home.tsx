@@ -8,6 +8,7 @@ import {
   formatDisplayDate,
 } from "@yahatapp/ui";
 import styles from "./content.module.css";
+import homeStyles from "./home.module.css";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Plus, Star } from "lucide-react";
@@ -24,21 +25,10 @@ const Home = () => {
   });
   const recentLogs = logsQuery.data ?? [];
   return (
-    <div className={styles.stack}>
-      <section>
-        <PageHeading
-          className={[styles.hero, styles.strong, styles.accent, styles.separated].join(" ")}
-        >
-          こんにちは、{profile?.displayName || "ゲスト"}さん
-        </PageHeading>
-        <p className={[styles.body, styles.muted].join(" ")}>今日はどんなコーヒーを淹れますか？</p>
-      </section>
-      <Button asChild fullWidth>
-        <Link to="/logs/new">
-          <Plus size={18} aria-hidden="true" />
-          抽出を記録する
-        </Link>
-      </Button>
+    <div className={[styles.stack, homeStyles.page].join(" ")}>
+      <PageHeading className={[styles.hero, styles.strong, styles.accent].join(" ")}>
+        こんにちは、{profile?.displayName || "ゲスト"}さん
+      </PageHeading>
 
       <Card>
         <RecentRecordsHeader
@@ -129,6 +119,12 @@ const Home = () => {
           </Card>
         </Link>
       </section>
+      <Button asChild className={homeStyles.recordAction}>
+        <Link to="/logs/new">
+          <Plus size={18} aria-hidden="true" />
+          抽出を記録する
+        </Link>
+      </Button>
     </div>
   );
 };

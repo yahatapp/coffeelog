@@ -1,5 +1,6 @@
 declare const styles: {
-  readonly origin: string;
+  readonly flag: string;
+  readonly rating: string;
   readonly record: string;
 };
 export default styles;

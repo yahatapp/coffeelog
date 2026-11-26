@@ -29,12 +29,9 @@ const HomePage = () => {
 
   return (
     <div className={styles.page}>
-      <section>
-        <PageHeading className={styles.greeting}>
-          こんにちは、{profile?.displayName || "ゲスト"}さん
-        </PageHeading>
-        <p className={styles.muted}>最近出会った一杯を振り返りましょう。</p>
-      </section>
+      <PageHeading className={styles.greeting}>
+        こんにちは、{profile?.displayName || "ゲスト"}さん
+      </PageHeading>
       <Button asChild fullWidth>
         <Link to="/logs/new">
           <Plus size={18} aria-hidden="true" />

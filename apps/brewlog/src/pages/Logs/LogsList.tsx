@@ -161,9 +161,7 @@ const LogsList = () => {
               >
                 <Card>
                   <div className={[styles.content, listStyles.record].join(" ")}>
-                    <div className={listStyles.origin}>
-                      <OriginFlag origin={log.bean.origin} size="md" />
-                    </div>
+                    <OriginFlag className={listStyles.flag} origin={log.bean.origin} size="md" />
                     <div className={[styles.fieldStack, styles.wrap].join(" ")}>
                       <h2 className={[styles.strong, styles.foreground].join(" ")}>
                         {log.bean.name}
@@ -184,12 +182,12 @@ const LogsList = () => {
                           {isIced ? "アイス" : "ホット"}
                         </span>
                         {(log.dripper?.name || log.method) && (
-                          <span>• {log.dripper?.name || log.method}</span>
+                          <span>{log.dripper?.name || log.method}</span>
                         )}
                       </div>
                     </div>
                     {log.rating != null && (
-                      <Chip tone="warning">
+                      <Chip tone="warning" className={listStyles.rating}>
                         <Star
                           size={16}
                           className={[styles.ratingFilled, styles.fixed].join(" ")}

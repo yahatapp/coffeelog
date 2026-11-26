@@ -2,14 +2,13 @@
   .record {
     display: grid;
     grid-template-columns: auto minmax(0, 1fr) auto;
-    align-items: center;
+    align-items: start;
     gap: var(--cl-space-field-gap);
   }
-  .origin {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    align-self: start;
-    gap: var(--cl-space-field-gap);
+  .flag {
+    margin-block-start: calc(var(--cl-font-size-body) * (var(--cl-line-height-body) - 1) / 2);
+  }
+  .rating {
+    align-self: center;
   }
 }
