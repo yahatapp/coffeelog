@@ -7,14 +7,8 @@ export const sortBeanVersions = <T extends Pick<Bean, "createdAt">>(beans: reado
   beans.toSorted((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
 export const groupBeanVersions = (beans: readonly Bean[]) => {
-  const groups = new Map<string, Bean[]>();
-  for (const bean of sortBeanVersions(beans)) {
-    const groupId = getBeanGroupId(bean);
-    const versions = groups.get(groupId);
-    if (versions) versions.push(bean);
-    else groups.set(groupId, [bean]);
-  }
-  return [...groups].map(([groupId, versions]) => ({
+  const groups = Map.groupBy(sortBeanVersions(beans), getBeanGroupId);
+  return Array.from(groups, ([groupId, versions]) => ({
     groupId,
     versions,
     latestBean: versions[0],

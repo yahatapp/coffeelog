@@ -43,7 +43,7 @@ const LogsList = () => {
     }
     return new Date(log.createdAt).getTime();
   };
-  const sortedLogs = [...filteredLogs].toSorted((a, b) => {
+  const sortedLogs = filteredLogs.toSorted((a, b) => {
     if (sortBy === "date") {
       const dateA = getLogTimestamp(a);
       const dateB = getLogTimestamp(b);

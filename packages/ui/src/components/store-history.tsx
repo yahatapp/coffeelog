@@ -342,15 +342,10 @@ export function StoreHistory({
   onOpenBrewRecord?: (id: string) => void;
 }) {
   const [selectedCafeRecord, setSelectedCafeRecord] = useState<CafeRecord | null>(null);
-  const brewGroups = useMemo(() => {
-    const groups = new Map<string, BrewRecord[]>();
-    for (const record of brewRecords) {
-      const records = groups.get(record.beanId) ?? [];
-      records.push(record);
-      groups.set(record.beanId, records);
-    }
-    return [...groups.values()];
-  }, [brewRecords]);
+  const brewGroups = useMemo(
+    () => Array.from(Map.groupBy(brewRecords, (record) => record.beanId).values()),
+    [brewRecords],
+  );
   return (
     <div className={styles.sectionStack}>
       <header className={styles.panel}>
