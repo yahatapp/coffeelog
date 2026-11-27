@@ -41,7 +41,7 @@ export const ImagePicker = ({
   const remove = (index: number) => {
     onError(null);
     URL.revokeObjectURL(images[index].previewUrl);
-    onChange(images.filter((_, current) => current !== index));
+    onChange(images.toSpliced(index, 1));
   };
   const preview = previewIndex === null ? null : images[previewIndex];
   return (
