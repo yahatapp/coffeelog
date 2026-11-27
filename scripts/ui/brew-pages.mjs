@@ -169,6 +169,14 @@ export async function verifyBrewPages(page, { baseURL, output, width, ids, reset
   await expect(page.getByText("今日はどんなコーヒーを淹れますか？", { exact: true })).toHaveCount(
     0,
   );
+  const create = page.getByRole("link", { name: "抽出を記録する", exact: true });
+  await expect(create).toHaveAttribute("href", "/logs/new");
+  const greetingBox = await page.getByRole("heading", { level: 1 }).boundingBox();
+  const createBox = await create.boundingBox();
+  const recentHeading = page.getByRole("heading", { name: "最近登録した記録", exact: true });
+  expect(createBox.y).toBeGreaterThan(greetingBox.y + greetingBox.height);
+  expect(createBox.y + createBox.height).toBeLessThan((await recentHeading.boundingBox()).y);
+  expect(createBox.width).toBeCloseTo(greetingBox.width, 0);
   const beansShortcut = page.getByRole("link", { name: "豆を管理", exact: true });
   const historyShortcut = page.getByRole("link", { name: "抽出履歴", exact: true });
   const beansBox = await beansShortcut.boundingBox();
@@ -188,6 +196,10 @@ export async function verifyBrewPages(page, { baseURL, output, width, ids, reset
     .locator("svg");
   expect(await historyIcon.innerHTML()).toBe(await navHistoryIcon.innerHTML());
   await audit("home-iced");
+  await create.focus();
+  await page.keyboard.press("Enter");
+  await expect(page).toHaveURL(baseURL + "/logs/new");
+  await visit("/");
   await historyShortcut.focus();
   await page.keyboard.press("Enter");
   await expect(page).toHaveURL(baseURL + "/logs");

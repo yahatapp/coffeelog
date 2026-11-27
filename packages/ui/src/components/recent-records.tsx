@@ -8,7 +8,9 @@ export function RecentRecordsHeader({ title, action }: { title: string; action?:
   return (
     <CardHeader spacing={action ? "compact" : "default"}>
       <div className={styles.header}>
-        <CardTitle as="h2">{title}</CardTitle>
+        <CardTitle as="h2" tone="text">
+          {title}
+        </CardTitle>
         {action && (
           <div className={styles.headerAction}>
             <Button asChild variant="ghost" size="sm">

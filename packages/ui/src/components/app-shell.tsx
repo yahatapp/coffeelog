@@ -3,6 +3,7 @@ import { PageLayout } from "./layout";
 import { Button } from "./button";
 import { Card, CardContent, CardHeader, CardTitle } from "./card";
 import { Loading } from "./status";
+import { cn } from "../lib/cn";
 import styles from "./app-shell.module.css";
 export type NavigationItem = { href: string; label: string; icon: ReactNode; active: boolean };
 export type NavigationLinkProps = {
@@ -42,13 +43,18 @@ export function AppShell({
   children,
   navigation,
   banner,
+  textTone = "default",
 }: {
   children: ReactNode;
   navigation: ReactNode;
   banner?: ReactNode;
+  textTone?: "default" | "neutral";
 }) {
   return (
-    <div className={styles.root} data-clarity-mask="True">
+    <div
+      className={cn(styles.root, textTone === "neutral" && styles.neutralText)}
+      data-clarity-mask="True"
+    >
       {banner}
       <main className={styles.main}>
         <PageLayout>{children}</PageLayout>

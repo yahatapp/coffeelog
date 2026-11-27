@@ -52,7 +52,7 @@
   .thumb {
     width: var(--cl-size-slider-thumb);
     height: var(--cl-size-slider-thumb);
-    border: var(--cl-focus-width) solid var(--cl-color-surface);
+    border: var(--cl-focus-width) solid var(--cl-color-surface-container-lowest);
     border-radius: var(--cl-radius-action);
     background: var(--cl-color-action-primary);
     box-shadow: var(--cl-shadow-card);

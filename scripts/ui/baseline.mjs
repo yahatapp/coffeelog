@@ -292,6 +292,11 @@ try {
             ]) {
               await page.goto(`http://127.0.0.1:${portBase + index}${path}`);
               await page.getByRole("navigation").waitFor();
+              await expect(page.locator("html")).toHaveCSS("background-color", "rgb(245, 245, 245)");
+              await expect(page.locator('[data-clarity-mask="True"]')).toHaveCSS(
+                "background-color",
+                "rgb(245, 245, 245)",
+              );
               console.log(app, width, page.url());
               if (process.env.UI_SHELL === "1") {
                 const nav = page.getByRole("navigation");

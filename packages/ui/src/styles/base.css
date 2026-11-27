@@ -3,7 +3,7 @@
   font-size: var(--cl-font-size-body);
   line-height: var(--cl-line-height-body);
   color: var(--cl-color-text);
-  background: var(--cl-color-background);
+  background: var(--cl-color-surface);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;

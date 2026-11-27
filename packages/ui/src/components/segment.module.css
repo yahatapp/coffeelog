@@ -23,7 +23,7 @@
   }
   .option[data-selected] {
     color: var(--cl-color-action-primary);
-    background: var(--cl-color-surface);
+    background: var(--cl-color-surface-container-lowest);
     box-shadow: var(--cl-shadow-card);
   }
   .option:has(:focus-visible) {

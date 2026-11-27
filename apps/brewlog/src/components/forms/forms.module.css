@@ -103,11 +103,11 @@
   }
   .choiceHot {
     color: var(--cl-color-temperature-hot);
-    background: var(--cl-color-surface);
+    background: var(--cl-color-surface-container-lowest);
   }
   .choiceIced {
     color: var(--cl-color-temperature-iced);
-    background: var(--cl-color-surface);
+    background: var(--cl-color-surface-container-lowest);
   }
   .choice:focus-visible,
   .textAction:focus-visible {

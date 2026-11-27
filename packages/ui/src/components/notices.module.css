@@ -22,7 +22,7 @@
     flex-shrink: 0;
     border: var(--cl-border-width) solid currentColor;
     border-radius: var(--cl-radius-card);
-    background: var(--cl-color-surface);
+    background: var(--cl-color-surface-container-lowest);
     padding: var(--cl-space-page-inline);
     box-shadow: var(--cl-shadow-card);
   }

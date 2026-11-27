@@ -1,5 +1,6 @@
-import { PageHeading } from "@yahatapp/ui";
 import {
+  Button,
+  PageHeading,
   Loading,
   ErrorState,
   RecentRecord,
@@ -10,7 +11,7 @@ import {
 import styles from "./content.module.css";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { ClipboardList, Star } from "lucide-react";
+import { ClipboardList, Plus, Star } from "lucide-react";
 import { useLiff } from "../hooks/useLiff";
 import { logQueries, type BrewLog } from "@/lib/queries";
 import { CoffeeBeansIcon } from "../components/ui/CoffeeBeansIcon";
@@ -24,10 +25,15 @@ const Home = () => {
   const recentLogs = logsQuery.data ?? [];
   return (
     <div className={styles.stack}>
-      <PageHeading className={[styles.hero, styles.strong, styles.accent].join(" ")}>
+      <PageHeading className={[styles.hero, styles.strong].join(" ")}>
         こんにちは、{profile?.displayName || "ゲスト"}さん
       </PageHeading>
-
+      <Button asChild fullWidth>
+        <Link to="/logs/new">
+          <Plus size={18} aria-hidden="true" />
+          抽出を記録する
+        </Link>
+      </Button>
       <Card>
         <RecentRecordsHeader
           title="最近登録した記録"
@@ -88,11 +94,11 @@ const Home = () => {
                       </div>
                       {log.rating != null && (
                         <div
-                          className={[styles.row, styles.warningText, styles.fixed].join(" ")}
+                          className={[styles.row, styles.muted, styles.fixed].join(" ")}
                           role="img"
                           aria-label={`評価 ${log.rating}`}
                         >
-                          <Star size={14} className={styles.ratingFilled} aria-hidden="true" />
+                          <Star size={14} className={styles.filled} aria-hidden="true" />
                           <span className={[styles.helper, styles.strong].join(" ")}>
                             {log.rating}
                           </span>

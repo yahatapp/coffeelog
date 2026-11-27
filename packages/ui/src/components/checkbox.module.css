@@ -24,7 +24,7 @@
     height: var(--cl-size-icon);
     border: var(--cl-border-width) solid var(--cl-color-border-input);
     border-radius: var(--cl-space-tight);
-    background: var(--cl-color-surface);
+    background: var(--cl-color-surface-container-lowest);
     pointer-events: none;
   }
   .check {

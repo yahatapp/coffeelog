@@ -389,7 +389,7 @@ const Grinders = () => {
                       </Button>
                       <span className={styles.masterName}>
                         {grinder.name}
-                        {grinder.isDefault && <Chip>デフォルト</Chip>}
+                        {grinder.isDefault && <Chip tone="tertiary">デフォルト</Chip>}
                       </span>
                     </div>
                     <div className={styles.masterActions}>

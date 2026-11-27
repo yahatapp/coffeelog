@@ -38,11 +38,13 @@ function Catalog() {
     <main className={styles.root}>
       <h1 className={styles.heading}>UI部品の確認</h1>
       <section className={styles.section} aria-label="基本部品">
-        {(["primary", "secondary", "outline", "ghost", "danger"] as const).map((variant) => (
-          <Button key={variant} variant={variant}>
-            {variant}
-          </Button>
-        ))}
+        {(["primary", "primary-container", "secondary", "outline", "ghost", "danger"] as const).map(
+          (variant) => (
+            <Button key={variant} variant={variant}>
+              {variant}
+            </Button>
+          ),
+        )}
         <Button asChild loading>
           <a href="#blocked">保存中のリンク</a>
         </Button>
@@ -56,6 +58,7 @@ function Catalog() {
       </section>
       <section className={styles.section} aria-label="チップ">
         <Chip>情報ラベル</Chip>
+        <Chip tone="tertiary">デフォルト</Chip>
         <Chip tone="hot">ホット</Chip>
         <Chip tone="iced">アイス</Chip>
         <Chip tone="warning">評価 4</Chip>

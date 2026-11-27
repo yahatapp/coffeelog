@@ -1,6 +1,6 @@
 @layer pages {
   .surface {
-    background: var(--cl-color-surface);
+    background: var(--cl-color-surface-container-lowest);
   }
   .tonal {
     background: var(--cl-color-surface-tonal);
@@ -194,7 +194,7 @@
   }
   .selected {
     color: var(--cl-color-action-primary);
-    background: var(--cl-color-surface);
+    background: var(--cl-color-surface-container-lowest);
     box-shadow: var(--cl-shadow-card);
   }
   .visuallyHidden {

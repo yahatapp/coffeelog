@@ -10,6 +10,7 @@ declare const styles: {
   readonly navigationItems: string;
   readonly navigationLabel: string;
   readonly navigationLink: string;
+  readonly neutralText: string;
   readonly root: string;
   readonly session: string;
   readonly sessionMessage: string;

@@ -37,7 +37,7 @@
   .empty {
     border: var(--cl-border-width) dashed var(--cl-color-border-decorative);
     border-radius: var(--cl-radius-card);
-    background: var(--cl-color-surface);
+    background: var(--cl-color-surface-container-lowest);
     color: var(--cl-color-text);
     padding: var(--cl-space-section-gap);
     text-align: center;

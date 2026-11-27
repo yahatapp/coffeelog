@@ -35,7 +35,7 @@
   .greeting {
     font-size: var(--cl-font-size-page-title);
     font-weight: var(--cl-font-weight-medium);
-    color: var(--cl-color-action-primary);
+    color: var(--cl-color-text);
     overflow-wrap: anywhere;
   }
   .muted {
@@ -63,10 +63,9 @@
     flex-shrink: 0;
     gap: var(--cl-space-tight);
     font-size: var(--cl-font-size-helper);
-    color: var(--cl-color-action-primary);
+    color: var(--cl-color-text-muted);
   }
   .star {
-    color: var(--cl-color-rating);
     fill: currentColor;
   }
   .visit,
@@ -84,7 +83,7 @@
     padding: var(--cl-space-page-inline);
     border: var(--cl-border-width) solid var(--cl-color-border-decorative);
     border-radius: var(--cl-radius-card);
-    background: var(--cl-color-surface);
+    background: var(--cl-color-surface-container-lowest);
     box-shadow: var(--cl-shadow-card);
     font-weight: var(--cl-font-weight-medium);
     color: var(--cl-color-action-primary);
@@ -108,7 +107,7 @@
     flex-direction: column;
     gap: var(--cl-space-field-gap);
     padding: var(--cl-space-page-inline);
-    background: var(--cl-color-surface);
+    background: var(--cl-color-surface-container-lowest);
     border: var(--cl-border-width) solid var(--cl-color-border-decorative);
     border-radius: var(--cl-radius-card);
   }

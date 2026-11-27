@@ -51,6 +51,7 @@ const Layout = () => {
   return (
     <AppNavigation app="Cafelog">
       <AppShell
+        textTone={location.pathname === "/" ? "neutral" : "default"}
         banner={
           analytics.configured && consent === null ? (
             <ConsentNotice
